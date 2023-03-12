@@ -20,8 +20,6 @@ namespace PixelCrypt
     /// </summary>
     public partial class Crypto : Page
     {
-        int i = 0;
-
         public Crypto(string name)
         {
             InitializeComponent();
@@ -34,23 +32,7 @@ namespace PixelCrypt
 
         private void Button_Crypto(object sender, RoutedEventArgs e)
         {
-            if (i == 1)
-            {
-                i1.Visibility = Visibility.Visible;
-                i2.Visibility = Visibility.Hidden;
-            }
-            if (i == 2)
-            {
-                i2.Visibility = Visibility.Visible;
-                i1.Visibility = Visibility.Hidden;
-            }
-            if (i == 3)
-            {
-                i1.Visibility = Visibility.Hidden;
-                i2.Visibility = Visibility.Hidden;
-                i = 0;
-            }
-            i++;
+            
         }
     }
 }

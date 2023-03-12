@@ -98,18 +98,20 @@
                 <RowDefinition Height="1*" />
                 <RowDefinition Height="50" />
             </Grid.RowDefinitions>
+            
             <Image Grid.Row="0"
-                   Name="i2"
-                   Source="D:\YandexDisk\ЯндексДиск\BOLOFFICIAL\Личное\Мои фото\_bolofficial-20220313-0018.jpg"
-                   Stretch="Uniform"
-                   Visibility="Hidden"
-                   Margin="10"/>
-            <Image Grid.Row="0"
-                   Name="i1"
-                   Source="C:\Users\Bolofficial\Desktop\Rabit.jpeg"
+                   Name="CryptoImage"
                    Stretch="Uniform" 
-                   Visibility="Hidden"
                    Margin="10"/>
+            <Button Grid.Row="0"
+                    Name="Button_Image"
+                    Content="Выбрать фаил"
+                    Background="White"
+                    Foreground="#FFA52020"
+                    FontFamily="Tahoma" 
+                    BorderThickness="0"
+                    FontWeight="Bold"
+                    Margin="10"/>
             <Grid Grid.Row="1">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="60" />
@@ -137,6 +139,7 @@
                          TextWrapping="Wrap" FontFamily="Tahoma" Foreground="#FFA52020"/>
             </Grid>
             <TextBox Grid.Row="2"
+                     Name="CryptoText"
                      VerticalScrollBarVisibility="Auto"
                      TextWrapping="Wrap" FontFamily="Tahoma"
                      FontWeight="Bold"
