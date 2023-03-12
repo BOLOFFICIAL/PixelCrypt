@@ -2,9 +2,21 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net6.0-windows</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="DALL·E 2023-03-12 16.48.07 - Pixel padlock in red shades.png" />
+    <None Remove="DALL·E 2023-03-12 16.56.46 - detailed pixel lock in red tones on a white background.png" />
+    <None Remove="zolotoj-kubok.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="DALL·E 2023-03-12 16.48.07 - Pixel padlock in red shades.png" />
+    <Resource Include="DALL·E 2023-03-12 16.56.46 - detailed pixel lock in red tones on a white background.png" />
+    <Resource Include="zolotoj-kubok.png" />
+  </ItemGroup>
 
 </Project>
