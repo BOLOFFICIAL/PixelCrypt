@@ -1,6 +1,8 @@
 ﻿using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Navigation;
 
 namespace PixelCrypt
 {
@@ -12,8 +14,7 @@ namespace PixelCrypt
         public MainWindow()
         {
             InitializeComponent();
-            Menu menu = new Menu();
-            Content = menu;
+            MainFrame.Content = new Menu();
         }
     }
 }

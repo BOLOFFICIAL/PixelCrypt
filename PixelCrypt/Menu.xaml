@@ -9,9 +9,9 @@
       Title="Menu">
     <Page.Resources>
         <Style TargetType="Button" x:Key="CustomButtonStyle">
-            <Setter Property="Foreground" Value="#FFFFFFFF"/>
+            <Setter Property="Foreground" Value="#FFFFFF"/>
             <Setter Property="Background" Value="#4FA52020"/>
-            <Setter Property="BorderBrush" Value="#FFFFFF"/>
+            <Setter Property="BorderBrush" Value="#FFFF"/>
             <Setter Property="FontSize" Value="30"/>
             <Setter Property="FontFamily" Value="Tahoma"/>
             <Setter Property="FontWeight" Value="Regular"/>
@@ -19,6 +19,7 @@
             <Setter Property="Height" Value="55"/>
             <Setter Property="HorizontalAlignment" Value="Center"/>
             <Setter Property="VerticalAlignment" Value="Top"/>
+            <Setter Property="Margin" Value="0,10,0,0"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type Button}">
@@ -27,9 +28,9 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" Value="#AFFFFFFF" TargetName="Border" />
-                                <Setter Property="Foreground" Value="#FFA52020"/>
-                                <Setter Property="BorderBrush" Value ="#FFA52020"/>
+                                <Setter Property="Background" Value="#8FFFFFFF" TargetName="Border" />
+                                <Setter Property="Foreground" Value="#A52020"/>
+                                <Setter Property="BorderBrush" Value ="#A52020"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -43,18 +44,12 @@
         </Style>
     </Page.Resources>
     <Page.Background>
-        <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-            <GradientStop Color="Black"/>
-            <GradientStop Color="White" Offset="1"/>
+        <LinearGradientBrush EndPoint="1,1" StartPoint="1,0">
+            <GradientStop Color="White"/>
+            <GradientStop Color="#A52020" Offset="0.9"/>
         </LinearGradientBrush>
     </Page.Background>
-    <Grid>
-        <Grid.Background>
-            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                <GradientStop Color="White" Offset="0"/>
-                <GradientStop Color="#FFA52020" Offset="1"/>
-            </LinearGradientBrush>
-        </Grid.Background>
+    <StackPanel>
         <TextBlock HorizontalAlignment="Center" 
                    Margin="0,50,0,0" 
                    TextWrapping="Wrap" 
@@ -62,13 +57,12 @@
                    FontSize="70"
                    FontWeight="Bold"
                    VerticalAlignment="Top" 
-                   Foreground="#FFA52020" 
+                   Foreground="#A52020" 
                    FontFamily="Tahoma"/>
         <Button x:Name="Button_in_picture"
                 Content="Текст в картинке"
                 Style="{StaticResource CustomButtonStyle}"
-                Click="Button_in_picture_Click"
-                Margin="0 180 0 0">
+                Click="Button_main_Click">
             <Button.Resources>
                 <Style TargetType="Border">
                     <Setter Property="CornerRadius" Value="25"/>
@@ -78,7 +72,7 @@
         <Button x:Name="Button_to_picture"
                 Content="Текст в картинку"
                 Style="{StaticResource CustomButtonStyle}"
-                Click="Button_to_picture_Click"  Margin="0,240,0,0">
+                Click="Button_main_Click">
             <Button.Resources>
                 <Style TargetType="Border">
                     <Setter Property="CornerRadius" Value="25"/>
@@ -88,12 +82,12 @@
         <Button x:Name="Button_is_picture"
                 Content="Картинка"
                 Style="{StaticResource CustomButtonStyle}"
-                Click="Button_is_picture_Click"  Margin="0,300,0,0">
+                Click="Button_main_Click">
             <Button.Resources>
                 <Style TargetType="Border">
                     <Setter Property="CornerRadius" Value="25"/>
                 </Style>
             </Button.Resources>
         </Button>
-    </Grid>
+    </StackPanel>
 </Page>
