@@ -8,6 +8,7 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="Menu">
     <Page.Resources>
+        
         <Style TargetType="Button" x:Key="CustomButtonStyle">
             <Setter Property="Foreground" Value="#FFFFFF"/>
             <Setter Property="Background" Value="#4FA52020"/>
@@ -42,16 +43,20 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        
     </Page.Resources>
+    
     <Page.Background>
         <LinearGradientBrush EndPoint="1,1" StartPoint="1,0">
             <GradientStop Color="White"/>
             <GradientStop Color="#A52020" Offset="0.9"/>
         </LinearGradientBrush>
     </Page.Background>
+    
     <StackPanel>
+        
         <TextBlock HorizontalAlignment="Center" 
-                   Margin="0,50,0,0" 
+                   Margin="0,100,0,0" 
                    TextWrapping="Wrap" 
                    Text="PixelCrypt" 
                    FontSize="70"
@@ -59,17 +64,21 @@
                    VerticalAlignment="Top" 
                    Foreground="#A52020" 
                    FontFamily="Tahoma"/>
+        
         <Button x:Name="Button_in_picture"
-                Content="Текст в картинке"
+                Content="Текст"
                 Style="{StaticResource CustomButtonStyle}"
-                Click="Button_main_Click">
+                Click="Button_in_picture_Click">
+            
             <Button.Resources>
                 <Style TargetType="Border">
                     <Setter Property="CornerRadius" Value="25"/>
                 </Style>
             </Button.Resources>
+            
         </Button>
-        <Button x:Name="Button_to_picture"
+        
+        <!--<Button x:Name="Button_to_picture"
                 Content="Текст в картинку"
                 Style="{StaticResource CustomButtonStyle}"
                 Click="Button_main_Click">
@@ -78,16 +87,20 @@
                     <Setter Property="CornerRadius" Value="25"/>
                 </Style>
             </Button.Resources>
-        </Button>
+        </Button>-->
+        
         <Button x:Name="Button_is_picture"
                 Content="Картинка"
                 Style="{StaticResource CustomButtonStyle}"
-                Click="Button_main_Click">
+                Click="Button_is_picture_Click">
+            
             <Button.Resources>
                 <Style TargetType="Border">
                     <Setter Property="CornerRadius" Value="25"/>
                 </Style>
             </Button.Resources>
+            
         </Button>
+        
     </StackPanel>
 </Page>

@@ -15,9 +15,6 @@ using System.Windows.Shapes;
 
 namespace PixelCrypt
 {
-    /// <summary>
-    /// Логика взаимодействия для Menu.xaml
-    /// </summary>
     public partial class Menu : Page
     {
         public Menu()
@@ -25,9 +22,14 @@ namespace PixelCrypt
             InitializeComponent();
         }
 
-        private void Button_main_Click(object sender, RoutedEventArgs e)
+        private void Button_in_picture_Click(object sender, RoutedEventArgs e)
         {
-            NavigationService.Navigate(new Crypto(((Button)sender).Name));
+            NavigationService.Navigate(new CryptoText());
+        }
+
+        private void Button_is_picture_Click(object sender, RoutedEventArgs e)
+        {
+            NavigationService.Navigate(new CryptoImage());
         }
     }
 }

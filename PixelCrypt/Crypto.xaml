@@ -8,6 +8,53 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="Crypto">
     <Page.Resources>
+        <Style TargetType="Button" x:Key="Style_Button_crypto">
+            <Setter Property="Height" Value="50" />
+            <Setter Property="FontSize" Value=" 25"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="Regular"/>
+            <Setter Property="BorderBrush" Value="#FFA52020"/>
+            <Setter Property="Background" Value="#FFA52020" />
+            <Setter Property="FontFamily" Value="Tahoma"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border x:Name="Border" Background="{TemplateBinding Background}" BorderThickness="2" BorderBrush="{TemplateBinding BorderBrush}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="White" TargetName="Border" />
+                                <Setter Property="Foreground" Value="#FFA52020" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style TargetType="Button" x:Key="Style_Button_Image">
+            <Setter Property="Background" Value="White" />
+            <Setter Property="Foreground" Value="#FFA52020" />
+            <Setter Property="FontFamily" Value="Tahoma"  />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="BorderBrush" Value="White" />
+            <Setter Property="Margin" Value="10" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border x:Name="Border" Background="{TemplateBinding Background}" BorderThickness="2" BorderBrush="{TemplateBinding BorderBrush}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="White" TargetName="Border" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
         <Style TargetType="Button" x:Key="ButtonStyleTitle">
             <Setter Property="FontFamily" Value="Tahoma"/>
             <Setter Property="FontWeight" Value="Bold"/>
@@ -39,8 +86,6 @@
             </Setter>
         </Style>
         <Style TargetType="Button" x:Key="ButtonStyle">
-            <Setter Property="BorderBrush" Value="#0000"/>
-            <Setter Property="Background" Value="#0000"/>
             <Setter Property="Height" Value="50"/>
             <Setter Property="FontSize" Value="25"/>
             <Setter Property="Foreground" Value="#A52020"/>
@@ -55,7 +100,7 @@
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter Property="Background" Value="White" TargetName="Border" />
-                                <Setter Property="BorderBrush" Value="White"/>
+                                
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -86,9 +131,17 @@
                     Click="Button_to_menu_Click"
                     Style="{StaticResource ButtonStyleTitle}"/>
             <Button Content="Зашифровать"
-                    Style="{StaticResource ButtonStyle}"/>
+                    Name="Encrypt"
+                    Background="White"
+                    BorderBrush="White"
+                    Style="{StaticResource ButtonStyle}" 
+                    Click="Encrypt_Click"/>
             <Button Content="Расшифровать"
-                    Style="{StaticResource ButtonStyle}"/>
+                    Name="Decrypt"
+                    Background="#0000"
+                    BorderBrush="#0000"
+                    Style="{StaticResource ButtonStyle}" 
+                    Click="Decrypt_Click"/>
         </StackPanel>
 
         <Grid Grid.Column="1" Background="White">
@@ -102,16 +155,14 @@
             <Image Grid.Row="0"
                    Name="CryptoImage"
                    Stretch="Uniform" 
+                   Source="C:\Users\Bolofficial\Desktop\Rabit.jpeg"
+                   Visibility="Hidden"
                    Margin="10"/>
             <Button Grid.Row="0"
                     Name="Button_Image"
+                    Click="Button_Image_Click"
                     Content="Выбрать фаил"
-                    Background="White"
-                    Foreground="#FFA52020"
-                    FontFamily="Tahoma" 
-                    BorderThickness="0"
-                    FontWeight="Bold"
-                    Margin="10"/>
+                    Style="{StaticResource Style_Button_Image}" />
             <Grid Grid.Row="1">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="60" />
@@ -147,13 +198,11 @@
                      BorderBrush="#FFA52020"
                      BorderThickness="2"
                      Margin="5" SelectionBrush="#FFA52020" Foreground="#FFA52020"/>
-            <Button Grid.Row="3" 
-                    Height="50" 
+            <Button Grid.Row="3"
+                    Content="Зашифровать"
+                    Name="Button_crypto"
                     Click="Button_Crypto"
-                    BorderBrush="#0000"
-                    BorderThickness="0"
-                    Background="#FFA52020" 
-                    FontFamily="Tahoma"/>
+                    Style="{StaticResource Style_Button_crypto}"/>
         </Grid>
     </Grid>
 </Page>
