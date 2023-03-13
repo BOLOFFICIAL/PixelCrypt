@@ -20,7 +20,7 @@
             <Setter Property="Height" Value="55"/>
             <Setter Property="HorizontalAlignment" Value="Center"/>
             <Setter Property="VerticalAlignment" Value="Top"/>
-            <Setter Property="Margin" Value="0,10,0,0"/>
+            <Setter Property="Margin" Value="0,15,0,0"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type Button}">
@@ -32,6 +32,8 @@
                                 <Setter Property="Background" Value="#8FFFFFFF" TargetName="Border" />
                                 <Setter Property="Foreground" Value="#A52020"/>
                                 <Setter Property="BorderBrush" Value ="#A52020"/>
+                                <Setter Property="Margin" Value="-5,-5,-5,-5"  TargetName="Border" />
+                                <Setter Property="CornerRadius" Value="30" TargetName="Border"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>

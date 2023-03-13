@@ -5,10 +5,19 @@
     <TargetFramework>net6.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
+    <ApplicationIcon>DALL·E 2023-03-12 16.48.07 - Pixel padlock in red shades.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
     <None Remove="DALL·E 2023-03-12 16.48.07 - Pixel padlock in red shades.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="DALL·E 2023-03-12 16.48.07 - Pixel padlock in red shades.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
   </ItemGroup>
 
   <ItemGroup>
