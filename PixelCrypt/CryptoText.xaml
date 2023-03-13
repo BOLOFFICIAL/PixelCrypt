@@ -217,8 +217,8 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="3*" />
                 <RowDefinition Height="25" />
-                <RowDefinition Height="45" />
-                <RowDefinition Height="35" />
+                <RowDefinition Height="40" />
+                <RowDefinition Height="30" />
                 <RowDefinition Height="1*" />
                 <RowDefinition Height="60" />
             </Grid.RowDefinitions>
@@ -247,7 +247,7 @@
                     BorderBrush="{StaticResource Main_color}"
                     FontWeight ="Bold"
                     FontSize="15"
-                    Margin="10,0,10,0"
+                    Margin="5,0,5,0"
                     Style="{StaticResource Style_Button_Image}">
                     <Button.Resources>
                         <Style TargetType="Border">
@@ -288,7 +288,7 @@
                          Height="25"
                          Padding="5,1,0,0"
                          MaxLength="200"
-                         Margin="42,0,10,0"
+                         Margin="42,0,5,0"
                          SelectionBrush="{StaticResource Main_color}" Grid.ColumnSpan="2">
                     <TextBox.Resources>
                         <Style TargetType="Border">
@@ -313,11 +313,10 @@
                        FontWeight="Bold"
                        FontSize="15"
                        Padding="8,3,0,2"
-                       Margin="10"
                        Foreground="White"
                        Background="{StaticResource Main_color}"
                        BorderBrush="{StaticResource Main_color}" 
-                       Width="70"
+                       Width="79"
                        Height="25">
                     <Label.Resources>
                         <Style TargetType="Border">
@@ -336,7 +335,7 @@
                          Height="25"
                          Padding="5,1,0,0"
                          MaxLength="200"
-                         Margin="67,10,10,10"
+                         Margin="60,5,5,5"
                          SelectionBrush="{StaticResource Main_color}" Grid.ColumnSpan="2">
                     <TextBox.Resources>
                         <Style TargetType="Border">
@@ -365,7 +364,7 @@
                     BorderBrush="{StaticResource Main_color}"
                     FontWeight ="Bold"
                     FontSize="15"
-                    Margin="10,0,10,10"
+                    Margin="5,0,5,5"
                     Style="{StaticResource Style_Button_File}">
                     <Button.Resources>
                         <Style TargetType="Border">
@@ -384,7 +383,7 @@
                     BorderThickness ="1"
                     BorderBrush="{StaticResource Main_color}"
                     FontSize="13"
-                    Margin="0,0,10,10"
+                    Margin="0,0,5,5"
                     Style="{StaticResource Style_Button_Delete}">
                     <Button.Resources>
                         <Style TargetType="Border">
@@ -402,7 +401,7 @@
                      FontSize="15"
                      FontWeight="Bold"
                      Foreground="{StaticResource Main_color}"
-                     Margin="10,0,10,10"
+                     Margin="5,0,5,5"
                      SelectionBrush="{StaticResource Main_color}"
                      TextWrapping="Wrap"
                      VerticalScrollBarVisibility="Auto"

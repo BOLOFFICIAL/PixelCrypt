@@ -45,6 +45,10 @@ namespace PixelCrypt
             selected_button = Button_Encrypt;
             Button_Crypto.Content = selected_button.Content;
             TextBox_Name.IsReadOnly = false;
+            if (image_path.Length>0) 
+            {
+                TextBox_Name.Text = DateTime.Now.ToString("HHmmssfff");
+            }
             if (!(file_path.Length > 0))
             {
                 TextBox_Text.IsReadOnly = false;
@@ -54,13 +58,6 @@ namespace PixelCrypt
             {
                 TextBox_Text.IsReadOnly = true;
                 TextBox_Text.Text = File.ReadAllText(file_path);
-            }
-            if (!(file_path.Length > 0))
-            {
-                Button_File.Content = "Выбрать фаил для чтения";
-            }
-            else
-            {
                 Button_File.Content = "Фаил для чтения " + Path.GetFileName(file_path);
             }
         }
@@ -103,7 +100,7 @@ namespace PixelCrypt
             {
                 image_path = openFileDialog.FileName;
                 Image_Image.Source = new BitmapImage(new Uri(image_path));
-                TextBox_Name.Text = Path.GetFileNameWithoutExtension(image_path)+"_PixelCrypt";
+                TextBox_Name.Text = DateTime.Now.ToString("HHmmssfff");
             }
         }
 
