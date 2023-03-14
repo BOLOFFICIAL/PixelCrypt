@@ -1,5 +1,6 @@
 ﻿using Microsoft.Win32;
 using System;
+using System.ComponentModel.Design.Serialization;
 using System.Drawing;
 using System.IO;
 using System.Windows;
@@ -130,6 +131,7 @@ namespace PixelCrypt
 
         private bool CheckCrypto()
         {
+            var image = Bitmap.FromFile(image_path);
             if (Image_Image.Source == null)
             {
                 MessageBox.Show("Выберите картику");
@@ -150,7 +152,6 @@ namespace PixelCrypt
                 MessageBox.Show("Укажите имя для зашифованной картинки");
                 return false;
             }
-            var image = Bitmap.FromFile(image_path);
             if ((image.Width * image.Height) < (TextBox_Text.Text.Length * 16 + 16))
             {
                 MessageBox.Show("Картинка мала для этого текста");
@@ -168,11 +169,11 @@ namespace PixelCrypt
                 file_path = openFileDialog.FileName;
                 if (selected_button.Content == Button_Encrypt.Content)
                 {
-                    Button_File.Content = "Фаил для чтения " + Path.GetFileName(file_path);
+                    Button_File.Content = Path.GetFileName(file_path);
                 }
                 else
                 {
-                    Button_File.Content = "Фаил для записи " + Path.GetFileName(file_path);
+                    Button_File.Content = Path.GetFileName(file_path);
                 }
 
                 if (selected_button.Content == Button_Encrypt.Content)
