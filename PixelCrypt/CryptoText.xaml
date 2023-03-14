@@ -339,7 +339,8 @@
                            Margin="5,6,5,5"/>
 
                     <Grid Grid.Row="2"
-                          Margin="5,0,5,0">
+                          HorizontalAlignment="Center"
+                          MinWidth="300">
 
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="70" />
@@ -354,7 +355,7 @@
                                FontFamily="Tahoma"
                                FontWeight="Bold"
                                FontSize="15"
-                               Padding="7,3,0,2"
+                               Padding="10,3,0,2"
                                Foreground="White"
                                Background="{StaticResource Main_color}"
                                BorderBrush="{StaticResource Main_color}" 
@@ -377,7 +378,8 @@
                                  FontFamily="Tahoma"
                                  FontWeight="Bold"
                                  Height="25"
-                                 Padding="5,1,0,0"
+                                 TextAlignment="Center"
+                                 Padding="15,1,15,0"
                                  MaxLength="200"
                                  Margin="-20,0,5,0"
                                  SelectionBrush="{StaticResource Main_color}">
@@ -389,6 +391,7 @@
                             </TextBox.Resources>
                             
                         </TextBox>
+                        
                     </Grid>
 
                 </Grid>
