@@ -18,7 +18,6 @@ namespace PixelCrypt
             var binaryMessage = TextToBinary(message);
             binaryMessage = EncryptBinaryText(binaryMessage, key);
             binaryMessage += "0000000000000000";
-            MessageBox.Show(binaryMessage.Length.ToString());
             using (var image = Image.FromFile(imagePath))
             using (var bitmap = new Bitmap(image))
             {
@@ -32,9 +31,8 @@ namespace PixelCrypt
                         binaryIndex++;
                         if (binaryIndex == binaryMessage.Length)
                         {
-                            string newpath = RenameFile(imagePath, name);
-                            bitmap.Save(newpath);
-                            MessageBox.Show($"Зашифрованная картинка\n{newpath}\nСохранена");
+                            bitmap.Save(RenameFile(imagePath, name));
+                            MessageBox.Show($"Картинка успешно сохранена");
                             return;
                         }
                     }

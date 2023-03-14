@@ -31,6 +31,8 @@ namespace PixelCrypt
             Button_Encrypt.Background = new SolidColorBrush(Colors.White);
             Button_Encrypt.BorderBrush = new SolidColorBrush(Colors.White);
             selected_button = Button_Encrypt;
+            TextBox_Name.Visibility = Visibility.Hidden;
+            Label_Name.Visibility = Visibility.Hidden;
         }
 
         private void Button_Menu_Click(object sender, RoutedEventArgs e)
@@ -106,7 +108,8 @@ namespace PixelCrypt
                 {
                     TextBox_Name.Text = Path.GetFileName(image_path);
                 }
-                //TextBox_Name.Text = DateTime.Now.ToString("HHmmssfff");
+                TextBox_Name.Visibility = Visibility.Visible;
+                Label_Name.Visibility = Visibility.Visible;
             }
         }
 
@@ -131,7 +134,6 @@ namespace PixelCrypt
 
         private bool CheckCrypto()
         {
-            var image = Bitmap.FromFile(image_path);
             if (Image_Image.Source == null)
             {
                 MessageBox.Show("Выберите картику");
@@ -152,11 +154,19 @@ namespace PixelCrypt
                 MessageBox.Show("Укажите имя для зашифованной картинки");
                 return false;
             }
-            if ((image.Width * image.Height) < (TextBox_Text.Text.Length * 16 + 16))
+            using (var image = Bitmap.FromFile(image_path)) 
             {
-                MessageBox.Show("Картинка мала для этого текста");
-                return false;
-            }
+                if (Path.GetFileNameWithoutExtension(image_path)==TextBox_Name.Text)
+                {
+                    MessageBox.Show("Имена не должны совпадать");
+                    return false;
+                }
+                if ((image.Width * image.Height) < (TextBox_Text.Text.Length * 16 + 16))
+                {
+                    MessageBox.Show("Картинка мала для этого текста");
+                    return false;
+                }
+            } 
             return true;
         }
 
