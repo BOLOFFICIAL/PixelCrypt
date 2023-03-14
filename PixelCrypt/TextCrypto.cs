@@ -11,12 +11,14 @@ namespace PixelCrypt
 {
     public class TextCrypto
     {
+        
         public static async void EncryptPhoto(string message, string imagePath, string key,string name)
         {
             int binaryIndex = 0;
             var binaryMessage = TextToBinary(message);
             binaryMessage = EncryptBinaryText(binaryMessage, key);
             binaryMessage += "0000000000000000";
+            MessageBox.Show(binaryMessage.Length.ToString());
             using (var image = Image.FromFile(imagePath))
             using (var bitmap = new Bitmap(image))
             {
@@ -105,22 +107,21 @@ namespace PixelCrypt
 
         private static Color EncryptPixel(Color pixel, char binaryValue)
         {
-            int red = pixel.R;
             int green = pixel.G;
-            if (red == 255)
-            {
-                red--;
-            }
             if (green == 255)
             {
                 green--;
             }
-            if ((red + green) % 2 == 0)
+            if (green == 0)
+            {
+                green++;
+            }
+            if ((pixel.R + green) % 2 == 0)
             {
                 green++;
             }
             green -= int.Parse(binaryValue.ToString());
-            return Color.FromArgb(red, green, pixel.B);
+            return Color.FromArgb(pixel.R, green, pixel.B);
         }
 
         private static string DecryptPixel(Color colorPixel)
