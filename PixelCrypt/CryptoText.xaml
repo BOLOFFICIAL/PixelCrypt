@@ -383,13 +383,13 @@
                                  MaxLength="200"
                                  Margin="-20,0,5,0"
                                  SelectionBrush="{StaticResource Main_color}">
-                            
+
                             <TextBox.Resources>
                                 <Style TargetType="Border">
                                     <Setter Property="CornerRadius" Value="10,10,10,10"/>
                                 </Style>
                             </TextBox.Resources>
-                            
+
                         </TextBox>
                         
                     </Grid>
