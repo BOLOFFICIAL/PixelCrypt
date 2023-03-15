@@ -18,7 +18,8 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Margin" Value="3"/>
+                                <Setter Property="BorderThickness" Value="5" TargetName="Border" />
+                                <Setter Property="BorderBrush" Value="White" TargetName="Border" />
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -105,6 +106,56 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        <Style TargetType="Button" x:Key="Style_Button_File">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border x:Name="Border" 
+                                Background="{TemplateBinding Background}" 
+                                BorderThickness="2" 
+                                BorderBrush="{TemplateBinding BorderBrush}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Margin" Value="-3,-3,-3,-3"  TargetName="Border" />
+                                <Setter Property="CornerRadius" Value="15" TargetName="Border" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="LayoutTransform">
+                <Setter.Value>
+                    <TransformGroup/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style TargetType="Button" x:Key="Style_Button_Delete">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border x:Name="Border" 
+                                Background="{TemplateBinding Background}" 
+                                BorderThickness="2" 
+                                BorderBrush="{TemplateBinding BorderBrush}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Margin" Value="-3,-3,-3,-3"  TargetName="Border" />
+                                <Setter Property="CornerRadius" Value="15" TargetName="Border" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="LayoutTransform">
+                <Setter.Value>
+                    <TransformGroup/>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Page.Resources>
     <Grid>
 
@@ -162,64 +213,33 @@
 
         </StackPanel>
 
-        <Grid Grid.Column="1" Background="White">
+        <Grid Grid.Column="1" Background="White" >
 
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
-                <RowDefinition Height="45" />
+                <RowDefinition Height="40" />
                 <RowDefinition Height="60" />
             </Grid.RowDefinitions>
 
-            <Image Name="Image_Image"
-                   Grid.Row="0"
-                   Stretch="Uniform"
-                   Margin="10"/>
-
-            <Grid Grid.Row="1">
+            <Grid Grid.Row="0" Name="MainGrid">
 
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="60" />
                     <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="120" />
+                    <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <TextBlock Name="TextBlock_Key"
-                           Text="🔑"
-                           Width="30"
-                           TextAlignment="Center"
-                           VerticalAlignment="Center"
-                           FontFamily="Tahoma"
-                           FontSize="15"
-                           FontWeight="Bold"
-                           Margin="10,0,20,0"
-                           Foreground="{StaticResource Main_color}"
-                           Grid.Column="0" RenderTransformOrigin="1,0.417"/>
+                <Grid Grid.Column="0" Name="GridImage">
 
-                <TextBox Name="TextBox_Key"
-                         Grid.Column="1"
-                         BorderBrush="{StaticResource Main_color}"
-                         BorderThickness="2"
-                         FontSize="15"
-                         Foreground="{StaticResource Main_color}"
-                         FontFamily="Tahoma"
-                         FontWeight="Bold"
-                         Height="25"
-                         MaxLength="100"
-                         Margin="-15,10,10,10"
-                         SelectionBrush="{StaticResource Main_color}">
-                    
-                    <TextBox.Resources>
-                        <Style TargetType="Border">
-                            <Setter Property="CornerRadius" Value="10"/>
-                        </Style>
-                    </TextBox.Resources>
-                    
-                </TextBox>
-                
-                <Button Name="Button_Image"
-                    Grid.Column="2"
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="30"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="30"/>
+                    </Grid.RowDefinitions>
+
+                    <Button Name="Button_Image"
+                    Grid.Column="0"
                     Click="Button_Image_Click"
-                    Content="Картинка"
+                    Content="Выбрать картинку"
                     Foreground="White"
                     Background ="{StaticResource Main_color}"
                     FontFamily ="Tahoma"
@@ -227,17 +247,217 @@
                     BorderBrush="{StaticResource Main_color}"
                     FontWeight ="Bold"
                     FontSize="15"
-                    Margin="0,10,10,10"
+                    Margin="5,5,5,0"
                     Style="{StaticResource Style_Button_Image}">
-                    
-                    <Button.Resources>
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="10"/>
+                            </Style>
+                        </Button.Resources>
+                    </Button>
+
+                    <Image Name="Image_Image"
+                           Grid.Row="1"
+                           Stretch="Uniform"
+                           Margin="5,6,5,5"/>
+
+                    <Grid Grid.Row="3"
+                          HorizontalAlignment="Center"
+                          MinWidth="300">
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="70" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Label Name="Label_Image_Name"
+                               Content="Имя"
+                               Grid.Column="0"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               FontFamily="Tahoma"
+                               FontWeight="Bold"
+                               FontSize="15"
+                               Padding="10,3,0,2"
+                               Foreground="White"
+                               Background="{StaticResource Main_color}"
+                               BorderBrush="{StaticResource Main_color}" 
+                               Width="59"
+                               Margin="0,0,0,0"
+                               Height="25">
+                            <Label.Resources>
+                                <Style TargetType="Border">
+                                    <Setter Property="CornerRadius" Value="10,0,0,10"/>
+                                </Style>
+                            </Label.Resources>
+                        </Label>
+
+                        <TextBox Name="TextBox_Image_Name"
+                                 BorderBrush="{StaticResource Main_color}"
+                                 BorderThickness="2"
+                                 Grid.Column="1"
+                                 FontSize="15"
+                                 Foreground="{StaticResource Main_color}"
+                                 FontFamily="Tahoma"
+                                 FontWeight="Bold"
+                                 Height="25"
+                                 TextAlignment="Center"
+                                 Padding="15,1,15,0"
+                                 MaxLength="200"
+                                 Margin="-20,0,5,0"
+                                 SelectionBrush="{StaticResource Main_color}">
+
+                            <TextBox.Resources>
+                                <Style TargetType="Border">
+                                    <Setter Property="CornerRadius" Value="10,10,10,10"/>
+                                </Style>
+                            </TextBox.Resources>
+
+                        </TextBox>
+
+                    </Grid>
+
+                </Grid>
+
+                <Grid Grid.Column="1" Name="GridImageSave">
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="30"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="30"/>
+                    </Grid.RowDefinitions>
+
+                    <Button Name="Button_Save"
+                    Grid.Column="0"
+                    Click="Button_Image_Click"
+                    Content="Сохранить картинку"
+                    Foreground="White"
+                    Background ="{StaticResource Main_color}"
+                    FontFamily ="Tahoma"
+                    BorderThickness ="1"
+                    BorderBrush="{StaticResource Main_color}"
+                    FontWeight ="Bold"
+                    FontSize="15"
+                    Margin="5,5,5,0"
+                    Style="{StaticResource Style_Button_Image}">
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="10"/>
+                            </Style>
+                        </Button.Resources>
+                    </Button>
+
+                    <Image Name="Image_Imagу_new"
+                           Grid.Row="1"
+                           Stretch="Uniform"
+                           Margin="5,6,5,5"/>
+
+                    <Grid Grid.Row="2"
+                          HorizontalAlignment="Center"
+                          MinWidth="300">
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="70" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Label Name="Label_Image_Save_Name"
+                               Content="Имя"
+                               Grid.Column="0"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               FontFamily="Tahoma"
+                               FontWeight="Bold"
+                               FontSize="15"
+                               Padding="10,3,0,2"
+                               Foreground="White"
+                               Background="{StaticResource Main_color}"
+                               BorderBrush="{StaticResource Main_color}" 
+                               Width="59"
+                               Margin="0,0,0,0"
+                               Height="25">
+                            <Label.Resources>
+                                <Style TargetType="Border">
+                                    <Setter Property="CornerRadius" Value="10,0,0,10"/>
+                                </Style>
+                            </Label.Resources>
+                        </Label>
+
+                        <TextBox Name="TextBox_Image_Save_Name"
+                                 BorderBrush="{StaticResource Main_color}"
+                                 BorderThickness="2"
+                                 Grid.Column="1"
+                                 FontSize="15"
+                                 Foreground="{StaticResource Main_color}"
+                                 FontFamily="Tahoma"
+                                 FontWeight="Bold"
+                                 Height="25"
+                                 TextAlignment="Center"
+                                 Padding="15,1,15,0"
+                                 MaxLength="200"
+                                 Margin="-20,0,5,0"
+                                 SelectionBrush="{StaticResource Main_color}">
+
+                            <TextBox.Resources>
+                                <Style TargetType="Border">
+                                    <Setter Property="CornerRadius" Value="10,10,10,10"/>
+                                </Style>
+                            </TextBox.Resources>
+
+                        </TextBox>
+
+                    </Grid>
+
+                </Grid>
+
+            </Grid>
+
+            <Grid Grid.Row="1">
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="90" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Label Name="Label_Key"
+                       Content="Ключ"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       FontFamily="Tahoma"
+                       FontWeight="Bold"
+                       FontSize="15"
+                       Padding="8,3,0,2"
+                       Foreground="White"
+                       Background="{StaticResource Main_color}"
+                       BorderBrush="{StaticResource Main_color}" 
+                       Width="79"
+                       Height="25">
+                    <Label.Resources>
                         <Style TargetType="Border">
-                            <Setter Property="CornerRadius" Value="10"/>
+                            <Setter Property="CornerRadius" Value="10,0,0,10"/>
                         </Style>
-                    </Button.Resources>
-                    
-                </Button>
-                
+                    </Label.Resources>
+                </Label>
+
+                <TextBox Name="TextBox_Key"
+                         BorderBrush="{StaticResource Main_color}"
+                         BorderThickness="2"
+                         FontSize="15"
+                         Foreground="{StaticResource Main_color}"
+                         FontFamily="Tahoma"
+                         FontWeight="Bold"
+                         Height="25"
+                         Padding="5,1,0,0"
+                         MaxLength="200"
+                         Margin="60,5,5,5"
+                         SelectionBrush="{StaticResource Main_color}" Grid.ColumnSpan="2">
+                    <TextBox.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="10,10,10,10"/>
+                        </Style>
+                    </TextBox.Resources>
+                </TextBox>
+
             </Grid>
 
             <Button Name="Button_Crypto"
@@ -248,10 +468,12 @@
                     FontFamily="Tahoma"
                     FontSize ="25"
                     Foreground ="White"
-                    Grid.Row="3"
+                    Grid.Row="2"
                     Height ="60"
                     FontWeight ="Regular"
                     Style="{StaticResource Style_Button_Crypto}"/>
+
         </Grid>
+        
     </Grid>
 </Page>

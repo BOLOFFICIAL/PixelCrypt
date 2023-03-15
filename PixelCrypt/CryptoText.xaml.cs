@@ -33,6 +33,13 @@ namespace PixelCrypt
             selected_button = Button_Encrypt;
             TextBox_Name.Visibility = Visibility.Hidden;
             Label_Name.Visibility = Visibility.Hidden;
+
+            GridImage.RowDefinitions[0].Height = new GridLength(100, GridUnitType.Star);
+            GridImage.RowDefinitions[1].Height = new GridLength(0);
+            GridImage.RowDefinitions[2].Height = new GridLength(0);
+
+            Button_Image.Background = new SolidColorBrush(Colors.White);
+            Button_Image.Foreground = new SolidColorBrush(System.Windows.Media.Color.FromArgb(255, 165, 32, 32));
         }
 
         private void Button_Menu_Click(object sender, RoutedEventArgs e)
@@ -110,6 +117,13 @@ namespace PixelCrypt
                 }
                 TextBox_Name.Visibility = Visibility.Visible;
                 Label_Name.Visibility = Visibility.Visible;
+
+                GridImage.RowDefinitions[0].Height = new GridLength(30);
+                GridImage.RowDefinitions[1].Height = new GridLength(100, GridUnitType.Star);
+                GridImage.RowDefinitions[2].Height = new GridLength(30);
+
+                Button_Image.Foreground = new SolidColorBrush(Colors.White);
+                Button_Image.Background = new SolidColorBrush(System.Windows.Media.Color.FromArgb(255, 165, 32, 32));
             }
         }
 
