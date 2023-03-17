@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Media.Imaging;
@@ -19,18 +20,23 @@ namespace PixelCrypt
 
             int stride = width * 4;
             byte[] pixelData = new byte[stride * height];
-            byte[] tmp = new byte[stride * height];
             originalImage.CopyPixels(pixelData, stride, 0);
 
             for (int i = 0; i < pixelData.Length; i += 4)
             {
-                pixelData[i + 0] = EncryptPixel(pixelData[i + 0], keybyte[index % keybyte.Length]);
-                pixelData[i + 1] = EncryptPixel(pixelData[i + 1], keybyte[index % keybyte.Length]);
-                pixelData[i + 2] = EncryptPixel(pixelData[i + 2], keybyte[index % keybyte.Length]);
-                index++;
-            }
+                byte b = pixelData[i];
+                byte g = pixelData[i + 1];
+                byte r = pixelData[i + 2];
+                byte a = pixelData[i + 3];
 
-            pixelData = ShiftByteArray(pixelData, key.Length);
+
+                pixelData[i + 0] = EncryptPixel(b, keybyte[index % keybyte.Length]);
+                pixelData[i + 1] = EncryptPixel(g, keybyte[index % keybyte.Length]);
+                pixelData[i + 2] = EncryptPixel(r, keybyte[index % keybyte.Length]);
+                pixelData[i + 3] = a;
+                index++;
+
+            }
 
             BitmapSource invertedBitmap = BitmapSource.Create(width, height, 96, 96, System.Windows.Media.PixelFormats.Bgra32, null, pixelData, stride);
 
@@ -61,17 +67,21 @@ namespace PixelCrypt
 
             int stride = width * 4; // 4 bytes per pixel
             byte[] pixelData = new byte[stride * height];
-            
             originalImage.CopyPixels(pixelData, stride, 0);
-
-            pixelData = ShiftByteArray(pixelData, key.Length);
 
             for (int i = 0; i < pixelData.Length; i += 4)
             {
-                pixelData[i + 0] = DecryptPixel(pixelData[i + 0], keybyte[index % keybyte.Length]);
-                pixelData[i + 1] = DecryptPixel(pixelData[i + 1], keybyte[index % keybyte.Length]);
-                pixelData[i + 2] = DecryptPixel(pixelData[i + 2], keybyte[index % keybyte.Length]);
+                byte b = pixelData[i];
+                byte g = pixelData[i + 1];
+                byte r = pixelData[i + 2];
+                byte a = pixelData[i + 3];
+
+                pixelData[i + 0] = DecryptPixel(b, keybyte[index % keybyte.Length]);
+                pixelData[i + 1] = DecryptPixel(g, keybyte[index % keybyte.Length]);
+                pixelData[i + 2] = DecryptPixel(r, keybyte[index % keybyte.Length]);
+                pixelData[i + 3] = a;
                 index++;
+
             }
 
             BitmapSource invertedBitmap = BitmapSource.Create(width, height, 96, 96, System.Windows.Media.PixelFormats.Bgra32, null, pixelData, stride);
@@ -90,23 +100,6 @@ namespace PixelCrypt
             }
 
             return invertedImage;
-        }
-
-        public static byte[] ShiftByteArray(byte[] byteArray, int shift)
-        {
-            byte[] shiftedArray = new byte[byteArray.Length];
-
-            for (int i = 0; i < byteArray.Length; i++)
-            {
-                int newIndex = i + shift;
-                if (newIndex >= byteArray.Length)
-                {
-                    newIndex -= byteArray.Length;
-                }
-                shiftedArray[newIndex] = byteArray[i];
-            }
-
-            return shiftedArray;
         }
 
         public static string GetUnicodeBinary(string str)
@@ -129,7 +122,7 @@ namespace PixelCrypt
             {
                 color = (byte)(254 - (color ^ key));
             }
-            else
+            else 
             {
                 color = (byte)((color ^ key));
             }
