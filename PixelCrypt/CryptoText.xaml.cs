@@ -124,6 +124,9 @@ namespace PixelCrypt
 
                 Button_Image.Foreground = new SolidColorBrush(Colors.White);
                 Button_Image.Background = new SolidColorBrush(System.Windows.Media.Color.FromArgb(255, 165, 32, 32));
+
+                Button_Image.MaxWidth = Double.PositiveInfinity;
+                Button_Image.MaxHeight = Double.PositiveInfinity;
             }
         }
 

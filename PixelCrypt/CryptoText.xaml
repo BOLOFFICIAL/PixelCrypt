@@ -314,18 +314,20 @@
                     </Grid.RowDefinitions>
 
                     <Button Name="Button_Image"
-                    Grid.Column="0"
-                    Click="Button_Image_Click"
-                    Content="Выбрать картинку"
-                    Foreground="White"
-                    Background ="{StaticResource Main_color}"
-                    FontFamily ="Tahoma"
-                    BorderThickness ="1"
-                    BorderBrush="{StaticResource Main_color}"
-                    FontWeight ="Bold"
-                    FontSize="15"
-                    Margin="5,5,5,0"
-                    Style="{StaticResource Style_Button_Image}">
+                            Grid.Column="0"
+                            MaxWidth="200"
+                            MaxHeight="100"
+                            Click="Button_Image_Click"
+                            Content="Выбрать картинку"
+                            Foreground="White"
+                            Background ="{StaticResource Main_color}"
+                            FontFamily ="Tahoma"
+                            BorderThickness ="1"
+                            BorderBrush="{StaticResource Main_color}"
+                            FontWeight ="Bold"
+                            FontSize="15"
+                            Margin="5,5,5,0"
+                            Style="{StaticResource Style_Button_Image}">
                         <Button.Resources>
                             <Style TargetType="Border">
                                 <Setter Property="CornerRadius" Value="10"/>
