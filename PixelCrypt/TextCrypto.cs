@@ -12,7 +12,7 @@ namespace PixelCrypt
     public class TextCrypto
     {
         
-        public static async void EncryptPhoto(string message, string imagePath, string key,string name)
+        public static async void EncryptPhoto(string message, string imagePath, string key, string name)
         {
             int binaryIndex = 0;
             var binaryMessage = TextToBinary(message);
@@ -21,13 +21,11 @@ namespace PixelCrypt
             using (var image = Image.FromFile(imagePath))
             using (var bitmap = new Bitmap(image))
             {
-                Color pixel = new Color();
                 for (int i = 0; i < image.Width; i++)
                 {
                     for (int j = 0; j < image.Height; j++)
                     {
-                        pixel = bitmap.GetPixel(i, j);
-                        bitmap.SetPixel(i, j, EncryptPixel(pixel, binaryMessage[binaryIndex]));
+                        bitmap.SetPixel(i, j, EncryptPixel(bitmap.GetPixel(i, j), binaryMessage[binaryIndex]));
                         binaryIndex++;
                         if (binaryIndex == binaryMessage.Length)
                         {
@@ -59,13 +57,11 @@ namespace PixelCrypt
             using (var image = Image.FromFile(imagePath))
             using (var bitmap = new Bitmap(image))
             {
-                Color pixel = new Color();
                 for (int i = 0; i < image.Width; i++)
                 {
                     for (int j = 0; j < image.Height; j++)
                     {
-                        pixel = bitmap.GetPixel(i, j);
-                        result.Append(DecryptPixel(pixel));
+                        result.Append(DecryptPixel(bitmap.GetPixel(i, j)));
                         if (result.Length % 16 == 0 && CheckEnd(result))
                         {
                             var output = result.ToString();

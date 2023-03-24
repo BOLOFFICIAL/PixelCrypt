@@ -51,6 +51,7 @@ namespace PixelCrypt
             Button_Decrypt.Background = new SolidColorBrush(System.Windows.Media.Color.FromArgb(0, 0, 0, 0));
             Button_Decrypt.BorderBrush = new SolidColorBrush(System.Windows.Media.Color.FromArgb(0, 0, 0, 0));
             selected_button = Button_Encrypt;
+            Button_Crypto.Content = selected_button.Content;
         }
 
         private void Button_Decrypt_Click(object sender, RoutedEventArgs e)
@@ -60,6 +61,7 @@ namespace PixelCrypt
             Button_Encrypt.Background = new SolidColorBrush(System.Windows.Media.Color.FromArgb(0, 0, 0, 0));
             Button_Encrypt.BorderBrush = new SolidColorBrush(System.Windows.Media.Color.FromArgb(0, 0, 0, 0));
             selected_button = Button_Decrypt;
+            Button_Crypto.Content = selected_button.Content;
         }
 
         private void Button_Crypto_Click(object sender, RoutedEventArgs e)

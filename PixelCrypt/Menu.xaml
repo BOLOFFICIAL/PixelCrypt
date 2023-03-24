@@ -92,7 +92,7 @@
         </Button>-->
         
         <Button x:Name="Button_is_picture"
-                Content="Картинка"
+                Content="Картинка (beta)"
                 Style="{StaticResource CustomButtonStyle}"
                 Click="Button_is_picture_Click">
             
