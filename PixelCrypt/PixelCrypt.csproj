@@ -5,15 +5,16 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
-    <ApplicationIcon>DALL·E 2023-03-12 16.48.07 - Pixel padlock in red shades.ico</ApplicationIcon>
+    <ApplicationIcon>Pixel padlock in red shades.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="DALL·E 2023-03-12 16.48.07 - Pixel padlock in red shades.png" />
+    <None Remove="Pixel padlock in red shades.ico" />
+    <None Remove="Pixel padlock in red shades.png" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="DALL·E 2023-03-12 16.48.07 - Pixel padlock in red shades.ico" />
+    <Content Include="Pixel padlock in red shades.ico" />
   </ItemGroup>
 
   <ItemGroup>
@@ -21,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="DALL·E 2023-03-12 16.48.07 - Pixel padlock in red shades.png" />
+    <Resource Include="Pixel padlock in red shades.png" />
   </ItemGroup>
 
 </Project>

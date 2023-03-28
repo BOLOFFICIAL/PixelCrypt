@@ -228,7 +228,9 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <Grid Grid.Column="0" Name="GridImage">
+                <Grid Name="GridImage" 
+                      Grid.Column="0" 
+                      MinWidth="300">
 
                     <Grid.RowDefinitions>
                         <RowDefinition Height="30"/>
@@ -322,7 +324,9 @@
 
                 </Grid>
 
-                <Grid Grid.Column="1" Name="GridImageSave">
+                <Grid Name="GridImageSave"
+                      Grid.Column="1"
+                      MinWidth="300">
 
                     <Grid.RowDefinitions>
                         <RowDefinition Height="30"/>
