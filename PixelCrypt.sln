@@ -5,6 +5,8 @@ VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PixelCrypt", "PixelCrypt\PixelCrypt.csproj", "{DD938715-E0E1-4BEC-BC11-9AA0472C4380}"
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "SetupPixelCrypt", "SetupPixelCrypt\SetupPixelCrypt.vdproj", "{B10962BD-054A-4638-BFB1-AAF7B3DF7ADC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,8 @@ Global
 		{DD938715-E0E1-4BEC-BC11-9AA0472C4380}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DD938715-E0E1-4BEC-BC11-9AA0472C4380}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DD938715-E0E1-4BEC-BC11-9AA0472C4380}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B10962BD-054A-4638-BFB1-AAF7B3DF7ADC}.Debug|Any CPU.ActiveCfg = Debug
+		{B10962BD-054A-4638-BFB1-AAF7B3DF7ADC}.Release|Any CPU.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

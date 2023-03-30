@@ -1,6 +1,5 @@
 ﻿using Microsoft.Win32;
 using System;
-using System.ComponentModel.Design.Serialization;
 using System.Drawing;
 using System.IO;
 using System.Windows;
@@ -11,9 +10,6 @@ using System.Windows.Navigation;
 
 namespace PixelCrypt
 {
-    /// <summary>
-    /// Логика взаимодействия для CryptoText.xaml
-    /// </summary>
     public partial class CryptoText : Page
     {
         private Button selected_button = new Button();
@@ -111,7 +107,7 @@ namespace PixelCrypt
             {
                 image_path = openFileDialog.FileName;
                 Image_Image.Source = new BitmapImage(new Uri(image_path));
-                if (selected_button == Button_Decrypt) 
+                if (selected_button == Button_Decrypt)
                 {
                     TextBox_Name.Text = Path.GetFileName(image_path);
                 }
@@ -130,11 +126,12 @@ namespace PixelCrypt
             }
         }
 
+        // Events after button clicks
         private void Button_Crypto_Click(object sender, RoutedEventArgs e)
         {
-            if (CheckCrypto())
+            if (CheckCrypto()) //Check Crypto method is called(True then Do ie encrypt)
             {
-                if (selected_button.Content == Button_Encrypt.Content)
+                if (selected_button.Content == Button_Encrypt.Content) //To encrypt text
                 {
                     TextCrypto.EncryptPhoto(TextBox_Text.Text, image_path, TextBox_Key.Text, TextBox_Name.Text);
                 }
@@ -147,7 +144,9 @@ namespace PixelCrypt
                     }
                 }
             }
+
         }
+
 
         private bool CheckCrypto()
         {
@@ -166,14 +165,14 @@ namespace PixelCrypt
                 MessageBox.Show("Введите ключ");
                 return false;
             }
-            if (TextBox_Name.Text.Length < 1) 
+            if (TextBox_Name.Text.Length < 1)
             {
                 MessageBox.Show("Укажите имя для зашифованной картинки");
                 return false;
             }
-            using (var image = Bitmap.FromFile(image_path)) 
+            using (var image = Bitmap.FromFile(image_path))
             {
-                if (Path.GetFileNameWithoutExtension(image_path)==TextBox_Name.Text)
+                if (Path.GetFileNameWithoutExtension(image_path) == TextBox_Name.Text)
                 {
                     MessageBox.Show("Имена не должны совпадать");
                     return false;
@@ -183,7 +182,7 @@ namespace PixelCrypt
                     MessageBox.Show("Картинка мала для этого текста");
                     return false;
                 }
-            } 
+            }
             return true;
         }
 
