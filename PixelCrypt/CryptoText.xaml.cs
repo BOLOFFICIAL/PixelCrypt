@@ -176,11 +176,6 @@ namespace PixelCrypt
                 MessageBox.Show("Введите ключ");
                 return false;
             }
-            if (TextBox_Name.Text.Length < 1)
-            {
-                MessageBox.Show("Укажите имя для зашифованной картинки");
-                return false;
-            }
             using (var image = Bitmap.FromFile(image_path))
             {
                 if (Path.GetFileNameWithoutExtension(image_path) == TextBox_Name.Text)
@@ -207,15 +202,6 @@ namespace PixelCrypt
                 if (selected_button.Content == Button_Encrypt.Content)
                 {
                     Button_File.Content = Path.GetFileName(file_path);
-                }
-                else
-                {
-                    Button_File.Content = Path.GetFileName(file_path);
-                }
-
-                if (selected_button.Content == Button_Encrypt.Content)
-                {
-                    TextBox_Text.Text = File.ReadAllText(file_path);
                 }
                 TextBox_Text.IsReadOnly = true;
             }
