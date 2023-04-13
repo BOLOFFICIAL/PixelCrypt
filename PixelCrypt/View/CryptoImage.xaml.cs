@@ -1,5 +1,6 @@
 ﻿using Microsoft.Win32;
 using System;
+using System.Drawing;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -92,6 +93,14 @@ namespace PixelCrypt
             {
                 MessageBox.Show("Введите ключ");
                 return false;
+            }
+            using (var image = Bitmap.FromFile(image_path))
+            {
+                if (Path.GetFileNameWithoutExtension(image_path) == TextBox_Image_Name.Text)
+                {
+                    MessageBox.Show("Имена не должны совпадать");
+                    return false;
+                }
             }
             return true;
         }
