@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace PixelCrypt.Commands.Base
+﻿namespace PixelCrypt.Commands.Base
 {
     internal class LambdaCommand : Command
     {
