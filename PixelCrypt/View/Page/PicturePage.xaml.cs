@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PixelCrypt.ViewModel.Page;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,6 +24,7 @@ namespace PixelCrypt.View.Page
         public PicturePage()
         {
             InitializeComponent();
+            DataContext = new PicturePageViewModel();
         }
     }
 }

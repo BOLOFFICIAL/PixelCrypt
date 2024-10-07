@@ -8,7 +8,215 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="TextInPicturePage">
 
-    <Grid>
-        
+    <Grid Margin="10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" MaxWidth="400"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid Grid.Column="0"
+              Margin="0,0,10,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="70"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Grid Grid.Column="0">
+                    <Button Content="Назад"
+                            BorderThickness="2"
+                            Background="Transparent"
+                            BorderBrush="Black"
+                            Padding="0"/>
+                </Grid>
+
+                <Grid Grid.Column="1">
+                    <TextBlock Text="Текст в картинке"
+                               FontSize="20"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"/>
+                </Grid>
+            </Grid>
+
+            <Grid Grid.Row="1">
+                <ScrollViewer VerticalScrollBarVisibility="Hidden">
+                    <StackPanel>
+
+                        <Grid Margin="0,10,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Grid Grid.Column="0"
+                                  Margin="0,0,5,0">
+                                <Button Content="Импорт"
+                                        BorderThickness="2"
+                                        Background="Transparent"
+                                        BorderBrush="Black"
+                                        Padding="0"/>
+                            </Grid>
+
+                            <Grid Grid.Column="1"
+                                  Margin="5,0,0,0">
+                                <Button Content="Экспорт"
+                                        BorderThickness="2"
+                                        Background="Transparent"
+                                        BorderBrush="Black"
+                                        Padding="0"/>
+                            </Grid>
+                        </Grid>
+
+                        <Grid Margin="0,10,0,0">
+                            <Button Content="Сплит"
+                                    BorderThickness="2"
+                                    Background="Transparent"
+                                    BorderBrush="Black"
+                                    Padding="0"/>
+                        </Grid>
+
+                        <Grid Margin="0,10,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Grid Grid.Column="0">
+                                <Button Content="Выбрать"
+                                        BorderThickness="2"
+                                        Background="Transparent"
+                                        BorderBrush="Black"/>
+                            </Grid>
+
+                            <Grid Grid.Column="1"
+                                  Margin="10,0,0,0">
+                                <Border BorderBrush="Black"
+                                        BorderThickness="2"
+                                        CornerRadius="10">
+                                    <TextBox Text=""
+                                             IsReadOnly="True"
+                                             FontSize="15"
+                                             Padding="10,0"
+                                             HorizontalAlignment="Stretch"
+                                             HorizontalContentAlignment="Center"
+                                             BorderBrush="Transparent"
+                                             VerticalAlignment="Center"/>
+                                </Border>
+                            </Grid>
+
+                            <Grid Grid.Column="2"
+                                  Margin="10,0,0,0">
+                                <Button Content="Х"
+                                        BorderThickness="2"
+                                        Background="Transparent"
+                                        BorderBrush="Black"/>
+                            </Grid>
+                        </Grid>
+                        
+                    </StackPanel>
+                </ScrollViewer>
+            </Grid>
+
+            <Grid Grid.Row="2"
+                  Margin="0,10,0,0">
+                <Border CornerRadius="10"
+                        BorderBrush="Black"
+                        BorderThickness="2">
+                    <TextBox TextWrapping="Wrap"
+                             Padding="10"
+                             VerticalContentAlignment="Top"
+                             BorderBrush="Transparent"
+                             FontSize="15"
+                             HorizontalAlignment="Stretch"/>
+                </Border>
+            </Grid>
+
+            <Grid Grid.Row="3"
+                  Margin="0,10,0,0">
+                <Button Content="Действие"
+                        BorderThickness="2"
+                        Background="Transparent"
+                        BorderBrush="Black"
+                        Padding="0"/>
+            </Grid>
+        </Grid>
+
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0">
+                <Border CornerRadius="10"
+                        BorderBrush="Black"
+                        Margin="0,0,0,10"
+                        BorderThickness="2">
+                    <Image/>
+                </Border>
+            </Grid>
+
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Grid Grid.Column="0">
+                    <Button Content="Выбрать"
+                            BorderThickness="2"
+                            Background="Transparent"
+                            BorderBrush="Black"/>
+                </Grid>
+
+                <Grid Grid.Column="1">
+                    <Border BorderBrush="Black"
+                            BorderThickness="2"
+                            CornerRadius="10"
+                            Margin="10,0,0,0">
+                        <TextBox Text=""
+                                 FontSize="15"
+                                 Padding="10,0"
+                                 HorizontalAlignment="Stretch"
+                                 HorizontalContentAlignment="Center"
+                                 BorderBrush="Transparent"
+                                 VerticalAlignment="Center"/>
+                    </Border>
+                </Grid>
+            </Grid>
+        </Grid>
+
+        <Grid Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0">
+                <Border CornerRadius="10"
+                        BorderBrush="Black"
+                        Margin="0,0,0,10"
+                        BorderThickness="2">
+
+                </Border>
+            </Grid>
+
+            <Grid Grid.Row="1">
+                <Button Content="Добавить"
+                        BorderThickness="2"
+                        HorizontalAlignment="Center"
+                        Background="Transparent"
+                        BorderBrush="Black"/>
+            </Grid>
+        </Grid>
     </Grid>
 </Page>
