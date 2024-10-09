@@ -1,7 +1,6 @@
 ﻿using PixelCrypt.Commands.Base;
 using PixelCrypt.ProgramData;
 using PixelCrypt.View.Page;
-using System.Configuration;
 using System.Windows.Input;
 
 namespace PixelCrypt.ViewModel.Page
@@ -10,7 +9,7 @@ namespace PixelCrypt.ViewModel.Page
     {
         public ICommand OpenPageCommand { get; }
 
-        public MainPageViewModel() 
+        public MainPageViewModel()
         {
             OpenPageCommand = new LambdaCommand(OnOpenPageCommandExecuted);
         }

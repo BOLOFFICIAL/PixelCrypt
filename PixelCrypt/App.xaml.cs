@@ -1,5 +1,4 @@
-﻿using PixelCrypt.Commands.Base;
-using System.Windows;
+﻿using System.Windows;
 
 namespace PixelCrypt
 {
@@ -12,7 +11,7 @@ namespace PixelCrypt
         {
             if (e.Args.Length > 0)
             {
-                
+
             }
         }
     }
