@@ -15,7 +15,7 @@ namespace PixelCrypt.ViewModel.Page
             OpenPageCommand = new LambdaCommand(OnOpenPageCommandExecuted);
         }
 
-        private void OnOpenPageCommandExecuted(object p)
+        private void OnOpenPageCommandExecuted(object p = null)
         {
             if (p is not string pageName) return;
 
