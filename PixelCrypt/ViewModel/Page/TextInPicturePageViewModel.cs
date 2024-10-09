@@ -13,6 +13,12 @@ namespace PixelCrypt.ViewModel.Page
 {
     internal class TextInPicturePageViewModel : Base.ViewModel
     {
+        #region Fields
+
+        #region Propertyes
+
+        #region Private
+
         private string _actionButtonName = "";
         private string _filePathFile = "";
         private string _filePathImage = "";
@@ -28,6 +34,8 @@ namespace PixelCrypt.ViewModel.Page
         private string _splitButtonForegroundColor = "";
         private string _actionButtonBackgroundColor = "";
         private string _actionButtonForegroundColor = "";
+        private string _errorDoActionMessage = "";
+        private string _errorSaveMessage = "";
 
         private bool _isSplit = false;
         private bool _isImport = false;
@@ -44,6 +52,14 @@ namespace PixelCrypt.ViewModel.Page
 
         private StackPanel _filePathImageStackPanel = new StackPanel();
 
+        #endregion
+
+        #endregion
+
+        #region Commands
+
+        #region Public
+
         public ICommand ClosePageCommand { get; }
         public ICommand ActionCommand { get; }
         public ICommand SplitCommand { get; }
@@ -54,7 +70,17 @@ namespace PixelCrypt.ViewModel.Page
         public ICommand ChoseImageCommand { get; }
         public ICommand DoActionCommand { get; }
 
+        #endregion
+
+        #region Private
+
         private ICommand RemoveImageCommand { get; }
+
+        #endregion
+
+        #endregion
+
+        #endregion
 
         public TextInPicturePageViewModel()
         {
@@ -66,7 +92,7 @@ namespace PixelCrypt.ViewModel.Page
             ShowPaswordCommand = new LambdaCommand(OnShowPaswordCommandExecuted);
             ChoseFileCommand = new LambdaCommand(OnChoseFileCommandExecuted);
             ChoseImageCommand = new LambdaCommand(OnChoseImageCommandExecuted);
-            DoActionCommand = new LambdaCommand(OnDoActionCommandExecuted);
+            DoActionCommand = new LambdaCommand(OnDoActionCommandExecuted, CanDoActionCommandExecute);
 
             RemoveImageCommand = new LambdaCommand(OnRemoveImageCommandExecuted);
 
@@ -74,6 +100,8 @@ namespace PixelCrypt.ViewModel.Page
             OnShowPaswordCommandExecuted(null);
             OnActionCommandExecuted("Import");
         }
+
+        #region Propertyes
 
         public bool IsFileDataReadonly
         {
@@ -128,36 +156,43 @@ namespace PixelCrypt.ViewModel.Page
             get => _importButtonBackgroundColor;
             set => Set(ref _importButtonBackgroundColor, value);
         }
+
         public string ImportButtonForegroundColor
         {
             get => _importButtonForegroundColor;
             set => Set(ref _importButtonForegroundColor, value);
         }
+
         public string ExportButtonBackgroundColor
         {
             get => _exportButtonBackgroundColor;
             set => Set(ref _exportButtonBackgroundColor, value);
         }
+
         public string ExportButtonForegroundColor
         {
             get => _exportButtonForegroundColor;
             set => Set(ref _exportButtonForegroundColor, value);
         }
+
         public string SplitButtonBackgroundColor
         {
             get => _splitButtonBackgroundColor;
             set => Set(ref _splitButtonBackgroundColor, value);
         }
+
         public string SplitButtonForegroundColor
         {
             get => _splitButtonForegroundColor;
             set => Set(ref _splitButtonForegroundColor, value);
         }
+
         public string ActionButtonBackgroundColor
         {
             get => _actionButtonBackgroundColor;
             set => Set(ref _actionButtonBackgroundColor, value);
         }
+
         public string ActionButtonForegroundColor
         {
             get => _actionButtonForegroundColor;
@@ -194,15 +229,19 @@ namespace PixelCrypt.ViewModel.Page
             set => Set(ref _saveButtonWidth, value);
         }
 
-        private void OnClosePageCommandExecuted(object p = null)
-        {
-            Context.MainWindowViewModel.CurrentPage = new MainPage();
-        }
-
         public StackPanel FilePathImageStackPanel
         {
             get => _filePathImageStackPanel;
             set => Set(ref _filePathImageStackPanel, value);
+        }
+
+        #endregion
+
+        #region Commands
+
+        private void OnClosePageCommandExecuted(object p = null)
+        {
+            Context.MainWindowViewModel.CurrentPage = new MainPage();
         }
 
         private void OnSplitCommandExecuted(object p = null)
@@ -342,7 +381,12 @@ namespace PixelCrypt.ViewModel.Page
 
                 if (openFileDialog.ShowDialog() ?? false)
                 {
-                    FilePathFile = openFileDialog.FileName;
+                    string content = File.ReadAllText(openFileDialog.FileName);
+
+                    if (content.Length > 0 && MessageBox.Show("Фаил содержит данные которые будут перезаписаны. Продолжить?", "Фаил для записи данных", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                    {
+                        FilePathFile = openFileDialog.FileName;
+                    }
                 }
             }
         }
@@ -395,6 +439,11 @@ namespace PixelCrypt.ViewModel.Page
             SaveButtonWidth = new GridLength(1, GridUnitType.Auto);
         }
 
+        private bool CanDoActionCommandExecute(object arg)
+        {
+            return CanDoAction();
+        }
+
         public void OnRemoveImageCommandExecuted(object p = null)
         {
             int index = (p == null) ? (-1) : ((p is int value) ? (value) : (-1));
@@ -405,6 +454,10 @@ namespace PixelCrypt.ViewModel.Page
 
             FilePathImageStackPanel = LoadFilePathImages();
         }
+
+        #endregion
+
+        #region Methods
 
         private void ImportAction()
         {
@@ -510,5 +563,12 @@ namespace PixelCrypt.ViewModel.Page
 
             return stackPanel;
         }
+
+        private bool CanDoAction()
+        {
+            return true;
+        }
+
+        #endregion
     }
 }
