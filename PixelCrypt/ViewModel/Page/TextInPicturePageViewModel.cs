@@ -1,8 +1,11 @@
 ﻿using FontAwesome5;
 using Microsoft.Win32;
+using Microsoft.WindowsAPICodePack.Dialogs;
 using PixelCrypt.Commands.Base;
 using PixelCrypt.ProgramData;
 using PixelCrypt.View;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -49,6 +52,8 @@ namespace PixelCrypt.ViewModel.Page
         private GridLength _saveButtonWidth = new GridLength(0, GridUnitType.Pixel);
 
         private List<string> _filePathImages = new List<string>();
+
+        private List<Bitmap> _bitmapImages = new List<Bitmap>();
 
         private StackPanel _filePathImageStackPanel = new StackPanel();
 
@@ -325,11 +330,92 @@ namespace PixelCrypt.ViewModel.Page
         {
             if (_isImport)
             {
+                if (_isSplit)
+                {
+                    var saveFileDialog = new SaveFileDialog();
 
+                    var dir = Path.GetDirectoryName(_filePathImage);
+                    var name = "PixelCrypt_" + (Path.GetFileNameWithoutExtension(_filePathImage) + "_" + DateTime.Now).Replace(":", "").Replace(" ", "").Replace(".", "");
+                    var format = ImageFormat.Png;
+
+                    switch (Path.GetExtension(_filePathImage))
+                    {
+                        case ".jpg":
+                        case ".jpeg":
+                            format = ImageFormat.Jpeg;
+                            saveFileDialog.Filter = "JPEG Image|*.jpeg";
+                            break;
+                        case ".png":
+                            format = ImageFormat.Png;
+                            saveFileDialog.Filter = "PNG Image|*.png";
+                            break;
+                    }
+
+                    saveFileDialog.Title = "Сохранение изображения";
+                    saveFileDialog.RestoreDirectory = true;
+                    saveFileDialog.InitialDirectory = dir;
+                    saveFileDialog.FileName = name;
+
+                    if (saveFileDialog.ShowDialog() ?? false)
+                    {
+                        _bitmapImages[0].Save(saveFileDialog.FileName, format);
+                        MessageBox.Show("Картинка сохранена", "Сохранение изображения");
+                    }
+                }
+                else
+                {
+                    CommonOpenFileDialog folderPicker = new CommonOpenFileDialog();
+
+                    folderPicker.IsFolderPicker = true;
+                    folderPicker.Title = "Выбор папки для хранения данных";
+                    var now = DateTime.Now;
+
+                    var folder = Path.Combine(Path.GetDirectoryName(_filePathImages[0]), $"PixelCrypt_{now.ToString().Replace(":", "").Replace(" ", "").Replace(".", "")}");
+
+                    if (!Directory.Exists(folder))
+                    {
+                        Directory.CreateDirectory(folder);
+                    }
+
+                    folderPicker.InitialDirectory = folder;
+
+                    CommonFileDialogResult dialogResult = folderPicker.ShowDialog();
+
+                    if (dialogResult == CommonFileDialogResult.Ok)
+                    {
+                        for (int i = 0; i < _bitmapImages.Count; i++)
+                        {
+                            var name = Path.Combine(folder, Path.GetFileNameWithoutExtension(_filePathImages[i]) + $"_PixelCrypt_{now.ToString().Replace(":", "").Replace(" ", "").Replace(".", "")}");
+                            var format = ImageFormat.Png;
+
+                            switch (Path.GetExtension(_filePathImages[i]))
+                            {
+                                case ".jpg":
+                                case ".jpeg":
+                                    format = ImageFormat.Jpeg;
+                                    name += ".jpeg";
+                                    break;
+                                case ".png":
+                                    format = ImageFormat.Png;
+                                    name += ".png";
+                                    break;
+                            }
+
+                            _bitmapImages[i].Save(name, format);
+                        }
+
+                        MessageBox.Show("Картинки сохранены", "Сохранение изображений");
+                    }
+                }
             }
             else
             {
+                if (File.Exists(_filePathFile))
+                {
+                    File.WriteAllText(_filePathFile, FileData);
 
+                    MessageBox.Show("Данные успешно сохранены", "Сохранение");
+                }
             }
         }
 
@@ -357,7 +443,7 @@ namespace PixelCrypt.ViewModel.Page
 
             if (_isImport)
             {
-                openFileDialog.Title = "Выберите фаил для чтения данных";
+                openFileDialog.Title = "Выберите файл для чтения данных";
 
                 openFileDialog.Filter = "Текстовые файлы (*.txt)|*.txt";
 
@@ -365,7 +451,7 @@ namespace PixelCrypt.ViewModel.Page
                 {
                     IsFileDataReadonly = true;
 
-                    if (FileData == null || FileData.Length == 0 || (FileData.Length > 0 && MessageBox.Show("Заменить текст на данные из файла?", "Фаил для чтения данных", MessageBoxButton.YesNo) == MessageBoxResult.Yes))
+                    if (FileData == null || FileData.Length == 0 || (FileData.Length > 0 && MessageBox.Show("Заменить текст на данные из файла?", "файл для чтения данных", MessageBoxButton.YesNo) == MessageBoxResult.Yes))
                     {
                         FilePathFile = openFileDialog.FileName;
 
@@ -375,7 +461,7 @@ namespace PixelCrypt.ViewModel.Page
             }
             else
             {
-                openFileDialog.Title = "Выберите фаил для записи данных";
+                openFileDialog.Title = "Выберите файл для записи данных";
 
                 openFileDialog.Filter = "Текстовые файлы (*.txt)|*.txt";
 
@@ -383,7 +469,7 @@ namespace PixelCrypt.ViewModel.Page
                 {
                     string content = File.ReadAllText(openFileDialog.FileName);
 
-                    if (content.Length > 0 && MessageBox.Show("Фаил содержит данные которые будут перезаписаны. Продолжить?", "Фаил для записи данных", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                    if (content.Length > 0 && MessageBox.Show("файл содержит данные которые будут перезаписаны. Продолжить?", "файл для записи данных", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                     {
                         FilePathFile = openFileDialog.FileName;
                     }
@@ -436,6 +522,15 @@ namespace PixelCrypt.ViewModel.Page
 
         public void OnDoActionCommandExecuted(object p = null)
         {
+            if (_isImport)
+            {
+                ImportData();
+            }
+            else
+            {
+                ExportData();
+            }
+
             SaveButtonWidth = new GridLength(1, GridUnitType.Auto);
         }
 
@@ -471,7 +566,7 @@ namespace PixelCrypt.ViewModel.Page
             _isImport = true;
             if (FilePathFile.Length > 0)
             {
-                if (FileData == null || FileData.Length == 0 || (FileData.Length > 0 && MessageBox.Show("Заменить текст на данные из файла?", "Фаил для чтения данных", MessageBoxButton.YesNo) == MessageBoxResult.Yes))
+                if (FileData == null || FileData.Length == 0 || (FileData.Length > 0 && MessageBox.Show("Заменить текст на данные из файла?", "файл для чтения данных", MessageBoxButton.YesNo) == MessageBoxResult.Yes))
                 {
                     IsFileDataReadonly = true;
 
@@ -494,6 +589,20 @@ namespace PixelCrypt.ViewModel.Page
             ExportButtonForegroundColor = "#FFFFFF";
             ImportButtonBackgroundColor = ExportButtonForegroundColor;
             ImportButtonForegroundColor = ExportButtonBackgroundColor;
+
+            if (_filePathFile != null && _filePathFile.Length > 0)
+            {
+                string content = File.ReadAllText(_filePathFile);
+
+                if (content.Length > 0 && MessageBox.Show("файл содержит данные которые будут перезаписаны. Оставить выбранный файл?", "файл для записи данных", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                {
+                    FilePathFile = _filePathFile;
+                }
+                else
+                {
+                    FilePathFile = "";
+                }
+            }
 
             _isImport = false;
             IsFileDataReadonly = false;
@@ -567,6 +676,136 @@ namespace PixelCrypt.ViewModel.Page
         private bool CanDoAction()
         {
             return true;
+        }
+
+        private void ExportData()
+        {
+            var pixels = Program.GetPixelsFromImage(_filePathImage);
+        }
+
+        private void ImportData()
+        {
+            string binary = Program.TextToBinary(FileData);
+
+            _bitmapImages = new List<Bitmap>();
+
+            //var text = Program.BinaryToText(binary);
+
+            if (_isSplit)
+            {
+                _bitmapImages.Add(ImportDataToImage(binary, _filePathImage));
+            }
+            else
+            {
+                var lines = Program.SplitStringIntoParts(binary, _filePathImages.Count);
+
+                for (int i = 0; i < _filePathImages.Count; i++)
+                {
+                    _bitmapImages.Add(ImportDataToImage(lines[i], _filePathImages[i]));
+                }
+            }
+
+            MessageBox.Show("Данные импортированы", "Испорт данных");
+        }
+
+        private Bitmap ImportDataToImage(string data, string filepath)
+        {
+            var pixels = Program.GetPixelsFromImage(filepath);
+            var uniq = new Dictionary<string, System.Drawing.Color>();
+
+            int width = pixels.GetLength(0);
+            int height = pixels.GetLength(1);
+
+            for (int x = 0; x < width; x++)
+            {
+                for (int y = 0; y < height; y++)
+                {
+                    var color = System.Drawing.Color.FromArgb(
+                        NormalizeColorByte(pixels[x, y].A),
+                        NormalizeColorByte(pixels[x, y].R),
+                        NormalizeColorByte(pixels[x, y].G),
+                        NormalizeColorByte(pixels[x, y].B));
+
+                    uniq.TryAdd(pixels[x, y].Name, color);
+                }
+            }
+
+            var uniqBinaryLength = Program.ToBinary(uniq.Count).Length;
+
+            var spl = Program.SplitStringIntoParts(data, 4);
+
+            var l0 = Program.ToBinary(spl[0].Length).PadLeft(uniqBinaryLength, '0');
+            var l1 = Program.ToBinary(spl[1].Length).PadLeft(uniqBinaryLength, '0');
+            var l2 = Program.ToBinary(spl[2].Length).PadLeft(uniqBinaryLength, '0');
+            var l3 = Program.ToBinary(spl[3].Length).PadLeft(uniqBinaryLength, '0');
+
+            var dataA = l0 + spl[0];
+            var dataR = l1 + spl[1];
+            var dataG = l2 + spl[2];
+            var dataB = l3 + spl[3];
+
+            ImportDataToColoe(uniq, "A", dataA);
+            ImportDataToColoe(uniq, "R", dataR);
+            ImportDataToColoe(uniq, "G", dataG);
+            ImportDataToColoe(uniq, "B", dataB);
+
+            var newPixels = new System.Drawing.Color[width, height];
+
+            for (int x = 0; x < width; x++)
+            {
+                for (int y = 0; y < height; y++)
+                {
+                    newPixels[x, y] = uniq[pixels[x, y].Name];
+                }
+            }
+
+            return Program.CreateImageFromPixels(newPixels);
+        }
+
+        private byte NormalizeColorByte(byte value)
+        {
+            var res = value;
+            if (res % 2 != 0)
+            {
+                return res;
+            }
+            else
+            {
+                if (res == 0)
+                {
+                    return 1;
+                }
+                else
+                {
+                    return (byte)(res - 1);
+                }
+            }
+            return res;
+        }
+
+        private void ImportDataToColoe(Dictionary<string, System.Drawing.Color> colors, string colorPart, string data)
+        {
+            for (int i = 0; i < colors.Count; i++)
+            {
+                var a = colors.ElementAt(i).Value.A;
+                var r = colors.ElementAt(i).Value.R;
+                var g = colors.ElementAt(i).Value.G;
+                var b = colors.ElementAt(i).Value.B;
+
+                if (i == data.Length) break;
+
+                switch (colorPart)
+                {
+                    case "A": a -= byte.Parse(data[i].ToString()); break;
+                    case "R": r -= byte.Parse(data[i].ToString()); break;
+                    case "G": g -= byte.Parse(data[i].ToString()); break;
+                    case "B": b -= byte.Parse(data[i].ToString()); break;
+                }
+
+                var color = System.Drawing.Color.FromArgb(a, r, g, b);
+
+                colors[colors.ElementAt(i).Key] = color;
+            }
         }
 
         #endregion
