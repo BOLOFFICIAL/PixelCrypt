@@ -47,6 +47,8 @@ namespace PixelCrypt.ViewModel.Page
         private bool _isImport = false;
         private bool _isClosePassword = false;
         private bool _isFileDataReadonly = false;
+        private bool _isSuccessAction = false;
+        private bool _canDoAction = true;
 
         private GridLength _onePictureWidth;
         private GridLength _manyPictureWidth;
@@ -96,7 +98,7 @@ namespace PixelCrypt.ViewModel.Page
             ActionCommand = new LambdaCommand(OnActionCommandExecuted);
             SplitCommand = new LambdaCommand(OnSplitCommandExecuted);
             ClearPathFileCommand = new LambdaCommand(OnClearPathFileCommandExecuted);
-            SaveCommand = new LambdaCommand(OnSaveCommandExecuted);
+            SaveCommand = new LambdaCommand(OnSaveCommandExecuted, CanSaveCommandExecute);
             ShowPaswordCommand = new LambdaCommand(OnShowPaswordCommandExecuted);
             ChoseFileCommand = new LambdaCommand(OnChoseFileCommandExecuted);
             ChoseImageCommand = new LambdaCommand(OnChoseImageCommandExecuted);
@@ -115,6 +117,18 @@ namespace PixelCrypt.ViewModel.Page
         {
             get => _isFileDataReadonly;
             set => Set(ref _isFileDataReadonly, value);
+        }
+
+        private bool IsSuccessAction
+        {
+            get => _isSuccessAction;
+            set
+            {
+                if (Set(ref _isSuccessAction, value))
+                {
+
+                }
+            }
         }
 
         public string ActionButtonName
@@ -316,17 +330,26 @@ namespace PixelCrypt.ViewModel.Page
         {
             if (p is not string actionName) return;
 
+            var value = _isImport;
+
             switch (actionName)
             {
                 case "Import": ImportAction(); break;
                 case "Export": ExportAction(); break;
             }
+
+            _isSuccessAction = value == _isImport;
         }
 
         private void OnClearPathFileCommandExecuted(object p = null)
         {
             IsFileDataReadonly = false;
             FilePathFile = "";
+        }
+
+        private bool CanSaveCommandExecute(object arg)
+        {
+            return CanSave();
         }
 
         private void OnSaveCommandExecuted(object p = null)
@@ -341,18 +364,8 @@ namespace PixelCrypt.ViewModel.Page
                     var name = "PixelCrypt_" + (Path.GetFileNameWithoutExtension(_filePathImage) + "_" + DateTime.Now).Replace(":", "").Replace(" ", "").Replace(".", "");
                     var format = ImageFormat.Png;
 
-                    switch (Path.GetExtension(_filePathImage))
-                    {
-                        case ".jpg":
-                        case ".jpeg":
-                            format = ImageFormat.Jpeg;
-                            saveFileDialog.Filter = "JPEG Image|*.jpeg";
-                            break;
-                        case ".png":
-                            format = ImageFormat.Png;
-                            saveFileDialog.Filter = "PNG Image|*.png";
-                            break;
-                    }
+                    format = ImageFormat.Png;
+                    saveFileDialog.Filter = "PNG Image|*.png";
 
                     saveFileDialog.Title = "Сохранение изображения";
                     saveFileDialog.RestoreDirectory = true;
@@ -391,18 +404,8 @@ namespace PixelCrypt.ViewModel.Page
                             var name = Path.Combine(folder, Path.GetFileNameWithoutExtension(_filePathImages[i]) + $"_PixelCrypt_{now.ToString().Replace(":", "").Replace(" ", "").Replace(".", "")}");
                             var format = ImageFormat.Png;
 
-                            switch (Path.GetExtension(_filePathImages[i]))
-                            {
-                                case ".jpg":
-                                case ".jpeg":
-                                    format = ImageFormat.Jpeg;
-                                    name += ".jpeg";
-                                    break;
-                                case ".png":
-                                    format = ImageFormat.Png;
-                                    name += ".png";
-                                    break;
-                            }
+                            format = ImageFormat.Png;
+                            name += ".png";
 
                             _bitmapImages[i].Save(name, format);
                         }
@@ -525,6 +528,10 @@ namespace PixelCrypt.ViewModel.Page
 
         public void OnDoActionCommandExecuted(object p = null)
         {
+            if (!_canDoAction) return;
+
+            _isSuccessAction = false;
+
             if (_isImport)
             {
                 ImportData();
@@ -533,8 +540,6 @@ namespace PixelCrypt.ViewModel.Page
             {
                 ExportData();
             }
-
-            SaveButtonWidth = new GridLength(1, GridUnitType.Auto);
         }
 
         private bool CanDoActionCommandExecute(object arg)
@@ -678,29 +683,133 @@ namespace PixelCrypt.ViewModel.Page
 
         private bool CanDoAction()
         {
+            _canDoAction = true;
+
+            if (_isImport)
+            {
+                _canDoAction = _canDoAction && FileData.Length > 0;
+
+                if (_isSplit)
+                {
+                    _canDoAction = _canDoAction && FilePathImage.Length > 0;
+                }
+                else
+                {
+                    _canDoAction = _canDoAction && _filePathImages.Count > 1;
+                }
+            }
+            else
+            {
+                if (_isSplit)
+                {
+                    _canDoAction = _canDoAction && FilePathImage.Length > 0;
+                }
+                else
+                {
+                    _canDoAction = _canDoAction && _filePathImages.Count > 1;
+                }
+            }
+
+            if (_canDoAction)
+            {
+                ActionButtonBackgroundColor = "#228B22";
+                ActionButtonForegroundColor = "#000000";
+            }
+            else
+            {
+                ActionButtonBackgroundColor = "#B22222";
+                ActionButtonForegroundColor = "#000000";
+            }
+
             return true;
+        }
+
+        private bool CanSave()
+        {
+            var res = true;
+
+            res = res && IsSuccessAction;
+
+            if (_isImport)
+            {
+                res = res && _bitmapImages.Count > 0;
+            }
+            else
+            {
+                res = res && FilePathFile.Length > 0;
+
+                res = res && FileData.Length > 0;
+            }
+
+            if (res)
+            {
+                SaveButtonWidth = new GridLength(1, GridUnitType.Auto);
+            }
+            else
+            {
+                SaveButtonWidth = new GridLength(0, GridUnitType.Pixel);
+            }
+
+            return res;
         }
 
         private void ExportData()
         {
-            var Data = new List<string>();
-            if (_isSplit)
-            {
-                FileData = Program.BinaryToText(ExportDataFromImage(_filePathImage));
-            }
-            else
-            {
+            var BynaryData = new List<string>();
 
-            }
+            FileData = "";
 
-            MessageBox.Show("Данные экспортированы", "Экспорт данных");
+            try
+            {
+                if (_isSplit)
+                {
+                    BynaryData.Add(ExportDataFromImage(_filePathImage));
+
+                }
+                else
+                {
+                    foreach (var filePathImage in _filePathImages)
+                    {
+                        BynaryData.Add(ExportDataFromImage(filePathImage));
+                    }
+                }
+
+                var allData = new StringBuilder();
+
+                foreach (var item in BynaryData)
+                {
+                    allData.Append(item);
+                }
+
+                var exportData = Program.BinaryToText(allData.ToString());
+
+                var hashPassword = Program.Hash32(Password?.Length > 0 ? Password : "PyxelCrypt");
+
+                exportData = Program.Decrypt(exportData, hashPassword);
+
+                _isSuccessAction = true;
+
+                MessageBox.Show("Данные экспортированы", "Экспорт данных");
+
+                FileData = exportData;
+            }
+            catch
+            {
+                MessageBox.Show($"Не удалось экспортировать данные");
+            }
         }
 
         private void ImportData()
         {
             try
             {
-                string binary = Program.TextToBinary(FileData);
+                var inportData = FileData;
+
+                var hashPassword = Program.Hash32(Password?.Length > 0 ? Password : "PyxelCrypt");
+
+                inportData = Program.Encrypt(inportData, hashPassword);
+
+                string binary = Program.TextToBinary(inportData);
 
                 _bitmapImages = new List<Bitmap>();
 
@@ -718,11 +827,14 @@ namespace PixelCrypt.ViewModel.Page
                     }
                 }
 
+                _isSuccessAction = true;
+
                 MessageBox.Show("Данные импортированы", "Испорт данных");
             }
-            catch (Exception ex)
+            catch
             {
-                MessageBox.Show($"Возникла ошибка импорта данных: {ex.Message}");
+                _bitmapImages = new List<Bitmap>();
+                MessageBox.Show($"Не удалось импортировать данные");
             }
         }
 
@@ -836,7 +948,7 @@ namespace PixelCrypt.ViewModel.Page
 
             var index = 0;
 
-            for (index = 0; index < slash * uniqBinaryLength - (slash - 1); index += 8)
+            for (index = 0; index < slash * uniqBinaryLength - (slash - 1); index += slash)
             {
                 lDiv += (listPixels[index].A % 2 == 0) ? "1" : "0";
                 lMod += (listPixels[index].B % 2 == 0) ? "1" : "0";
@@ -850,7 +962,7 @@ namespace PixelCrypt.ViewModel.Page
             var dataG = new StringBuilder();
             var dataB = new StringBuilder();
 
-            for (int i = index; i < index + (slash * sizeDiv - (slash - 1)); i += 8)
+            for (int i = index; i < index + (slash * sizeDiv - (slash - 1)); i += slash)
             {
                 dataA.Append((listPixels[i].A % 2 == 0) ? "1" : "0");
                 dataR.Append((listPixels[i].R % 2 == 0) ? "1" : "0");
@@ -885,7 +997,6 @@ namespace PixelCrypt.ViewModel.Page
                     return (byte)(res - 1);
                 }
             }
-            return res;
         }
 
         #endregion
