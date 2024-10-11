@@ -7,6 +7,7 @@ using PixelCrypt.View;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -21,6 +22,8 @@ namespace PixelCrypt.ViewModel.Page
         #region Propertyes
 
         #region Private
+
+        private readonly int slash = 8;
 
         private string _actionButtonName = "";
         private string _filePathFile = "";
@@ -680,38 +683,53 @@ namespace PixelCrypt.ViewModel.Page
 
         private void ExportData()
         {
-            var pixels = Program.GetPixelsFromImage(_filePathImage);
+            var Data = new List<string>();
+            if (_isSplit)
+            {
+                FileData = Program.BinaryToText(ExportDataFromImage(_filePathImage));
+            }
+            else
+            {
+
+            }
+
+            MessageBox.Show("Данные экспортированы", "Экспорт данных");
         }
 
         private void ImportData()
         {
-            string binary = Program.TextToBinary(FileData);
-
-            _bitmapImages = new List<Bitmap>();
-
-            //var text = Program.BinaryToText(binary);
-
-            if (_isSplit)
+            try
             {
-                _bitmapImages.Add(ImportDataToImage(binary, _filePathImage));
-            }
-            else
-            {
-                var lines = Program.SplitStringIntoParts(binary, _filePathImages.Count);
+                string binary = Program.TextToBinary(FileData);
 
-                for (int i = 0; i < _filePathImages.Count; i++)
+                _bitmapImages = new List<Bitmap>();
+
+                if (_isSplit)
                 {
-                    _bitmapImages.Add(ImportDataToImage(lines[i], _filePathImages[i]));
+                    _bitmapImages.Add(ImportDataToImage(binary, _filePathImage));
                 }
-            }
+                else
+                {
+                    var lines = Program.SplitStringIntoParts(binary, _filePathImages.Count);
 
-            MessageBox.Show("Данные импортированы", "Испорт данных");
+                    for (int i = 0; i < _filePathImages.Count; i++)
+                    {
+                        _bitmapImages.Add(ImportDataToImage(lines[i], _filePathImages[i]));
+                    }
+                }
+
+                MessageBox.Show("Данные импортированы", "Испорт данных");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Возникла ошибка импорта данных: {ex.Message}");
+            }
         }
 
         private Bitmap ImportDataToImage(string data, string filepath)
         {
             var pixels = Program.GetPixelsFromImage(filepath);
-            var uniq = new Dictionary<string, System.Drawing.Color>();
+            var listPixels = new List<System.Drawing.Color>();
 
             int width = pixels.GetLength(0);
             int height = pixels.GetLength(1);
@@ -726,11 +744,11 @@ namespace PixelCrypt.ViewModel.Page
                         NormalizeColorByte(pixels[x, y].G),
                         NormalizeColorByte(pixels[x, y].B));
 
-                    uniq.TryAdd(pixels[x, y].Name, color);
+                    listPixels.Add(color);
                 }
             }
 
-            var uniqBinaryLength = Program.ToBinary(uniq.Count).Length;
+            var uniqBinaryLength = Program.ToBinary(listPixels.Count).Length;
 
             var spl = Program.SplitStringIntoParts(data, 4);
 
@@ -744,22 +762,109 @@ namespace PixelCrypt.ViewModel.Page
             var dataG = l2 + spl[2];
             var dataB = l3 + spl[3];
 
-            ImportDataToColoe(uniq, "A", dataA);
-            ImportDataToColoe(uniq, "R", dataR);
-            ImportDataToColoe(uniq, "G", dataG);
-            ImportDataToColoe(uniq, "B", dataB);
+            var limit = listPixels.Count / slash;
+
+            var avrage = (dataA.Length + dataR.Length + dataG.Length + dataB.Length) / 4;
+
+            if (limit < avrage)
+            {
+                throw new Exception($"Данных слишком  много для импорта в картинку");
+            }
 
             var newPixels = new System.Drawing.Color[width, height];
+
+            int index = 0;
+            int elementIndex = 0;
 
             for (int x = 0; x < width; x++)
             {
                 for (int y = 0; y < height; y++)
                 {
-                    newPixels[x, y] = uniq[pixels[x, y].Name];
+                    var color = System.Drawing.Color.FromArgb(
+                        listPixels[index].A,
+                        listPixels[index].R,
+                        listPixels[index].G,
+                        listPixels[index].B);
+
+                    if (index % slash == 0)
+                    {
+                        var a = (elementIndex < dataA.Length) ? (byte)(color.A - byte.Parse(dataA[elementIndex].ToString())) : color.A;
+                        var r = (elementIndex < dataR.Length) ? (byte)(color.R - byte.Parse(dataR[elementIndex].ToString())) : color.R;
+                        var g = (elementIndex < dataG.Length) ? (byte)(color.G - byte.Parse(dataG[elementIndex].ToString())) : color.G;
+                        var b = (elementIndex < dataB.Length) ? (byte)(color.B - byte.Parse(dataB[elementIndex].ToString())) : color.B;
+
+                        //var a = (elementIndex < dataA.Length) ? (byte)(255) : color.A;
+                        //var r = (elementIndex < dataR.Length) ? (byte)(0) : color.R;
+                        //var g = (elementIndex < dataG.Length) ? (byte)(0) : color.G;
+                        //var b = (elementIndex < dataB.Length) ? (byte)(0) : color.B;
+
+                        color = System.Drawing.Color.FromArgb(a, r, g, b);
+
+                        elementIndex++;
+                    }
+
+                    newPixels[x, y] = color;
+                    index++;
                 }
             }
 
             return Program.CreateImageFromPixels(newPixels);
+        }
+
+        private string ExportDataFromImage(string path)
+        {
+            var res = "";
+
+            var pixels = Program.GetPixelsFromImage(path);
+            var listPixels = new List<System.Drawing.Color>();
+
+            int width = pixels.GetLength(0);
+            int height = pixels.GetLength(1);
+
+            for (int x = 0; x < width; x++)
+            {
+                for (int y = 0; y < height; y++)
+                {
+                    listPixels.Add(pixels[x, y]);
+                }
+            }
+
+            var uniqBinaryLength = Program.ToBinary(listPixels.Count).Length;
+
+            var lDiv = "";
+            var lMod = "";
+
+            var index = 0;
+
+            for (index = 0; index < slash * uniqBinaryLength - (slash - 1); index += 8)
+            {
+                lDiv += (listPixels[index].A % 2 == 0) ? "1" : "0";
+                lMod += (listPixels[index].B % 2 == 0) ? "1" : "0";
+            }
+
+            var sizeDiv = Program.FromBinary(lDiv);
+            var SizeMod = Program.FromBinary(lMod);
+
+            var dataA = new StringBuilder();
+            var dataR = new StringBuilder();
+            var dataG = new StringBuilder();
+            var dataB = new StringBuilder();
+
+            for (int i = index; i < index + (slash * sizeDiv - (slash - 1)); i += 8)
+            {
+                dataA.Append((listPixels[i].A % 2 == 0) ? "1" : "0");
+                dataR.Append((listPixels[i].R % 2 == 0) ? "1" : "0");
+                dataG.Append((listPixels[i].G % 2 == 0) ? "1" : "0");
+            }
+
+            for (int i = index; i < index + (slash * SizeMod - (slash - 1)); i += 8)
+            {
+                dataB.Append((listPixels[i].B % 2 == 0) ? "1" : "0");
+            }
+
+            res = dataA.ToString() + dataR.ToString() + dataG.ToString() + dataB.ToString();
+
+            return res;
         }
 
         private byte NormalizeColorByte(byte value)
@@ -781,31 +886,6 @@ namespace PixelCrypt.ViewModel.Page
                 }
             }
             return res;
-        }
-
-        private void ImportDataToColoe(Dictionary<string, System.Drawing.Color> colors, string colorPart, string data)
-        {
-            for (int i = 0; i < colors.Count; i++)
-            {
-                var a = colors.ElementAt(i).Value.A;
-                var r = colors.ElementAt(i).Value.R;
-                var g = colors.ElementAt(i).Value.G;
-                var b = colors.ElementAt(i).Value.B;
-
-                if (i == data.Length) break;
-
-                switch (colorPart)
-                {
-                    case "A": a -= byte.Parse(data[i].ToString()); break;
-                    case "R": r -= byte.Parse(data[i].ToString()); break;
-                    case "G": g -= byte.Parse(data[i].ToString()); break;
-                    case "B": b -= byte.Parse(data[i].ToString()); break;
-                }
-
-                var color = System.Drawing.Color.FromArgb(a, r, g, b);
-
-                colors[colors.ElementAt(i).Key] = color;
-            }
         }
 
         #endregion
