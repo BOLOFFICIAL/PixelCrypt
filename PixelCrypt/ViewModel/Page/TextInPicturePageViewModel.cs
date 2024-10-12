@@ -27,11 +27,7 @@ namespace PixelCrypt.ViewModel.Page
 
         private string _actionButtonName = "";
         private string _filePathFile = "";
-        private string _filePathImage = "";
-        private string _password = "";
         private string _fileData = "";
-        private string _imageData = "";
-        private string _showPasword = "";
         private string _importButtonBackgroundColor = "";
         private string _importButtonForegroundColor = "";
         private string _exportButtonBackgroundColor = "";
@@ -45,17 +41,13 @@ namespace PixelCrypt.ViewModel.Page
 
         private bool _isSplit = false;
         private bool _isImport = false;
-        private bool _isClosePassword = false;
         private bool _isFileDataReadonly = false;
-        private bool _isSuccessAction = false;
         private bool _canDoAction = true;
 
         private Visibility _choseImageVisibility;
 
         private GridLength _onePictureWidth;
         private GridLength _manyPictureWidth;
-        private GridLength _closePasswordWidth;
-        private GridLength _openPasswordWidth;
         private GridLength _saveButtonWidth = new GridLength(0, GridUnitType.Pixel);
         private GridLength _choseImageWidth;
 
@@ -73,15 +65,11 @@ namespace PixelCrypt.ViewModel.Page
 
         #region Public
 
-        public ICommand ClosePageCommand { get; }
         public ICommand ActionCommand { get; }
         public ICommand SplitCommand { get; }
         public ICommand ClearPathFileCommand { get; }
         public ICommand SaveCommand { get; }
-        public ICommand ShowPaswordCommand { get; }
         public ICommand ChoseFileCommand { get; }
-        public ICommand ChoseImageCommand { get; }
-        public ICommand DoActionCommand { get; }
 
         #endregion
 
@@ -97,12 +85,10 @@ namespace PixelCrypt.ViewModel.Page
 
         public TextInPicturePageViewModel()
         {
-            ClosePageCommand = new LambdaCommand(OnClosePageCommandExecuted);
             ActionCommand = new LambdaCommand(OnActionCommandExecuted);
             SplitCommand = new LambdaCommand(OnSplitCommandExecuted);
             ClearPathFileCommand = new LambdaCommand(OnClearPathFileCommandExecuted);
             SaveCommand = new LambdaCommand(OnSaveCommandExecuted, CanSaveCommandExecute);
-            ShowPaswordCommand = new LambdaCommand(OnShowPaswordCommandExecuted);
             ChoseFileCommand = new LambdaCommand(OnChoseFileCommandExecuted);
             ChoseImageCommand = new LambdaCommand(OnChoseImageCommandExecuted, CanChoseImageCommandExecute);
             DoActionCommand = new LambdaCommand(OnDoActionCommandExecuted, CanDoActionCommandExecute);
@@ -110,7 +96,6 @@ namespace PixelCrypt.ViewModel.Page
             RemoveImageCommand = new LambdaCommand(OnRemoveImageCommandExecuted);
 
             OnSplitCommandExecuted(null);
-            OnShowPaswordCommandExecuted(null);
             OnActionCommandExecuted("Import");
         }
 
@@ -146,34 +131,10 @@ namespace PixelCrypt.ViewModel.Page
             set => Set(ref _filePathFile, value);
         }
 
-        public string FilePathImage
-        {
-            get => Path.GetFileName(_filePathImage);
-            set => Set(ref _filePathImage, value);
-        }
-
-        public string Password
-        {
-            get => _password;
-            set => Set(ref _password, value);
-        }
-
         public string FileData
         {
             get => _fileData;
             set => Set(ref _fileData, value);
-        }
-
-        public string ImageData
-        {
-            get => _imageData;
-            set => Set(ref _imageData, value);
-        }
-
-        public string ShowPasword
-        {
-            get => _showPasword;
-            set => Set(ref _showPasword, value);
         }
 
         public string ImportButtonBackgroundColor
@@ -236,18 +197,6 @@ namespace PixelCrypt.ViewModel.Page
             set => Set(ref _manyPictureWidth, value);
         }
 
-        public GridLength ClosePasswordWidth
-        {
-            get => _closePasswordWidth;
-            set => Set(ref _closePasswordWidth, value);
-        }
-
-        public GridLength OpenPasswordWidth
-        {
-            get => _openPasswordWidth;
-            set => Set(ref _openPasswordWidth, value);
-        }
-
         public GridLength SaveButtonWidth
         {
             get => _saveButtonWidth;
@@ -269,11 +218,6 @@ namespace PixelCrypt.ViewModel.Page
         #endregion
 
         #region Commands
-
-        private void OnClosePageCommandExecuted(object p = null)
-        {
-            Context.MainWindowViewModel.CurrentPage = new MainPage();
-        }
 
         private void OnSplitCommandExecuted(object p = null)
         {
@@ -439,24 +383,6 @@ namespace PixelCrypt.ViewModel.Page
             {
                 MessageBox.Show("Возникла ошибка при сохранении", "Сохранение");
             }
-        }
-
-        private void OnShowPaswordCommandExecuted(object p = null)
-        {
-            if (_isClosePassword)
-            {
-                OpenPasswordWidth = new GridLength(1, GridUnitType.Star);
-                ClosePasswordWidth = new GridLength(0, GridUnitType.Star);
-                ShowPasword = "Regular_Eye";
-            }
-            else
-            {
-                OpenPasswordWidth = new GridLength(0, GridUnitType.Star);
-                ClosePasswordWidth = new GridLength(1, GridUnitType.Star);
-                ShowPasword = "Regular_EyeSlash";
-            }
-
-            _isClosePassword = !_isClosePassword;
         }
 
         public void OnChoseFileCommandExecuted(object p = null)
