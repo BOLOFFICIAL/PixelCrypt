@@ -40,7 +40,6 @@ namespace PixelCrypt.ProgramData.Components
         public BindablePasswordBox()
         {
             InitializeComponent();
-            passwordBox.Foreground = (Brush)new BrushConverter().ConvertFromString("#000");
         }
 
         private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)

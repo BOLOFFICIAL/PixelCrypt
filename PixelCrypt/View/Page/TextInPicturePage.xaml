@@ -5,7 +5,9 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:PixelCrypt.View.Page" xmlns:fa="http://schemas.fontawesome.com/icons/" xmlns:components="clr-namespace:PixelCrypt.ProgramData.Components"
       mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
+      Background="{Binding Path=Color1}"
+      d:DesignHeight="450" 
+      d:DesignWidth="800"
       Title="TextInPicturePage">
 
     <Grid Margin="10">
@@ -37,7 +39,7 @@
                             Command="{Binding Path=ClosePageCommand}"
                             Padding="0">
                         <fa:ImageAwesome Icon="Regular_ArrowAltCircleLeft"
-                                         Foreground="Black"
+                                         Foreground="{Binding Path=Color3}"
                                          Width="25"
                                          Height="25"/>
                     </Button>
@@ -45,6 +47,7 @@
 
                 <Grid Grid.Column="1">
                     <TextBlock Text="Текст в картинке"
+                               Foreground="{Binding Path=Color3}"
                                FontSize="20"
                                FontWeight="Bold"
                                HorizontalAlignment="Center"
@@ -68,7 +71,7 @@
                                 <Button ToolTip = "Помещение информации в картинку"
                                         BorderThickness="1"
                                         Background="{Binding Path=ImportButtonBackgroundColor}"
-                                        BorderBrush="Black"
+                                        BorderBrush="{Binding Path=Color3}"
                                         Command="{Binding Path=ActionCommand}"
                                         CommandParameter="Import"
                                         Padding="10,0">
@@ -84,7 +87,7 @@
                                 <Button ToolTip = "Получение информации из картинки"
                                         BorderThickness="1"
                                         Background="{Binding Path=ExportButtonBackgroundColor}"
-                                        BorderBrush="Black"
+                                        BorderBrush="{Binding Path=Color3}"
                                         Command="{Binding Path=ActionCommand}"
                                         CommandParameter="Export"
                                         Padding="10,0">
@@ -102,7 +105,7 @@
                                         BorderThickness="1"
                                         Foreground="{Binding Path=SplitButtonForegroundColor}"
                                         Background="{Binding Path=SplitButtonBackgroundColor}"
-                                        BorderBrush="Black"
+                                        BorderBrush="{Binding Path=Color3}"
                                         Command="{Binding Path=SplitCommand}"
                                         Padding="0"/>
                             </Grid>
@@ -122,19 +125,22 @@
                                         Command="{Binding Path=ChoseFileCommand}"
                                         ToolTip = "Выбор файла для чтения или записи данных"
                                         BorderThickness="1"
-                                        Background="Transparent"
-                                        BorderBrush="Black"/>
+                                        BorderBrush="{Binding Path=Color3}"
+                                        Foreground="{Binding Path=Color3}"
+                                        Background="{Binding Path = Color2}"/>
                             </Grid>
 
                             <Grid Grid.Column="1"
                                   Margin="10,0,0,0">
-                                <Border BorderBrush="Black"
+                                <Border BorderBrush="{Binding Path=Color3}"
+                                        Background="{Binding Path=Color4}"
                                         BorderThickness="1"
                                         CornerRadius="10">
                                     <TextBox Text="{Binding Path=FilePathFile,UpdateSourceTrigger=PropertyChanged}"
                                              IsReadOnly="True"
                                              FontSize="15"
                                              Padding="10,0"
+                                             Foreground="{Binding Path=Color3}"
                                              HorizontalAlignment="Stretch"
                                              HorizontalContentAlignment="Center"
                                              BorderBrush="Transparent"
@@ -152,7 +158,7 @@
                                         Background="Transparent"
                                         BorderBrush="Transparent">
                                     <fa:ImageAwesome Icon="Regular_TimesCircle"
-                                                     Foreground="Black"
+                                                     Foreground="{Binding Path=Color3}"
                                                      Width="25"
                                                      Height="25"/>
                                 </Button>
@@ -166,7 +172,8 @@
             <Grid Grid.Row="2"
                   Margin="0,10,0,0">
                 <Border CornerRadius="10"
-                        BorderBrush="Black"
+                        Background="{Binding Path=Color4}"
+                        BorderBrush="{Binding Path=Color3}"
                         BorderThickness="1">
                     <TextBox Text ="{Binding Path=FileData, UpdateSourceTrigger=PropertyChanged}"
                              Padding="10"
@@ -174,6 +181,7 @@
                              TextWrapping="Wrap"
                              VerticalContentAlignment="Top"
                              BorderBrush="Transparent"
+                             Foreground="{Binding Path=Color3}"
                              FontSize="15"
                              HorizontalAlignment="Stretch">
                     </TextBox>
@@ -189,18 +197,21 @@
                 </Grid.ColumnDefinitions>
 
                 <Grid Grid.Column="0">
-                    <Border BorderBrush="Black"
+                    <Border BorderBrush="{Binding Path=Color3}"
+                            Background="{Binding Path=Color4}"
                             CornerRadius="10,0,0,10"
                             Padding="10,5"
                             BorderThickness="1">
                         <TextBlock Text="Пароль"
+                                   Foreground="{Binding Path=Color3}"
                                    VerticalAlignment="Center"
                                    FontSize="15"/>
                     </Border>
                 </Grid>
 
                 <Grid Grid.Column="1">
-                    <Border BorderBrush="Black"
+                    <Border BorderBrush="{Binding Path=Color3}"
+                            Background="{Binding Path=Color4}"
                             BorderThickness="0,1,1,1"
                             CornerRadius="0,10,10,0">
                         <Grid>
@@ -212,7 +223,6 @@
                             <Grid Grid.Column="0">
                                 <components:BindablePasswordBox Password="{Binding Path=Password,UpdateSourceTrigger=PropertyChanged}"
                                                                 FontSize="15"
-                                                                Foreground="Black"
                                                                 Padding="5,0,10,0"
                                                                 FontWeight="Bold"
                                                                 BorderThickness="0"
@@ -224,6 +234,7 @@
                                 <TextBox Text="{Binding Path=Password,UpdateSourceTrigger=PropertyChanged}"
                                          FontSize="15"
                                          Padding="10,0"
+                                         Foreground="{Binding Path=Color3}"
                                          HorizontalAlignment="Stretch"
                                          HorizontalContentAlignment="Center"
                                          BorderBrush="Transparent"
@@ -242,7 +253,7 @@
                             Background="Transparent"
                             BorderBrush="Transparent">
                         <fa:ImageAwesome Icon="{Binding Path=ShowPasword,UpdateSourceTrigger=PropertyChanged}"
-                                         Foreground="Black"
+                                         Foreground="{Binding Path=Color3}"
                                          Width="30"
                                          Height="30"/>
                     </Button>
@@ -263,7 +274,7 @@
                             Command="{Binding Path=DoActionCommand}"
                             Background="{Binding Path=ActionButtonBackgroundColor}"
                             Foreground="{Binding Path=ActionButtonForegroundColor}"
-                            BorderBrush="Black"
+                            BorderBrush="{Binding Path=Color3}"
                             Padding="0"/>
                 </Grid>
 
@@ -273,8 +284,9 @@
                             Margin="10,0,0,0"
                             Command="{Binding Path=SaveCommand}"
                             HorizontalAlignment="Center"
-                            Background="Transparent"
-                            BorderBrush="Black"
+                            BorderBrush="{Binding Path=Color3}"
+                            Foreground="{Binding Path=Color3}"
+                            Background="{Binding Path = Color2}"
                             Padding="10,0"/>
                 </Grid>
             </Grid>
@@ -290,17 +302,32 @@
             <Grid Grid.Column="0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
-                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="{Binding Path=ChoseImageWidth}"/>
                 </Grid.RowDefinitions>
 
                 <Grid Grid.Row="0">
                     <Border CornerRadius="10"
-                            BorderBrush="Black"
+                            BorderBrush="{Binding Path=Color3}"
+                            Background="{Binding Path=Color4}"
                             Margin="0,0,0,10"
                             Padding="10"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center"
                             BorderThickness="1">
                         <Grid>
-                            <Image Source="{Binding Path=ImageData,UpdateSourceTrigger=PropertyChanged}"/>
+                            <Grid>
+                                <Image Source="{Binding Path=ImageData,UpdateSourceTrigger=PropertyChanged}"/>
+                            </Grid>
+                            <Grid>
+                                <Button Content="Выбрать"
+                                        Visibility="{Binding Path = ChoseImageVisibility}"
+                                        Command="{Binding Path=ChoseImageCommand}"
+                                        ToolTip = "Выбор изображения для получения или запиcи данных"
+                                        BorderThickness="1"
+                                        BorderBrush="{Binding Path=Color3}"
+                                        Foreground="{Binding Path=Color3}"
+                                        Background="{Binding Path = Color2}"/>
+                            </Grid>
                         </Grid>
                     </Border>
                 </Grid>
@@ -316,18 +343,21 @@
                                 Command="{Binding Path=ChoseImageCommand}"
                                 ToolTip = "Выбор изображения для получения или запиши данных"
                                 BorderThickness="1"
-                                Background="Transparent"
-                                BorderBrush="Black"/>
+                                BorderBrush="{Binding Path=Color3}"
+                                Foreground="{Binding Path=Color3}"
+                                Background="{Binding Path = Color2}"/>
                     </Grid>
 
                     <Grid Grid.Column="1">
-                        <Border BorderBrush="Black"
+                        <Border BorderBrush="{Binding Path=Color3}"
+                                Background="{Binding Path=Color4}"
                                 BorderThickness="1"
                                 CornerRadius="10"
                                 Margin="10,0,0,0">
                             <TextBox Text="{Binding Path=FilePathImage,UpdateSourceTrigger=PropertyChanged}"
                                      IsReadOnly="True"
                                      FontSize="15"
+                                     Foreground="{Binding Path=Color3}"
                                      Padding="10,0"
                                      HorizontalAlignment="Stretch"
                                      HorizontalContentAlignment="Center"
@@ -346,7 +376,8 @@
 
                 <Grid Grid.Row="0">
                     <Border CornerRadius="10"
-                            BorderBrush="Black"
+                            BorderBrush="{Binding Path=Color3}"
+                            Background="{Binding Path=Color4}"
                             Margin="0,0,0,10"
                             Padding="10,0,10,10"
                             BorderThickness="1">
@@ -362,8 +393,9 @@
                             BorderThickness="1"
                             Command="{Binding Path=ChoseImageCommand}"
                             HorizontalAlignment="Center"
-                            Background="Transparent"
-                            BorderBrush="Black"/>
+                            BorderBrush="{Binding Path=Color3}"
+                            Foreground="{Binding Path=Color3}"
+                            Background="{Binding Path = Color2}"/>
                 </Grid>
             </Grid>
         </Grid>

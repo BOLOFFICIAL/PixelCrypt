@@ -1,13 +1,11 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Windows;
 
 namespace PixelCrypt.ViewModel.Base
 {
     internal abstract class ViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler? PropertyChanged;
-        private GridLength _authorizationHeight;
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
@@ -23,5 +21,11 @@ namespace PixelCrypt.ViewModel.Base
 
             return true;
         }
+
+        public string Color1 => "#1E1E1E";
+        public string Color2 => "#8B0000";
+        public string Color3 => "#FFFFFF";
+        public string Color4 => "#303336";
+
     }
 }

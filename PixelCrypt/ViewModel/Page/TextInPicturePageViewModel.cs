@@ -50,11 +50,14 @@ namespace PixelCrypt.ViewModel.Page
         private bool _isSuccessAction = false;
         private bool _canDoAction = true;
 
+        private Visibility _choseImageVisibility;
+
         private GridLength _onePictureWidth;
         private GridLength _manyPictureWidth;
         private GridLength _closePasswordWidth;
         private GridLength _openPasswordWidth;
         private GridLength _saveButtonWidth = new GridLength(0, GridUnitType.Pixel);
+        private GridLength _choseImageWidth;
 
         private List<string> _filePathImages = new List<string>();
 
@@ -101,7 +104,7 @@ namespace PixelCrypt.ViewModel.Page
             SaveCommand = new LambdaCommand(OnSaveCommandExecuted, CanSaveCommandExecute);
             ShowPaswordCommand = new LambdaCommand(OnShowPaswordCommandExecuted);
             ChoseFileCommand = new LambdaCommand(OnChoseFileCommandExecuted);
-            ChoseImageCommand = new LambdaCommand(OnChoseImageCommandExecuted);
+            ChoseImageCommand = new LambdaCommand(OnChoseImageCommandExecuted, CanChoseImageCommandExecute);
             DoActionCommand = new LambdaCommand(OnDoActionCommandExecuted, CanDoActionCommandExecute);
 
             RemoveImageCommand = new LambdaCommand(OnRemoveImageCommandExecuted);
@@ -122,13 +125,13 @@ namespace PixelCrypt.ViewModel.Page
         private bool IsSuccessAction
         {
             get => _isSuccessAction;
-            set
-            {
-                if (Set(ref _isSuccessAction, value))
-                {
+            set => Set(ref _isSuccessAction, value);
+        }
 
-                }
-            }
+        public Visibility ChoseImageVisibility
+        {
+            get => _choseImageVisibility;
+            set => Set(ref _choseImageVisibility, value);
         }
 
         public string ActionButtonName
@@ -251,6 +254,12 @@ namespace PixelCrypt.ViewModel.Page
             set => Set(ref _saveButtonWidth, value);
         }
 
+        public GridLength ChoseImageWidth
+        {
+            get => _choseImageWidth;
+            set => Set(ref _choseImageWidth, value);
+        }
+
         public StackPanel FilePathImageStackPanel
         {
             get => _filePathImageStackPanel;
@@ -273,8 +282,8 @@ namespace PixelCrypt.ViewModel.Page
                 OnePictureWidth = new GridLength(0, GridUnitType.Star);
                 ManyPictureWidth = new GridLength(1, GridUnitType.Star);
 
-                SplitButtonBackgroundColor = "#000000";
-                SplitButtonForegroundColor = "#FFFFFF";
+                SplitButtonBackgroundColor = Color2;
+                SplitButtonForegroundColor = Color3;
 
                 if (ImageData?.Length > 0)
                 {
@@ -306,8 +315,8 @@ namespace PixelCrypt.ViewModel.Page
                 OnePictureWidth = new GridLength(1, GridUnitType.Star);
                 ManyPictureWidth = new GridLength(0, GridUnitType.Star);
 
-                SplitButtonBackgroundColor = "#FFFFFF";
-                SplitButtonForegroundColor = "#000000";
+                SplitButtonBackgroundColor = Color4;
+                SplitButtonForegroundColor = Color3;
 
                 FilePathImageStackPanel = new StackPanel();
 
@@ -354,74 +363,81 @@ namespace PixelCrypt.ViewModel.Page
 
         private void OnSaveCommandExecuted(object p = null)
         {
-            if (_isImport)
+            try
             {
-                if (_isSplit)
+                if (_isImport)
                 {
-                    var saveFileDialog = new SaveFileDialog();
-
-                    var dir = Path.GetDirectoryName(_filePathImage);
-                    var name = "PixelCrypt_" + (Path.GetFileNameWithoutExtension(_filePathImage) + "_" + DateTime.Now).Replace(":", "").Replace(" ", "").Replace(".", "");
-                    var format = ImageFormat.Png;
-
-                    format = ImageFormat.Png;
-                    saveFileDialog.Filter = "PNG Image|*.png";
-
-                    saveFileDialog.Title = "Сохранение изображения";
-                    saveFileDialog.RestoreDirectory = true;
-                    saveFileDialog.InitialDirectory = dir;
-                    saveFileDialog.FileName = name;
-
-                    if (saveFileDialog.ShowDialog() ?? false)
+                    if (_isSplit)
                     {
-                        _bitmapImages[0].Save(saveFileDialog.FileName, format);
-                        MessageBox.Show("Картинка сохранена", "Сохранение изображения");
+                        var saveFileDialog = new SaveFileDialog();
+
+                        var dir = Path.GetDirectoryName(_filePathImage);
+                        var name = "PixelCrypt_" + (Path.GetFileNameWithoutExtension(_filePathImage) + "_" + DateTime.Now).Replace(":", "").Replace(" ", "").Replace(".", "");
+                        var format = ImageFormat.Png;
+
+                        format = ImageFormat.Png;
+                        saveFileDialog.Filter = "PNG Image|*.png";
+
+                        saveFileDialog.Title = "Сохранение изображения";
+                        saveFileDialog.RestoreDirectory = true;
+                        saveFileDialog.InitialDirectory = dir;
+                        saveFileDialog.FileName = name;
+
+                        if (saveFileDialog.ShowDialog() ?? false)
+                        {
+                            _bitmapImages[0].Save(saveFileDialog.FileName, format);
+                            MessageBox.Show("Картинка сохранена", "Сохранение изображения");
+                        }
+                    }
+                    else
+                    {
+                        CommonOpenFileDialog folderPicker = new CommonOpenFileDialog();
+
+                        folderPicker.IsFolderPicker = true;
+                        folderPicker.Title = "Выбор папки для хранения данных";
+                        var now = DateTime.Now;
+
+                        var folder = Path.Combine(Path.GetDirectoryName(_filePathImages[0]), $"PixelCrypt_{now.ToString().Replace(":", "").Replace(" ", "").Replace(".", "")}");
+
+                        if (!Directory.Exists(folder))
+                        {
+                            Directory.CreateDirectory(folder);
+                        }
+
+                        folderPicker.InitialDirectory = folder;
+
+                        CommonFileDialogResult dialogResult = folderPicker.ShowDialog();
+
+                        if (dialogResult == CommonFileDialogResult.Ok)
+                        {
+                            for (int i = 0; i < _bitmapImages.Count; i++)
+                            {
+                                var name = Path.Combine(folder, Path.GetFileNameWithoutExtension(_filePathImages[i]) + $"_PixelCrypt_{now.ToString().Replace(":", "").Replace(" ", "").Replace(".", "")}");
+                                var format = ImageFormat.Png;
+
+                                format = ImageFormat.Png;
+                                name += ".png";
+
+                                _bitmapImages[i].Save(name, format);
+                            }
+
+                            MessageBox.Show("Картинки сохранены", "Сохранение изображений");
+                        }
                     }
                 }
                 else
                 {
-                    CommonOpenFileDialog folderPicker = new CommonOpenFileDialog();
-
-                    folderPicker.IsFolderPicker = true;
-                    folderPicker.Title = "Выбор папки для хранения данных";
-                    var now = DateTime.Now;
-
-                    var folder = Path.Combine(Path.GetDirectoryName(_filePathImages[0]), $"PixelCrypt_{now.ToString().Replace(":", "").Replace(" ", "").Replace(".", "")}");
-
-                    if (!Directory.Exists(folder))
+                    if (File.Exists(_filePathFile))
                     {
-                        Directory.CreateDirectory(folder);
-                    }
+                        File.WriteAllText(_filePathFile, FileData);
 
-                    folderPicker.InitialDirectory = folder;
-
-                    CommonFileDialogResult dialogResult = folderPicker.ShowDialog();
-
-                    if (dialogResult == CommonFileDialogResult.Ok)
-                    {
-                        for (int i = 0; i < _bitmapImages.Count; i++)
-                        {
-                            var name = Path.Combine(folder, Path.GetFileNameWithoutExtension(_filePathImages[i]) + $"_PixelCrypt_{now.ToString().Replace(":", "").Replace(" ", "").Replace(".", "")}");
-                            var format = ImageFormat.Png;
-
-                            format = ImageFormat.Png;
-                            name += ".png";
-
-                            _bitmapImages[i].Save(name, format);
-                        }
-
-                        MessageBox.Show("Картинки сохранены", "Сохранение изображений");
+                        MessageBox.Show("Данные успешно сохранены", "Сохранение");
                     }
                 }
             }
-            else
+            catch (Exception)
             {
-                if (File.Exists(_filePathFile))
-                {
-                    File.WriteAllText(_filePathFile, FileData);
-
-                    MessageBox.Show("Данные успешно сохранены", "Сохранение");
-                }
+                MessageBox.Show("Возникла ошибка при сохранении", "Сохранение");
             }
         }
 
@@ -451,8 +467,6 @@ namespace PixelCrypt.ViewModel.Page
             {
                 openFileDialog.Title = "Выберите файл для чтения данных";
 
-                openFileDialog.Filter = "Текстовые файлы (*.txt)|*.txt";
-
                 if (openFileDialog.ShowDialog() ?? false)
                 {
                     IsFileDataReadonly = true;
@@ -469,8 +483,6 @@ namespace PixelCrypt.ViewModel.Page
             {
                 openFileDialog.Title = "Выберите файл для записи данных";
 
-                openFileDialog.Filter = "Текстовые файлы (*.txt)|*.txt";
-
                 if (openFileDialog.ShowDialog() ?? false)
                 {
                     string content = File.ReadAllText(openFileDialog.FileName);
@@ -481,6 +493,11 @@ namespace PixelCrypt.ViewModel.Page
                     }
                 }
             }
+        }
+
+        private bool CanChoseImageCommandExecute(object arg)
+        {
+            return CanChoseImage();
         }
 
         public void OnChoseImageCommandExecuted(object p = null)
@@ -566,10 +583,10 @@ namespace PixelCrypt.ViewModel.Page
         {
             ActionButtonName = "Импортировать";
 
-            ImportButtonBackgroundColor = "#000000";
-            ImportButtonForegroundColor = "#FFFFFF";
-            ExportButtonBackgroundColor = ImportButtonForegroundColor;
-            ExportButtonForegroundColor = ImportButtonBackgroundColor;
+            ImportButtonBackgroundColor = Color2;
+            ImportButtonForegroundColor = Color3;
+            ExportButtonBackgroundColor = Color4;
+            ExportButtonForegroundColor = Color3;
 
             _isImport = true;
             if (FilePathFile.Length > 0)
@@ -593,10 +610,10 @@ namespace PixelCrypt.ViewModel.Page
         {
             ActionButtonName = "Экспортировать";
 
-            ExportButtonBackgroundColor = "#000000";
-            ExportButtonForegroundColor = "#FFFFFF";
-            ImportButtonBackgroundColor = ExportButtonForegroundColor;
-            ImportButtonForegroundColor = ExportButtonBackgroundColor;
+            ExportButtonBackgroundColor = Color2;
+            ExportButtonForegroundColor = Color3;
+            ImportButtonBackgroundColor = Color4;
+            ImportButtonForegroundColor = Color3;
 
             if (_filePathFile != null && _filePathFile.Length > 0)
             {
@@ -634,6 +651,7 @@ namespace PixelCrypt.ViewModel.Page
                 var textBlock = new TextBlock
                 {
                     Text = image,
+                    Foreground = (System.Windows.Media.Brush)new BrushConverter().ConvertFromString(Color3),
                     FontSize = 15,
                     TextWrapping = TextWrapping.Wrap,
                     HorizontalAlignment = HorizontalAlignment.Left,
@@ -641,7 +659,7 @@ namespace PixelCrypt.ViewModel.Page
 
                 var border = new Border
                 {
-                    BorderBrush = new SolidColorBrush(Colors.Black),
+                    BorderBrush = (System.Windows.Media.Brush)new BrushConverter().ConvertFromString(Color3),
                     BorderThickness = new Thickness(2),
                     CornerRadius = new CornerRadius(10),
                     Padding = new Thickness(10, 5, 10, 5)
@@ -660,7 +678,8 @@ namespace PixelCrypt.ViewModel.Page
                     {
                         Icon = EFontAwesomeIcon.Regular_TimesCircle,
                         Width = 25,
-                        Height = 25
+                        Height = 25,
+                        Foreground = (System.Windows.Media.Brush)new BrushConverter().ConvertFromString(Color3)
                     },
                     Command = RemoveImageCommand,
                     CommandParameter = index,
@@ -712,13 +731,13 @@ namespace PixelCrypt.ViewModel.Page
 
             if (_canDoAction)
             {
-                ActionButtonBackgroundColor = "#228B22";
-                ActionButtonForegroundColor = "#000000";
+                ActionButtonBackgroundColor = Color2;
+                ActionButtonForegroundColor = Color3;
             }
             else
             {
-                ActionButtonBackgroundColor = "#B22222";
-                ActionButtonForegroundColor = "#000000";
+                ActionButtonBackgroundColor = Color4;
+                ActionButtonForegroundColor = Color3;
             }
 
             return true;
@@ -748,6 +767,24 @@ namespace PixelCrypt.ViewModel.Page
             else
             {
                 SaveButtonWidth = new GridLength(0, GridUnitType.Pixel);
+            }
+
+            return res;
+        }
+
+        private bool CanChoseImage()
+        {
+            var res = true;
+
+            if (FilePathImage.Length > 0)
+            {
+                ChoseImageVisibility = Visibility.Collapsed;
+                ChoseImageWidth = new GridLength(1, GridUnitType.Auto);
+            }
+            else
+            {
+                ChoseImageVisibility = Visibility.Visible;
+                ChoseImageWidth = new GridLength(0, GridUnitType.Pixel);
             }
 
             return res;
