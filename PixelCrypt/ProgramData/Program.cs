@@ -3,6 +3,7 @@ using System.IO;
 using System.Text;
 using System.Security.Cryptography;
 using static System.Net.Mime.MediaTypeNames;
+using System.Windows.Media.Imaging;
 
 namespace PixelCrypt.ProgramData
 {
@@ -160,6 +161,24 @@ namespace PixelCrypt.ProgramData
                             }
                         }
                     }
+                }
+            }
+        }
+
+        public static Bitmap ConvertToBitmap(System.Windows.Controls.Image wpfImage)
+        {
+            var bitmapSource = wpfImage.Source as BitmapSource;
+
+            using (var memoryStream = new MemoryStream())
+            {
+                var encoder = new PngBitmapEncoder();
+                encoder.Frames.Add(BitmapFrame.Create(bitmapSource));
+
+                encoder.Save(memoryStream);
+
+                using (var bmp = new Bitmap(memoryStream))
+                {
+                    return new Bitmap(bmp);
                 }
             }
         }

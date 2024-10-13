@@ -19,6 +19,9 @@ namespace PixelCrypt.ViewModel.Base
 
         private GridLength _closePasswordWidth;
         private GridLength _openPasswordWidth;
+        private GridLength _choseImageWidth;
+
+        private Visibility _choseImageVisibility;
 
         public string _filePathImage = "";
 
@@ -28,6 +31,7 @@ namespace PixelCrypt.ViewModel.Base
         public ICommand ShowPaswordCommand { get; }
         public ICommand ChoseImageCommand { get; set; }
         public ICommand DoActionCommand { get; set; }
+        public ICommand SaveCommand { get; set; }
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -93,6 +97,18 @@ namespace PixelCrypt.ViewModel.Base
         {
             get => _openPasswordWidth;
             set => Set(ref _openPasswordWidth, value);
+        }
+
+        public GridLength ChoseImageWidth
+        {
+            get => _choseImageWidth;
+            set => Set(ref _choseImageWidth, value);
+        }
+
+        public Visibility ChoseImageVisibility
+        {
+            get => _choseImageVisibility;
+            set => Set(ref _choseImageVisibility, value);
         }
 
         private void OnClosePageCommandExecuted(object p = null)

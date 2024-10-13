@@ -299,19 +299,29 @@
                             BorderBrush="{Binding Path=Color3}"
                             Background="{Binding Path=Color4}"
                             Margin="0,0,0,10"
-                            MinHeight="200"
-                            MinWidth="200"
                             Padding="10"
                             BorderThickness="1">
                         <Grid>
-                            <Image Source="{Binding Path=ImageData,UpdateSourceTrigger=PropertyChanged}"/>
+                            <Grid>
+                                <Image Source="{Binding Path=ImageData,UpdateSourceTrigger=PropertyChanged}"/>
+                            </Grid>
+                            <Grid>
+                                <Button Content="Выбрать"
+                                        Visibility="{Binding Path = ChoseImageVisibility}"
+                                        Command="{Binding Path=ChoseImageCommand}"
+                                        ToolTip = "Выбор изображения для получения или запиcи данных"
+                                        BorderThickness="1"
+                                        BorderBrush="{Binding Path=Color3}"
+                                        Foreground="{Binding Path=Color3}"
+                                        Background="{Binding Path = Color2}"/>
+                            </Grid>
                         </Grid>
                     </Border>
                 </Grid>
 
                 <Grid Grid.Row="1" HorizontalAlignment="Center" MaxWidth="500">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="{Binding Path=ChoseImageWidth}"/>
                         <RowDefinition Height="{Binding Path=ActionWidth}"/>
                     </Grid.RowDefinitions>
 
@@ -476,6 +486,7 @@
                             <Grid Grid.Column="1">
                                 <Button Content="Сохранить"
                                         BorderThickness="1"
+                                        Command="{Binding Path=SaveCommand}"
                                         BorderBrush="{Binding Path=Color3}"
                                         Foreground="{Binding Path=Color3}"
                                         Background="{Binding Path = Color2}"

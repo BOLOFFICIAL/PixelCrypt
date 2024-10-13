@@ -44,12 +44,9 @@ namespace PixelCrypt.ViewModel.Page
         private bool _isFileDataReadonly = false;
         private bool _canDoAction = true;
 
-        private Visibility _choseImageVisibility;
-
         private GridLength _onePictureWidth;
         private GridLength _manyPictureWidth;
         private GridLength _saveButtonWidth = new GridLength(0, GridUnitType.Pixel);
-        private GridLength _choseImageWidth;
 
         private List<string> _filePathImages = new List<string>();
 
@@ -68,7 +65,6 @@ namespace PixelCrypt.ViewModel.Page
         public ICommand ActionCommand { get; }
         public ICommand SplitCommand { get; }
         public ICommand ClearPathFileCommand { get; }
-        public ICommand SaveCommand { get; }
         public ICommand ChoseFileCommand { get; }
 
         #endregion
@@ -111,12 +107,6 @@ namespace PixelCrypt.ViewModel.Page
         {
             get => _isSuccessAction;
             set => Set(ref _isSuccessAction, value);
-        }
-
-        public Visibility ChoseImageVisibility
-        {
-            get => _choseImageVisibility;
-            set => Set(ref _choseImageVisibility, value);
         }
 
         public string ActionButtonName
@@ -201,12 +191,6 @@ namespace PixelCrypt.ViewModel.Page
         {
             get => _saveButtonWidth;
             set => Set(ref _saveButtonWidth, value);
-        }
-
-        public GridLength ChoseImageWidth
-        {
-            get => _choseImageWidth;
-            set => Set(ref _choseImageWidth, value);
         }
 
         public StackPanel FilePathImageStackPanel
