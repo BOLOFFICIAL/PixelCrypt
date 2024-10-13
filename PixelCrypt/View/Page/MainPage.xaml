@@ -28,7 +28,7 @@
             <StackPanel>
                 <Button Content="Текст в картинке"
                         Height="35"
-                        BorderThickness="1"
+                        BorderThickness="0"
                         BorderBrush="{Binding Path=Color3}"
                         Foreground="{Binding Path=Color3}"
                         Background="{Binding Path = Color2}"
@@ -40,7 +40,7 @@
 
                 <Button Content="Картинка"
                         Height="35"
-                        BorderThickness="1"
+                        BorderThickness="0"
                         BorderBrush="{Binding Path=Color3}"
                         Foreground="{Binding Path=Color3}"
                         Background="{Binding Path = Color2}"
