@@ -59,7 +59,7 @@ namespace PixelCrypt.ViewModel.Base
         }
 
         public string Color1 => "#1E1E1E";
-        public string Color2 => "#8B0000";
+        public string Color2 => "#A52A2A";
         public string Color3 => "#FFFFFF";
         public string Color4 => "#303336";
 
