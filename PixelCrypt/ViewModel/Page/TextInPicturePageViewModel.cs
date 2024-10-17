@@ -3,7 +3,6 @@ using Microsoft.Win32;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using PixelCrypt.Commands.Base;
 using PixelCrypt.ProgramData;
-using PixelCrypt.View;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -787,7 +786,8 @@ namespace PixelCrypt.ViewModel.Page
 
         private Bitmap ImportDataToImage(string data, string filepath)
         {
-            var pixels = Program.GetPixelsFromImage(filepath);
+            var pixels = Program.GetPixelsFromImageArray(filepath);
+
             var listPixels = new List<System.Drawing.Color>();
 
             int width = pixels.GetLength(0);
@@ -852,11 +852,6 @@ namespace PixelCrypt.ViewModel.Page
                         var g = (elementIndex < dataG.Length) ? (byte)(color.G - byte.Parse(dataG[elementIndex].ToString())) : color.G;
                         var b = (elementIndex < dataB.Length) ? (byte)(color.B - byte.Parse(dataB[elementIndex].ToString())) : color.B;
 
-                        //var a = (elementIndex < dataA.Length) ? (byte)(255) : color.A;
-                        //var r = (elementIndex < dataR.Length) ? (byte)(0) : color.R;
-                        //var g = (elementIndex < dataG.Length) ? (byte)(0) : color.G;
-                        //var b = (elementIndex < dataB.Length) ? (byte)(0) : color.B;
-
                         color = System.Drawing.Color.FromArgb(a, r, g, b);
 
                         elementIndex++;
@@ -867,63 +862,60 @@ namespace PixelCrypt.ViewModel.Page
                 }
             }
 
-            return Program.CreateImageFromPixels(newPixels);
+            return Program.CreateBitmapFromPixels(newPixels);
         }
 
         private string ExportDataFromImage(string path)
         {
-            var res = "";
-
-            var pixels = Program.GetPixelsFromImage(path);
-            var listPixels = new List<System.Drawing.Color>();
-
-            int width = pixels.GetLength(0);
-            int height = pixels.GetLength(1);
-
-            for (int x = 0; x < width; x++)
+            try
             {
-                for (int y = 0; y < height; y++)
+                var res = "";
+
+                var pixels = Program.GetPixelsFromImageArray(path);
+
+                var listPixels = Program.GetPixelsFromImageList(pixels);
+
+                var uniqBinaryLength = Program.ToBinary(listPixels.Count).Length;
+
+                var lDiv = "";
+                var lMod = "";
+
+                var index = 0;
+
+                for (index = 0; index < slash * uniqBinaryLength - (slash - 1); index += slash)
                 {
-                    listPixels.Add(pixels[x, y]);
+                    lDiv += (listPixels[index].A % 2 == 0) ? "1" : "0";
+                    lMod += (listPixels[index].B % 2 == 0) ? "1" : "0";
                 }
+
+                var sizeDiv = Program.FromBinary(lDiv);
+                var SizeMod = Program.FromBinary(lMod);
+
+                var dataA = new StringBuilder();
+                var dataR = new StringBuilder();
+                var dataG = new StringBuilder();
+                var dataB = new StringBuilder();
+
+                for (int i = index; i < index + (slash * sizeDiv - (slash - 1)); i += slash)
+                {
+                    dataA.Append((listPixels[i].A % 2 == 0) ? "1" : "0");
+                    dataR.Append((listPixels[i].R % 2 == 0) ? "1" : "0");
+                    dataG.Append((listPixels[i].G % 2 == 0) ? "1" : "0");
+                }
+
+                for (int i = index; i < index + (slash * SizeMod - (slash - 1)); i += 8)
+                {
+                    dataB.Append((listPixels[i].B % 2 == 0) ? "1" : "0");
+                }
+
+                res = dataA.ToString() + dataR.ToString() + dataG.ToString() + dataB.ToString();
+
+                return res;
             }
-
-            var uniqBinaryLength = Program.ToBinary(listPixels.Count).Length;
-
-            var lDiv = "";
-            var lMod = "";
-
-            var index = 0;
-
-            for (index = 0; index < slash * uniqBinaryLength - (slash - 1); index += slash)
+            catch
             {
-                lDiv += (listPixels[index].A % 2 == 0) ? "1" : "0";
-                lMod += (listPixels[index].B % 2 == 0) ? "1" : "0";
+                return "";
             }
-
-            var sizeDiv = Program.FromBinary(lDiv);
-            var SizeMod = Program.FromBinary(lMod);
-
-            var dataA = new StringBuilder();
-            var dataR = new StringBuilder();
-            var dataG = new StringBuilder();
-            var dataB = new StringBuilder();
-
-            for (int i = index; i < index + (slash * sizeDiv - (slash - 1)); i += slash)
-            {
-                dataA.Append((listPixels[i].A % 2 == 0) ? "1" : "0");
-                dataR.Append((listPixels[i].R % 2 == 0) ? "1" : "0");
-                dataG.Append((listPixels[i].G % 2 == 0) ? "1" : "0");
-            }
-
-            for (int i = index; i < index + (slash * SizeMod - (slash - 1)); i += 8)
-            {
-                dataB.Append((listPixels[i].B % 2 == 0) ? "1" : "0");
-            }
-
-            res = dataA.ToString() + dataR.ToString() + dataG.ToString() + dataB.ToString();
-
-            return res;
         }
 
         private byte NormalizeColorByte(byte value)

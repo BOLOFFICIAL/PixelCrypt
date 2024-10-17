@@ -9,7 +9,7 @@ namespace PixelCrypt.ProgramData
 {
     public class Program
     {
-        public static Color[,] GetPixelsFromImage(string imagePath)
+        public static Color[,] GetPixelsFromImageArray(string imagePath)
         {
             if (!File.Exists(imagePath)) return new Color[0, 0];
 
@@ -38,7 +38,44 @@ namespace PixelCrypt.ProgramData
             }
         }
 
-        public static Bitmap CreateImageFromPixels(Color[,] pixels)
+        public static List<Color> GetPixelsFromImageList(Color[,] pixels)
+        {
+            var listPixels = new List<System.Drawing.Color>();
+
+            int width = pixels.GetLength(0);
+            int height = pixels.GetLength(1);
+
+            for (int x = 0; x < width; x++)
+            {
+                for (int y = 0; y < height; y++)
+                {
+                    listPixels.Add(System.Drawing.Color.FromArgb(pixels[x, y].A, pixels[x, y].R, pixels[x, y].G, pixels[x, y].B));
+                }
+            }
+
+            return listPixels;
+        }
+
+        public static Bitmap CreateBitmapFromPixelsList(List<Color> pixels,int width,int height)
+        {
+            Bitmap bitmap = new Bitmap(width, height);
+
+            var newPixels = new System.Drawing.Color[width, height];
+            int index = 0;
+
+            for (int x = 0; x < width; x++)
+            {
+                for (int y = 0; y < height; y++)
+                {
+                    newPixels[x, y] = System.Drawing.Color.FromArgb(pixels[index].A, pixels[index].R, pixels[index].G, pixels[index].B);
+                    index++;
+                }
+            }
+
+            return CreateBitmapFromPixels(newPixels);
+        }
+
+        public static Bitmap CreateBitmapFromPixels(Color[,] pixels)
         {
             int width = pixels.GetLength(0);
             int height = pixels.GetLength(1);

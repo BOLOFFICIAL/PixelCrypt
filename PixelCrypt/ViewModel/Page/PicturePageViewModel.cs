@@ -4,6 +4,8 @@ using PixelCrypt.ProgramData;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Security.Cryptography;
+using System.Security.Policy;
 using System.Text;
 using System.Windows;
 using System.Windows.Media.Imaging;
@@ -180,84 +182,30 @@ namespace PixelCrypt.ViewModel.Page
 
         public static BitmapImage EncryptPhoto(string imagepath, string key)
         {
-            int index = 0;
-            byte[] keybyte = Encoding.UTF8.GetBytes(key);
-            using (var image = System.Drawing.Image.FromFile(imagepath))
-            using (var bitmap = new Bitmap(image))
-            {
-                for (int i = 0; i < image.Width; i++)
-                {
-                    for (int j = 0; j < image.Height; j++)
-                    {
-                        bitmap.SetPixel(i, j, EncryptPixel(bitmap.GetPixel(i, j), keybyte[index % keybyte.Length]));
-                        index++;
-                    }
-                }
-                return ConvertToBitmapImage(bitmap);
-            }
+            var pixels = Program.GetPixelsFromImageArray(imagepath);
+
+            int width = pixels.GetLength(0);
+            int height = pixels.GetLength(1);
+
+            var listPixels = Program.GetPixelsFromImageList(pixels);
+
+            var encrypt = EncryptSequence(listPixels, key);
+
+            return ConvertToBitmapImage(Program.CreateBitmapFromPixelsList(encrypt, width, height));
         }
 
         public static BitmapImage DecryptPhoto(string imagepath, string key)
         {
-            int index = 0;
-            byte[] keybyte = Encoding.UTF8.GetBytes(key);
-            using (var image = System.Drawing.Image.FromFile(imagepath))
-            using (var bitmap = new Bitmap(image))
-            {
-                for (int i = 0; i < image.Width; i++)
-                {
-                    for (int j = 0; j < image.Height; j++)
-                    {
-                        bitmap.SetPixel(i, j, DecryptPixel(bitmap.GetPixel(i, j), keybyte[index % keybyte.Length]));
-                        index++;
-                    }
-                }
-                return ConvertToBitmapImage(bitmap);
-            }
-        }
+            var pixels = Program.GetPixelsFromImageArray(imagepath);
 
-        private static Color EncryptPixel(Color color, byte key)
-        {
-            if (key % 2 == 0)
-            {
-                key++;
-            }
-            return Color.FromArgb(EncryptColor(color.R, key), EncryptColor(color.G, key), EncryptColor(color.B, key));
-        }
+            int width = pixels.GetLength(0);
+            int height = pixels.GetLength(1);
 
-        private static byte EncryptColor(byte color, byte key)
-        {
-            if (color % 2 != 0)
-            {
-                color = (byte)(254 - (color ^ key));
-            }
-            else
-            {
-                color = (byte)((color ^ key));
-            }
-            return color;
-        }
+            var listPixels = Program.GetPixelsFromImageList(pixels);
 
-        private static Color DecryptPixel(Color color, byte key)
-        {
-            if (key % 2 == 0)
-            {
-                key++;
-            }
-            return Color.FromArgb(DecryptColor(color.R, key), DecryptColor(color.G, key), DecryptColor(color.B, key));
-        }
+            var decrypt = DecryptSequence(listPixels, key);
 
-        private static byte DecryptColor(byte color, byte key)
-        {
-            if (color % 2 == 0)
-            {
-                color = (byte)((254 - color) ^ key);
-            }
-            else
-            {
-                color = (byte)((color ^ key));
-            }
-            return color;
+            return ConvertToBitmapImage(Program.CreateBitmapFromPixelsList(decrypt, width, height));
         }
 
         public static BitmapImage ConvertToBitmapImage(Bitmap bitmap)
@@ -276,6 +224,50 @@ namespace PixelCrypt.ViewModel.Page
             }
 
             return bitmapImage;
+        }
+
+        private static List<int> CreatePermutation(string password, int length)
+        {
+            using (var md5 = MD5.Create())
+            {
+                byte[] hash = md5.ComputeHash(Encoding.UTF8.GetBytes(password));
+                int hashValue = BitConverter.ToInt32(hash, 0);
+
+                List<int> perm = Enumerable.Range(0, length).ToList();
+                Random random = new Random(hashValue);
+                perm = perm.OrderBy(x => random.Next()).ToList();
+
+                return perm;
+            }
+        }
+
+        private static List<T> EncryptSequence<T>(List<T> collection, string password)
+        {
+            int length = collection.Count;
+            List<int> perm = CreatePermutation(password, length);
+            List<T> encryptedCollection = new List<T>(new T[length]);
+            for (int i = 0; i < length; i++)
+            {
+                encryptedCollection[i] = collection[perm[i]];
+            }
+            return encryptedCollection;
+        }
+        
+        private static List<T> DecryptSequence<T>(List<T> encryptedCollection, string password)
+        {
+            int length = encryptedCollection.Count;
+            List<int> perm = CreatePermutation(password, length);
+            List<int> reversePerm = new List<int>(new int[length]);
+            for (int i = 0; i < length; i++)
+            {
+                reversePerm[perm[i]] = i;
+            }
+            List<T> decryptedCollection = new List<T>(new T[length]);
+            for (int i = 0; i < length; i++)
+            {
+                decryptedCollection[i] = encryptedCollection[reversePerm[i]];
+            }
+            return decryptedCollection;
         }
     }
 }
