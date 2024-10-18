@@ -93,7 +93,7 @@ namespace PixelCrypt.ViewModel.Page
             }
             catch
             {
-                MessageBox.Show("Не удалось выполнить действие");
+                Notification.MakeMessage("Не удалось выполнить действие");
             }
         }
 
@@ -118,12 +118,12 @@ namespace PixelCrypt.ViewModel.Page
                 if (saveFileDialog.ShowDialog() ?? false)
                 {
                     Program.ConvertToBitmap(Context.ResultImage).Save(saveFileDialog.FileName, format);
-                    MessageBox.Show("Картинка сохранена", "Сохранение изображения");
+                    Notification.MakeMessage("Картинка сохранена", "Сохранение изображения");
                 }
             }
             catch (Exception)
             {
-                MessageBox.Show("Возникла ошибка при сохранении", "Сохранение");
+                Notification.MakeMessage("Возникла ошибка при сохранении", "Сохранение");
             }
         }
 
@@ -134,12 +134,12 @@ namespace PixelCrypt.ViewModel.Page
             try
             {
                 Context.ResultImage.Source = DecryptPhoto(_filePathImage, hashPassword);
-                MessageBox.Show("Картинка успешно расшифрована");
+                Notification.MakeMessage("Картинка успешно расшифрована");
                 _isSuccessAction = true;
             }
             catch
             {
-                MessageBox.Show("Не удалось расшифровать картинку");
+                Notification.MakeMessage("Не удалось расшифровать картинку");
                 _isSuccessAction = false;
             }
         }
@@ -151,12 +151,12 @@ namespace PixelCrypt.ViewModel.Page
             try
             {
                 Context.ResultImage.Source = EncryptPhoto(_filePathImage, hashPassword);
-                MessageBox.Show("Картинка успешно зашифрована");
+                Notification.MakeMessage("Картинка успешно зашифрована");
                 _isSuccessAction = true;
             }
             catch
             {
-                MessageBox.Show("Не удалось зашифровать картинку");
+                Notification.MakeMessage("Не удалось зашифровать картинку");
                 _isSuccessAction = false;
             }
 

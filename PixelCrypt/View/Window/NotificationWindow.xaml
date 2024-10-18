@@ -1,0 +1,104 @@
+﻿<Window x:Class="PixelCrypt.View.Window.NotificationWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PixelCrypt.View.Window" xmlns:fa="http://schemas.fontawesome.com/icons/"
+        mc:Ignorable="d"
+        WindowStyle="None"
+        ResizeMode="NoResize"
+        Width="350"
+        Height="200"
+        WindowStartupLocation="CenterScreen">
+    <Border BorderBrush="{Binding Path=Color3}"
+            BorderThickness="2"
+            Background="{Binding Path=Color4}">
+        
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0"
+                  Background="{Binding Path=Color1}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="auto"/>
+                </Grid.ColumnDefinitions>
+
+                <Grid Grid.Column="0"
+                      Margin="10,5"
+                      VerticalAlignment="Center">
+                    <TextBlock VerticalAlignment="Center"
+                               FontSize="18"
+                               Foreground="{Binding Path=Color3}"
+                               Text="{Binding Path=Title,UpdateSourceTrigger=PropertyChanged}"/>
+                </Grid>
+
+                <Grid Grid.Column="1">
+                    <Button Padding="0"
+                            BorderThickness="0"
+                            Command="{Binding Path=CloseNotificationCommand}"
+                            CommandParameter="Close"
+                            Background="Transparent"
+                            BorderBrush="Transparent"
+                            Height="25"
+                            Width="25"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Right">
+                        <fa:ImageAwesome Icon="Solid_Times"
+                                 Foreground="{Binding Path=Color3}"
+                                 Width="15"
+                                 Height="15"/>
+                    </Button>
+                </Grid>
+            </Grid>
+
+            <Grid Grid.Row="1"
+                  Margin="10,10,10,0">
+                <TextBlock HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           TextWrapping="Wrap"
+                           FontSize="18"
+                           Foreground="{Binding Path=Color3}"
+                           Text="{Binding Path=Content,UpdateSourceTrigger=PropertyChanged}"/>
+            </Grid>
+
+            <Grid Grid.Row="2"
+                  Background="{Binding Path=Color1}">
+                <Grid HorizontalAlignment="Center"
+                      Margin="0,10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="{Binding Path=SecondButtonWidth}"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid Grid.Column="0">
+                        <Button Content="{Binding Path=FirstButtonContent,UpdateSourceTrigger=PropertyChanged}"
+                                Padding="15,0"
+                                Command="{Binding Path=CloseNotificationCommand}"
+                                CommandParameter="{Binding Path=FirstButtonContent,UpdateSourceTrigger=PropertyChanged}"
+                                BorderThickness="0"
+                                BorderBrush="{Binding Path=Color3}"
+                                Foreground="{Binding Path=Color3}"
+                                Background="{Binding Path = Color2}"/>
+                    </Grid>
+
+                    <Grid Grid.Column="1"
+                          Margin="10,0,0,0">
+                        <Button Content="{Binding Path=SecondButtonContent,UpdateSourceTrigger=PropertyChanged}"
+                                Padding="15,0"
+                                Command="{Binding Path=CloseNotificationCommand}"
+                                CommandParameter="{Binding Path=SecondButtonContent,UpdateSourceTrigger=PropertyChanged}"
+                                BorderThickness="0"
+                                BorderBrush="{Binding Path=Color3}"
+                                Foreground="{Binding Path=Color3}"
+                                Background="{Binding Path = Color2}"/>
+                    </Grid>
+                </Grid>
+            </Grid>
+        </Grid>
+    </Border>
+</Window>

@@ -313,7 +313,7 @@ namespace PixelCrypt.ViewModel.Page
                         if (saveFileDialog.ShowDialog() ?? false)
                         {
                             _bitmapImages[0].Save(saveFileDialog.FileName, format);
-                            MessageBox.Show("Картинка сохранена", "Сохранение изображения");
+                            Notification.MakeMessage("Картинка сохранена", "Сохранение изображения");
                         }
                     }
                     else
@@ -348,7 +348,7 @@ namespace PixelCrypt.ViewModel.Page
                                 _bitmapImages[i].Save(name, format);
                             }
 
-                            MessageBox.Show("Картинки сохранены", "Сохранение изображений");
+                            Notification.MakeMessage("Картинки сохранены", "Сохранение изображений");
                         }
                     }
                 }
@@ -358,13 +358,13 @@ namespace PixelCrypt.ViewModel.Page
                     {
                         File.WriteAllText(_filePathFile, FileData);
 
-                        MessageBox.Show("Данные успешно сохранены", "Сохранение");
+                        Notification.MakeMessage("Данные успешно сохранены", "Сохранение");
                     }
                 }
             }
             catch (Exception)
             {
-                MessageBox.Show("Возникла ошибка при сохранении", "Сохранение");
+                Notification.MakeMessage("Возникла ошибка при сохранении", "Сохранение");
             }
         }
 
@@ -378,10 +378,10 @@ namespace PixelCrypt.ViewModel.Page
 
                 if (openFileDialog.ShowDialog() ?? false)
                 {
-                    IsFileDataReadonly = true;
-
-                    if (FileData == null || FileData.Length == 0 || (FileData.Length > 0 && MessageBox.Show("Заменить текст на данные из файла?", "файл для чтения данных", MessageBoxButton.YesNo) == MessageBoxResult.Yes))
+                    if (FileData == null || FileData.Length == 0 || (FileData.Length > 0 && Notification.MakeMessage("Заменить текст на данные из файла?", "Файл для чтения данных", NotificationButton.YesNo) == NotificationResult.Yes))
                     {
+                        IsFileDataReadonly = true;
+
                         FilePathFile = openFileDialog.FileName;
 
                         FileData = File.ReadAllText(_filePathFile);
@@ -396,7 +396,7 @@ namespace PixelCrypt.ViewModel.Page
                 {
                     string content = File.ReadAllText(openFileDialog.FileName);
 
-                    if (content.Length > 0 && MessageBox.Show("файл содержит данные которые будут перезаписаны. Продолжить?", "файл для записи данных", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                    if (content.Length > 0 && Notification.MakeMessage("Файл содержит данные которые будут перезаписаны. Продолжить?", "Файл для записи данных", NotificationButton.YesNo) == NotificationResult.Yes)
                     {
                         FilePathFile = openFileDialog.FileName;
                     }
@@ -500,7 +500,7 @@ namespace PixelCrypt.ViewModel.Page
             _isImport = true;
             if (FilePathFile.Length > 0)
             {
-                if (FileData == null || FileData.Length == 0 || (FileData.Length > 0 && MessageBox.Show("Заменить текст на данные из файла?", "файл для чтения данных", MessageBoxButton.YesNo) == MessageBoxResult.Yes))
+                if (FileData == null || FileData.Length == 0 || (FileData.Length > 0 && Notification.MakeMessage("Заменить текст на данные из файла?", "Файл для чтения данных", NotificationButton.YesNo) == NotificationResult.Yes))
                 {
                     IsFileDataReadonly = true;
 
@@ -528,7 +528,7 @@ namespace PixelCrypt.ViewModel.Page
             {
                 string content = File.ReadAllText(_filePathFile);
 
-                if (content.Length > 0 && MessageBox.Show("файл содержит данные которые будут перезаписаны. Оставить выбранный файл?", "файл для записи данных", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                if (content.Length > 0 && Notification.MakeMessage("файл содержит данные которые будут перезаписаны. Оставить выбранный файл?", "Файл для записи данных", NotificationButton.YesNo) == NotificationResult.Yes)
                 {
                     FilePathFile = _filePathFile;
                 }
@@ -735,13 +735,13 @@ namespace PixelCrypt.ViewModel.Page
 
                 _isSuccessAction = true;
 
-                MessageBox.Show("Данные экспортированы", "Экспорт данных");
+                Notification.MakeMessage("Данные экспортированы", "Экспорт данных");
 
                 FileData = exportData;
             }
             catch
             {
-                MessageBox.Show($"Не удалось экспортировать данные");
+                Notification.MakeMessage($"Не удалось экспортировать данные");
             }
         }
 
@@ -775,12 +775,12 @@ namespace PixelCrypt.ViewModel.Page
 
                 _isSuccessAction = true;
 
-                MessageBox.Show("Данные импортированы", "Испорт данных");
+                Notification.MakeMessage("Данные импортированы", "Испорт данных");
             }
             catch
             {
                 _bitmapImages = new List<Bitmap>();
-                MessageBox.Show($"Не удалось импортировать данные");
+                Notification.MakeMessage($"Не удалось импортировать данные");
             }
         }
 
