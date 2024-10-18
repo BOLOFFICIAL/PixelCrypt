@@ -11,7 +11,7 @@
         Height="200"
         WindowStartupLocation="CenterScreen">
     <Border BorderBrush="{Binding Path=Color3}"
-            BorderThickness="2"
+            BorderThickness="1"
             Background="{Binding Path=Color4}">
         
         <Grid>
@@ -44,14 +44,14 @@
                             CommandParameter="Close"
                             Background="Transparent"
                             BorderBrush="Transparent"
-                            Height="25"
-                            Width="25"
-                            VerticalAlignment="Center"
+                            Height="20"
+                            Width="20"
+                            VerticalAlignment="Top"
                             HorizontalAlignment="Right">
                         <fa:ImageAwesome Icon="Solid_Times"
                                  Foreground="{Binding Path=Color3}"
-                                 Width="15"
-                                 Height="15"/>
+                                 Width="13"
+                                 Height="13"/>
                     </Button>
                 </Grid>
             </Grid>
