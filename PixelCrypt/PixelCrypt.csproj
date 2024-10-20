@@ -16,14 +16,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Model\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="FontAwesome5" Version="2.1.11" />
     <PackageReference Include="MaterialDesignThemes" Version="5.1.0" />
     <PackageReference Include="System.Drawing.Common" Version="8.0.8" />
     <PackageReference Include="WindowsAPICodePack" Version="8.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Model\" />
   </ItemGroup>
 
 </Project>

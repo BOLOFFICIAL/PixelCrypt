@@ -12,7 +12,8 @@ namespace PixelCrypt.View.Page
         {
             InitializeComponent();
             DataContext = new PicturePageViewModel();
-            Context.ResultImage = ResultImage;
+            Context.ResultImageHeight = ResultImageHeight;
+            Context.ResultImageWidth = ResultImageWidth;
         }
     }
 }

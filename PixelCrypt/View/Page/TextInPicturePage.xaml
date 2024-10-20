@@ -10,7 +10,7 @@
       d:DesignWidth="800"
       Title="TextInPicturePage">
 
-    <Grid Margin="10">
+    <!--<Grid Margin="10">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" MaxWidth="400"/>
             <ColumnDefinition Width="*"/>
@@ -62,8 +62,7 @@
 
                         <Grid Margin="0,10,0,0">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="auto"/>
-                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
 
@@ -76,10 +75,27 @@
                                         Command="{Binding Path=ActionCommand}"
                                         CommandParameter="Import"
                                         Padding="10,0">
-                                    <fa:ImageAwesome Icon="Solid_SignInAlt"
-                                                     Foreground="{Binding Path=ImportButtonForegroundColor}"
-                                                     Width="25"
-                                                     Height="25"/>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        
+                                        <Grid Grid.Column="0">
+                                            <fa:ImageAwesome Icon="Solid_SignInAlt"
+                                                             Foreground="{Binding Path=ImportButtonForegroundColor}"
+                                                             Width="25"
+                                                             Height="25"/>
+                                        </Grid>
+
+                                        <Grid Grid.Column="1">
+                                            <TextBlock Text="Экспорт"
+                                                       FontSize="15"
+                                                       Margin="10,0,0,0"
+                                                       VerticalAlignment="Center"
+                                                       Foreground="{Binding Path=ImportButtonForegroundColor}"/>
+                                        </Grid>
+                                    </Grid>
                                 </Button>
                             </Grid>
 
@@ -92,23 +108,28 @@
                                         Command="{Binding Path=ActionCommand}"
                                         CommandParameter="Export"
                                         Padding="10,0">
-                                    <fa:ImageAwesome Icon="Solid_SignOutAlt"
-                                                     Foreground="{Binding Path=ExportButtonForegroundColor}"
-                                                     Width="25"
-                                                     Height="25"/>
-                                </Button>
-                            </Grid>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        
+                                        <Grid Grid.Column="0">
+                                            <fa:ImageAwesome Icon="Solid_SignOutAlt"
+                                                             Foreground="{Binding Path=ImportButtonForegroundColor}"
+                                                             Width="25"
+                                                             Height="25"/>
+                                        </Grid>
 
-                            <Grid Grid.Column="2"
-                                  Margin="5,0,0,0">
-                                <Button Content="Сплит"
-                                        ToolTip = "Распределение информации в несколько изображений"
-                                        BorderThickness="0"
-                                        Foreground="{Binding Path=SplitButtonForegroundColor}"
-                                        Background="{Binding Path=SplitButtonBackgroundColor}"
-                                        BorderBrush="{Binding Path=Color3}"
-                                        Command="{Binding Path=SplitCommand}"
-                                        Padding="0"/>
+                                        <Grid Grid.Column="1">
+                                            <TextBlock Text="Экспорт"
+                                                       FontSize="15"
+                                                       Margin="10,0,0,0"
+                                                       VerticalAlignment="Center"
+                                                       Foreground="{Binding Path=ImportButtonForegroundColor}"/>
+                                        </Grid>
+                                    </Grid>
+                                </Button>
                             </Grid>
                         </Grid>
 
@@ -397,6 +418,386 @@
                             BorderBrush="{Binding Path=Color3}"
                             Foreground="{Binding Path=Color3}"
                             Background="{Binding Path = Color2}"/>
+                </Grid>
+            </Grid>
+        </Grid>
+    </Grid>-->
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="25"/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+
+            <Grid Grid.Column="0">
+                <Button BorderThickness="0"
+                        Background="Transparent"
+                        BorderBrush="Transparent"
+                        IsEnabled="{Binding Path=IsButtonFree,UpdateSourceTrigger=PropertyChanged}"
+                        Command="{Binding Path=ClosePageCommand}"
+                        Padding="0">
+                    <fa:ImageAwesome Icon="Regular_ArrowAltCircleLeft"
+                             Foreground="{Binding Path=Color3}"
+                             Width="25"
+                             Height="25"/>
+                </Button>
+            </Grid>
+
+            <Grid Grid.Column="1">
+                <TextBlock Text="Текст в картинке"
+                           Foreground="{Binding Path=Color3}"
+                           FontSize="20"
+                           Margin="10,0,0,0"
+                           FontWeight="Bold"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"/>
+            </Grid>
+        </Grid>
+
+        <Grid Grid.Row="1">
+            <Grid VerticalAlignment="Center">
+                <Grid HorizontalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="{Binding Path=ActionWidth,UpdateSourceTrigger=PropertyChanged}"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid Grid.Column="0"
+                          Margin="0,0,10,0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                        </Grid.RowDefinitions>
+
+                        <Grid Grid.Row="0">
+                            <ScrollViewer VerticalScrollBarVisibility="Hidden">
+                                <StackPanel>
+                                    <Grid Margin="0,10,0,0">
+                                        <Grid HorizontalAlignment="Center">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="auto"/>
+                                                <ColumnDefinition Width="auto"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <Grid Grid.Column="0"
+                                                  Margin="0,0,5,0">
+                                                <Button ToolTip = "Помещение информации в картинку"
+                                                        BorderThickness="0"
+                                                        IsEnabled="{Binding Path=IsButtonFree,UpdateSourceTrigger=PropertyChanged}"
+                                                        Background="{Binding Path=ImportButtonBackgroundColor}"
+                                                        BorderBrush="{Binding Path=Color3}"
+                                                        Command="{Binding Path=ActionCommand}"
+                                                        CommandParameter="Import"
+                                                        Padding="10,0">
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="auto"/>
+                                                            <ColumnDefinition Width="*"/>
+                                                        </Grid.ColumnDefinitions>
+
+                                                        <Grid Grid.Column="0">
+                                                            <fa:ImageAwesome Icon="Solid_SignInAlt"
+                                                                             Foreground="{Binding Path=ImportButtonForegroundColor}"
+                                                                             Width="25"
+                                                                             Height="25"/>
+                                                        </Grid>
+
+                                                        <Grid Grid.Column="1">
+                                                            <TextBlock Text="Импорт"
+                                                                       FontSize="15"
+                                                                       Margin="10,0,0,0"
+                                                                       VerticalAlignment="Center"
+                                                                       Foreground="{Binding Path=ImportButtonForegroundColor}"/>
+                                                        </Grid>
+                                                    </Grid>
+                                                </Button>
+                                            </Grid>
+
+                                            <Grid Grid.Column="1"
+                                                  Margin="5,0,5,0">
+                                                <Button ToolTip = "Получение информации из картинки"
+                                                        BorderThickness="0"
+                                                        IsEnabled="{Binding Path=IsButtonFree,UpdateSourceTrigger=PropertyChanged}"
+                                                        Background="{Binding Path=ExportButtonBackgroundColor}"
+                                                        BorderBrush="{Binding Path=Color3}"
+                                                        Command="{Binding Path=ActionCommand}"
+                                                        CommandParameter="Export"
+                                                        Padding="10,0">
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="auto"/>
+                                                            <ColumnDefinition Width="*"/>
+                                                        </Grid.ColumnDefinitions>
+
+                                                        <Grid Grid.Column="0">
+                                                            <fa:ImageAwesome Icon="Solid_SignOutAlt"
+                                                                                 Foreground="{Binding Path=ImportButtonForegroundColor}"
+                                                                                 Width="25"
+                                                                                 Height="25"/>
+                                                        </Grid>
+
+                                                        <Grid Grid.Column="1">
+                                                            <TextBlock Text="Экспорт"
+                                                                           FontSize="15"
+                                                                           Margin="10,0,0,0"
+                                                                           VerticalAlignment="Center"
+                                                                           Foreground="{Binding Path=ImportButtonForegroundColor}"/>
+                                                        </Grid>
+                                                    </Grid>
+                                                </Button>
+                                            </Grid>
+                                        </Grid>
+                                    </Grid>
+
+                                    <Grid Margin="0,10,0,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <Grid Grid.Column="0">
+                                            <Button Content="Выбрать"
+                                                    IsEnabled="{Binding Path=IsButtonFree,UpdateSourceTrigger=PropertyChanged}"
+                                                    Command="{Binding Path=ChoseFileCommand}"
+                                                    ToolTip = "Выбор файла для чтения или записи данных"
+                                                    BorderThickness="0"
+                                                    BorderBrush="{Binding Path=Color3}"
+                                                    Foreground="{Binding Path=Color3}"
+                                                    Background="{Binding Path = Color2}"/>
+                                        </Grid>
+
+                                        <Grid Grid.Column="1"
+                                              Margin="10,0,0,0">
+                                            <Border BorderBrush="{Binding Path=Color3}"
+                                                    Background="{Binding Path=Color4}"
+                                                    BorderThickness="0"
+                                                    CornerRadius="10">
+                                                <TextBox Text="{Binding Path=FilePathFile,UpdateSourceTrigger=PropertyChanged}"
+                                                         IsReadOnly="True"
+                                                         FontSize="15"
+                                                         Padding="10,0"
+                                                         Foreground="{Binding Path=Color3}"
+                                                         HorizontalAlignment="Stretch"
+                                                         HorizontalContentAlignment="Center"
+                                                         BorderBrush="Transparent"
+                                                         VerticalAlignment="Center"/>
+                                            </Border>
+                                        </Grid>
+
+                                        <Grid Grid.Column="2"
+                                              Margin="10,0,0,0">
+                                            <Button ToolTip = "Удалить из контекста фаил для чтения или записи"
+                                                    BorderThickness="0"
+                                                    IsEnabled="{Binding Path=IsButtonFree,UpdateSourceTrigger=PropertyChanged}"
+                                                    FontWeight="Bold"
+                                                    Padding="0"
+                                                    Command="{Binding Path=ClearPathFileCommand}"
+                                                    Background="Transparent"
+                                                    BorderBrush="Transparent">
+                                                <fa:ImageAwesome Icon="Regular_TimesCircle"
+                                                     Foreground="{Binding Path=Color3}"
+                                                     Width="25"
+                                                     Height="25"/>
+                                            </Button>
+                                        </Grid>
+                                    </Grid>
+
+                                </StackPanel>
+                            </ScrollViewer>
+                        </Grid>
+
+                        <Grid Grid.Row="1"
+                              Margin="0,10,0,0">
+                            <Border CornerRadius="10"
+                                    Background="{Binding Path=Color4}"
+                                    BorderBrush="{Binding Path=Color3}"
+                                    BorderThickness="0">
+                                <TextBox Text ="{Binding Path=FileData, UpdateSourceTrigger=PropertyChanged}"
+                                         Padding="10"
+                                         IsReadOnly="{Binding Path=IsFileDataReadonly,UpdateSourceTrigger=PropertyChanged}"
+                                         TextWrapping="Wrap"
+                                         VerticalContentAlignment="Top"
+                                         BorderBrush="Transparent"
+                                         Foreground="{Binding Path=Color3}"
+                                         FontSize="15"
+                                         HorizontalAlignment="Stretch">
+                                </TextBox>
+                            </Border>
+                        </Grid>
+
+                        <Grid Grid.Row="2"
+                              Margin="0,10,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Grid Grid.Column="0">
+                                <Border BorderBrush="{Binding Path=Color3}"
+                                        Background="{Binding Path=Color4}"
+                                        CornerRadius="10,0,0,10"
+                                        Padding="10,5"
+                                        BorderThickness="0">
+                                    <TextBlock Text="Пароль"
+                                               Foreground="{Binding Path=Color3}"
+                                               VerticalAlignment="Center"
+                                               FontSize="15"/>
+                                </Border>
+                            </Grid>
+
+                            <Grid Grid.Column="1">
+                                <Border BorderBrush="{Binding Path=Color3}"
+                                        Background="{Binding Path=Color4}"
+                                        BorderThickness="1,0,0,0"
+                                        CornerRadius="0,10,10,0">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="{Binding Path=ClosePasswordWidth,UpdateSourceTrigger=PropertyChanged}"/>
+                                            <ColumnDefinition Width="{Binding Path=OpenPasswordWidth,UpdateSourceTrigger=PropertyChanged}"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <Grid Grid.Column="0">
+                                            <components:BindablePasswordBox Password="{Binding Path=Password,UpdateSourceTrigger=PropertyChanged}"
+                                                                            FontSize="15"
+                                                                            Padding="5,0,10,0"
+                                                                            FontWeight="Bold"
+                                                                            BorderThickness="0"
+                                                                            VerticalContentAlignment="Center"
+                                                                            HorizontalAlignment="Stretch"/>
+                                        </Grid>
+
+                                        <Grid Grid.Column="1">
+                                            <TextBox Text="{Binding Path=Password,UpdateSourceTrigger=PropertyChanged}"
+                                                     FontSize="15"
+                                                     Padding="10,0"
+                                                     Foreground="{Binding Path=Color3}"
+                                                     HorizontalAlignment="Stretch"
+                                                     HorizontalContentAlignment="Center"
+                                                     BorderBrush="Transparent"
+                                                     VerticalAlignment="Center"/>
+                                        </Grid>
+                                    </Grid>
+                                </Border>
+                            </Grid>
+
+                            <Grid Grid.Column="2"
+                                  Margin="10,0,5,0">
+                                <Button BorderThickness="0"
+                                        FontWeight="Bold"
+                                        Padding="0"
+                                        Command="{Binding Path=ShowPaswordCommand}"
+                                        Background="Transparent"
+                                        BorderBrush="Transparent">
+                                    <fa:ImageAwesome Icon="{Binding Path=ShowPasword,UpdateSourceTrigger=PropertyChanged}"
+                                                     Foreground="{Binding Path=Color3}"
+                                                     Width="30"
+                                                     Height="30"/>
+                                </Button>
+                            </Grid>
+                        </Grid>
+
+                        <Grid Grid.Row="3"
+                              Margin="0,10,0,0">
+
+                            <Grid HorizontalAlignment="Center">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="{Binding Path=SaveButtonWidth}"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Grid Grid.Column="0">
+                                    <Button Content="{Binding Path=ActionButtonName,UpdateSourceTrigger=PropertyChanged}"
+                                            BorderThickness="0"
+                                            IsEnabled="{Binding Path=IsButtonFree,UpdateSourceTrigger=PropertyChanged}"
+                                            Command="{Binding Path=DoActionCommand}"
+                                            Background="{Binding Path=ActionButtonBackgroundColor}"
+                                            Foreground="{Binding Path=ActionButtonForegroundColor}"
+                                            BorderBrush="{Binding Path=Color3}"
+                                            Padding="10,0"/>
+                                </Grid>
+
+                                <Grid Grid.Column="1">
+                                    <Button Content="Сохранить"
+                                            IsEnabled="{Binding Path=IsButtonFree,UpdateSourceTrigger=PropertyChanged}"
+                                            BorderThickness="0"
+                                            Margin="10,0,0,0"
+                                            Command="{Binding Path=SaveCommand}"
+                                            HorizontalAlignment="Center"
+                                            BorderBrush="{Binding Path=Color3}"
+                                            Foreground="{Binding Path=Color3}"
+                                            Background="{Binding Path = Color2}"
+                                            Padding="10,0"/>
+                                </Grid>
+                            </Grid>
+                        </Grid>
+                    </Grid>
+
+                    <Grid Grid.Column="1">
+                        <Grid VerticalAlignment="Center">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="{Binding Path=ImagesWidth,UpdateSourceTrigger=PropertyChanged}"/>
+                            </Grid.RowDefinitions>
+
+                            <Grid Grid.Row="0">
+                                <Button Content="Выбрать"
+                                        IsEnabled="{Binding Path=IsButtonFree,UpdateSourceTrigger=PropertyChanged}"
+                                        Command="{Binding Path=ChoseImageCommand}"
+                                        ToolTip = "Выбор изображения для шифрования или расшифровывание"
+                                        BorderThickness="0"
+                                        HorizontalAlignment="Center"
+                                        BorderBrush="{Binding Path=Color3}"
+                                        Foreground="{Binding Path=Color3}"
+                                        Background="{Binding Path = Color2}"/>
+                            </Grid>
+
+                            <Grid Grid.Row="1">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="2*"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+
+                                <Grid Grid.Row="0"
+                                      Margin="0,10,0,0">
+                                    <Border CornerRadius="10"
+                                            BorderBrush="{Binding Path=Color3}"
+                                            Background="{Binding Path=Color4}"
+                                            Padding="10"
+                                            Margin="0,0,5,0"
+                                            BorderThickness="0">
+                                        <Grid>
+                                            <Image Source="{Binding Path=ImageData,UpdateSourceTrigger=PropertyChanged}"/>
+                                        </Grid>
+                                    </Border>
+                                </Grid>
+
+                                <Grid Grid.Row="1">
+                                    <Border CornerRadius="10"
+                                            BorderBrush="{Binding Path=Color3}"
+                                            Background="{Binding Path=Color4}"
+                                            Padding="10,0,5,10"
+                                            Margin="0,10,0,0"
+                                            BorderThickness="0">
+                                        <Grid>
+                                            <ScrollViewer Content="{Binding Path=FilePathImageStackPanel,UpdateSourceTrigger=PropertyChanged}"
+                                                          HorizontalContentAlignment="Left"
+                                                          VerticalScrollBarVisibility="Hidden"/>
+                                        </Grid>
+                                    </Border>
+                                </Grid>
+                            </Grid>
+                        </Grid>
+                    </Grid>
                 </Grid>
             </Grid>
         </Grid>

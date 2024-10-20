@@ -3,6 +3,7 @@ using Microsoft.Win32;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using PixelCrypt.Commands.Base;
 using PixelCrypt.ProgramData;
+using PixelCrypt.View;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -16,6 +17,30 @@ namespace PixelCrypt.ViewModel.Page
 {
     internal class TextInPicturePageViewModel : Base.ViewModel
     {
+        private string _password = "";
+        private string _showPasword = "";
+        private string _imageData = "";
+
+        private bool _isOpenPassword = false;
+
+        private GridLength _closePasswordWidth;
+        private GridLength _openPasswordWidth;
+        private GridLength _choseImageWidth;
+        private GridLength _actionWidth = new GridLength(0, GridUnitType.Pixel);
+        private GridLength _imagesWidth = new GridLength(0, GridUnitType.Pixel);
+
+        public string _filePathImage = "";
+
+        public bool _isSuccessAction = false;
+        private bool _isButtonFree = true;
+
+        public ICommand ClosePageCommand { get; }
+        public ICommand ShowPaswordCommand { get; }
+        public ICommand ChoseImageCommand { get; set; }
+        public ICommand DoActionCommand { get; set; }
+        public ICommand SaveCommand { get; set; }
+        private ICommand ShowImageCommand { get; }
+
         #region Fields
 
         #region Propertyes
@@ -31,14 +56,11 @@ namespace PixelCrypt.ViewModel.Page
         private string _importButtonForegroundColor = "";
         private string _exportButtonBackgroundColor = "";
         private string _exportButtonForegroundColor = "";
-        private string _splitButtonBackgroundColor = "";
-        private string _splitButtonForegroundColor = "";
         private string _actionButtonBackgroundColor = "";
         private string _actionButtonForegroundColor = "";
         private string _errorDoActionMessage = "";
         private string _errorSaveMessage = "";
 
-        private bool _isSplit = false;
         private bool _isImport = false;
         private bool _isFileDataReadonly = false;
         private bool _canDoAction = true;
@@ -49,9 +71,11 @@ namespace PixelCrypt.ViewModel.Page
 
         private List<string> _filePathImages = new List<string>();
 
-        private List<Bitmap> _bitmapImages = new List<Bitmap>();
+        private List<Bitmap> _resultImages = new List<Bitmap>();
 
         private StackPanel _filePathImageStackPanel = new StackPanel();
+
+        private int _selectedElementIndex = -1;
 
         #endregion
 
@@ -87,6 +111,11 @@ namespace PixelCrypt.ViewModel.Page
             ChoseFileCommand = new LambdaCommand(OnChoseFileCommandExecuted);
             ChoseImageCommand = new LambdaCommand(OnChoseImageCommandExecuted, CanChoseImageCommandExecute);
             DoActionCommand = new LambdaCommand(OnDoActionCommandExecuted, CanDoActionCommandExecute);
+            ClosePageCommand = new LambdaCommand(OnClosePageCommandExecuted);
+            ShowPaswordCommand = new LambdaCommand(OnShowPaswordCommandExecuted);
+            ShowImageCommand = new LambdaCommand(OnShowImageCommandExecuted);
+
+            OnShowPaswordCommandExecuted(null);
 
             RemoveImageCommand = new LambdaCommand(OnRemoveImageCommandExecuted);
 
@@ -150,18 +179,6 @@ namespace PixelCrypt.ViewModel.Page
             set => Set(ref _exportButtonForegroundColor, value);
         }
 
-        public string SplitButtonBackgroundColor
-        {
-            get => _splitButtonBackgroundColor;
-            set => Set(ref _splitButtonBackgroundColor, value);
-        }
-
-        public string SplitButtonForegroundColor
-        {
-            get => _splitButtonForegroundColor;
-            set => Set(ref _splitButtonForegroundColor, value);
-        }
-
         public string ActionButtonBackgroundColor
         {
             get => _actionButtonBackgroundColor;
@@ -192,10 +209,70 @@ namespace PixelCrypt.ViewModel.Page
             set => Set(ref _saveButtonWidth, value);
         }
 
+        public GridLength ActionWidth
+        {
+            get => _actionWidth;
+            set => Set(ref _actionWidth, value);
+        }
+
+        public GridLength ImagesWidth
+        {
+            get => _imagesWidth;
+            set => Set(ref _imagesWidth, value);
+        }
+
         public StackPanel FilePathImageStackPanel
         {
             get => _filePathImageStackPanel;
             set => Set(ref _filePathImageStackPanel, value);
+        }
+
+        public bool IsButtonFree
+        {
+            get => _isButtonFree;
+            set => Set(ref _isButtonFree, value);
+        }
+
+        public string Password
+        {
+            get => _password;
+            set => Set(ref _password, value);
+        }
+
+        public string ShowPasword
+        {
+            get => _showPasword;
+            set => Set(ref _showPasword, value);
+        }
+
+        public string ImageData
+        {
+            get => _imageData;
+            set => Set(ref _imageData, value);
+        }
+
+        public string FilePathImage
+        {
+            get => Path.GetFileName(_filePathImage);
+            set => Set(ref _filePathImage, value);
+        }
+
+        public GridLength ClosePasswordWidth
+        {
+            get => _closePasswordWidth;
+            set => Set(ref _closePasswordWidth, value);
+        }
+
+        public GridLength OpenPasswordWidth
+        {
+            get => _openPasswordWidth;
+            set => Set(ref _openPasswordWidth, value);
+        }
+
+        public GridLength ChoseImageWidth
+        {
+            get => _choseImageWidth;
+            set => Set(ref _choseImageWidth, value);
         }
 
         #endregion
@@ -204,62 +281,21 @@ namespace PixelCrypt.ViewModel.Page
 
         private void OnSplitCommandExecuted(object p = null)
         {
-            if (_isSplit)
+            OnePictureWidth = new GridLength(1, GridUnitType.Star);
+            ManyPictureWidth = new GridLength(0, GridUnitType.Star);
+
+            FilePathImageStackPanel = new StackPanel();
+
+            if (_filePathImages.Count > 0)
             {
-                OnePictureWidth = new GridLength(0, GridUnitType.Star);
-                ManyPictureWidth = new GridLength(1, GridUnitType.Star);
-
-                SplitButtonBackgroundColor = Color2;
-                SplitButtonForegroundColor = Color3;
-
-                if (ImageData?.Length > 0)
-                {
-                    if (_filePathImages != null && _filePathImages.Count == 0)
-                    {
-                        _filePathImages.Add(ImageData);
-                    }
-                    else if (_filePathImages == null)
-                    {
-                        _filePathImages = new List<string>()
-                        {
-                            ImageData
-                        };
-                    }
-                    else if (_filePathImages != null && _filePathImages.Count > 0)
-                    {
-                        _filePathImages[0] = ImageData;
-                    }
-                }
-                else
-                {
-                    _filePathImages = new List<string>();
-                }
-
-                FilePathImageStackPanel = LoadFilePathImages();
+                ImageData = _filePathImages[0];
+                FilePathImage = _filePathImages[0];
             }
             else
             {
-                OnePictureWidth = new GridLength(1, GridUnitType.Star);
-                ManyPictureWidth = new GridLength(0, GridUnitType.Star);
-
-                SplitButtonBackgroundColor = Color4;
-                SplitButtonForegroundColor = Color3;
-
-                FilePathImageStackPanel = new StackPanel();
-
-                if (_filePathImages.Count > 0)
-                {
-                    ImageData = _filePathImages[0];
-                    FilePathImage = _filePathImages[0];
-                }
-                else
-                {
-                    ImageData = "";
-                    FilePathImage = "";
-                }
+                ImageData = "";
+                FilePathImage = "";
             }
-
-            _isSplit = !_isSplit;
         }
 
         private void OnActionCommandExecuted(object p = null)
@@ -294,62 +330,37 @@ namespace PixelCrypt.ViewModel.Page
             {
                 if (_isImport)
                 {
-                    if (_isSplit)
+                    CommonOpenFileDialog folderPicker = new CommonOpenFileDialog();
+
+                    folderPicker.IsFolderPicker = true;
+                    folderPicker.Title = "Выбор папки для хранения данных";
+                    var now = DateTime.Now;
+
+                    var folder = Path.Combine(Path.GetDirectoryName(_filePathImages[0]), $"PixelCrypt_{now.ToString().Replace(":", "").Replace(" ", "").Replace(".", "")}");
+
+                    if (!Directory.Exists(folder))
                     {
-                        var saveFileDialog = new SaveFileDialog();
-
-                        var dir = Path.GetDirectoryName(_filePathImage);
-                        var name = "PixelCrypt_" + (Path.GetFileNameWithoutExtension(_filePathImage) + "_" + DateTime.Now).Replace(":", "").Replace(" ", "").Replace(".", "");
-                        var format = ImageFormat.Png;
-
-                        format = ImageFormat.Png;
-                        saveFileDialog.Filter = "PNG Image|*.png";
-
-                        saveFileDialog.Title = "Сохранение изображения";
-                        saveFileDialog.RestoreDirectory = true;
-                        saveFileDialog.InitialDirectory = dir;
-                        saveFileDialog.FileName = name;
-
-                        if (saveFileDialog.ShowDialog() ?? false)
-                        {
-                            _bitmapImages[0].Save(saveFileDialog.FileName, format);
-                            Notification.MakeMessage("Картинка сохранена", "Сохранение изображения");
-                        }
+                        Directory.CreateDirectory(folder);
                     }
-                    else
+
+                    folderPicker.InitialDirectory = folder;
+
+                    CommonFileDialogResult dialogResult = folderPicker.ShowDialog();
+
+                    if (dialogResult == CommonFileDialogResult.Ok)
                     {
-                        CommonOpenFileDialog folderPicker = new CommonOpenFileDialog();
-
-                        folderPicker.IsFolderPicker = true;
-                        folderPicker.Title = "Выбор папки для хранения данных";
-                        var now = DateTime.Now;
-
-                        var folder = Path.Combine(Path.GetDirectoryName(_filePathImages[0]), $"PixelCrypt_{now.ToString().Replace(":", "").Replace(" ", "").Replace(".", "")}");
-
-                        if (!Directory.Exists(folder))
+                        for (int i = 0; i < _resultImages.Count; i++)
                         {
-                            Directory.CreateDirectory(folder);
+                            var name = Path.Combine(folderPicker.FileName, Path.GetFileNameWithoutExtension(_filePathImages[i]) + $"_PixelCrypt_{now.ToString().Replace(":", "").Replace(" ", "").Replace(".", "")}");
+                            var format = ImageFormat.Png;
+
+                            format = ImageFormat.Png;
+                            name += ".png";
+
+                            _resultImages[i].Save(name, format);
                         }
 
-                        folderPicker.InitialDirectory = folder;
-
-                        CommonFileDialogResult dialogResult = folderPicker.ShowDialog();
-
-                        if (dialogResult == CommonFileDialogResult.Ok)
-                        {
-                            for (int i = 0; i < _bitmapImages.Count; i++)
-                            {
-                                var name = Path.Combine(folder, Path.GetFileNameWithoutExtension(_filePathImages[i]) + $"_PixelCrypt_{now.ToString().Replace(":", "").Replace(" ", "").Replace(".", "")}");
-                                var format = ImageFormat.Png;
-
-                                format = ImageFormat.Png;
-                                name += ".png";
-
-                                _bitmapImages[i].Save(name, format);
-                            }
-
-                            Notification.MakeMessage("Картинки сохранены", "Сохранение изображений");
-                        }
+                        Notification.MakeMessage("Картинки сохранены", "Сохранение изображений");
                     }
                 }
                 else
@@ -414,11 +425,8 @@ namespace PixelCrypt.ViewModel.Page
             OpenFileDialog openFileDialog = new OpenFileDialog()
             {
                 Filter = "Изображения|*.jpg;*.jpeg;*.png",
+                Multiselect = true,
             };
-            if (!_isSplit)
-            {
-                openFileDialog.Multiselect = true;
-            }
 
             if (_isImport)
             {
@@ -431,40 +439,46 @@ namespace PixelCrypt.ViewModel.Page
 
             if (openFileDialog.ShowDialog() ?? false)
             {
-                if (_isSplit)
-                {
-                    ImageData = openFileDialog.FileNames[0];
+                _isSuccessAction = false;
 
-                    FilePathImage = ImageData;
-                }
-                else
+                foreach (var file in openFileDialog.FileNames)
                 {
-                    foreach (var file in openFileDialog.FileNames)
+                    if (!_filePathImages.Contains(file))
                     {
-                        if (!_filePathImages.Contains(file))
-                        {
-                            _filePathImages.Add(file);
-                        }
+                        _filePathImages.Add(file);
                     }
-
-                    FilePathImageStackPanel = LoadFilePathImages();
                 }
+
+                ImagesWidth = new GridLength(1, GridUnitType.Star);
+                ActionWidth = new GridLength(1, GridUnitType.Star);
+
+                _selectedElementIndex = _selectedElementIndex == -1 ? _filePathImages.Count - 1 : _selectedElementIndex;
+
+                ImageData = _filePathImages[_selectedElementIndex];
+
+                FilePathImageStackPanel = LoadFilePathImages();
             }
         }
 
-        public void OnDoActionCommandExecuted(object p = null)
+        public async void OnDoActionCommandExecuted(object p = null)
         {
             if (!_canDoAction) return;
 
             _isSuccessAction = false;
+            IsButtonFree = false;
 
-            if (_isImport)
+            if (_isImport) { await ImportData(); }
+            else { await ExportData(); }
+
+            IsButtonFree = true;
+
+            if (_isSuccessAction)
             {
-                ImportData();
+                FilePathImageStackPanel = LoadFilePathImages(_filePathImages.Count);
             }
             else
             {
-                ExportData();
+                FilePathImageStackPanel = LoadFilePathImages();
             }
         }
 
@@ -481,7 +495,34 @@ namespace PixelCrypt.ViewModel.Page
 
             _filePathImages.RemoveAt(index);
 
-            FilePathImageStackPanel = LoadFilePathImages();
+            if (index <= _selectedElementIndex)
+            {
+                _selectedElementIndex--;
+
+                if (_filePathImages.Count > 0)
+                {
+                    if (_selectedElementIndex == -1)
+                    {
+                        _selectedElementIndex = 0;
+                    }
+
+                    ImageData = _filePathImages[_selectedElementIndex];
+                }
+                else
+                {
+                    ImagesWidth = new GridLength(0, GridUnitType.Pixel);
+                    ActionWidth = new GridLength(0, GridUnitType.Pixel);
+                }
+            }
+
+            if (_isSuccessAction)
+            {
+                FilePathImageStackPanel = LoadFilePathImages(_filePathImages.Count);
+            }
+            else
+            {
+                FilePathImageStackPanel = LoadFilePathImages();
+            }
         }
 
         #endregion
@@ -542,7 +583,7 @@ namespace PixelCrypt.ViewModel.Page
             IsFileDataReadonly = false;
         }
 
-        private StackPanel LoadFilePathImages()
+        private StackPanel LoadFilePathImages(int count = 0)
         {
             var stackPanel = new StackPanel();
             int index = 0;
@@ -554,27 +595,41 @@ namespace PixelCrypt.ViewModel.Page
                     Margin = new Thickness(0, 10, 0, 0)
                 };
 
+                grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
                 grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
                 grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
 
-                var textBlock = new TextBlock
+                var icon = new ImageAwesome
                 {
-                    Text = image,
-                    Foreground = (System.Windows.Media.Brush)new BrushConverter().ConvertFromString(Color3),
+                    Icon = EFontAwesomeIcon.Regular_CheckCircle,
+                    Width = 25,
+                    Height = 25,
+                    Margin = new Thickness(0, 0, 10, 0),
+                    Foreground = (System.Windows.Media.Brush)new BrushConverter().ConvertFromString(Color5)
+                };
+
+                Grid.SetColumn(icon, 0);
+
+                var button = new Button()
+                {
+                    Content = Path.GetFileName(image),
+                    Command = ShowImageCommand,
+                    CommandParameter = index,
                     FontSize = 15,
-                    TextWrapping = TextWrapping.Wrap,
-                    HorizontalAlignment = HorizontalAlignment.Left,
-                };
-
-                var border = new Border
-                {
+                    Foreground = (System.Windows.Media.Brush)new BrushConverter().ConvertFromString(Color3),
+                    Background = (System.Windows.Media.Brush)new BrushConverter().ConvertFromString(Color4),
                     BorderBrush = (System.Windows.Media.Brush)new BrushConverter().ConvertFromString(Color3),
-                    BorderThickness = new Thickness(2),
-                    CornerRadius = new CornerRadius(10),
-                    Padding = new Thickness(10, 5, 10, 5)
+                    BorderThickness = new Thickness(2)
                 };
 
-                Grid.SetColumn(border, 0);
+                if (index == _selectedElementIndex)
+                {
+                    button.Background = (System.Windows.Media.Brush)new BrushConverter().ConvertFromString(Color3);
+                    button.Foreground = (System.Windows.Media.Brush)new BrushConverter().ConvertFromString(Color4);
+                    button.BorderThickness = new Thickness(0);
+                }
+
+                Grid.SetColumn(button, 1);
 
                 var deleteButton = new Button
                 {
@@ -591,15 +646,20 @@ namespace PixelCrypt.ViewModel.Page
                         Foreground = (System.Windows.Media.Brush)new BrushConverter().ConvertFromString(Color3)
                     },
                     Command = RemoveImageCommand,
+                    IsEnabled = IsButtonFree,
                     CommandParameter = index,
                     Background = System.Windows.Media.Brushes.Transparent,
                     BorderBrush = System.Windows.Media.Brushes.Transparent,
                 };
 
-                Grid.SetColumn(deleteButton, 1);
+                Grid.SetColumn(deleteButton, 2);
 
-                border.Child = textBlock;
-                grid.Children.Add(border);
+                if (index < count)
+                {
+                    grid.Children.Add(icon);
+                }
+
+                grid.Children.Add(button);
                 grid.Children.Add(deleteButton);
                 stackPanel.Children.Add(grid);
 
@@ -616,26 +676,6 @@ namespace PixelCrypt.ViewModel.Page
             if (_isImport)
             {
                 _canDoAction = _canDoAction && FileData.Length > 0;
-
-                if (_isSplit)
-                {
-                    _canDoAction = _canDoAction && FilePathImage.Length > 0;
-                }
-                else
-                {
-                    _canDoAction = _canDoAction && _filePathImages.Count > 1;
-                }
-            }
-            else
-            {
-                if (_isSplit)
-                {
-                    _canDoAction = _canDoAction && FilePathImage.Length > 0;
-                }
-                else
-                {
-                    _canDoAction = _canDoAction && _filePathImages.Count > 1;
-                }
             }
 
             if (_canDoAction)
@@ -660,7 +700,7 @@ namespace PixelCrypt.ViewModel.Page
 
             if (_isImport)
             {
-                res = res && _bitmapImages.Count > 0;
+                res = res && _resultImages.Count > 0;
             }
             else
             {
@@ -687,19 +727,17 @@ namespace PixelCrypt.ViewModel.Page
 
             if (FilePathImage.Length > 0)
             {
-                ChoseImageVisibility = Visibility.Collapsed;
                 ChoseImageWidth = new GridLength(1, GridUnitType.Auto);
             }
             else
             {
-                ChoseImageVisibility = Visibility.Visible;
                 ChoseImageWidth = new GridLength(0, GridUnitType.Pixel);
             }
 
             return res;
         }
 
-        private void ExportData()
+        private async Task ExportData()
         {
             var BynaryData = new List<string>();
 
@@ -707,17 +745,11 @@ namespace PixelCrypt.ViewModel.Page
 
             try
             {
-                if (_isSplit)
+                foreach (var filePathImage in _filePathImages)
                 {
-                    BynaryData.Add(ExportDataFromImage(_filePathImage));
-
-                }
-                else
-                {
-                    foreach (var filePathImage in _filePathImages)
-                    {
-                        BynaryData.Add(ExportDataFromImage(filePathImage));
-                    }
+                    var exportDataImage = await ExportDataFromImage(filePathImage);
+                    BynaryData.Add(exportDataImage);
+                    FilePathImageStackPanel = LoadFilePathImages(BynaryData.Count);
                 }
 
                 var allData = new StringBuilder();
@@ -742,10 +774,12 @@ namespace PixelCrypt.ViewModel.Page
             catch
             {
                 Notification.MakeMessage($"Не удалось экспортировать данные");
+                _isSuccessAction = false;
+                FilePathImageStackPanel = LoadFilePathImages();
             }
         }
 
-        private void ImportData()
+        private async Task ImportData()
         {
             try
             {
@@ -757,20 +791,15 @@ namespace PixelCrypt.ViewModel.Page
 
                 string binary = Program.TextToBinary(inportData);
 
-                _bitmapImages = new List<Bitmap>();
+                _resultImages = new List<Bitmap>();
 
-                if (_isSplit)
-                {
-                    _bitmapImages.Add(ImportDataToImage(binary, _filePathImage));
-                }
-                else
-                {
-                    var lines = Program.SplitStringIntoParts(binary, _filePathImages.Count);
+                var lines = Program.SplitStringIntoParts(binary, _filePathImages.Count);
 
-                    for (int i = 0; i < _filePathImages.Count; i++)
-                    {
-                        _bitmapImages.Add(ImportDataToImage(lines[i], _filePathImages[i]));
-                    }
+                for (int i = 0; i < _filePathImages.Count; i++)
+                {
+                    var importDataImage = await ImportDataToImage(lines[i], _filePathImages[i]);
+                    _resultImages.Add(importDataImage);
+                    FilePathImageStackPanel = LoadFilePathImages(_resultImages.Count);
                 }
 
                 _isSuccessAction = true;
@@ -779,138 +808,148 @@ namespace PixelCrypt.ViewModel.Page
             }
             catch
             {
-                _bitmapImages = new List<Bitmap>();
+                _resultImages = new List<Bitmap>();
                 Notification.MakeMessage($"Не удалось импортировать данные");
+                _isSuccessAction = false;
+                FilePathImageStackPanel = LoadFilePathImages();
             }
         }
 
-        private Bitmap ImportDataToImage(string data, string filepath)
+        private async Task<Bitmap> ImportDataToImage(string data, string filepath)
         {
-            var pixels = Program.GetPixelsFromImageArray(filepath);
-
-            var listPixels = new List<System.Drawing.Color>();
-
-            int width = pixels.GetLength(0);
-            int height = pixels.GetLength(1);
-
-            for (int x = 0; x < width; x++)
+            var importDataImage = await Task.Run(() =>
             {
-                for (int y = 0; y < height; y++)
+                var pixels = Program.GetPixelsFromImageArray(filepath);
+
+                var listPixels = new List<System.Drawing.Color>();
+
+                int width = pixels.GetLength(0);
+                int height = pixels.GetLength(1);
+
+                for (int x = 0; x < width; x++)
                 {
-                    var color = System.Drawing.Color.FromArgb(
-                        NormalizeColorByte(pixels[x, y].A),
-                        NormalizeColorByte(pixels[x, y].R),
-                        NormalizeColorByte(pixels[x, y].G),
-                        NormalizeColorByte(pixels[x, y].B));
-
-                    listPixels.Add(color);
-                }
-            }
-
-            var uniqBinaryLength = Program.ToBinary(listPixels.Count).Length;
-
-            var spl = Program.SplitStringIntoParts(data, 4);
-
-            var l0 = Program.ToBinary(spl[0].Length).PadLeft(uniqBinaryLength, '0');
-            var l1 = Program.ToBinary(spl[1].Length).PadLeft(uniqBinaryLength, '0');
-            var l2 = Program.ToBinary(spl[2].Length).PadLeft(uniqBinaryLength, '0');
-            var l3 = Program.ToBinary(spl[3].Length).PadLeft(uniqBinaryLength, '0');
-
-            var dataA = l0 + spl[0];
-            var dataR = l1 + spl[1];
-            var dataG = l2 + spl[2];
-            var dataB = l3 + spl[3];
-
-            var limit = listPixels.Count / slash;
-
-            var avrage = (dataA.Length + dataR.Length + dataG.Length + dataB.Length) / 4;
-
-            if (limit < avrage)
-            {
-                throw new Exception($"Данных слишком  много для импорта в картинку");
-            }
-
-            var newPixels = new System.Drawing.Color[width, height];
-
-            int index = 0;
-            int elementIndex = 0;
-
-            for (int x = 0; x < width; x++)
-            {
-                for (int y = 0; y < height; y++)
-                {
-                    var color = System.Drawing.Color.FromArgb(
-                        listPixels[index].A,
-                        listPixels[index].R,
-                        listPixels[index].G,
-                        listPixels[index].B);
-
-                    if (index % slash == 0)
+                    for (int y = 0; y < height; y++)
                     {
-                        var a = (elementIndex < dataA.Length) ? (byte)(color.A - byte.Parse(dataA[elementIndex].ToString())) : color.A;
-                        var r = (elementIndex < dataR.Length) ? (byte)(color.R - byte.Parse(dataR[elementIndex].ToString())) : color.R;
-                        var g = (elementIndex < dataG.Length) ? (byte)(color.G - byte.Parse(dataG[elementIndex].ToString())) : color.G;
-                        var b = (elementIndex < dataB.Length) ? (byte)(color.B - byte.Parse(dataB[elementIndex].ToString())) : color.B;
+                        var color = System.Drawing.Color.FromArgb(
+                            NormalizeColorByte(pixels[x, y].A),
+                            NormalizeColorByte(pixels[x, y].R),
+                            NormalizeColorByte(pixels[x, y].G),
+                            NormalizeColorByte(pixels[x, y].B));
 
-                        color = System.Drawing.Color.FromArgb(a, r, g, b);
-
-                        elementIndex++;
+                        listPixels.Add(color);
                     }
-
-                    newPixels[x, y] = color;
-                    index++;
                 }
-            }
-
-            return Program.CreateBitmapFromPixels(newPixels);
-        }
-
-        private string ExportDataFromImage(string path)
-        {
-            try
-            {
-                var res = "";
-
-                var pixels = Program.GetPixelsFromImageArray(path);
-
-                var listPixels = Program.GetPixelsFromImageList(pixels);
 
                 var uniqBinaryLength = Program.ToBinary(listPixels.Count).Length;
 
-                var lDiv = "";
-                var lMod = "";
+                var spl = Program.SplitStringIntoParts(data, 4);
 
-                var index = 0;
+                var l0 = Program.ToBinary(spl[0].Length).PadLeft(uniqBinaryLength, '0');
+                var l1 = Program.ToBinary(spl[1].Length).PadLeft(uniqBinaryLength, '0');
+                var l2 = Program.ToBinary(spl[2].Length).PadLeft(uniqBinaryLength, '0');
+                var l3 = Program.ToBinary(spl[3].Length).PadLeft(uniqBinaryLength, '0');
 
-                for (index = 0; index < slash * uniqBinaryLength - (slash - 1); index += slash)
+                var dataA = l0 + spl[0];
+                var dataR = l1 + spl[1];
+                var dataG = l2 + spl[2];
+                var dataB = l3 + spl[3];
+
+                var limit = listPixels.Count / slash;
+
+                var avrage = (dataA.Length + dataR.Length + dataG.Length + dataB.Length) / 4;
+
+                if (limit < avrage)
                 {
-                    lDiv += (listPixels[index].A % 2 == 0) ? "1" : "0";
-                    lMod += (listPixels[index].B % 2 == 0) ? "1" : "0";
+                    throw new Exception($"Данных слишком  много для импорта в картинку");
                 }
 
-                var sizeDiv = Program.FromBinary(lDiv);
-                var SizeMod = Program.FromBinary(lMod);
+                var newPixels = new System.Drawing.Color[width, height];
 
-                var dataA = new StringBuilder();
-                var dataR = new StringBuilder();
-                var dataG = new StringBuilder();
-                var dataB = new StringBuilder();
+                int index = 0;
+                int elementIndex = 0;
 
-                for (int i = index; i < index + (slash * sizeDiv - (slash - 1)); i += slash)
+                for (int x = 0; x < width; x++)
                 {
-                    dataA.Append((listPixels[i].A % 2 == 0) ? "1" : "0");
-                    dataR.Append((listPixels[i].R % 2 == 0) ? "1" : "0");
-                    dataG.Append((listPixels[i].G % 2 == 0) ? "1" : "0");
-                }
+                    for (int y = 0; y < height; y++)
+                    {
+                        var color = System.Drawing.Color.FromArgb(
+                            listPixels[index].A,
+                            listPixels[index].R,
+                            listPixels[index].G,
+                            listPixels[index].B);
 
-                for (int i = index; i < index + (slash * SizeMod - (slash - 1)); i += 8)
+                        if (index % slash == 0)
+                        {
+                            var a = (elementIndex < dataA.Length) ? (byte)(color.A - byte.Parse(dataA[elementIndex].ToString())) : color.A;
+                            var r = (elementIndex < dataR.Length) ? (byte)(color.R - byte.Parse(dataR[elementIndex].ToString())) : color.R;
+                            var g = (elementIndex < dataG.Length) ? (byte)(color.G - byte.Parse(dataG[elementIndex].ToString())) : color.G;
+                            var b = (elementIndex < dataB.Length) ? (byte)(color.B - byte.Parse(dataB[elementIndex].ToString())) : color.B;
+
+                            color = System.Drawing.Color.FromArgb(a, r, g, b);
+
+                            elementIndex++;
+                        }
+
+                        newPixels[x, y] = color;
+                        index++;
+                    }
+                }
+                return newPixels;
+            });
+
+            return Program.CreateBitmapFromPixels(importDataImage);
+        }
+
+        private async Task<string> ExportDataFromImage(string path)
+        {
+            try
+            {
+                var exportDataImage = await Task.Run(() =>
                 {
-                    dataB.Append((listPixels[i].B % 2 == 0) ? "1" : "0");
-                }
+                    var res = "";
 
-                res = dataA.ToString() + dataR.ToString() + dataG.ToString() + dataB.ToString();
+                    var pixels = Program.GetPixelsFromImageArray(path);
 
-                return res;
+                    var listPixels = Program.GetPixelsFromImageList(pixels);
+
+                    var uniqBinaryLength = Program.ToBinary(listPixels.Count).Length;
+
+                    var lDiv = "";
+                    var lMod = "";
+
+                    var index = 0;
+
+                    for (index = 0; index < slash * uniqBinaryLength - (slash - 1); index += slash)
+                    {
+                        lDiv += (listPixels[index].A % 2 == 0) ? "1" : "0";
+                        lMod += (listPixels[index].B % 2 == 0) ? "1" : "0";
+                    }
+
+                    var sizeDiv = Program.FromBinary(lDiv);
+                    var SizeMod = Program.FromBinary(lMod);
+
+                    var dataA = new StringBuilder();
+                    var dataR = new StringBuilder();
+                    var dataG = new StringBuilder();
+                    var dataB = new StringBuilder();
+
+                    for (int i = index; i < index + (slash * sizeDiv - (slash - 1)); i += slash)
+                    {
+                        dataA.Append((listPixels[i].A % 2 == 0) ? "1" : "0");
+                        dataR.Append((listPixels[i].R % 2 == 0) ? "1" : "0");
+                        dataG.Append((listPixels[i].G % 2 == 0) ? "1" : "0");
+                    }
+
+                    for (int i = index; i < index + (slash * SizeMod - (slash - 1)); i += 8)
+                    {
+                        dataB.Append((listPixels[i].B % 2 == 0) ? "1" : "0");
+                    }
+
+                    res = dataA.ToString() + dataR.ToString() + dataG.ToString() + dataB.ToString();
+                    return res;
+                });
+
+                return exportDataImage;
             }
             catch
             {
@@ -939,5 +978,48 @@ namespace PixelCrypt.ViewModel.Page
         }
 
         #endregion
+
+        private void OnClosePageCommandExecuted(object p = null)
+        {
+            Context.MainWindowViewModel.CurrentPage = new MainPage();
+        }
+
+        private void OnShowPaswordCommandExecuted(object p = null)
+        {
+            if (_isOpenPassword)
+            {
+                OpenPasswordWidth = new GridLength(1, GridUnitType.Star);
+                ClosePasswordWidth = new GridLength(0, GridUnitType.Star);
+                ShowPasword = "Regular_Eye";
+            }
+            else
+            {
+                OpenPasswordWidth = new GridLength(0, GridUnitType.Star);
+                ClosePasswordWidth = new GridLength(1, GridUnitType.Star);
+                ShowPasword = "Regular_EyeSlash";
+            }
+
+            _isOpenPassword = !_isOpenPassword;
+        }
+
+        public void OnShowImageCommandExecuted(object p = null)
+        {
+            int index = (p == null) ? (-1) : ((p is int value) ? (value) : (-1));
+
+            if (index == -1 || _selectedElementIndex == index) return;
+
+            _selectedElementIndex = index;
+
+            ImageData = _filePathImages[_selectedElementIndex];
+
+            if (_isSuccessAction)
+            {
+                FilePathImageStackPanel = LoadFilePathImages(_filePathImages.Count);
+            }
+            else
+            {
+                FilePathImageStackPanel = LoadFilePathImages();
+            }
+        }
     }
 }
