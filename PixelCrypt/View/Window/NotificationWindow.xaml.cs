@@ -1,7 +1,5 @@
 ﻿using PixelCrypt.ProgramData;
-using PixelCrypt.ViewModel.Page;
 using PixelCrypt.ViewModel.Window;
-using System.Windows;
 
 namespace PixelCrypt.View.Window
 {

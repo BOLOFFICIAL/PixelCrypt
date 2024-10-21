@@ -1,8 +1,7 @@
 ﻿using System.Drawing;
 using System.IO;
-using System.Text;
 using System.Security.Cryptography;
-using static System.Net.Mime.MediaTypeNames;
+using System.Text;
 using System.Windows.Media.Imaging;
 
 namespace PixelCrypt.ProgramData
@@ -56,7 +55,7 @@ namespace PixelCrypt.ProgramData
             return listPixels;
         }
 
-        public static Bitmap CreateBitmapFromPixelsList(List<Color> pixels,int width,int height)
+        public static Bitmap CreateBitmapFromPixelsList(List<Color> pixels, int width, int height)
         {
             Bitmap bitmap = new Bitmap(width, height);
 
@@ -105,7 +104,7 @@ namespace PixelCrypt.ProgramData
         }
 
         public static string BinaryToText(string binary)
-        { 
+        {
             StringBuilder text = new StringBuilder();
             for (int i = 0; i < binary.Length; i += 8)
             {
@@ -148,11 +147,11 @@ namespace PixelCrypt.ProgramData
 
         public static string Hash32(string input)
         {
-            string output; 
+            string output;
             MD5 MD5Hash = MD5.Create();
-            byte[] inputBytes = Encoding.ASCII.GetBytes(input); 
-            byte[] hash = MD5Hash.ComputeHash(inputBytes); 
-            return output = Convert.ToHexString(hash); 
+            byte[] inputBytes = Encoding.ASCII.GetBytes(input);
+            byte[] hash = MD5Hash.ComputeHash(inputBytes);
+            return output = Convert.ToHexString(hash);
         }
 
         public static string Encrypt(string plainText, string key)

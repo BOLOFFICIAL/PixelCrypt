@@ -26,7 +26,7 @@
 
         <Grid Grid.Row="1">
             <StackPanel>
-                <Button Content="Текст в картинке"
+                <Button Content="Steganography"
                         Height="35"
                         BorderThickness="0"
                         BorderBrush="{Binding Path=Color3}"
@@ -38,7 +38,7 @@
                         CommandParameter="TextInPicturePage"
                         FontSize="20"/>
 
-                <Button Content="Картинка"
+                <Button Content="Cryptography"
                         Height="35"
                         BorderThickness="0"
                         BorderBrush="{Binding Path=Color3}"

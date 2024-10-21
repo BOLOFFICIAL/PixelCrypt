@@ -7,20 +7,27 @@ namespace PixelCrypt.ViewModel.Window
 {
     internal class NotificationViewModel : Base.ViewModel
     {
-        private string _title;
-        private string _content;
-        private string _firstButtonContent;
-        private string _secondButtonContent;
-
-        private GridLength _secondButtonWidth;
-
         public ICommand CloseNotificationCommand { get; }
+        public string Title { get; set; }
+        public string Content { get; set; }
+        public string FirstButtonContent { get; set; }
+        public string SecondButtonContent { get; set; }
+        public GridLength SecondButtonWidth { get; set; }
+
+        private Dictionary<string, NotificationResult> _buttonContents = new()
+        {
+            {"Ок",NotificationResult.Ok },
+            {"Да",NotificationResult.Yes },
+            {"Нет",NotificationResult.No },
+            {"Close",NotificationResult.Close },
+        };
 
         public NotificationViewModel(string content, string title = "PixelCrypt", NotificationButton messageBoxButton = NotificationButton.Ok)
         {
             CloseNotificationCommand = new LambdaCommand(OnCloseNotificationCommandExecuted);
-            _title = title;
-            _content = content;
+
+            Title = title;
+            Content = content;
 
             UpdateParams(messageBoxButton);
         }
@@ -29,44 +36,7 @@ namespace PixelCrypt.ViewModel.Window
         {
             if (p is not string parametr) return;
             Context.NotificationWindow.Close();
-
-            switch (parametr)
-            {
-                case "Ок": Context.NotificationResult = NotificationResult.Ok; break;
-                case "Да": Context.NotificationResult = NotificationResult.Yes; break;
-                case "Нет": Context.NotificationResult = NotificationResult.No; break;
-                case "Close": Context.NotificationResult = NotificationResult.Close; break;
-            }
-        }
-
-        public string Title
-        {
-            get => _title;
-            set => Set(ref _title, value);
-        }
-
-        public string Content
-        {
-            get => _content;
-            set => Set(ref _content, value);
-        }
-
-        public string FirstButtonContent
-        {
-            get => _firstButtonContent;
-            set => Set(ref _firstButtonContent, value);
-        }
-
-        public string SecondButtonContent
-        {
-            get => _secondButtonContent;
-            set => Set(ref _secondButtonContent, value);
-        }
-
-        public GridLength SecondButtonWidth
-        {
-            get => _secondButtonWidth;
-            set => Set(ref _secondButtonWidth, value);
+            Context.NotificationResult = _buttonContents[parametr];
         }
 
         private void UpdateParams(NotificationButton messageBoxButton)
@@ -76,14 +46,14 @@ namespace PixelCrypt.ViewModel.Window
                 case NotificationButton.Ok:
                     {
                         SecondButtonWidth = new GridLength(0, GridUnitType.Pixel);
-                        FirstButtonContent = "Ок";
+                        FirstButtonContent = _buttonContents.FirstOrDefault(x => x.Value == NotificationResult.Ok).Key;
                         break;
                     }
                 case NotificationButton.YesNo:
                     {
                         SecondButtonWidth = new GridLength(1, GridUnitType.Auto);
-                        FirstButtonContent = "Да";
-                        SecondButtonContent = "Нет";
+                        FirstButtonContent = _buttonContents.FirstOrDefault(x => x.Value == NotificationResult.Yes).Key;
+                        SecondButtonContent = _buttonContents.FirstOrDefault(x => x.Value == NotificationResult.No).Key;
                         break;
                     }
             }

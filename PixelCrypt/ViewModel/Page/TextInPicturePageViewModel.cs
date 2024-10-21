@@ -407,7 +407,7 @@ namespace PixelCrypt.ViewModel.Page
                 {
                     string content = File.ReadAllText(openFileDialog.FileName);
 
-                    if (content.Length > 0 && Notification.MakeMessage("Файл содержит данные которые будут перезаписаны. Продолжить?", "Файл для записи данных", NotificationButton.YesNo) == NotificationResult.Yes)
+                    if (content.Length == 0 || content.Length > 0 && Notification.MakeMessage("Файл содержит данные которые будут перезаписаны. Продолжить?", "Файл для записи данных", NotificationButton.YesNo) == NotificationResult.Yes)
                     {
                         FilePathFile = openFileDialog.FileName;
                     }
@@ -466,6 +466,7 @@ namespace PixelCrypt.ViewModel.Page
 
             _isSuccessAction = false;
             IsButtonFree = false;
+            FilePathImageStackPanel = LoadFilePathImages();
 
             if (_isImport) { await ImportData(); }
             else { await ExportData(); }

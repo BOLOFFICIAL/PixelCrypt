@@ -1,7 +1,6 @@
 ﻿using PixelCrypt.Commands.Base;
 using PixelCrypt.ProgramData;
 using PixelCrypt.View.Page;
-using PixelCrypt.View.Window;
 using System.Windows.Input;
 
 namespace PixelCrypt.ViewModel.Page

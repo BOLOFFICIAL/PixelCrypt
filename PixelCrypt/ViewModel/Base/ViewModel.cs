@@ -1,11 +1,5 @@
-﻿using PixelCrypt.Commands.Base;
-using PixelCrypt.ProgramData;
-using PixelCrypt.View;
-using System.ComponentModel;
-using System.IO;
+﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Windows;
-using System.Windows.Input;
 
 namespace PixelCrypt.ViewModel.Base
 {

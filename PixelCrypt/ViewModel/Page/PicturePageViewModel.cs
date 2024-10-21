@@ -209,12 +209,12 @@ namespace PixelCrypt.ViewModel.Page
                 if (p is not string action) return;
 
                 IsButtonFree = false;
-                FilePathImageStackPanel = LoadFilePathImages();
                 _isSuccessAction = false;
+                _resultImages.Clear();
+                FilePathImageStackPanel = LoadFilePathImages(); 
                 SaveButtonWidth = new GridLength(0, GridUnitType.Pixel);
                 ImageResultHeight = new GridLength(0, GridUnitType.Pixel);
                 ImageResultWidth = new GridLength(0, GridUnitType.Pixel);
-                _resultImages.Clear();
                 ResultImageWidth = SaveButtonWidth;
 
                 switch (action)
@@ -293,7 +293,7 @@ namespace PixelCrypt.ViewModel.Page
                         Program.ConvertToBitmap(image).Save(name, format);
                     }
 
-                    Notification.MakeMessage("Картинки сохранены", "Сохранение изображений");
+                    Notification.MakeMessage("Данные сохранены", "Сохранение данных");
                 }
             }
             catch (Exception)
@@ -317,13 +317,13 @@ namespace PixelCrypt.ViewModel.Page
                     FilePathImageStackPanel = LoadFilePathImages();
                 }
 
-                Notification.MakeMessage("Все картинки успешно расшифрованы");
+                Notification.MakeMessage("Все картинки расшифрованы");
 
                 _isSuccessAction = true;
             }
             catch
             {
-                Notification.MakeMessage("Не удалось расшифровать картинку");
+                Notification.MakeMessage("Не удалось расшифровать картинки");
                 _isSuccessAction = false;
             }
         }
