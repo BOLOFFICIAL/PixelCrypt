@@ -915,33 +915,47 @@ namespace PixelCrypt.ViewModel.Page
 
                     var uniqBinaryLength = Program.ToBinary(listPixels.Count).Length;
 
-                    var lDiv = "";
-                    var lMod = "";
+                    var A = "";
+                    var R = "";
+                    var G = "";
+                    var B = "";
 
                     var index = 0;
 
                     for (index = 0; index < slash * uniqBinaryLength - (slash - 1); index += slash)
                     {
-                        lDiv += (listPixels[index].A % 2 == 0) ? "1" : "0";
-                        lMod += (listPixels[index].B % 2 == 0) ? "1" : "0";
+                        A += (listPixels[index].A % 2 == 0) ? "1" : "0";
+                        R += (listPixels[index].R % 2 == 0) ? "1" : "0";
+                        G += (listPixels[index].G % 2 == 0) ? "1" : "0";
+                        B += (listPixels[index].B % 2 == 0) ? "1" : "0";
                     }
 
-                    var sizeDiv = Program.FromBinary(lDiv);
-                    var SizeMod = Program.FromBinary(lMod);
+                    var SizeA = Program.FromBinary(A);
+                    var SizeR = Program.FromBinary(R);
+                    var SizeG = Program.FromBinary(G);
+                    var SizeB = Program.FromBinary(B);
 
                     var dataA = new StringBuilder();
                     var dataR = new StringBuilder();
                     var dataG = new StringBuilder();
                     var dataB = new StringBuilder();
 
-                    for (int i = index; i < index + (slash * sizeDiv - (slash - 1)); i += slash)
+                    for (int i = index; i < index + (slash * SizeA - (slash - 1)); i += slash)
                     {
                         dataA.Append((listPixels[i].A % 2 == 0) ? "1" : "0");
+                    }
+
+                    for (int i = index; i < index + (slash * SizeR - (slash - 1)); i += slash)
+                    {
                         dataR.Append((listPixels[i].R % 2 == 0) ? "1" : "0");
+                    }
+
+                    for (int i = index; i < index + (slash * SizeG - (slash - 1)); i += slash)
+                    {
                         dataG.Append((listPixels[i].G % 2 == 0) ? "1" : "0");
                     }
 
-                    for (int i = index; i < index + (slash * SizeMod - (slash - 1)); i += 8)
+                    for (int i = index; i < index + (slash * SizeB - (slash - 1)); i += 8)
                     {
                         dataB.Append((listPixels[i].B % 2 == 0) ? "1" : "0");
                     }
