@@ -11,7 +11,8 @@ namespace PixelCrypt.View.Window
         public NotificationWindow(string content, string title = "PixelCrypt", NotificationButton messageBoxButton = NotificationButton.Ok)
         {
             InitializeComponent();
-            DataContext = new NotificationViewModel(content, title, messageBoxButton);
+            DataContext = new NotificationViewModel((new Action(Close)), content, title, messageBoxButton);
+            ShowDialog();
         }
     }
 }

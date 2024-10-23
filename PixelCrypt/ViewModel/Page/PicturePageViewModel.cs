@@ -4,11 +4,8 @@ using Microsoft.WindowsAPICodePack.Dialogs;
 using PixelCrypt.Commands.Base;
 using PixelCrypt.ProgramData;
 using PixelCrypt.View;
-using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Security.Cryptography;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -159,7 +156,20 @@ namespace PixelCrypt.ViewModel.Page
 
         private bool CanChoseImageCommandExecute(object arg)
         {
-            return CanChoseImage();
+            var res = true;
+
+            if (_filePathImages.Count > 0)
+            {
+                ActionWidth = new GridLength(1, GridUnitType.Star);
+                ImagesWidth = new GridLength(1, GridUnitType.Star);
+            }
+            else
+            {
+                ActionWidth = new GridLength(0, GridUnitType.Pixel);
+                ImagesWidth = new GridLength(0, GridUnitType.Pixel);
+            }
+
+            return res;
         }
 
         public void OnChoseImageCommandExecuted(object p = null)
@@ -211,7 +221,7 @@ namespace PixelCrypt.ViewModel.Page
                 IsButtonFree = false;
                 _isSuccessAction = false;
                 _resultImages.Clear();
-                FilePathImageStackPanel = LoadFilePathImages(); 
+                FilePathImageStackPanel = LoadFilePathImages();
                 SaveButtonWidth = new GridLength(0, GridUnitType.Pixel);
                 ImageResultHeight = new GridLength(0, GridUnitType.Pixel);
                 ImageResultWidth = new GridLength(0, GridUnitType.Pixel);
@@ -290,7 +300,7 @@ namespace PixelCrypt.ViewModel.Page
                         format = ImageFormat.Png;
                         name += ".png";
                         image.Source = _resultImages[i];
-                        Program.ConvertToBitmap(image).Save(name, format);
+                        Converter.ConvertImageToBitmap(image).Save(name, format);
                     }
 
                     Notification.MakeMessage("Данные сохранены", "Сохранение данных");
@@ -304,13 +314,13 @@ namespace PixelCrypt.ViewModel.Page
 
         private async Task Decrypt()
         {
-            var hashPassword = Program.Hash32(Password?.Length > 0 ? Password : "PyxelCrypt");
+            var hashPassword = Program.GetHash32(Password?.Length > 0 ? Password : "PyxelCrypt");
 
             try
             {
                 foreach (var file in _filePathImages)
                 {
-                    var decryptPhoto = await DecryptPhoto(file, hashPassword);
+                    var decryptPhoto = await Cryptography.DecryptPhoto(file, hashPassword);
 
                     _resultImages.Add(decryptPhoto);
 
@@ -330,13 +340,13 @@ namespace PixelCrypt.ViewModel.Page
 
         private async Task Encrypt()
         {
-            var hashPassword = Program.Hash32(Password?.Length > 0 ? Password : "PyxelCrypt");
+            var hashPassword = Program.GetHash32(Password?.Length > 0 ? Password : "PyxelCrypt");
 
             try
             {
                 foreach (var file in _filePathImages)
                 {
-                    var encryptPhoto = await EncryptPhoto(file, hashPassword);
+                    var encryptPhoto = await Cryptography.EncryptPhoto(file, hashPassword);
 
                     _resultImages.Add(encryptPhoto);
 
@@ -356,121 +366,6 @@ namespace PixelCrypt.ViewModel.Page
                 _resultImages.Clear();
                 FilePathImageStackPanel = LoadFilePathImages();
             }
-        }
-
-        private bool CanChoseImage()
-        {
-            var res = true;
-
-            if (_filePathImages.Count > 0)
-            {
-                ActionWidth = new GridLength(1, GridUnitType.Star);
-                ImagesWidth = new GridLength(1, GridUnitType.Star);
-            }
-            else
-            {
-                ActionWidth = new GridLength(0, GridUnitType.Pixel);
-                ImagesWidth = new GridLength(0, GridUnitType.Pixel);
-            }
-
-            return res;
-        }
-
-        public static async Task<BitmapImage> EncryptPhoto(string imagepath, string key)
-        {
-            var encryptedPixels = await Task.Run(() =>
-            {
-                var pixels = Program.GetPixelsFromImageArray(imagepath);
-                int width = pixels.GetLength(0);
-                int height = pixels.GetLength(1);
-
-                var listPixels = Program.GetPixelsFromImageList(pixels);
-                var encrypt = EncryptSequence(listPixels, key);
-
-                return Program.CreateBitmapFromPixelsList(encrypt, width, height);
-            });
-
-            return ConvertToBitmapImage(encryptedPixels);
-        }
-
-
-        public static async Task<BitmapImage> DecryptPhoto(string imagepath, string key)
-        {
-            var decryptedPixels = await Task.Run(() =>
-            {
-                var pixels = Program.GetPixelsFromImageArray(imagepath);
-                int width = pixels.GetLength(0);
-                int height = pixels.GetLength(1);
-
-                var listPixels = Program.GetPixelsFromImageList(pixels);
-                var decrypt = DecryptSequence(listPixels, key);
-
-                return Program.CreateBitmapFromPixelsList(decrypt, width, height);
-            });
-
-            return ConvertToBitmapImage(decryptedPixels);
-        }
-
-        public static BitmapImage ConvertToBitmapImage(Bitmap bitmap)
-        {
-            BitmapImage bitmapImage = new BitmapImage();
-
-            using (MemoryStream stream = new MemoryStream())
-            {
-                bitmap.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
-                stream.Position = 0;
-
-                bitmapImage.BeginInit();
-                bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
-                bitmapImage.StreamSource = stream;
-                bitmapImage.EndInit();
-            }
-
-            return bitmapImage;
-        }
-
-        private static List<int> CreatePermutation(string password, int length)
-        {
-            using (var md5 = MD5.Create())
-            {
-                byte[] hash = md5.ComputeHash(Encoding.UTF8.GetBytes(password));
-                int hashValue = BitConverter.ToInt32(hash, 0);
-
-                List<int> perm = Enumerable.Range(0, length).ToList();
-                Random random = new Random(hashValue);
-                perm = perm.OrderBy(x => random.Next()).ToList();
-
-                return perm;
-            }
-        }
-
-        private static List<T> EncryptSequence<T>(List<T> collection, string password)
-        {
-            int length = collection.Count;
-            List<int> perm = CreatePermutation(password, length);
-            List<T> encryptedCollection = new List<T>(new T[length]);
-            for (int i = 0; i < length; i++)
-            {
-                encryptedCollection[i] = collection[perm[i]];
-            }
-            return encryptedCollection;
-        }
-
-        private static List<T> DecryptSequence<T>(List<T> encryptedCollection, string password)
-        {
-            int length = encryptedCollection.Count;
-            List<int> perm = CreatePermutation(password, length);
-            List<int> reversePerm = new List<int>(new int[length]);
-            for (int i = 0; i < length; i++)
-            {
-                reversePerm[perm[i]] = i;
-            }
-            List<T> decryptedCollection = new List<T>(new T[length]);
-            for (int i = 0; i < length; i++)
-            {
-                decryptedCollection[i] = encryptedCollection[reversePerm[i]];
-            }
-            return decryptedCollection;
         }
 
         private void OnClosePageCommandExecuted(object p = null)

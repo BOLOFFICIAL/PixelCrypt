@@ -321,7 +321,31 @@ namespace PixelCrypt.ViewModel.Page
 
         private bool CanSaveCommandExecute(object arg)
         {
-            return CanSave();
+            var res = true;
+
+            res = res && IsSuccessAction;
+
+            if (_isImport)
+            {
+                res = res && _resultImages.Count > 0;
+            }
+            else
+            {
+                res = res && FilePathFile.Length > 0;
+
+                res = res && FileData.Length > 0;
+            }
+
+            if (res)
+            {
+                SaveButtonWidth = new GridLength(1, GridUnitType.Auto);
+            }
+            else
+            {
+                SaveButtonWidth = new GridLength(0, GridUnitType.Pixel);
+            }
+
+            return res;
         }
 
         private void OnSaveCommandExecuted(object p = null)
@@ -365,12 +389,9 @@ namespace PixelCrypt.ViewModel.Page
                 }
                 else
                 {
-                    if (File.Exists(_filePathFile))
-                    {
-                        File.WriteAllText(_filePathFile, FileData);
+                    var message = Program.SaveDataToFile(_filePathFile, FileData) ? "Данные успешно сохранены" : "Не удалось сохранить данные";
 
-                        Notification.MakeMessage("Данные успешно сохранены", "Сохранение");
-                    }
+                    Notification.MakeMessage(message, "Сохранение");
                 }
             }
             catch (Exception)
@@ -417,7 +438,18 @@ namespace PixelCrypt.ViewModel.Page
 
         private bool CanChoseImageCommandExecute(object arg)
         {
-            return CanChoseImage();
+            var res = true;
+
+            if (FilePathImage.Length > 0)
+            {
+                ChoseImageWidth = new GridLength(1, GridUnitType.Auto);
+            }
+            else
+            {
+                ChoseImageWidth = new GridLength(0, GridUnitType.Pixel);
+            }
+
+            return res;
         }
 
         public void OnChoseImageCommandExecuted(object p = null)
@@ -485,7 +517,25 @@ namespace PixelCrypt.ViewModel.Page
 
         private bool CanDoActionCommandExecute(object arg)
         {
-            return CanDoAction();
+            _canDoAction = true;
+
+            if (_isImport)
+            {
+                _canDoAction = _canDoAction && FileData.Length > 0;
+            }
+
+            if (_canDoAction)
+            {
+                ActionButtonBackgroundColor = Color2;
+                ActionButtonForegroundColor = Color3;
+            }
+            else
+            {
+                ActionButtonBackgroundColor = Color4;
+                ActionButtonForegroundColor = Color3;
+            }
+
+            return true;
         }
 
         public void OnRemoveImageCommandExecuted(object p = null)
@@ -515,6 +565,49 @@ namespace PixelCrypt.ViewModel.Page
                     ActionWidth = new GridLength(0, GridUnitType.Pixel);
                 }
             }
+
+            if (_isSuccessAction)
+            {
+                FilePathImageStackPanel = LoadFilePathImages(_filePathImages.Count);
+            }
+            else
+            {
+                FilePathImageStackPanel = LoadFilePathImages();
+            }
+        }
+
+        private void OnClosePageCommandExecuted(object p = null)
+        {
+            Context.MainWindowViewModel.CurrentPage = new MainPage();
+        }
+
+        private void OnShowPaswordCommandExecuted(object p = null)
+        {
+            if (_isOpenPassword)
+            {
+                OpenPasswordWidth = new GridLength(1, GridUnitType.Star);
+                ClosePasswordWidth = new GridLength(0, GridUnitType.Star);
+                ShowPasword = "Regular_Eye";
+            }
+            else
+            {
+                OpenPasswordWidth = new GridLength(0, GridUnitType.Star);
+                ClosePasswordWidth = new GridLength(1, GridUnitType.Star);
+                ShowPasword = "Regular_EyeSlash";
+            }
+
+            _isOpenPassword = !_isOpenPassword;
+        }
+
+        public void OnShowImageCommandExecuted(object p = null)
+        {
+            int index = (p == null) ? (-1) : ((p is int value) ? (value) : (-1));
+
+            if (index == -1 || _selectedElementIndex == index) return;
+
+            _selectedElementIndex = index;
+
+            ImageData = _filePathImages[_selectedElementIndex];
 
             if (_isSuccessAction)
             {
@@ -670,74 +763,6 @@ namespace PixelCrypt.ViewModel.Page
             return stackPanel;
         }
 
-        private bool CanDoAction()
-        {
-            _canDoAction = true;
-
-            if (_isImport)
-            {
-                _canDoAction = _canDoAction && FileData.Length > 0;
-            }
-
-            if (_canDoAction)
-            {
-                ActionButtonBackgroundColor = Color2;
-                ActionButtonForegroundColor = Color3;
-            }
-            else
-            {
-                ActionButtonBackgroundColor = Color4;
-                ActionButtonForegroundColor = Color3;
-            }
-
-            return true;
-        }
-
-        private bool CanSave()
-        {
-            var res = true;
-
-            res = res && IsSuccessAction;
-
-            if (_isImport)
-            {
-                res = res && _resultImages.Count > 0;
-            }
-            else
-            {
-                res = res && FilePathFile.Length > 0;
-
-                res = res && FileData.Length > 0;
-            }
-
-            if (res)
-            {
-                SaveButtonWidth = new GridLength(1, GridUnitType.Auto);
-            }
-            else
-            {
-                SaveButtonWidth = new GridLength(0, GridUnitType.Pixel);
-            }
-
-            return res;
-        }
-
-        private bool CanChoseImage()
-        {
-            var res = true;
-
-            if (FilePathImage.Length > 0)
-            {
-                ChoseImageWidth = new GridLength(1, GridUnitType.Auto);
-            }
-            else
-            {
-                ChoseImageWidth = new GridLength(0, GridUnitType.Pixel);
-            }
-
-            return res;
-        }
-
         private async Task ExportData()
         {
             var BynaryData = new List<string>();
@@ -748,7 +773,7 @@ namespace PixelCrypt.ViewModel.Page
             {
                 foreach (var filePathImage in _filePathImages)
                 {
-                    var exportDataImage = await ExportDataFromImage(filePathImage);
+                    var exportDataImage = await ImageHelper.ExportDataFromImage(filePathImage);
                     BynaryData.Add(exportDataImage);
                     FilePathImageStackPanel = LoadFilePathImages(BynaryData.Count);
                 }
@@ -760,11 +785,11 @@ namespace PixelCrypt.ViewModel.Page
                     allData.Append(item);
                 }
 
-                var exportData = Program.BinaryToText(allData.ToString());
+                var exportData = Converter.ConvertBinaryStringToText(allData.ToString());
 
-                var hashPassword = Program.Hash32(Password?.Length > 0 ? Password : "PyxelCrypt");
+                var hashPassword = Program.GetHash32(Password?.Length > 0 ? Password : "PyxelCrypt");
 
-                exportData = Program.Decrypt(exportData, hashPassword);
+                exportData = Cryptography.DecryptText(exportData, hashPassword);
 
                 _isSuccessAction = true;
 
@@ -786,11 +811,11 @@ namespace PixelCrypt.ViewModel.Page
             {
                 var inportData = FileData;
 
-                var hashPassword = Program.Hash32(Password?.Length > 0 ? Password : "PyxelCrypt");
+                var hashPassword = Program.GetHash32(Password?.Length > 0 ? Password : "PyxelCrypt");
 
-                inportData = Program.Encrypt(inportData, hashPassword);
+                inportData = Cryptography.EncryptText(inportData, hashPassword);
 
-                string binary = Program.TextToBinary(inportData);
+                string binary = Converter.ConvertTextToBinaryString(inportData);
 
                 _resultImages = new List<Bitmap>();
 
@@ -798,7 +823,7 @@ namespace PixelCrypt.ViewModel.Page
 
                 for (int i = 0; i < _filePathImages.Count; i++)
                 {
-                    var importDataImage = await ImportDataToImage(lines[i], _filePathImages[i]);
+                    var importDataImage = await ImageHelper.ImportDataToImage(lines[i], _filePathImages[i]);
                     _resultImages.Add(importDataImage);
                     FilePathImageStackPanel = LoadFilePathImages(_resultImages.Count);
                 }
@@ -816,225 +841,6 @@ namespace PixelCrypt.ViewModel.Page
             }
         }
 
-        private async Task<Bitmap> ImportDataToImage(string data, string filepath)
-        {
-            var importDataImage = await Task.Run(() =>
-            {
-                var pixels = Program.GetPixelsFromImageArray(filepath);
-
-                var listPixels = new List<System.Drawing.Color>();
-
-                int width = pixels.GetLength(0);
-                int height = pixels.GetLength(1);
-
-                for (int x = 0; x < width; x++)
-                {
-                    for (int y = 0; y < height; y++)
-                    {
-                        var color = System.Drawing.Color.FromArgb(
-                            NormalizeColorByte(pixels[x, y].A),
-                            NormalizeColorByte(pixels[x, y].R),
-                            NormalizeColorByte(pixels[x, y].G),
-                            NormalizeColorByte(pixels[x, y].B));
-
-                        listPixels.Add(color);
-                    }
-                }
-
-                var uniqBinaryLength = Program.ToBinary(listPixels.Count).Length;
-
-                var spl = Program.SplitStringIntoParts(data, 4);
-
-                var l0 = Program.ToBinary(spl[0].Length).PadLeft(uniqBinaryLength, '0');
-                var l1 = Program.ToBinary(spl[1].Length).PadLeft(uniqBinaryLength, '0');
-                var l2 = Program.ToBinary(spl[2].Length).PadLeft(uniqBinaryLength, '0');
-                var l3 = Program.ToBinary(spl[3].Length).PadLeft(uniqBinaryLength, '0');
-
-                var dataA = l0 + spl[0];
-                var dataR = l1 + spl[1];
-                var dataG = l2 + spl[2];
-                var dataB = l3 + spl[3];
-
-                var limit = listPixels.Count / slash;
-
-                var avrage = (dataA.Length + dataR.Length + dataG.Length + dataB.Length) / 4;
-
-                if (limit < avrage)
-                {
-                    throw new Exception($"Данных слишком  много для импорта в картинку");
-                }
-
-                var newPixels = new System.Drawing.Color[width, height];
-
-                int index = 0;
-                int elementIndex = 0;
-
-                for (int x = 0; x < width; x++)
-                {
-                    for (int y = 0; y < height; y++)
-                    {
-                        var color = System.Drawing.Color.FromArgb(
-                            listPixels[index].A,
-                            listPixels[index].R,
-                            listPixels[index].G,
-                            listPixels[index].B);
-
-                        if (index % slash == 0)
-                        {
-                            var a = (elementIndex < dataA.Length) ? (byte)(color.A - byte.Parse(dataA[elementIndex].ToString())) : color.A;
-                            var r = (elementIndex < dataR.Length) ? (byte)(color.R - byte.Parse(dataR[elementIndex].ToString())) : color.R;
-                            var g = (elementIndex < dataG.Length) ? (byte)(color.G - byte.Parse(dataG[elementIndex].ToString())) : color.G;
-                            var b = (elementIndex < dataB.Length) ? (byte)(color.B - byte.Parse(dataB[elementIndex].ToString())) : color.B;
-
-                            color = System.Drawing.Color.FromArgb(a, r, g, b);
-
-                            elementIndex++;
-                        }
-
-                        newPixels[x, y] = color;
-                        index++;
-                    }
-                }
-                return newPixels;
-            });
-
-            return Program.CreateBitmapFromPixels(importDataImage);
-        }
-
-        private async Task<string> ExportDataFromImage(string path)
-        {
-            try
-            {
-                var exportDataImage = await Task.Run(() =>
-                {
-                    var res = "";
-
-                    var pixels = Program.GetPixelsFromImageArray(path);
-
-                    var listPixels = Program.GetPixelsFromImageList(pixels);
-
-                    var uniqBinaryLength = Program.ToBinary(listPixels.Count).Length;
-
-                    var A = "";
-                    var R = "";
-                    var G = "";
-                    var B = "";
-
-                    var index = 0;
-
-                    for (index = 0; index < slash * uniqBinaryLength - (slash - 1); index += slash)
-                    {
-                        A += (listPixels[index].A % 2 == 0) ? "1" : "0";
-                        R += (listPixels[index].R % 2 == 0) ? "1" : "0";
-                        G += (listPixels[index].G % 2 == 0) ? "1" : "0";
-                        B += (listPixels[index].B % 2 == 0) ? "1" : "0";
-                    }
-
-                    var SizeA = Program.FromBinary(A);
-                    var SizeR = Program.FromBinary(R);
-                    var SizeG = Program.FromBinary(G);
-                    var SizeB = Program.FromBinary(B);
-
-                    var dataA = new StringBuilder();
-                    var dataR = new StringBuilder();
-                    var dataG = new StringBuilder();
-                    var dataB = new StringBuilder();
-
-                    for (int i = index; i < index + (slash * SizeA - (slash - 1)); i += slash)
-                    {
-                        dataA.Append((listPixels[i].A % 2 == 0) ? "1" : "0");
-                    }
-
-                    for (int i = index; i < index + (slash * SizeR - (slash - 1)); i += slash)
-                    {
-                        dataR.Append((listPixels[i].R % 2 == 0) ? "1" : "0");
-                    }
-
-                    for (int i = index; i < index + (slash * SizeG - (slash - 1)); i += slash)
-                    {
-                        dataG.Append((listPixels[i].G % 2 == 0) ? "1" : "0");
-                    }
-
-                    for (int i = index; i < index + (slash * SizeB - (slash - 1)); i += 8)
-                    {
-                        dataB.Append((listPixels[i].B % 2 == 0) ? "1" : "0");
-                    }
-
-                    res = dataA.ToString() + dataR.ToString() + dataG.ToString() + dataB.ToString();
-                    return res;
-                });
-
-                return exportDataImage;
-            }
-            catch
-            {
-                return "";
-            }
-        }
-
-        private byte NormalizeColorByte(byte value)
-        {
-            var res = value;
-            if (res % 2 != 0)
-            {
-                return res;
-            }
-            else
-            {
-                if (res == 0)
-                {
-                    return 1;
-                }
-                else
-                {
-                    return (byte)(res - 1);
-                }
-            }
-        }
-
         #endregion
-
-        private void OnClosePageCommandExecuted(object p = null)
-        {
-            Context.MainWindowViewModel.CurrentPage = new MainPage();
-        }
-
-        private void OnShowPaswordCommandExecuted(object p = null)
-        {
-            if (_isOpenPassword)
-            {
-                OpenPasswordWidth = new GridLength(1, GridUnitType.Star);
-                ClosePasswordWidth = new GridLength(0, GridUnitType.Star);
-                ShowPasword = "Regular_Eye";
-            }
-            else
-            {
-                OpenPasswordWidth = new GridLength(0, GridUnitType.Star);
-                ClosePasswordWidth = new GridLength(1, GridUnitType.Star);
-                ShowPasword = "Regular_EyeSlash";
-            }
-
-            _isOpenPassword = !_isOpenPassword;
-        }
-
-        public void OnShowImageCommandExecuted(object p = null)
-        {
-            int index = (p == null) ? (-1) : ((p is int value) ? (value) : (-1));
-
-            if (index == -1 || _selectedElementIndex == index) return;
-
-            _selectedElementIndex = index;
-
-            ImageData = _filePathImages[_selectedElementIndex];
-
-            if (_isSuccessAction)
-            {
-                FilePathImageStackPanel = LoadFilePathImages(_filePathImages.Count);
-            }
-            else
-            {
-                FilePathImageStackPanel = LoadFilePathImages();
-            }
-        }
     }
 }

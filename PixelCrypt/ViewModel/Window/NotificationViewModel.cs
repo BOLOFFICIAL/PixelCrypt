@@ -10,9 +10,13 @@ namespace PixelCrypt.ViewModel.Window
         public ICommand CloseNotificationCommand { get; }
         public string Title { get; set; }
         public string Content { get; set; }
+
+        private Action _closeWindow;
+
         public string FirstButtonContent { get; set; }
         public string SecondButtonContent { get; set; }
         public GridLength SecondButtonWidth { get; set; }
+        public NotificationResult NotificationResult { get; private set; }
 
         private Dictionary<string, NotificationResult> _buttonContents = new()
         {
@@ -22,12 +26,13 @@ namespace PixelCrypt.ViewModel.Window
             {"Close",NotificationResult.Close },
         };
 
-        public NotificationViewModel(string content, string title = "PixelCrypt", NotificationButton messageBoxButton = NotificationButton.Ok)
+        public NotificationViewModel(Action closeWindow, string content, string title = "PixelCrypt", NotificationButton messageBoxButton = NotificationButton.Ok)
         {
             CloseNotificationCommand = new LambdaCommand(OnCloseNotificationCommandExecuted);
 
             Title = title;
             Content = content;
+            _closeWindow = closeWindow;
 
             UpdateParams(messageBoxButton);
         }
@@ -35,8 +40,8 @@ namespace PixelCrypt.ViewModel.Window
         private void OnCloseNotificationCommandExecuted(object p = null)
         {
             if (p is not string parametr) return;
-            Context.NotificationWindow.Close();
-            Context.NotificationResult = _buttonContents[parametr];
+            NotificationResult = _buttonContents[parametr];
+            _closeWindow();
         }
 
         private void UpdateParams(NotificationButton messageBoxButton)
