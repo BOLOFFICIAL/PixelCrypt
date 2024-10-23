@@ -53,7 +53,7 @@ namespace PixelCrypt.ProgramData
 
                 if (limit < avrage)
                 {
-                    throw new Exception($"Данных слишком  много для импорта в картинку");
+                    throw new Exception($"A lot of data");
                 }
 
                 var newPixels = new Color[width, height];
@@ -65,11 +65,7 @@ namespace PixelCrypt.ProgramData
                 {
                     for (int y = 0; y < height; y++)
                     {
-                        var color = Color.FromArgb(
-                            listPixels[index].A,
-                            listPixels[index].R,
-                            listPixels[index].G,
-                            listPixels[index].B);
+                        var color = Color.FromArgb(listPixels[index].A, listPixels[index].R, listPixels[index].G, listPixels[index].B);
 
                         if (index % slash == 0)
                         {
@@ -78,7 +74,7 @@ namespace PixelCrypt.ProgramData
                             var g = (elementIndex < dataG.Length) ? (byte)(color.G - byte.Parse(dataG[elementIndex].ToString())) : color.G;
                             var b = (elementIndex < dataB.Length) ? (byte)(color.B - byte.Parse(dataB[elementIndex].ToString())) : color.B;
 
-                            color = System.Drawing.Color.FromArgb(a, r, g, b);
+                            color = Color.FromArgb(a, r, g, b);
 
                             elementIndex++;
                         }
@@ -99,61 +95,34 @@ namespace PixelCrypt.ProgramData
             {
                 var exportDataImage = await Task.Run(() =>
                 {
-                    var res = "";
-
                     var pixels = GetArrayPixelsFromImage(path);
 
                     var listPixels = GetListPixelsFromArrayPixels(pixels);
 
                     var uniqBinaryLength = Converter.ConvertIntToBinaryString(listPixels.Count).Length;
 
-                    var A = "";
-                    var R = "";
-                    var G = "";
-                    var B = "";
+                    var A = new StringBuilder();
+                    var R = new StringBuilder();
+                    var G = new StringBuilder();
+                    var B = new StringBuilder();
 
                     var index = 0;
 
                     for (index = 0; index < slash * uniqBinaryLength - (slash - 1); index += slash)
                     {
-                        A += (listPixels[index].A % 2 == 0) ? "1" : "0";
-                        R += (listPixels[index].R % 2 == 0) ? "1" : "0";
-                        G += (listPixels[index].G % 2 == 0) ? "1" : "0";
-                        B += (listPixels[index].B % 2 == 0) ? "1" : "0";
+                        var currentPixel = listPixels[index];
+                        A.Append((currentPixel.A % 2 == 0) ? "1" : "0");
+                        R.Append((currentPixel.R % 2 == 0) ? "1" : "0");
+                        G.Append((currentPixel.G % 2 == 0) ? "1" : "0");
+                        B.Append((currentPixel.B % 2 == 0) ? "1" : "0");
                     }
 
-                    var SizeA = Converter.ConvertBinaryStringToInt(A);
-                    var SizeR = Converter.ConvertBinaryStringToInt(R);
-                    var SizeG = Converter.ConvertBinaryStringToInt(G);
-                    var SizeB = Converter.ConvertBinaryStringToInt(B);
+                    var dataA = new string(Enumerable.Range(0, Converter.ConvertBinaryStringToInt(A.ToString())).Select(i => (listPixels[index + i * slash].A & 1) == 0 ? '1' : '0').ToArray());
+                    var dataR = new string(Enumerable.Range(0, Converter.ConvertBinaryStringToInt(R.ToString())).Select(i => (listPixels[index + i * slash].R & 1) == 0 ? '1' : '0').ToArray());
+                    var dataG = new string(Enumerable.Range(0, Converter.ConvertBinaryStringToInt(G.ToString())).Select(i => (listPixels[index + i * slash].G & 1) == 0 ? '1' : '0').ToArray());
+                    var dataB = new string(Enumerable.Range(0, Converter.ConvertBinaryStringToInt(B.ToString())).Select(i => (listPixels[index + i * slash].B & 1) == 0 ? '1' : '0').ToArray());
 
-                    var dataA = new StringBuilder();
-                    var dataR = new StringBuilder();
-                    var dataG = new StringBuilder();
-                    var dataB = new StringBuilder();
-
-                    for (int i = index; i < index + (slash * SizeA - (slash - 1)); i += slash)
-                    {
-                        dataA.Append((listPixels[i].A % 2 == 0) ? "1" : "0");
-                    }
-
-                    for (int i = index; i < index + (slash * SizeR - (slash - 1)); i += slash)
-                    {
-                        dataR.Append((listPixels[i].R % 2 == 0) ? "1" : "0");
-                    }
-
-                    for (int i = index; i < index + (slash * SizeG - (slash - 1)); i += slash)
-                    {
-                        dataG.Append((listPixels[i].G % 2 == 0) ? "1" : "0");
-                    }
-
-                    for (int i = index; i < index + (slash * SizeB - (slash - 1)); i += 8)
-                    {
-                        dataB.Append((listPixels[i].B % 2 == 0) ? "1" : "0");
-                    }
-
-                    res = dataA.ToString() + dataR.ToString() + dataG.ToString() + dataB.ToString();
-                    return res;
+                    return dataA + dataR + dataG + dataB;
                 });
 
                 return exportDataImage;
@@ -215,7 +184,7 @@ namespace PixelCrypt.ProgramData
 
         public static List<Color> GetListPixelsFromArrayPixels(Color[,] pixels)
         {
-            var listPixels = new List<System.Drawing.Color>();
+            var listPixels = new List<Color>();
 
             int width = pixels.GetLength(0);
             int height = pixels.GetLength(1);
@@ -224,7 +193,7 @@ namespace PixelCrypt.ProgramData
             {
                 for (int y = 0; y < height; y++)
                 {
-                    listPixels.Add(System.Drawing.Color.FromArgb(pixels[x, y].A, pixels[x, y].R, pixels[x, y].G, pixels[x, y].B));
+                    listPixels.Add(Color.FromArgb(pixels[x, y].A, pixels[x, y].R, pixels[x, y].G, pixels[x, y].B));
                 }
             }
 
