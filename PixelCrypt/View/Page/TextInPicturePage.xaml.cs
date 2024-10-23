@@ -1,4 +1,5 @@
-﻿using PixelCrypt.ViewModel.Page;
+﻿using PixelCrypt.ProgramData;
+using PixelCrypt.ViewModel.Page;
 
 namespace PixelCrypt.View.Page
 {
@@ -10,7 +11,7 @@ namespace PixelCrypt.View.Page
         public TextInPicturePage()
         {
             InitializeComponent();
-            DataContext = new TextInPicturePageViewModel();
+            DataContext = Context.TextInPicturePageViewModel;
         }
     }
 }

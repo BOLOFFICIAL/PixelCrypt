@@ -26,7 +26,6 @@
                 <Button BorderThickness="0"
                         Background="Transparent"
                         BorderBrush="Transparent"
-                        IsEnabled="{Binding Path=IsButtonFree,UpdateSourceTrigger=PropertyChanged}"
                         Command="{Binding Path=ClosePageCommand}"
                         Padding="0">
                     <fa:ImageAwesome Icon="Regular_ArrowAltCircleLeft"

@@ -91,46 +91,66 @@ namespace PixelCrypt.ProgramData
 
         public static async Task<string> ExportDataFromImage(string path)
         {
-            try
+            var exportDataImage = await Task.Run(() =>
             {
-                var exportDataImage = await Task.Run(() =>
+                var res = "";
+
+                var pixels = GetArrayPixelsFromImage(path);
+
+                var listPixels = GetListPixelsFromArrayPixels(pixels);
+
+                var uniqBinaryLength = Converter.ConvertIntToBinaryString(listPixels.Count).Length;
+
+                var A = "";
+                var R = "";
+                var G = "";
+                var B = "";
+
+                var index = 0;
+
+                for (index = 0; index < slash * uniqBinaryLength - (slash - 1); index += slash)
                 {
-                    var pixels = GetArrayPixelsFromImage(path);
+                    A += (listPixels[index].A % 2 == 0) ? "1" : "0";
+                    R += (listPixels[index].R % 2 == 0) ? "1" : "0";
+                    G += (listPixels[index].G % 2 == 0) ? "1" : "0";
+                    B += (listPixels[index].B % 2 == 0) ? "1" : "0";
+                }
 
-                    var listPixels = GetListPixelsFromArrayPixels(pixels);
+                var SizeA = Converter.ConvertBinaryStringToInt(A);
+                var SizeR = Converter.ConvertBinaryStringToInt(R);
+                var SizeG = Converter.ConvertBinaryStringToInt(G);
+                var SizeB = Converter.ConvertBinaryStringToInt(B);
 
-                    var uniqBinaryLength = Converter.ConvertIntToBinaryString(listPixels.Count).Length;
+                var dataA = new StringBuilder();
+                var dataR = new StringBuilder();
+                var dataG = new StringBuilder();
+                var dataB = new StringBuilder();
 
-                    var A = new StringBuilder();
-                    var R = new StringBuilder();
-                    var G = new StringBuilder();
-                    var B = new StringBuilder();
+                for (int i = index; i < index + (slash * SizeA - (slash - 1)); i += slash)
+                {
+                    dataA.Append((listPixels[i].A % 2 == 0) ? "1" : "0");
+                }
 
-                    var index = 0;
+                for (int i = index; i < index + (slash * SizeR - (slash - 1)); i += slash)
+                {
+                    dataR.Append((listPixels[i].R % 2 == 0) ? "1" : "0");
+                }
 
-                    for (index = 0; index < slash * uniqBinaryLength - (slash - 1); index += slash)
-                    {
-                        var currentPixel = listPixels[index];
-                        A.Append((currentPixel.A % 2 == 0) ? "1" : "0");
-                        R.Append((currentPixel.R % 2 == 0) ? "1" : "0");
-                        G.Append((currentPixel.G % 2 == 0) ? "1" : "0");
-                        B.Append((currentPixel.B % 2 == 0) ? "1" : "0");
-                    }
+                for (int i = index; i < index + (slash * SizeG - (slash - 1)); i += slash)
+                {
+                    dataG.Append((listPixels[i].G % 2 == 0) ? "1" : "0");
+                }
 
-                    var dataA = new string(Enumerable.Range(0, Converter.ConvertBinaryStringToInt(A.ToString())).Select(i => (listPixels[index + i * slash].A & 1) == 0 ? '1' : '0').ToArray());
-                    var dataR = new string(Enumerable.Range(0, Converter.ConvertBinaryStringToInt(R.ToString())).Select(i => (listPixels[index + i * slash].R & 1) == 0 ? '1' : '0').ToArray());
-                    var dataG = new string(Enumerable.Range(0, Converter.ConvertBinaryStringToInt(G.ToString())).Select(i => (listPixels[index + i * slash].G & 1) == 0 ? '1' : '0').ToArray());
-                    var dataB = new string(Enumerable.Range(0, Converter.ConvertBinaryStringToInt(B.ToString())).Select(i => (listPixels[index + i * slash].B & 1) == 0 ? '1' : '0').ToArray());
+                for (int i = index; i < index + (slash * SizeB - (slash - 1)); i += 8)
+                {
+                    dataB.Append((listPixels[i].B % 2 == 0) ? "1" : "0");
+                }
 
-                    return dataA + dataR + dataG + dataB;
-                });
+                res = dataA.ToString() + dataR.ToString() + dataG.ToString() + dataB.ToString();
+                return res;
+            });
 
-                return exportDataImage;
-            }
-            catch
-            {
-                return "";
-            }
+            return exportDataImage;
         }
 
         private static byte NormalizeColorByte(byte value)

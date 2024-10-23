@@ -43,6 +43,8 @@ namespace PixelCrypt.ViewModel.Page
         private GridLength _openPasswordWidth = new GridLength(0, GridUnitType.Pixel);
         private GridLength _choseImageWidth = new GridLength(0, GridUnitType.Pixel);
         private int _selectedElementIndex = -1;
+        public Image ResultHeightImage { get; set; }
+        public Image ResultWidthImage { get; set; }
 
         public PicturePageViewModel()
         {
@@ -236,13 +238,13 @@ namespace PixelCrypt.ViewModel.Page
                 {
                     ImageResultHeight = new GridLength(1, GridUnitType.Star);
                     ImageResultWidth = new GridLength(0, GridUnitType.Pixel);
-                    Context.ResultImageHeight.Source = source;
+                    ResultHeightImage.Source = source;
                 }
                 else
                 {
                     ImageResultWidth = new GridLength(1, GridUnitType.Star);
                     ImageResultHeight = new GridLength(0, GridUnitType.Pixel);
-                    Context.ResultImageWidth.Source = source;
+                    ResultWidthImage.Source = source;
                 }
 
                 if (_isSuccessAction)
@@ -419,13 +421,13 @@ namespace PixelCrypt.ViewModel.Page
                     {
                         ImageResultHeight = new GridLength(1, GridUnitType.Star);
                         ImageResultWidth = new GridLength(0, GridUnitType.Pixel);
-                        Context.ResultImageHeight.Source = source;
+                        ResultHeightImage.Source = source;
                     }
                     else
                     {
                         ImageResultWidth = new GridLength(1, GridUnitType.Star);
                         ImageResultHeight = new GridLength(0, GridUnitType.Pixel);
-                        Context.ResultImageWidth.Source = source;
+                        ResultWidthImage.Source = source;
                     }
                 }
             }
@@ -451,13 +453,13 @@ namespace PixelCrypt.ViewModel.Page
                 {
                     ImageResultHeight = new GridLength(1, GridUnitType.Star);
                     ImageResultWidth = new GridLength(0, GridUnitType.Pixel);
-                    Context.ResultImageHeight.Source = source;
+                    ResultHeightImage.Source = source;
                 }
                 else
                 {
                     ImageResultWidth = new GridLength(1, GridUnitType.Star);
                     ImageResultHeight = new GridLength(0, GridUnitType.Pixel);
-                    Context.ResultImageWidth.Source = source;
+                    ResultWidthImage.Source = source;
                 }
             }
 
@@ -548,6 +550,26 @@ namespace PixelCrypt.ViewModel.Page
             }
 
             return stackPanel;
+        }
+
+        public void InitializeImage()
+        {
+            if (_isSuccessAction == false || _selectedElementIndex == -1) return;
+
+            var source = _resultImages[_selectedElementIndex];
+
+            if (source.Width > source.Height)
+            {
+                ImageResultHeight = new GridLength(1, GridUnitType.Star);
+                ImageResultWidth = new GridLength(0, GridUnitType.Pixel);
+                ResultHeightImage.Source = source;
+            }
+            else
+            {
+                ImageResultWidth = new GridLength(1, GridUnitType.Star);
+                ImageResultHeight = new GridLength(0, GridUnitType.Pixel);
+                ResultWidthImage.Source = source;
+            }
         }
     }
 }

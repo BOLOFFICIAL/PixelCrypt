@@ -717,6 +717,8 @@ namespace PixelCrypt.ViewModel.Page
 
         private async Task ExportData()
         {
+            var hashPassword = Program.GetHash32(Password?.Length > 0 ? Password : "PyxelCrypt");
+
             var BynaryData = new List<string>();
 
             FileData = "";
@@ -738,8 +740,6 @@ namespace PixelCrypt.ViewModel.Page
                 }
 
                 var exportData = Converter.ConvertBinaryStringToText(allData.ToString());
-
-                var hashPassword = Program.GetHash32(Password?.Length > 0 ? Password : "PyxelCrypt");
 
                 exportData = Cryptography.DecryptText(exportData, hashPassword);
 
