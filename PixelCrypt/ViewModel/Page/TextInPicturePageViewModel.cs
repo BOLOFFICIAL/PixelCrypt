@@ -20,35 +20,22 @@ namespace PixelCrypt.ViewModel.Page
         private string _password = "";
         private string _showPasword = "";
         private string _imageData = "";
-
         private bool _isOpenPassword = false;
-
         private GridLength _closePasswordWidth;
         private GridLength _openPasswordWidth;
         private GridLength _choseImageWidth;
         private GridLength _actionWidth = new GridLength(0, GridUnitType.Pixel);
         private GridLength _imagesWidth = new GridLength(0, GridUnitType.Pixel);
-
         public string _filePathImage = "";
-
         public bool _isSuccessAction = false;
         private bool _isButtonFree = true;
-
         public ICommand ClosePageCommand { get; }
         public ICommand ShowPaswordCommand { get; }
         public ICommand ChoseImageCommand { get; set; }
         public ICommand DoActionCommand { get; set; }
         public ICommand SaveCommand { get; set; }
         private ICommand ShowImageCommand { get; }
-
-        #region Fields
-
-        #region Propertyes
-
-        #region Private
-
         private readonly int slash = 8;
-
         private string _actionButtonName = "";
         private string _filePathFile = "";
         private string _fileData = "";
@@ -60,47 +47,22 @@ namespace PixelCrypt.ViewModel.Page
         private string _actionButtonForegroundColor = "";
         private string _errorDoActionMessage = "";
         private string _errorSaveMessage = "";
-
         private bool _isImport = false;
         private bool _isFileDataReadonly = false;
         private bool _canDoAction = true;
-
         private GridLength _onePictureWidth;
         private GridLength _manyPictureWidth;
         private GridLength _saveButtonWidth = new GridLength(0, GridUnitType.Pixel);
-
         private List<string> _filePathImages = new List<string>();
-
         private List<Bitmap> _resultImages = new List<Bitmap>();
-
         private StackPanel _filePathImageStackPanel = new StackPanel();
-
         private int _selectedElementIndex = -1;
-
-        #endregion
-
-        #endregion
-
-        #region Commands
-
-        #region Public
-
         public ICommand ActionCommand { get; }
         public ICommand SplitCommand { get; }
         public ICommand ClearPathFileCommand { get; }
         public ICommand ChoseFileCommand { get; }
-
-        #endregion
-
-        #region Private
-
         private ICommand RemoveImageCommand { get; }
 
-        #endregion
-
-        #endregion
-
-        #endregion
 
         public TextInPicturePageViewModel()
         {
@@ -122,8 +84,6 @@ namespace PixelCrypt.ViewModel.Page
             OnSplitCommandExecuted(null);
             OnActionCommandExecuted("Import");
         }
-
-        #region Propertyes
 
         public bool IsFileDataReadonly
         {
@@ -274,10 +234,6 @@ namespace PixelCrypt.ViewModel.Page
             get => _choseImageWidth;
             set => Set(ref _choseImageWidth, value);
         }
-
-        #endregion
-
-        #region Commands
 
         private void OnSplitCommandExecuted(object p = null)
         {
@@ -619,10 +575,6 @@ namespace PixelCrypt.ViewModel.Page
             }
         }
 
-        #endregion
-
-        #region Methods
-
         private void ImportAction()
         {
             ActionButtonName = "Импортировать";
@@ -840,7 +792,5 @@ namespace PixelCrypt.ViewModel.Page
                 FilePathImageStackPanel = LoadFilePathImages();
             }
         }
-
-        #endregion
     }
 }

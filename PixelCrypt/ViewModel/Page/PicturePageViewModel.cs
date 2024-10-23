@@ -20,7 +20,6 @@ namespace PixelCrypt.ViewModel.Page
         private string _showPasword = "";
         private string _imageData = "";
         private bool _isOpenPassword = false;
-        private Visibility _choseImageVisibility;
         public string _filePathImage = "";
         public bool _isSuccessAction = false;
         private bool _isButtonFree = true;
@@ -146,12 +145,6 @@ namespace PixelCrypt.ViewModel.Page
         {
             get => _choseImageWidth;
             set => Set(ref _choseImageWidth, value);
-        }
-
-        public Visibility ChoseImageVisibility
-        {
-            get => _choseImageVisibility;
-            set => Set(ref _choseImageVisibility, value);
         }
 
         private bool CanChoseImageCommandExecute(object arg)

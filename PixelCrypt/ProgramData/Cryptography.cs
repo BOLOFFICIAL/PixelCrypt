@@ -88,21 +88,6 @@ namespace PixelCrypt.ProgramData
             return Converter.ConvertBitmapToBitmapImage(decryptedPixels);
         }
 
-        private static List<int> CreatePermutation(string password, int length)
-        {
-            using (var md5 = MD5.Create())
-            {
-                byte[] hash = md5.ComputeHash(Encoding.UTF8.GetBytes(password));
-                int hashValue = BitConverter.ToInt32(hash, 0);
-
-                List<int> perm = Enumerable.Range(0, length).ToList();
-                Random random = new Random(hashValue);
-                perm = perm.OrderBy(x => random.Next()).ToList();
-
-                return perm;
-            }
-        }
-
         public static List<T> EncryptSequence<T>(List<T> collection, string password)
         {
             int length = collection.Count;
@@ -130,6 +115,22 @@ namespace PixelCrypt.ProgramData
                 decryptedCollection[i] = encryptedCollection[reversePerm[i]];
             }
             return decryptedCollection;
+        }
+
+
+        private static List<int> CreatePermutation(string password, int length)
+        {
+            using (var md5 = MD5.Create())
+            {
+                byte[] hash = md5.ComputeHash(Encoding.UTF8.GetBytes(password));
+                int hashValue = BitConverter.ToInt32(hash, 0);
+
+                List<int> perm = Enumerable.Range(0, length).ToList();
+                Random random = new Random(hashValue);
+                perm = perm.OrderBy(x => random.Next()).ToList();
+
+                return perm;
+            }
         }
     }
 }

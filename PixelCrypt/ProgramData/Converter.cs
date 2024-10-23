@@ -9,16 +9,14 @@ namespace PixelCrypt.ProgramData
     {
         public static Bitmap ConvertPixelsToBitmap(List<Color> pixels, int width, int height)
         {
-            Bitmap bitmap = new Bitmap(width, height);
-
-            var newPixels = new System.Drawing.Color[width, height];
+            var newPixels = new Color[width, height];
             int index = 0;
 
             for (int x = 0; x < width; x++)
             {
                 for (int y = 0; y < height; y++)
                 {
-                    newPixels[x, y] = System.Drawing.Color.FromArgb(pixels[index].A, pixels[index].R, pixels[index].G, pixels[index].B);
+                    newPixels[x, y] = Color.FromArgb(pixels[index].A, pixels[index].R, pixels[index].G, pixels[index].B);
                     index++;
                 }
             }
