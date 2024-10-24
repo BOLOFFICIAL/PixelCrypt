@@ -1,11 +1,9 @@
 ﻿using FontAwesome5;
 using Microsoft.Win32;
-using Microsoft.WindowsAPICodePack.Dialogs;
 using PixelCrypt.Commands.Base;
 using PixelCrypt.ProgramData;
 using PixelCrypt.View;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Text;
 using System.Windows;
@@ -310,36 +308,8 @@ namespace PixelCrypt.ViewModel.Page
             {
                 if (_isImport)
                 {
-                    CommonOpenFileDialog folderPicker = new CommonOpenFileDialog();
-
-                    folderPicker.IsFolderPicker = true;
-                    folderPicker.Title = "Выбор папки для хранения данных";
-                    var now = DateTime.Now;
-
-                    var folder = Path.Combine(Path.GetDirectoryName(_filePathImages[0]), $"PixelCrypt_{now.ToString().Replace(":", "").Replace(" ", "").Replace(".", "")}");
-
-                    if (!Directory.Exists(folder))
+                    if (Program.SaveDataToFolder(_filePathImages, _resultImages))
                     {
-                        Directory.CreateDirectory(folder);
-                    }
-
-                    folderPicker.InitialDirectory = folder;
-
-                    CommonFileDialogResult dialogResult = folderPicker.ShowDialog();
-
-                    if (dialogResult == CommonFileDialogResult.Ok)
-                    {
-                        for (int i = 0; i < _resultImages.Count; i++)
-                        {
-                            var name = Path.Combine(folderPicker.FileName, Path.GetFileNameWithoutExtension(_filePathImages[i]) + $"_PixelCrypt_{now.ToString().Replace(":", "").Replace(" ", "").Replace(".", "")}");
-                            var format = ImageFormat.Png;
-
-                            format = ImageFormat.Png;
-                            name += ".png";
-
-                            _resultImages[i].Save(name, format);
-                        }
-
                         Notification.MakeMessage("Картинки сохранены", "Сохранение изображений");
                     }
                 }

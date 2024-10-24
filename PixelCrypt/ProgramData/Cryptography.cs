@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Drawing;
+using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using System.Windows.Media.Imaging;
@@ -54,7 +55,7 @@ namespace PixelCrypt.ProgramData
             }
         }
 
-        public static async Task<BitmapImage> EncryptPhoto(string imagepath, string key)
+        public static async Task<Bitmap> EncryptPhoto(string imagepath, string key)
         {
             var encryptedPixels = await Task.Run(() =>
             {
@@ -68,10 +69,10 @@ namespace PixelCrypt.ProgramData
                 return Converter.ConvertPixelsToBitmap(encrypt, width, height);
             });
 
-            return Converter.ConvertBitmapToBitmapImage(encryptedPixels);
+            return encryptedPixels;
         }
 
-        public static async Task<BitmapImage> DecryptPhoto(string imagepath, string key)
+        public static async Task<Bitmap> DecryptPhoto(string imagepath, string key)
         {
             var decryptedPixels = await Task.Run(() =>
             {
@@ -85,7 +86,7 @@ namespace PixelCrypt.ProgramData
                 return Converter.ConvertPixelsToBitmap(decrypt, width, height);
             });
 
-            return Converter.ConvertBitmapToBitmapImage(decryptedPixels);
+            return decryptedPixels;
         }
 
         public static List<T> EncryptSequence<T>(List<T> collection, string password)

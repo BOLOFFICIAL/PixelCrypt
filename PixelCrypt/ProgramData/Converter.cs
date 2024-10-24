@@ -1,22 +1,23 @@
 ﻿using System.Drawing;
 using System.IO;
 using System.Text;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace PixelCrypt.ProgramData
 {
     internal class Converter
     {
-        public static Bitmap ConvertPixelsToBitmap(List<Color> pixels, int width, int height)
+        public static Bitmap ConvertPixelsToBitmap(List<System.Drawing.Color> pixels, int width, int height)
         {
-            var newPixels = new Color[width, height];
+            var newPixels = new System.Drawing.Color[width, height];
             int index = 0;
 
             for (int x = 0; x < width; x++)
             {
                 for (int y = 0; y < height; y++)
                 {
-                    newPixels[x, y] = Color.FromArgb(pixels[index].A, pixels[index].R, pixels[index].G, pixels[index].B);
+                    newPixels[x, y] = System.Drawing.Color.FromArgb(pixels[index].A, pixels[index].R, pixels[index].G, pixels[index].B);
                     index++;
                 }
             }
@@ -24,7 +25,7 @@ namespace PixelCrypt.ProgramData
             return ConvertPixelsToBitmap(newPixels);
         }
 
-        public static Bitmap ConvertPixelsToBitmap(Color[,] pixels)
+        public static Bitmap ConvertPixelsToBitmap(System.Drawing.Color[,] pixels)
         {
             int width = pixels.GetLength(0);
             int height = pixels.GetLength(1);
@@ -92,22 +93,21 @@ namespace PixelCrypt.ProgramData
             }
         }
 
-        public static BitmapImage ConvertBitmapToBitmapImage(Bitmap bitmap)
+        public static ImageSource ConvertBitmapToImageSource(Bitmap bitmap)
         {
-            BitmapImage bitmapImage = new BitmapImage();
-
-            using (MemoryStream stream = new MemoryStream())
+            using (MemoryStream memory = new MemoryStream())
             {
-                bitmap.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
-                stream.Position = 0;
-
+                bitmap.Save(memory, System.Drawing.Imaging.ImageFormat.Png);
+                memory.Position = 0;
+                BitmapImage bitmapImage = new BitmapImage();
                 bitmapImage.BeginInit();
                 bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
-                bitmapImage.StreamSource = stream;
+                bitmapImage.StreamSource = memory;
                 bitmapImage.EndInit();
-            }
+                bitmapImage.Freeze();
 
-            return bitmapImage;
+                return bitmapImage;
+            }
         }
     }
 }

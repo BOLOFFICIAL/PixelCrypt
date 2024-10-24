@@ -4,6 +4,7 @@ using Microsoft.WindowsAPICodePack.Dialogs;
 using PixelCrypt.Commands.Base;
 using PixelCrypt.ProgramData;
 using PixelCrypt.View;
+using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Windows;
@@ -32,7 +33,7 @@ namespace PixelCrypt.ViewModel.Page
         private ICommand ShowImageCommand { get; }
         private StackPanel _filePathImageStackPanel = new StackPanel();
         private List<string> _filePathImages = new List<string>();
-        private List<BitmapImage> _resultImages = new List<BitmapImage>();
+        private List<Bitmap> _resultImages = new List<Bitmap>();
         private GridLength _resultImageWidth = new GridLength(0, GridUnitType.Pixel);
         private GridLength _actionWidth = new GridLength(0, GridUnitType.Pixel);
         private GridLength _saveButtonWidth = new GridLength(0, GridUnitType.Pixel);
@@ -43,8 +44,8 @@ namespace PixelCrypt.ViewModel.Page
         private GridLength _openPasswordWidth = new GridLength(0, GridUnitType.Pixel);
         private GridLength _choseImageWidth = new GridLength(0, GridUnitType.Pixel);
         private int _selectedElementIndex = -1;
-        public Image ResultHeightImage { get; set; }
-        public Image ResultWidthImage { get; set; }
+        public System.Windows.Controls.Image ResultHeightImage { get; set; }
+        public System.Windows.Controls.Image ResultWidthImage { get; set; }
 
         public PicturePageViewModel()
         {
@@ -201,7 +202,7 @@ namespace PixelCrypt.ViewModel.Page
                 ResultImageWidth = SaveButtonWidth;
 
                 _isSuccessAction = false;
-                _resultImages = new List<BitmapImage>();
+                _resultImages = new List<Bitmap>();
 
                 FilePathImageStackPanel = LoadFilePathImages();
             }
@@ -238,13 +239,13 @@ namespace PixelCrypt.ViewModel.Page
                 {
                     ImageResultHeight = new GridLength(1, GridUnitType.Star);
                     ImageResultWidth = new GridLength(0, GridUnitType.Pixel);
-                    ResultHeightImage.Source = source;
+                    ResultHeightImage.Source = Converter.ConvertBitmapToImageSource(source);
                 }
                 else
                 {
                     ImageResultWidth = new GridLength(1, GridUnitType.Star);
                     ImageResultHeight = new GridLength(0, GridUnitType.Pixel);
-                    ResultWidthImage.Source = source;
+                    ResultWidthImage.Source = Converter.ConvertBitmapToImageSource(source);
                 }
 
                 if (_isSuccessAction)
@@ -267,38 +268,9 @@ namespace PixelCrypt.ViewModel.Page
         {
             try
             {
-                CommonOpenFileDialog folderPicker = new CommonOpenFileDialog();
-
-                folderPicker.IsFolderPicker = true;
-                folderPicker.Title = "Выбор папки для хранения данных";
-                var now = DateTime.Now;
-
-                var folder = Path.Combine(Path.GetDirectoryName(_filePathImages[0]), $"PixelCrypt_{now.ToString().Replace(":", "").Replace(" ", "").Replace(".", "")}");
-
-                if (!Directory.Exists(folder))
+                if (Program.SaveDataToFolder(_filePathImages, _resultImages))
                 {
-                    Directory.CreateDirectory(folder);
-                }
-
-                folderPicker.InitialDirectory = folder;
-
-                CommonFileDialogResult dialogResult = folderPicker.ShowDialog();
-
-                if (dialogResult == CommonFileDialogResult.Ok)
-                {
-                    var image = new System.Windows.Controls.Image();
-                    for (int i = 0; i < _resultImages.Count; i++)
-                    {
-                        var name = Path.Combine(folderPicker.FileName, Path.GetFileNameWithoutExtension(_filePathImages[i]) + $"_PixelCrypt_{now.ToString().Replace(":", "").Replace(" ", "").Replace(".", "")}");
-                        var format = ImageFormat.Png;
-
-                        format = ImageFormat.Png;
-                        name += ".png";
-                        image.Source = _resultImages[i];
-                        Converter.ConvertImageToBitmap(image).Save(name, format);
-                    }
-
-                    Notification.MakeMessage("Данные сохранены", "Сохранение данных");
+                    Notification.MakeMessage("Картинки сохранены", "Сохранение изображений");
                 }
             }
             catch (Exception)
@@ -421,13 +393,13 @@ namespace PixelCrypt.ViewModel.Page
                     {
                         ImageResultHeight = new GridLength(1, GridUnitType.Star);
                         ImageResultWidth = new GridLength(0, GridUnitType.Pixel);
-                        ResultHeightImage.Source = source;
+                        ResultHeightImage.Source = Converter.ConvertBitmapToImageSource(source);
                     }
                     else
                     {
                         ImageResultWidth = new GridLength(1, GridUnitType.Star);
                         ImageResultHeight = new GridLength(0, GridUnitType.Pixel);
-                        ResultWidthImage.Source = source;
+                        ResultWidthImage.Source = Converter.ConvertBitmapToImageSource(source);
                     }
                 }
             }
@@ -453,13 +425,13 @@ namespace PixelCrypt.ViewModel.Page
                 {
                     ImageResultHeight = new GridLength(1, GridUnitType.Star);
                     ImageResultWidth = new GridLength(0, GridUnitType.Pixel);
-                    ResultHeightImage.Source = source;
+                    ResultHeightImage.Source = Converter.ConvertBitmapToImageSource(source);
                 }
                 else
                 {
                     ImageResultWidth = new GridLength(1, GridUnitType.Star);
                     ImageResultHeight = new GridLength(0, GridUnitType.Pixel);
-                    ResultWidthImage.Source = source;
+                    ResultWidthImage.Source = Converter.ConvertBitmapToImageSource(source);
                 }
             }
 
@@ -562,13 +534,13 @@ namespace PixelCrypt.ViewModel.Page
             {
                 ImageResultHeight = new GridLength(1, GridUnitType.Star);
                 ImageResultWidth = new GridLength(0, GridUnitType.Pixel);
-                ResultHeightImage.Source = source;
+                ResultHeightImage.Source = Converter.ConvertBitmapToImageSource(source);
             }
             else
             {
                 ImageResultWidth = new GridLength(1, GridUnitType.Star);
                 ImageResultHeight = new GridLength(0, GridUnitType.Pixel);
-                ResultWidthImage.Source = source;
+                ResultWidthImage.Source = Converter.ConvertBitmapToImageSource(source);
             }
         }
     }
