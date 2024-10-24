@@ -24,6 +24,7 @@
 
             <Grid Grid.Column="0">
                 <Button BorderThickness="0"
+                        IsEnabled="{Binding Path=CanBack,UpdateSourceTrigger=PropertyChanged}"
                         Background="Transparent"
                         BorderBrush="Transparent"
                         Command="{Binding Path=ClosePageCommand}"
@@ -36,7 +37,7 @@
             </Grid>
 
             <Grid Grid.Column="1">
-                <TextBlock Text="Steganography"
+                <TextBlock Text="{Binding Path=PageTitle}"
                            Foreground="{Binding Path=Color3}"
                            FontSize="20"
                            Margin="10,0,0,0"
@@ -350,7 +351,7 @@
 
                             <Grid Grid.Row="1">
                                 <Grid.RowDefinitions>
-                                    <RowDefinition Height="2*"/>
+                                    <RowDefinition Height="*"/>
                                     <RowDefinition Height="*"/>
                                 </Grid.RowDefinitions>
 

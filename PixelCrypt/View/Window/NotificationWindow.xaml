@@ -7,9 +7,11 @@
         mc:Ignorable="d"
         WindowStyle="None"
         ResizeMode="NoResize"
+        Topmost="True"
         Width="350"
         Height="200"
         WindowStartupLocation="CenterScreen">
+    
     <Border BorderBrush="{Binding Path=Color3}"
             BorderThickness="1"
             Background="{Binding Path=Color4}">

@@ -3,6 +3,7 @@ using Microsoft.Win32;
 using PixelCrypt.Commands.Base;
 using PixelCrypt.ProgramData;
 using PixelCrypt.View;
+using PixelCrypt.View.Page;
 using System.Drawing;
 using System.IO;
 using System.Text;
@@ -27,6 +28,7 @@ namespace PixelCrypt.ViewModel.Page
         public string _filePathImage = "";
         public bool _isSuccessAction = false;
         private bool _isButtonFree = true;
+        private bool _canBack = true;
         public ICommand ClosePageCommand { get; }
         public ICommand ShowPaswordCommand { get; }
         public ICommand ChoseImageCommand { get; set; }
@@ -82,6 +84,8 @@ namespace PixelCrypt.ViewModel.Page
             OnSplitCommandExecuted(null);
             OnActionCommandExecuted("Import");
         }
+
+        public string PageTitle => "Steganography";
 
         public bool IsFileDataReadonly
         {
@@ -189,6 +193,12 @@ namespace PixelCrypt.ViewModel.Page
         {
             get => _isButtonFree;
             set => Set(ref _isButtonFree, value);
+        }
+
+        public bool CanBack
+        {
+            get => _canBack;
+            set => Set(ref _canBack, value);
         }
 
         public string Password
@@ -424,6 +434,7 @@ namespace PixelCrypt.ViewModel.Page
 
             _isSuccessAction = false;
             IsButtonFree = false;
+            CanBack = false;
             FilePathImageStackPanel = LoadFilePathImages();
 
             if (_isImport) { await ImportData(); }
@@ -641,7 +652,7 @@ namespace PixelCrypt.ViewModel.Page
                     Foreground = (System.Windows.Media.Brush)new BrushConverter().ConvertFromString(Color3),
                     Background = (System.Windows.Media.Brush)new BrushConverter().ConvertFromString(Color4),
                     BorderBrush = (System.Windows.Media.Brush)new BrushConverter().ConvertFromString(Color3),
-                    BorderThickness = new Thickness(2,1,2,1)
+                    BorderThickness = new Thickness(3, 1, 3, 1)
                 };
 
                 if (index == _selectedElementIndex)
@@ -697,7 +708,12 @@ namespace PixelCrypt.ViewModel.Page
         {
             var hashPassword = Program.GetHash32(Password?.Length > 0 ? Password : "PyxelCrypt");
 
+            CanBack = true;
+
             var BynaryData = new List<string>();
+
+            var message = "Данные экспортированы";
+            var title = "Экспорт данных";
 
             FileData = "";
 
@@ -723,25 +739,34 @@ namespace PixelCrypt.ViewModel.Page
 
                 _isSuccessAction = true;
 
-                Notification.MakeMessage("Данные экспортированы", "Экспорт данных");
-
                 FileData = exportData;
             }
             catch
             {
-                Notification.MakeMessage($"Не удалось экспортировать данные");
+                message = "Не удалось экспортировать данные";
+
                 _isSuccessAction = false;
                 FilePathImageStackPanel = LoadFilePathImages();
+            }
+            finally
+            {
+                DoNotification(message, title, new TextInPicturePage(), PageTitle);
             }
         }
 
         private async Task ImportData()
         {
+            var inportData = FileData;
+
+            var hashPassword = Program.GetHash32(Password?.Length > 0 ? Password : "PyxelCrypt");
+
+            CanBack = true;
+
+            var message = "Данные испортированы";
+            var title = "Импорт данных";
+
             try
             {
-                var inportData = FileData;
-
-                var hashPassword = Program.GetHash32(Password?.Length > 0 ? Password : "PyxelCrypt");
 
                 inportData = Cryptography.EncryptText(inportData, hashPassword);
 
@@ -759,15 +784,18 @@ namespace PixelCrypt.ViewModel.Page
                 }
 
                 _isSuccessAction = true;
-
-                Notification.MakeMessage("Данные импортированы", "Испорт данных");
             }
             catch
             {
                 _resultImages = new List<Bitmap>();
-                Notification.MakeMessage($"Не удалось импортировать данные");
+
+                message = "Не удалось импортировать данные";
                 _isSuccessAction = false;
                 FilePathImageStackPanel = LoadFilePathImages();
+            }
+            finally
+            {
+                DoNotification(message, title, new TextInPicturePage(), PageTitle);
             }
         }
     }

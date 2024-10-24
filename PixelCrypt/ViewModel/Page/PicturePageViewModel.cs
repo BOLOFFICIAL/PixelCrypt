@@ -1,17 +1,15 @@
 ﻿using FontAwesome5;
 using Microsoft.Win32;
-using Microsoft.WindowsAPICodePack.Dialogs;
 using PixelCrypt.Commands.Base;
 using PixelCrypt.ProgramData;
 using PixelCrypt.View;
+using PixelCrypt.View.Page;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 
 namespace PixelCrypt.ViewModel.Page
 {
@@ -24,6 +22,7 @@ namespace PixelCrypt.ViewModel.Page
         public string _filePathImage = "";
         public bool _isSuccessAction = false;
         private bool _isButtonFree = true;
+        private bool _canBack = true;
         public ICommand ClosePageCommand { get; }
         public ICommand ShowPaswordCommand { get; }
         public ICommand ChoseImageCommand { get; set; }
@@ -59,6 +58,8 @@ namespace PixelCrypt.ViewModel.Page
 
             OnShowPaswordCommandExecuted(null);
         }
+
+        public string PageTitle => "Cryptography";
 
         public GridLength ResultImageWidth
         {
@@ -106,6 +107,12 @@ namespace PixelCrypt.ViewModel.Page
         {
             get => _isButtonFree;
             set => Set(ref _isButtonFree, value);
+        }
+
+        public bool CanBack
+        {
+            get => _canBack;
+            set => Set(ref _canBack, value);
         }
 
         public string Password
@@ -215,6 +222,7 @@ namespace PixelCrypt.ViewModel.Page
                 if (p is not string action) return;
 
                 IsButtonFree = false;
+                CanBack = false;
                 _isSuccessAction = false;
                 _resultImages.Clear();
                 FilePathImageStackPanel = LoadFilePathImages();
@@ -266,22 +274,28 @@ namespace PixelCrypt.ViewModel.Page
 
         private void OnSaveCommandExecuted(object p = null)
         {
+            var title = "Сохранение изображений";
             try
             {
                 if (Program.SaveDataToFolder(_filePathImages, _resultImages))
                 {
-                    Notification.MakeMessage("Картинки сохранены", "Сохранение изображений");
+                    Notification.MakeMessage("Картинки сохранены", title);
                 }
             }
             catch (Exception)
             {
-                Notification.MakeMessage("Возникла ошибка при сохранении", "Сохранение");
+                Notification.MakeMessage("Возникла ошибка при сохранении", title);
             }
         }
 
         private async Task Decrypt()
         {
             var hashPassword = Program.GetHash32(Password?.Length > 0 ? Password : "PyxelCrypt");
+
+            CanBack = true;
+
+            var message = "Все картинки расшифрованы";
+            var title = "Расшифровывание данных";
 
             try
             {
@@ -294,20 +308,27 @@ namespace PixelCrypt.ViewModel.Page
                     FilePathImageStackPanel = LoadFilePathImages();
                 }
 
-                Notification.MakeMessage("Все картинки расшифрованы");
-
                 _isSuccessAction = true;
             }
             catch
             {
-                Notification.MakeMessage("Не удалось расшифровать картинки");
+                message = "Не удалось расшифровать картинки";
                 _isSuccessAction = false;
+            }
+            finally
+            {
+                DoNotification(message, title, new PicturePage(), PageTitle);
             }
         }
 
         private async Task Encrypt()
         {
             var hashPassword = Program.GetHash32(Password?.Length > 0 ? Password : "PyxelCrypt");
+
+            CanBack = true;
+
+            var message = "Все данные зашифрованы";
+            var title = "Шифрование данных";
 
             try
             {
@@ -322,16 +343,18 @@ namespace PixelCrypt.ViewModel.Page
 
                 FilePathImageStackPanel = LoadFilePathImages();
 
-                Notification.MakeMessage("Все картинки успешно зашифрованы");
-
                 _isSuccessAction = true;
             }
             catch (Exception ex)
             {
-                Notification.MakeMessage("Не удалось зашифровать картинку");
+                message = "Не удалось зашифровать данные";
                 _isSuccessAction = false;
                 _resultImages.Clear();
                 FilePathImageStackPanel = LoadFilePathImages();
+            }
+            finally
+            {
+                DoNotification(message, title, new PicturePage(), PageTitle);
             }
         }
 
@@ -480,7 +503,7 @@ namespace PixelCrypt.ViewModel.Page
                     Foreground = (System.Windows.Media.Brush)new BrushConverter().ConvertFromString(Color3),
                     Background = (System.Windows.Media.Brush)new BrushConverter().ConvertFromString(Color4),
                     BorderBrush = (System.Windows.Media.Brush)new BrushConverter().ConvertFromString(Color3),
-                    BorderThickness = new Thickness(2, 1, 2, 1)
+                    BorderThickness = new Thickness(3, 1, 3, 1)
                 };
 
                 if (index == _selectedElementIndex)
@@ -550,6 +573,6 @@ namespace PixelCrypt.ViewModel.Page
                 ImageResultHeight = new GridLength(0, GridUnitType.Pixel);
                 ResultWidthImage.Source = Converter.ConvertBitmapToImageSource(source);
             }
-        }
+        } 
     }
 }

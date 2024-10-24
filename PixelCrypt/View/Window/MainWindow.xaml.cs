@@ -1,4 +1,5 @@
-﻿using PixelCrypt.ViewModel.Window;
+﻿using PixelCrypt.ProgramData;
+using PixelCrypt.ViewModel.Window;
 using System.Windows;
 
 namespace PixelCrypt
@@ -11,6 +12,7 @@ namespace PixelCrypt
         public MainWindow()
         {
             InitializeComponent();
+            Context.MainWindow = this;
             DataContext = new MainWindowViewModel();
         }
     }
