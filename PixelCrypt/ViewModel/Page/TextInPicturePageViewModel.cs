@@ -626,16 +626,22 @@ namespace PixelCrypt.ViewModel.Page
 
                 Grid.SetColumn(icon, 0);
 
+                var imageName = new TextBlock()
+                {
+                    Text = Path.GetFileName(image),
+                    FontSize = 15,
+                    TextWrapping = TextWrapping.Wrap,
+                };
+
                 var button = new Button()
                 {
-                    Content = Path.GetFileName(image),
                     Command = ShowImageCommand,
                     CommandParameter = index,
-                    FontSize = 15,
+                    Height = double.NaN,
                     Foreground = (System.Windows.Media.Brush)new BrushConverter().ConvertFromString(Color3),
                     Background = (System.Windows.Media.Brush)new BrushConverter().ConvertFromString(Color4),
                     BorderBrush = (System.Windows.Media.Brush)new BrushConverter().ConvertFromString(Color3),
-                    BorderThickness = new Thickness(2)
+                    BorderThickness = new Thickness(2,1,2,1)
                 };
 
                 if (index == _selectedElementIndex)
@@ -644,6 +650,8 @@ namespace PixelCrypt.ViewModel.Page
                     button.Foreground = (System.Windows.Media.Brush)new BrushConverter().ConvertFromString(Color4);
                     button.BorderThickness = new Thickness(0);
                 }
+
+                button.Content = imageName;
 
                 Grid.SetColumn(button, 1);
 
