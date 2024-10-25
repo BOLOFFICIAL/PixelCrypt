@@ -750,7 +750,7 @@ namespace PixelCrypt.ViewModel.Page
             }
             finally
             {
-                DoNotification(message, title, new TextInPicturePage(), PageTitle);
+                DoNotification(message, title, typeof(TextInPicturePage), PageTitle);
             }
         }
 
@@ -795,7 +795,7 @@ namespace PixelCrypt.ViewModel.Page
             }
             finally
             {
-                DoNotification(message, title, new TextInPicturePage(), PageTitle);
+                DoNotification(message, title, typeof(TextInPicturePage), PageTitle);
             }
         }
     }

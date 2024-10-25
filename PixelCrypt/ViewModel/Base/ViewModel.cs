@@ -1,4 +1,6 @@
 ﻿using PixelCrypt.ProgramData;
+using PixelCrypt.View;
+using PixelCrypt.View.Page;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
@@ -30,40 +32,45 @@ namespace PixelCrypt.ViewModel.Base
         public string Color4 => "#303336";
         public string Color5 => "#32CD32";
 
-        public void DoNotification(string message, string title, System.Windows.Controls.Page page, string pageTitle)
+        public void DoNotification(string message, string title, Type pageType, string pageTitle)
         {
-            var res = Context.MainWindowViewModel.CurrentPage.GetType() == page.GetType();
+            var isThisPage = Context.MainWindowViewModel.CurrentPage.GetType() == pageType;
+            var isWindowMinimized = Context.MainWindow.WindowState == WindowState.Minimized;
 
-            if (Context.MainWindow.WindowState != WindowState.Minimized && res && Context.MainWindow.IsActive)
+            if (!isWindowMinimized && isThisPage && Context.MainWindow.IsActive)
             {
                 Notification.MakeMessage(message, title);
                 Context.MainWindow.Activate();
+                return;
             }
-            else
+
+            message += isWindowMinimized ? $".\nОткрыть окно и перейти на страницу {pageTitle}?" : $".\nПерейти на страницу {pageTitle}?";
+
+            if (Notification.MakeMessage(message, title, NotificationButton.YesNo) == NotificationResult.Yes)
             {
-                if (Context.MainWindow.WindowState != WindowState.Minimized)
+                isWindowMinimized = Context.MainWindow.WindowState == WindowState.Minimized;
+
+                if (!isWindowMinimized || !isThisPage)
                 {
-                    message += $".\nПерейти на страницу {pageTitle}?";
+                    Context.MainWindowViewModel.CurrentPage = GetPageByType(pageType);
                 }
-                else
+                if (isWindowMinimized)
                 {
-                    message += $".\nОткрыть окно и перейти на страницу {pageTitle}?";
+                    Context.MainWindow.WindowState = WindowState.Normal;
                 }
 
-                if (Notification.MakeMessage(message, title, NotificationButton.YesNo) == NotificationResult.Yes)
-                {
-                    if (Context.MainWindow.WindowState != WindowState.Minimized || !res)
-                    {
-                        Context.MainWindowViewModel.CurrentPage = page;
-                    }
-                    if (Context.MainWindow.WindowState == WindowState.Minimized)
-                    {
-                        Context.MainWindow.WindowState = WindowState.Normal;
-                    }
-
-                    Context.MainWindow.Activate();
-                }
+                Context.MainWindow.Activate();
             }
+        }
+
+        private System.Windows.Controls.Page GetPageByType(Type pageType)
+        {
+            return pageType.Name switch
+            {
+                "PicturePage" => new PicturePage(),
+                "TextInPicturePage" => new TextInPicturePage(),
+                _ => new MainPage(),
+            };
         }
     }
 }

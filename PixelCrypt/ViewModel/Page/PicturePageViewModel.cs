@@ -317,7 +317,7 @@ namespace PixelCrypt.ViewModel.Page
             }
             finally
             {
-                DoNotification(message, title, new PicturePage(), PageTitle);
+                DoNotification(message, title, typeof(PicturePage), PageTitle);
             }
         }
 
@@ -354,7 +354,7 @@ namespace PixelCrypt.ViewModel.Page
             }
             finally
             {
-                DoNotification(message, title, new PicturePage(), PageTitle);
+                DoNotification(message, title, typeof(PicturePage), PageTitle);
             }
         }
 
@@ -573,6 +573,6 @@ namespace PixelCrypt.ViewModel.Page
                 ImageResultHeight = new GridLength(0, GridUnitType.Pixel);
                 ResultWidthImage.Source = Converter.ConvertBitmapToImageSource(source);
             }
-        } 
+        }
     }
 }
