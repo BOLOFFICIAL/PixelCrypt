@@ -61,16 +61,35 @@
                             <RowDefinition Height="{Binding Path=ActionWidth}"/>
                         </Grid.RowDefinitions>
 
-                        <Grid Grid.Row="0">
-                            <Button Content="Выбрать"
-                                    IsEnabled="{Binding Path=IsButtonFree,UpdateSourceTrigger=PropertyChanged}"
-                                    Command="{Binding Path=ChoseImageCommand}"
-                                    ToolTip = "Выбор изображения для шифрования или расшифровывание"
-                                    BorderThickness="0"
-                                    HorizontalAlignment="Center"
-                                    BorderBrush="{Binding Path=Color3}"
-                                    Foreground="{Binding Path=Color3}"
-                                    Background="{Binding Path = Color2}"/>
+                        <Grid Grid.Row="0"
+                              HorizontalAlignment="Center">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition Width="{Binding Path=ClearWidth,UpdateSourceTrigger=PropertyChanged}"/>
+                            </Grid.ColumnDefinitions>
+                            
+                            <Grid Grid.Column="0">
+                                <Button Content="Выбрать"
+                                        IsEnabled="{Binding Path=IsButtonFree,UpdateSourceTrigger=PropertyChanged}"
+                                        Command="{Binding Path=ChoseImageCommand}"
+                                        ToolTip = "Выбор изображения для шифрования или расшифровывание"
+                                        BorderThickness="0"  
+                                        BorderBrush="{Binding Path=Color3}"
+                                        Foreground="{Binding Path=Color3}"
+                                        Background="{Binding Path = Color2}"/>
+                            </Grid>
+
+                            <Grid Grid.Column="1"
+                                  Margin="10,0,0,0">
+                                <Button Content="Очистить"
+                                        IsEnabled="{Binding Path=IsButtonFree,UpdateSourceTrigger=PropertyChanged}"
+                                        Command="{Binding Path=ClearAllCommand}"
+                                        ToolTip = "Очистка списка элементов"
+                                        BorderThickness="0"
+                                        BorderBrush="{Binding Path=Color3}"
+                                        Foreground="{Binding Path=Color3}"
+                                        Background="{Binding Path = Color2}"/>
+                            </Grid>
                         </Grid>
 
                         <Grid Grid.Row="1">

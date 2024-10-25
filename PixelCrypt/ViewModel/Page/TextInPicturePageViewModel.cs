@@ -23,6 +23,7 @@ namespace PixelCrypt.ViewModel.Page
         private GridLength _choseImageWidth;
         private GridLength _actionWidth = new GridLength(0, GridUnitType.Pixel);
         private GridLength _imagesWidth = new GridLength(0, GridUnitType.Pixel);
+        private GridLength _clearWidth = new GridLength(0, GridUnitType.Pixel);
         public string _filePathImage = "";
         public bool _isSuccessAction = false;
         private bool _isButtonFree = true;
@@ -53,12 +54,14 @@ namespace PixelCrypt.ViewModel.Page
         private GridLength _saveButtonWidth = new GridLength(0, GridUnitType.Pixel);
         private List<string> _filePathImages = new List<string>();
         private List<Bitmap> _resultImages = new List<Bitmap>();
+        private List<string> _bynaryData = new List<string>();
         private StackPanel _filePathImageStackPanel = new StackPanel();
         private int _selectedElementIndex = -1;
         public ICommand ActionCommand { get; }
         public ICommand SplitCommand { get; }
         public ICommand ClearPathFileCommand { get; }
         public ICommand ChoseFileCommand { get; }
+        public ICommand ClearAllCommand { get; }
         private ICommand RemoveImageCommand { get; }
 
 
@@ -74,6 +77,7 @@ namespace PixelCrypt.ViewModel.Page
             ClosePageCommand = new LambdaCommand(OnClosePageCommandExecuted);
             ShowPaswordCommand = new LambdaCommand(OnShowPaswordCommandExecuted);
             ShowImageCommand = new LambdaCommand(OnShowImageCommandExecuted);
+            ClearAllCommand = new LambdaCommand(OnClearAllCommandExecuted, CanClearAllCommandExecute);
 
             OnShowPaswordCommandExecuted(null);
 
@@ -181,6 +185,12 @@ namespace PixelCrypt.ViewModel.Page
             set => Set(ref _imagesWidth, value);
         }
 
+        public GridLength ClearWidth
+        {
+            get => _clearWidth;
+            set => Set(ref _clearWidth, value);
+        }
+
         public StackPanel FilePathImageStackPanel
         {
             get => _filePathImageStackPanel;
@@ -198,8 +208,6 @@ namespace PixelCrypt.ViewModel.Page
             get => _canBack;
             set => Set(ref _canBack, value);
         }
-
-        private List<string> _bynaryData;
 
         public string Password
         {
@@ -273,6 +281,11 @@ namespace PixelCrypt.ViewModel.Page
                 case "Import": ImportAction(); break;
                 case "Export": ExportAction(); break;
             }
+
+            _resultImages.Clear();
+            _bynaryData.Clear();
+
+            FilePathImageStackPanel = LoadFilePathImages(_filePathImages, ShowImageCommand, RemoveImageCommand, _selectedElementIndex, IsButtonFree);
 
             _isSuccessAction = value == _isImport;
         }
@@ -437,6 +450,9 @@ namespace PixelCrypt.ViewModel.Page
             CanBack = false;
             FilePathImageStackPanel = LoadFilePathImages(_filePathImages, ShowImageCommand, RemoveImageCommand, _selectedElementIndex, IsButtonFree);
 
+            _bynaryData.Clear();
+            _resultImages.Clear();
+
             if (_isImport) { await ImportData(); }
             else { await ExportData(); }
 
@@ -542,6 +558,33 @@ namespace PixelCrypt.ViewModel.Page
             FilePathImageStackPanel = LoadFilePathImages(_filePathImages, ShowImageCommand, RemoveImageCommand, _selectedElementIndex, IsButtonFree, count);
         }
 
+        public void OnClearAllCommandExecuted(object p = null)
+        {
+            ActionWidth = new GridLength(0, GridUnitType.Pixel);
+            ImagesWidth = new GridLength(0, GridUnitType.Pixel);
+
+            _filePathImages.Clear();
+            _resultImages.Clear();
+            _bynaryData.Clear();
+
+            _selectedElementIndex = -1;
+            FilePathImageStackPanel = new StackPanel();
+        }
+
+        private bool CanClearAllCommandExecute(object arg)
+        {
+            if (_filePathImages.Count > 1)
+            {
+                ClearWidth = new GridLength(1, GridUnitType.Auto);
+            }
+            else
+            {
+                ClearWidth = new GridLength(0, GridUnitType.Pixel);
+            }
+
+            return true;
+        }
+
         private void ImportAction()
         {
             ActionButtonName = "Импортировать";
@@ -552,6 +595,7 @@ namespace PixelCrypt.ViewModel.Page
             ExportButtonForegroundColor = Color3;
 
             _isImport = true;
+
             if (FilePathFile.Length > 0)
             {
                 if (FileData == null || FileData.Length == 0 || (FileData.Length > 0 && Notification.MakeMessage("Заменить текст на данные из файла?", "Файл для чтения данных", NotificationButton.YesNo) == NotificationResult.Yes))
@@ -582,7 +626,7 @@ namespace PixelCrypt.ViewModel.Page
             {
                 string content = File.ReadAllText(_filePathFile);
 
-                if (content.Length > 0 && Notification.MakeMessage("файл содержит данные которые будут перезаписаны. Оставить выбранный файл?", "Файл для записи данных", NotificationButton.YesNo) == NotificationResult.Yes)
+                if (content.Length > 0 && Notification.MakeMessage("Файл содержит данные которые будут перезаписаны. Оставить выбранный файл?", "Файл для записи данных", NotificationButton.YesNo) == NotificationResult.Yes)
                 {
                     FilePathFile = _filePathFile;
                 }
@@ -601,8 +645,6 @@ namespace PixelCrypt.ViewModel.Page
             var hashPassword = Program.GetHash32(Password?.Length > 0 ? Password : "PyxelCrypt");
 
             CanBack = true;
-
-            _bynaryData = new List<string>();
 
             var message = "Данные экспортированы";
             var title = "Экспорт данных";

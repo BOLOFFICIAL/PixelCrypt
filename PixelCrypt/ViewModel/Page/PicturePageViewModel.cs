@@ -28,6 +28,7 @@ namespace PixelCrypt.ViewModel.Page
         public ICommand SaveCommand { get; set; }
         private ICommand RemoveImageCommand { get; }
         private ICommand ShowImageCommand { get; }
+        public ICommand ClearAllCommand { get; }
         private StackPanel _filePathImageStackPanel = new StackPanel();
         private List<string> _filePathImages = new List<string>();
         private List<Bitmap> _resultImages = new List<Bitmap>();
@@ -40,6 +41,7 @@ namespace PixelCrypt.ViewModel.Page
         private GridLength _closePasswordWidth = new GridLength(0, GridUnitType.Pixel);
         private GridLength _openPasswordWidth = new GridLength(0, GridUnitType.Pixel);
         private GridLength _choseImageWidth = new GridLength(0, GridUnitType.Pixel);
+        private GridLength _clearWidth = new GridLength(0, GridUnitType.Pixel);
         private int _selectedElementIndex = -1;
         public System.Windows.Controls.Image ResultHeightImage { get; set; }
         public System.Windows.Controls.Image ResultWidthImage { get; set; }
@@ -53,6 +55,7 @@ namespace PixelCrypt.ViewModel.Page
             ShowPaswordCommand = new LambdaCommand(OnShowPaswordCommandExecuted);
             RemoveImageCommand = new LambdaCommand(OnRemoveImageCommandExecuted);
             ShowImageCommand = new LambdaCommand(OnShowImageCommandExecuted);
+            ClearAllCommand = new LambdaCommand(OnClearAllCommandExecuted, CanClearAllCommandExecute);
 
             OnShowPaswordCommandExecuted(null);
         }
@@ -153,6 +156,12 @@ namespace PixelCrypt.ViewModel.Page
         {
             get => _choseImageWidth;
             set => Set(ref _choseImageWidth, value);
+        }
+
+        public GridLength ClearWidth 
+        {
+            get => _clearWidth;
+            set => Set(ref _clearWidth, value);
         }
 
         private bool CanChoseImageCommandExecute(object arg)
@@ -416,6 +425,32 @@ namespace PixelCrypt.ViewModel.Page
             }
 
             FilePathImageStackPanel = LoadFilePathImages(_filePathImages, ShowImageCommand, RemoveImageCommand, _selectedElementIndex, IsButtonFree, _resultImages.Count);
+        }
+
+        public void OnClearAllCommandExecuted(object p = null)
+        {
+            ActionWidth = new GridLength(0, GridUnitType.Pixel);
+            ImagesWidth = new GridLength(0, GridUnitType.Pixel);
+
+            _filePathImages.Clear();
+            _resultImages.Clear();
+
+            _selectedElementIndex = -1;
+            FilePathImageStackPanel = new StackPanel();
+        }
+
+        private bool CanClearAllCommandExecute(object arg)
+        {
+            if (_filePathImages.Count > 1)
+            {
+                ClearWidth = new GridLength(1, GridUnitType.Auto);
+            }
+            else
+            {
+                ClearWidth = new GridLength(0, GridUnitType.Pixel);
+            }
+
+            return true;
         }
 
         public void InitializeImage()
