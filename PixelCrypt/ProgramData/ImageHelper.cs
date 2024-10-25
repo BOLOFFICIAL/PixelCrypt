@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Text;
 
@@ -218,6 +219,20 @@ namespace PixelCrypt.ProgramData
             }
 
             return listPixels;
+        }
+
+        public static ImageFormat GetImageFormat(string path)
+        {
+            return Path.GetExtension(path)?.ToLower() switch
+            {
+                ".jpg" or ".jpeg" => ImageFormat.Jpeg,
+                ".png" => ImageFormat.Png,
+                ".bmp" => ImageFormat.Bmp,
+                ".gif" => ImageFormat.Gif,
+                ".tiff" => ImageFormat.Tiff,
+                ".ico" => ImageFormat.Icon,
+                _ => ImageFormat.Png
+            };
         }
     }
 }

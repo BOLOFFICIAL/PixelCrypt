@@ -1,9 +1,14 @@
-﻿using PixelCrypt.ProgramData;
+﻿using FontAwesome5;
+using PixelCrypt.ProgramData;
 using PixelCrypt.View;
 using PixelCrypt.View.Page;
 using System.ComponentModel;
+using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
 
 namespace PixelCrypt.ViewModel.Base
 {
@@ -71,6 +76,100 @@ namespace PixelCrypt.ViewModel.Base
                 "TextInPicturePage" => new TextInPicturePage(),
                 _ => new MainPage(),
             };
+        }
+
+        protected StackPanel LoadFilePathImages(List<string> filePathImages, ICommand showImageCommand, ICommand removeImageCommand, int selectedElementIndex, bool isButtonFree, int count = 0)
+        {
+            var stackPanel = new StackPanel();
+            int index = 0;
+
+            foreach (var image in filePathImages)
+            {
+                var grid = new Grid()
+                {
+                    Margin = new Thickness(0, 10, 0, 0)
+                };
+
+                grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
+                grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+                grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
+
+                var icon = new ImageAwesome
+                {
+                    Icon = EFontAwesomeIcon.Regular_CheckCircle,
+                    Width = 25,
+                    Height = 25,
+                    Margin = new Thickness(0, 0, 10, 0),
+                    Foreground = (System.Windows.Media.Brush)new BrushConverter().ConvertFromString(Color5)
+                };
+
+                Grid.SetColumn(icon, 0);
+
+                var imageName = new TextBlock()
+                {
+                    Text = Path.GetFileName(image),
+                    FontSize = 15,
+                    TextWrapping = TextWrapping.Wrap,
+                };
+
+                var button = new Button()
+                {
+                    Command = showImageCommand,
+                    CommandParameter = index,
+                    Height = double.NaN,
+                    HorizontalContentAlignment = HorizontalAlignment.Left,
+                    Foreground = (Brush)new BrushConverter().ConvertFromString(Color3),
+                    Background = (Brush)new BrushConverter().ConvertFromString(Color4),
+                    BorderBrush = (Brush)new BrushConverter().ConvertFromString(Color3),
+                    BorderThickness = new Thickness(3, 1, 3, 1)
+                };
+
+                if (index == selectedElementIndex)
+                {
+                    button.Background = (Brush)new BrushConverter().ConvertFromString(Color3);
+                    button.Foreground = (Brush)new BrushConverter().ConvertFromString(Color4);
+                    button.BorderThickness = new Thickness(0);
+                }
+
+                button.Content = imageName;
+
+                Grid.SetColumn(button, 1);
+
+                var deleteButton = new Button
+                {
+                    Margin = new Thickness(5, 0, 0, 0),
+                    Width = 35,
+                    Height = 35,
+                    Padding = new Thickness(0),
+                    Content = new ImageAwesome
+                    {
+                        Icon = EFontAwesomeIcon.Regular_TimesCircle,
+                        Width = 25,
+                        Height = 25,
+                        Foreground = (Brush)new BrushConverter().ConvertFromString(Color3)
+                    },
+                    Command = removeImageCommand,
+                    IsEnabled = isButtonFree,
+                    CommandParameter = index,
+                    Background = System.Windows.Media.Brushes.Transparent,
+                    BorderBrush = System.Windows.Media.Brushes.Transparent,
+                };
+
+                Grid.SetColumn(deleteButton, 2);
+
+                if (index < count)
+                {
+                    grid.Children.Add(icon);
+                }
+
+                grid.Children.Add(button);
+                grid.Children.Add(deleteButton);
+                stackPanel.Children.Add(grid);
+
+                index++;
+            }
+
+            return stackPanel;
         }
     }
 }

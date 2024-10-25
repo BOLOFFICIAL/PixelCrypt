@@ -1,5 +1,4 @@
-﻿using FontAwesome5;
-using Microsoft.Win32;
+﻿using Microsoft.Win32;
 using PixelCrypt.Commands.Base;
 using PixelCrypt.ProgramData;
 using PixelCrypt.View;
@@ -9,7 +8,6 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media;
 
 namespace PixelCrypt.ViewModel.Page
 {
@@ -211,7 +209,7 @@ namespace PixelCrypt.ViewModel.Page
                 _isSuccessAction = false;
                 _resultImages = new List<Bitmap>();
 
-                FilePathImageStackPanel = LoadFilePathImages();
+                FilePathImageStackPanel = LoadFilePathImages(_filePathImages, ShowImageCommand, RemoveImageCommand, _selectedElementIndex, IsButtonFree);
             }
         }
 
@@ -225,7 +223,7 @@ namespace PixelCrypt.ViewModel.Page
                 CanBack = false;
                 _isSuccessAction = false;
                 _resultImages.Clear();
-                FilePathImageStackPanel = LoadFilePathImages();
+                FilePathImageStackPanel = LoadFilePathImages(_filePathImages, ShowImageCommand, RemoveImageCommand, _selectedElementIndex, IsButtonFree);
                 SaveButtonWidth = new GridLength(0, GridUnitType.Pixel);
                 ImageResultHeight = new GridLength(0, GridUnitType.Pixel);
                 ImageResultWidth = new GridLength(0, GridUnitType.Pixel);
@@ -239,22 +237,9 @@ namespace PixelCrypt.ViewModel.Page
 
                 IsButtonFree = true;
 
-                FilePathImageStackPanel = LoadFilePathImages();
+                FilePathImageStackPanel = LoadFilePathImages(_filePathImages, ShowImageCommand, RemoveImageCommand, _selectedElementIndex, IsButtonFree, _resultImages.Count);
 
-                var source = _resultImages[_selectedElementIndex];
-
-                if (source.Width > source.Height)
-                {
-                    ImageResultHeight = new GridLength(1, GridUnitType.Star);
-                    ImageResultWidth = new GridLength(0, GridUnitType.Pixel);
-                    ResultHeightImage.Source = Converter.ConvertBitmapToImageSource(source);
-                }
-                else
-                {
-                    ImageResultWidth = new GridLength(1, GridUnitType.Star);
-                    ImageResultHeight = new GridLength(0, GridUnitType.Pixel);
-                    ResultWidthImage.Source = Converter.ConvertBitmapToImageSource(source);
-                }
+                UpdateResultImage();
 
                 if (_isSuccessAction)
                 {
@@ -268,7 +253,7 @@ namespace PixelCrypt.ViewModel.Page
 
                 IsButtonFree = true;
 
-                FilePathImageStackPanel = LoadFilePathImages();
+                FilePathImageStackPanel = LoadFilePathImages(_filePathImages, ShowImageCommand, RemoveImageCommand, _selectedElementIndex, IsButtonFree);
             }
         }
 
@@ -305,7 +290,7 @@ namespace PixelCrypt.ViewModel.Page
 
                     _resultImages.Add(decryptPhoto);
 
-                    FilePathImageStackPanel = LoadFilePathImages();
+                    FilePathImageStackPanel = LoadFilePathImages(_filePathImages, ShowImageCommand, RemoveImageCommand, _selectedElementIndex, IsButtonFree, _resultImages.Count);
                 }
 
                 _isSuccessAction = true;
@@ -314,6 +299,7 @@ namespace PixelCrypt.ViewModel.Page
             {
                 message = "Не удалось расшифровать картинки";
                 _isSuccessAction = false;
+                _resultImages.Clear();
             }
             finally
             {
@@ -338,10 +324,8 @@ namespace PixelCrypt.ViewModel.Page
 
                     _resultImages.Add(encryptPhoto);
 
-                    FilePathImageStackPanel = LoadFilePathImages();
+                    FilePathImageStackPanel = LoadFilePathImages(_filePathImages, ShowImageCommand, RemoveImageCommand, _selectedElementIndex, IsButtonFree, _resultImages.Count);
                 }
-
-                FilePathImageStackPanel = LoadFilePathImages();
 
                 _isSuccessAction = true;
             }
@@ -350,7 +334,6 @@ namespace PixelCrypt.ViewModel.Page
                 message = "Не удалось зашифровать данные";
                 _isSuccessAction = false;
                 _resultImages.Clear();
-                FilePathImageStackPanel = LoadFilePathImages();
             }
             finally
             {
@@ -410,24 +393,11 @@ namespace PixelCrypt.ViewModel.Page
 
                 if (_filePathImages.Count > 0)
                 {
-                    var source = _resultImages[_selectedElementIndex];
-
-                    if (source.Width > source.Height)
-                    {
-                        ImageResultHeight = new GridLength(1, GridUnitType.Star);
-                        ImageResultWidth = new GridLength(0, GridUnitType.Pixel);
-                        ResultHeightImage.Source = Converter.ConvertBitmapToImageSource(source);
-                    }
-                    else
-                    {
-                        ImageResultWidth = new GridLength(1, GridUnitType.Star);
-                        ImageResultHeight = new GridLength(0, GridUnitType.Pixel);
-                        ResultWidthImage.Source = Converter.ConvertBitmapToImageSource(source);
-                    }
+                    UpdateResultImage();
                 }
             }
 
-            FilePathImageStackPanel = LoadFilePathImages();
+            FilePathImageStackPanel = LoadFilePathImages(_filePathImages, ShowImageCommand, RemoveImageCommand, _selectedElementIndex, IsButtonFree, _resultImages.Count);
         }
 
         public void OnShowImageCommandExecuted(object p = null)
@@ -442,123 +412,21 @@ namespace PixelCrypt.ViewModel.Page
 
             if (_isSuccessAction)
             {
-                var source = _resultImages[_selectedElementIndex];
-
-                if (source.Width > source.Height)
-                {
-                    ImageResultHeight = new GridLength(1, GridUnitType.Star);
-                    ImageResultWidth = new GridLength(0, GridUnitType.Pixel);
-                    ResultHeightImage.Source = Converter.ConvertBitmapToImageSource(source);
-                }
-                else
-                {
-                    ImageResultWidth = new GridLength(1, GridUnitType.Star);
-                    ImageResultHeight = new GridLength(0, GridUnitType.Pixel);
-                    ResultWidthImage.Source = Converter.ConvertBitmapToImageSource(source);
-                }
+                UpdateResultImage();
             }
 
-            FilePathImageStackPanel = LoadFilePathImages();
-        }
-
-        private StackPanel LoadFilePathImages()
-        {
-            var stackPanel = new StackPanel();
-            int index = 0;
-
-            foreach (var image in _filePathImages)
-            {
-                var grid = new Grid()
-                {
-                    Margin = new Thickness(0, 10, 0, 0)
-                };
-
-                grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
-                grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-                grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
-
-                var icon = new ImageAwesome
-                {
-                    Icon = EFontAwesomeIcon.Regular_CheckCircle,
-                    Width = 25,
-                    Height = 25,
-                    Margin = new Thickness(0, 0, 10, 0),
-                    Foreground = (System.Windows.Media.Brush)new BrushConverter().ConvertFromString(Color5)
-                };
-
-                Grid.SetColumn(icon, 0);
-
-                var imageName = new TextBlock()
-                {
-                    Text = Path.GetFileName(image),
-                    FontSize = 15,
-                    TextWrapping = TextWrapping.Wrap,
-                };
-
-                var button = new Button()
-                {
-                    Command = ShowImageCommand,
-                    CommandParameter = index,
-                    Height = double.NaN,
-                    Foreground = (System.Windows.Media.Brush)new BrushConverter().ConvertFromString(Color3),
-                    Background = (System.Windows.Media.Brush)new BrushConverter().ConvertFromString(Color4),
-                    BorderBrush = (System.Windows.Media.Brush)new BrushConverter().ConvertFromString(Color3),
-                    BorderThickness = new Thickness(3, 1, 3, 1)
-                };
-
-                if (index == _selectedElementIndex)
-                {
-                    button.Background = (System.Windows.Media.Brush)new BrushConverter().ConvertFromString(Color3);
-                    button.Foreground = (System.Windows.Media.Brush)new BrushConverter().ConvertFromString(Color4);
-                    button.BorderThickness = new Thickness(0);
-                }
-
-                button.Content = imageName;
-
-                Grid.SetColumn(button, 1);
-
-                var deleteButton = new Button
-                {
-                    Margin = new Thickness(5, 0, 0, 0),
-                    Width = 35,
-                    Height = 35,
-                    Padding = new Thickness(0),
-                    VerticalAlignment = VerticalAlignment.Top,
-                    Content = new ImageAwesome
-                    {
-                        Icon = EFontAwesomeIcon.Regular_TimesCircle,
-                        Width = 25,
-                        Height = 25,
-                        Foreground = (System.Windows.Media.Brush)new BrushConverter().ConvertFromString(Color3)
-                    },
-                    Command = RemoveImageCommand,
-                    IsEnabled = IsButtonFree,
-                    CommandParameter = index,
-                    Background = System.Windows.Media.Brushes.Transparent,
-                    BorderBrush = System.Windows.Media.Brushes.Transparent,
-                };
-
-                Grid.SetColumn(deleteButton, 2);
-
-                if (index < _resultImages.Count)
-                {
-                    grid.Children.Add(icon);
-                }
-
-                grid.Children.Add(button);
-                grid.Children.Add(deleteButton);
-                stackPanel.Children.Add(grid);
-
-                index++;
-            }
-
-            return stackPanel;
+            FilePathImageStackPanel = LoadFilePathImages(_filePathImages, ShowImageCommand, RemoveImageCommand, _selectedElementIndex, IsButtonFree, _resultImages.Count);
         }
 
         public void InitializeImage()
         {
             if (_isSuccessAction == false || _selectedElementIndex == -1) return;
 
+            UpdateResultImage();
+        }
+
+        private void UpdateResultImage()
+        {
             var source = _resultImages[_selectedElementIndex];
 
             if (source.Width > source.Height)

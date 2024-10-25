@@ -1,5 +1,4 @@
-﻿using FontAwesome5;
-using Microsoft.Win32;
+﻿using Microsoft.Win32;
 using PixelCrypt.Commands.Base;
 using PixelCrypt.ProgramData;
 using PixelCrypt.View;
@@ -10,7 +9,6 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media;
 
 namespace PixelCrypt.ViewModel.Page
 {
@@ -200,6 +198,8 @@ namespace PixelCrypt.ViewModel.Page
             get => _canBack;
             set => Set(ref _canBack, value);
         }
+
+        private List<string> _bynaryData;
 
         public string Password
         {
@@ -424,7 +424,7 @@ namespace PixelCrypt.ViewModel.Page
 
                 ImageData = _filePathImages[_selectedElementIndex];
 
-                FilePathImageStackPanel = LoadFilePathImages();
+                FilePathImageStackPanel = LoadFilePathImages(_filePathImages, ShowImageCommand, RemoveImageCommand, _selectedElementIndex, IsButtonFree);
             }
         }
 
@@ -435,21 +435,16 @@ namespace PixelCrypt.ViewModel.Page
             _isSuccessAction = false;
             IsButtonFree = false;
             CanBack = false;
-            FilePathImageStackPanel = LoadFilePathImages();
+            FilePathImageStackPanel = LoadFilePathImages(_filePathImages, ShowImageCommand, RemoveImageCommand, _selectedElementIndex, IsButtonFree);
 
             if (_isImport) { await ImportData(); }
             else { await ExportData(); }
 
             IsButtonFree = true;
 
-            if (_isSuccessAction)
-            {
-                FilePathImageStackPanel = LoadFilePathImages(_filePathImages.Count);
-            }
-            else
-            {
-                FilePathImageStackPanel = LoadFilePathImages();
-            }
+            var count = _isSuccessAction ? _filePathImages.Count : 0;
+
+            FilePathImageStackPanel = LoadFilePathImages(_filePathImages, ShowImageCommand, RemoveImageCommand, _selectedElementIndex, IsButtonFree, count);
         }
 
         private bool CanDoActionCommandExecute(object arg)
@@ -503,14 +498,9 @@ namespace PixelCrypt.ViewModel.Page
                 }
             }
 
-            if (_isSuccessAction)
-            {
-                FilePathImageStackPanel = LoadFilePathImages(_filePathImages.Count);
-            }
-            else
-            {
-                FilePathImageStackPanel = LoadFilePathImages();
-            }
+            var count = _isSuccessAction ? _filePathImages.Count : 0;
+
+            FilePathImageStackPanel = LoadFilePathImages(_filePathImages, ShowImageCommand, RemoveImageCommand, _selectedElementIndex, IsButtonFree, count);
         }
 
         private void OnClosePageCommandExecuted(object p = null)
@@ -538,6 +528,7 @@ namespace PixelCrypt.ViewModel.Page
 
         public void OnShowImageCommandExecuted(object p = null)
         {
+
             int index = (p == null) ? (-1) : ((p is int value) ? (value) : (-1));
 
             if (index == -1 || _selectedElementIndex == index) return;
@@ -546,14 +537,9 @@ namespace PixelCrypt.ViewModel.Page
 
             ImageData = _filePathImages[_selectedElementIndex];
 
-            if (_isSuccessAction)
-            {
-                FilePathImageStackPanel = LoadFilePathImages(_filePathImages.Count);
-            }
-            else
-            {
-                FilePathImageStackPanel = LoadFilePathImages();
-            }
+            var count = _isImport ? _resultImages.Count : _bynaryData.Count;
+
+            FilePathImageStackPanel = LoadFilePathImages(_filePathImages, ShowImageCommand, RemoveImageCommand, _selectedElementIndex, IsButtonFree, count);
         }
 
         private void ImportAction()
@@ -610,107 +596,13 @@ namespace PixelCrypt.ViewModel.Page
             IsFileDataReadonly = false;
         }
 
-        private StackPanel LoadFilePathImages(int count = 0)
-        {
-            var stackPanel = new StackPanel();
-            int index = 0;
-
-            foreach (var image in _filePathImages)
-            {
-                var grid = new Grid()
-                {
-                    Margin = new Thickness(0, 10, 0, 0)
-                };
-
-                grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
-                grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-                grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
-
-                var icon = new ImageAwesome
-                {
-                    Icon = EFontAwesomeIcon.Regular_CheckCircle,
-                    Width = 25,
-                    Height = 25,
-                    Margin = new Thickness(0, 0, 10, 0),
-                    Foreground = (System.Windows.Media.Brush)new BrushConverter().ConvertFromString(Color5)
-                };
-
-                Grid.SetColumn(icon, 0);
-
-                var imageName = new TextBlock()
-                {
-                    Text = Path.GetFileName(image),
-                    FontSize = 15,
-                    TextWrapping = TextWrapping.Wrap,
-                };
-
-                var button = new Button()
-                {
-                    Command = ShowImageCommand,
-                    CommandParameter = index,
-                    Height = double.NaN,
-                    Foreground = (System.Windows.Media.Brush)new BrushConverter().ConvertFromString(Color3),
-                    Background = (System.Windows.Media.Brush)new BrushConverter().ConvertFromString(Color4),
-                    BorderBrush = (System.Windows.Media.Brush)new BrushConverter().ConvertFromString(Color3),
-                    BorderThickness = new Thickness(3, 1, 3, 1)
-                };
-
-                if (index == _selectedElementIndex)
-                {
-                    button.Background = (System.Windows.Media.Brush)new BrushConverter().ConvertFromString(Color3);
-                    button.Foreground = (System.Windows.Media.Brush)new BrushConverter().ConvertFromString(Color4);
-                    button.BorderThickness = new Thickness(0);
-                }
-
-                button.Content = imageName;
-
-                Grid.SetColumn(button, 1);
-
-                var deleteButton = new Button
-                {
-                    Margin = new Thickness(5, 0, 0, 0),
-                    Width = 35,
-                    Height = 35,
-                    Padding = new Thickness(0),
-                    VerticalAlignment = VerticalAlignment.Top,
-                    Content = new ImageAwesome
-                    {
-                        Icon = EFontAwesomeIcon.Regular_TimesCircle,
-                        Width = 25,
-                        Height = 25,
-                        Foreground = (System.Windows.Media.Brush)new BrushConverter().ConvertFromString(Color3)
-                    },
-                    Command = RemoveImageCommand,
-                    IsEnabled = IsButtonFree,
-                    CommandParameter = index,
-                    Background = System.Windows.Media.Brushes.Transparent,
-                    BorderBrush = System.Windows.Media.Brushes.Transparent,
-                };
-
-                Grid.SetColumn(deleteButton, 2);
-
-                if (index < count)
-                {
-                    grid.Children.Add(icon);
-                }
-
-                grid.Children.Add(button);
-                grid.Children.Add(deleteButton);
-                stackPanel.Children.Add(grid);
-
-                index++;
-            }
-
-            return stackPanel;
-        }
-
         private async Task ExportData()
         {
             var hashPassword = Program.GetHash32(Password?.Length > 0 ? Password : "PyxelCrypt");
 
             CanBack = true;
 
-            var BynaryData = new List<string>();
+            _bynaryData = new List<string>();
 
             var message = "Данные экспортированы";
             var title = "Экспорт данных";
@@ -722,13 +614,13 @@ namespace PixelCrypt.ViewModel.Page
                 foreach (var filePathImage in _filePathImages)
                 {
                     var exportDataImage = await ImageHelper.ExportDataFromImage(filePathImage);
-                    BynaryData.Add(exportDataImage);
-                    FilePathImageStackPanel = LoadFilePathImages(BynaryData.Count);
+                    _bynaryData.Add(exportDataImage);
+                    FilePathImageStackPanel = LoadFilePathImages(_filePathImages, ShowImageCommand, RemoveImageCommand, _selectedElementIndex, IsButtonFree, _bynaryData.Count);
                 }
 
                 var allData = new StringBuilder();
 
-                foreach (var item in BynaryData)
+                foreach (var item in _bynaryData)
                 {
                     allData.Append(item);
                 }
@@ -744,9 +636,9 @@ namespace PixelCrypt.ViewModel.Page
             catch
             {
                 message = "Не удалось экспортировать данные";
-
+                _bynaryData.Clear();
                 _isSuccessAction = false;
-                FilePathImageStackPanel = LoadFilePathImages();
+                FilePathImageStackPanel = LoadFilePathImages(_filePathImages, ShowImageCommand, RemoveImageCommand, _selectedElementIndex, IsButtonFree);
             }
             finally
             {
@@ -767,7 +659,6 @@ namespace PixelCrypt.ViewModel.Page
 
             try
             {
-
                 inportData = Cryptography.EncryptText(inportData, hashPassword);
 
                 string binary = Converter.ConvertTextToBinaryString(inportData);
@@ -780,7 +671,7 @@ namespace PixelCrypt.ViewModel.Page
                 {
                     var importDataImage = await ImageHelper.ImportDataToImage(lines[i], _filePathImages[i]);
                     _resultImages.Add(importDataImage);
-                    FilePathImageStackPanel = LoadFilePathImages(_resultImages.Count);
+                    FilePathImageStackPanel = LoadFilePathImages(_filePathImages, ShowImageCommand, RemoveImageCommand, _selectedElementIndex, IsButtonFree, _resultImages.Count);
                 }
 
                 _isSuccessAction = true;
@@ -788,10 +679,9 @@ namespace PixelCrypt.ViewModel.Page
             catch
             {
                 _resultImages = new List<Bitmap>();
-
                 message = "Не удалось импортировать данные";
                 _isSuccessAction = false;
-                FilePathImageStackPanel = LoadFilePathImages();
+                FilePathImageStackPanel = LoadFilePathImages(_filePathImages, ShowImageCommand, RemoveImageCommand, _selectedElementIndex, IsButtonFree);
             }
             finally
             {

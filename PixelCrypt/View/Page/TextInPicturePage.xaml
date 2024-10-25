@@ -257,6 +257,7 @@
                                         <Grid Grid.Column="0">
                                             <components:BindablePasswordBox Password="{Binding Path=Password,UpdateSourceTrigger=PropertyChanged}"
                                                                             FontSize="15"
+                                                                            IsEnabled="{Binding Path=IsButtonFree,UpdateSourceTrigger=PropertyChanged}"
                                                                             Padding="5,0,10,0"
                                                                             FontWeight="Bold"
                                                                             BorderThickness="0"
@@ -267,6 +268,7 @@
                                         <Grid Grid.Column="1">
                                             <TextBox Text="{Binding Path=Password,UpdateSourceTrigger=PropertyChanged}"
                                                      FontSize="15"
+                                                     IsEnabled="{Binding Path=IsButtonFree,UpdateSourceTrigger=PropertyChanged}"
                                                      Padding="10,0"
                                                      Foreground="{Binding Path=Color3}"
                                                      HorizontalAlignment="Stretch"
