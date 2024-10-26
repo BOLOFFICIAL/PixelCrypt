@@ -20,11 +20,9 @@ namespace PixelCrypt.ViewModel.Page
         private bool _isOpenPassword = false;
         private GridLength _closePasswordWidth;
         private GridLength _openPasswordWidth;
-        //private GridLength _choseImageWidth;
         private GridLength _actionWidth = new GridLength(0, GridUnitType.Pixel);
         private GridLength _imagesWidth = new GridLength(0, GridUnitType.Pixel);
         private GridLength _clearWidth = new GridLength(0, GridUnitType.Pixel);
-        //public string _filePathImage = "";
         public bool _isSuccessAction = false;
         private bool _isButtonFree = true;
         private bool _canBack = true;
@@ -355,7 +353,7 @@ namespace PixelCrypt.ViewModel.Page
 
             if (openFileDialog.ShowDialog() ?? false)
             {
-                _isSuccessAction = false;
+                var prefCount = _filePathImages.Count;
 
                 foreach (var file in openFileDialog.FileNames)
                 {
@@ -365,14 +363,21 @@ namespace PixelCrypt.ViewModel.Page
                     }
                 }
 
-                ImagesWidth = new GridLength(1, GridUnitType.Star);
-                ActionWidth = new GridLength(1, GridUnitType.Star);
+                if (prefCount!= _filePathImages.Count) 
+                {
+                    _isSuccessAction = false;
+                    _resultImages.Clear();
+                    _bynaryData.Clear();
 
-                _selectedElementIndex = _selectedElementIndex == -1 ? _filePathImages.Count - 1 : _selectedElementIndex;
+                    ImagesWidth = new GridLength(1, GridUnitType.Star);
+                    ActionWidth = new GridLength(1, GridUnitType.Star);
 
-                ImageData = _filePathImages[_selectedElementIndex];
+                    _selectedElementIndex = _selectedElementIndex == -1 ? _filePathImages.Count - 1 : _selectedElementIndex;
 
-                FilePathImageStackPanel = LoadFilePathImages(_filePathImages, ShowImageCommand, RemoveImageCommand, _selectedElementIndex, IsButtonFree);
+                    ImageData = _filePathImages[_selectedElementIndex];
+
+                    FilePathImageStackPanel = LoadFilePathImages(_filePathImages, ShowImageCommand, RemoveImageCommand, _selectedElementIndex, IsButtonFree);
+                }
             }
         }
 
@@ -449,6 +454,10 @@ namespace PixelCrypt.ViewModel.Page
                 }
             }
 
+            _isSuccessAction = false;
+            _resultImages.Clear();
+            _bynaryData.Clear();
+
             var count = _isSuccessAction ? _filePathImages.Count : 0;
 
             FilePathImageStackPanel = LoadFilePathImages(_filePathImages, ShowImageCommand, RemoveImageCommand, _selectedElementIndex, IsButtonFree, count);
@@ -479,10 +488,9 @@ namespace PixelCrypt.ViewModel.Page
 
         public void OnShowImageCommandExecuted(object p = null)
         {
-
             int index = (p == null) ? (-1) : ((p is int value) ? (value) : (-1));
 
-            if (index == -1 || _selectedElementIndex == index) return;
+            if (index == -1 || _selectedElementIndex == index || !IsButtonFree) return;
 
             _selectedElementIndex = index;
 
@@ -592,7 +600,10 @@ namespace PixelCrypt.ViewModel.Page
                 {
                     var exportDataImage = await ImageHelper.ExportDataFromImage(filePathImage);
                     _bynaryData.Add(exportDataImage);
-                    FilePathImageStackPanel = LoadFilePathImages(_filePathImages, ShowImageCommand, RemoveImageCommand, _selectedElementIndex, IsButtonFree, _bynaryData.Count);
+                    if (Context.MainWindowViewModel.CurrentPage.GetType() == typeof(TextInPicturePage) && Context.MainWindow.IsActive) 
+                    {
+                        FilePathImageStackPanel = LoadFilePathImages(_filePathImages, ShowImageCommand, RemoveImageCommand, _selectedElementIndex, IsButtonFree, _bynaryData.Count);
+                    }
                 }
 
                 var allData = new StringBuilder();
@@ -648,7 +659,10 @@ namespace PixelCrypt.ViewModel.Page
                 {
                     var importDataImage = await ImageHelper.ImportDataToImage(lines[i], _filePathImages[i]);
                     _resultImages.Add(importDataImage);
-                    FilePathImageStackPanel = LoadFilePathImages(_filePathImages, ShowImageCommand, RemoveImageCommand, _selectedElementIndex, IsButtonFree, _resultImages.Count);
+                    if (Context.MainWindowViewModel.CurrentPage.GetType() == typeof(TextInPicturePage) && Context.MainWindow.IsActive)
+                    {
+                        FilePathImageStackPanel = LoadFilePathImages(_filePathImages, ShowImageCommand, RemoveImageCommand, _selectedElementIndex, IsButtonFree, _resultImages.Count);
+                    }
                 }
 
                 _isSuccessAction = true;

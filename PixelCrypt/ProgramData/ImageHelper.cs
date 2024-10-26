@@ -70,12 +70,11 @@ namespace PixelCrypt.ProgramData
 
                         if (index % slash == 0)
                         {
-                            var a = (elementIndex < dataA.Length) ? (byte)(color.A - byte.Parse(dataA[elementIndex].ToString())) : color.A;
-                            var r = (elementIndex < dataR.Length) ? (byte)(color.R - byte.Parse(dataR[elementIndex].ToString())) : color.R;
-                            var g = (elementIndex < dataG.Length) ? (byte)(color.G - byte.Parse(dataG[elementIndex].ToString())) : color.G;
-                            var b = (elementIndex < dataB.Length) ? (byte)(color.B - byte.Parse(dataB[elementIndex].ToString())) : color.B;
-
-                            color = Color.FromArgb(a, r, g, b);
+                            color = Color.FromArgb(
+                                (elementIndex < dataA.Length) ? (byte)(color.A - byte.Parse(dataA[elementIndex].ToString())) : color.A,
+                                (elementIndex < dataR.Length) ? (byte)(color.R - byte.Parse(dataR[elementIndex].ToString())) : color.R,
+                                (elementIndex < dataG.Length) ? (byte)(color.G - byte.Parse(dataG[elementIndex].ToString())) : color.G,
+                                (elementIndex < dataB.Length) ? (byte)(color.B - byte.Parse(dataB[elementIndex].ToString())) : color.B);
 
                             elementIndex++;
                         }
@@ -94,61 +93,53 @@ namespace PixelCrypt.ProgramData
         {
             var exportDataImage = await Task.Run(() =>
             {
-                var res = "";
-
                 var pixels = GetArrayPixelsFromImage(path);
 
                 var listPixels = GetListPixelsFromArrayPixels(pixels);
 
                 var uniqBinaryLength = Converter.ConvertIntToBinaryString(listPixels.Count).Length;
 
-                var A = "";
-                var R = "";
-                var G = "";
-                var B = "";
+                var A = new StringBuilder();
+                var R = new StringBuilder();
+                var G = new StringBuilder();
+                var B = new StringBuilder();
 
                 var index = 0;
 
                 for (index = 0; index < slash * uniqBinaryLength - (slash - 1); index += slash)
                 {
-                    A += (listPixels[index].A % 2 == 0) ? "1" : "0";
-                    R += (listPixels[index].R % 2 == 0) ? "1" : "0";
-                    G += (listPixels[index].G % 2 == 0) ? "1" : "0";
-                    B += (listPixels[index].B % 2 == 0) ? "1" : "0";
+                    A.Append((listPixels[index].A % 2 == 0) ? "1" : "0");
+                    R.Append((listPixels[index].R % 2 == 0) ? "1" : "0");
+                    G.Append((listPixels[index].G % 2 == 0) ? "1" : "0");
+                    B.Append((listPixels[index].B % 2 == 0) ? "1" : "0");
                 }
 
-                var SizeA = Converter.ConvertBinaryStringToInt(A);
-                var SizeR = Converter.ConvertBinaryStringToInt(R);
-                var SizeG = Converter.ConvertBinaryStringToInt(G);
-                var SizeB = Converter.ConvertBinaryStringToInt(B);
-
-                var dataA = new StringBuilder();
-                var dataR = new StringBuilder();
-                var dataG = new StringBuilder();
-                var dataB = new StringBuilder();
+                var SizeA = Converter.ConvertBinaryStringToInt(A.ToString()); A.Clear();
+                var SizeR = Converter.ConvertBinaryStringToInt(R.ToString()); R.Clear();
+                var SizeG = Converter.ConvertBinaryStringToInt(G.ToString()); G.Clear();
+                var SizeB = Converter.ConvertBinaryStringToInt(B.ToString()); B.Clear();
 
                 for (int i = index; i < index + (slash * SizeA - (slash - 1)); i += slash)
                 {
-                    dataA.Append((listPixels[i].A % 2 == 0) ? "1" : "0");
+                    A.Append((listPixels[i].A % 2 == 0) ? "1" : "0");
                 }
 
                 for (int i = index; i < index + (slash * SizeR - (slash - 1)); i += slash)
                 {
-                    dataR.Append((listPixels[i].R % 2 == 0) ? "1" : "0");
+                    R.Append((listPixels[i].R % 2 == 0) ? "1" : "0");
                 }
 
                 for (int i = index; i < index + (slash * SizeG - (slash - 1)); i += slash)
                 {
-                    dataG.Append((listPixels[i].G % 2 == 0) ? "1" : "0");
+                    G.Append((listPixels[i].G % 2 == 0) ? "1" : "0");
                 }
 
                 for (int i = index; i < index + (slash * SizeB - (slash - 1)); i += 8)
                 {
-                    dataB.Append((listPixels[i].B % 2 == 0) ? "1" : "0");
+                    B.Append((listPixels[i].B % 2 == 0) ? "1" : "0");
                 }
 
-                res = dataA.ToString() + dataR.ToString() + dataG.ToString() + dataB.ToString();
-                return res;
+                return A.Append(R.Append(G.Append(B))).ToString();
             });
 
             return exportDataImage;
