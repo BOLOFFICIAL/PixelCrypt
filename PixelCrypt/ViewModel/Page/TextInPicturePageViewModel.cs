@@ -20,11 +20,11 @@ namespace PixelCrypt.ViewModel.Page
         private bool _isOpenPassword = false;
         private GridLength _closePasswordWidth;
         private GridLength _openPasswordWidth;
-        private GridLength _choseImageWidth;
+        //private GridLength _choseImageWidth;
         private GridLength _actionWidth = new GridLength(0, GridUnitType.Pixel);
         private GridLength _imagesWidth = new GridLength(0, GridUnitType.Pixel);
         private GridLength _clearWidth = new GridLength(0, GridUnitType.Pixel);
-        public string _filePathImage = "";
+        //public string _filePathImage = "";
         public bool _isSuccessAction = false;
         private bool _isButtonFree = true;
         private bool _canBack = true;
@@ -49,8 +49,6 @@ namespace PixelCrypt.ViewModel.Page
         private bool _isImport = false;
         private bool _isFileDataReadonly = false;
         private bool _canDoAction = true;
-        private GridLength _onePictureWidth;
-        private GridLength _manyPictureWidth;
         private GridLength _saveButtonWidth = new GridLength(0, GridUnitType.Pixel);
         private List<string> _filePathImages = new List<string>();
         private List<Bitmap> _resultImages = new List<Bitmap>();
@@ -58,7 +56,6 @@ namespace PixelCrypt.ViewModel.Page
         private StackPanel _filePathImageStackPanel = new StackPanel();
         private int _selectedElementIndex = -1;
         public ICommand ActionCommand { get; }
-        public ICommand SplitCommand { get; }
         public ICommand ClearPathFileCommand { get; }
         public ICommand ChoseFileCommand { get; }
         public ICommand ClearAllCommand { get; }
@@ -68,11 +65,10 @@ namespace PixelCrypt.ViewModel.Page
         public TextInPicturePageViewModel()
         {
             ActionCommand = new LambdaCommand(OnActionCommandExecuted);
-            SplitCommand = new LambdaCommand(OnSplitCommandExecuted);
             ClearPathFileCommand = new LambdaCommand(OnClearPathFileCommandExecuted);
             SaveCommand = new LambdaCommand(OnSaveCommandExecuted, CanSaveCommandExecute);
             ChoseFileCommand = new LambdaCommand(OnChoseFileCommandExecuted);
-            ChoseImageCommand = new LambdaCommand(OnChoseImageCommandExecuted, CanChoseImageCommandExecute);
+            ChoseImageCommand = new LambdaCommand(OnChoseImageCommandExecuted);
             DoActionCommand = new LambdaCommand(OnDoActionCommandExecuted, CanDoActionCommandExecute);
             ClosePageCommand = new LambdaCommand(OnClosePageCommandExecuted);
             ShowPaswordCommand = new LambdaCommand(OnShowPaswordCommandExecuted);
@@ -83,7 +79,6 @@ namespace PixelCrypt.ViewModel.Page
 
             RemoveImageCommand = new LambdaCommand(OnRemoveImageCommandExecuted);
 
-            OnSplitCommandExecuted(null);
             OnActionCommandExecuted("Import");
         }
 
@@ -155,18 +150,6 @@ namespace PixelCrypt.ViewModel.Page
             set => Set(ref _actionButtonForegroundColor, value);
         }
 
-        public GridLength OnePictureWidth
-        {
-            get => _onePictureWidth;
-            set => Set(ref _onePictureWidth, value);
-        }
-
-        public GridLength ManyPictureWidth
-        {
-            get => _manyPictureWidth;
-            set => Set(ref _manyPictureWidth, value);
-        }
-
         public GridLength SaveButtonWidth
         {
             get => _saveButtonWidth;
@@ -227,12 +210,6 @@ namespace PixelCrypt.ViewModel.Page
             set => Set(ref _imageData, value);
         }
 
-        public string FilePathImage
-        {
-            get => Path.GetFileName(_filePathImage);
-            set => Set(ref _filePathImage, value);
-        }
-
         public GridLength ClosePasswordWidth
         {
             get => _closePasswordWidth;
@@ -245,36 +222,11 @@ namespace PixelCrypt.ViewModel.Page
             set => Set(ref _openPasswordWidth, value);
         }
 
-        public GridLength ChoseImageWidth
-        {
-            get => _choseImageWidth;
-            set => Set(ref _choseImageWidth, value);
-        }
-
-        private void OnSplitCommandExecuted(object p = null)
-        {
-            OnePictureWidth = new GridLength(1, GridUnitType.Star);
-            ManyPictureWidth = new GridLength(0, GridUnitType.Star);
-
-            FilePathImageStackPanel = new StackPanel();
-
-            if (_filePathImages.Count > 0)
-            {
-                ImageData = _filePathImages[0];
-                FilePathImage = _filePathImages[0];
-            }
-            else
-            {
-                ImageData = "";
-                FilePathImage = "";
-            }
-        }
-
         private void OnActionCommandExecuted(object p = null)
         {
             if (p is not string actionName) return;
 
-            var value = _isImport;
+            if (_isSuccessAction && Notification.MakeMessage("Смена режима приведет к потере результата.\nПродолжить?", null, NotificationButton.YesNo) != NotificationResult.Yes) return;
 
             switch (actionName)
             {
@@ -284,10 +236,9 @@ namespace PixelCrypt.ViewModel.Page
 
             _resultImages.Clear();
             _bynaryData.Clear();
+            _isSuccessAction = false;
 
             FilePathImageStackPanel = LoadFilePathImages(_filePathImages, ShowImageCommand, RemoveImageCommand, _selectedElementIndex, IsButtonFree);
-
-            _isSuccessAction = value == _isImport;
         }
 
         private void OnClearPathFileCommandExecuted(object p = null)
@@ -383,22 +334,6 @@ namespace PixelCrypt.ViewModel.Page
                     }
                 }
             }
-        }
-
-        private bool CanChoseImageCommandExecute(object arg)
-        {
-            var res = true;
-
-            if (FilePathImage.Length > 0)
-            {
-                ChoseImageWidth = new GridLength(1, GridUnitType.Auto);
-            }
-            else
-            {
-                ChoseImageWidth = new GridLength(0, GridUnitType.Pixel);
-            }
-
-            return res;
         }
 
         public void OnChoseImageCommandExecuted(object p = null)
@@ -626,7 +561,7 @@ namespace PixelCrypt.ViewModel.Page
             {
                 string content = File.ReadAllText(_filePathFile);
 
-                if (content.Length > 0 && Notification.MakeMessage("Файл содержит данные которые будут перезаписаны. Оставить выбранный файл?", "Файл для записи данных", NotificationButton.YesNo) == NotificationResult.Yes)
+                if (content.Length > 0 && Notification.MakeMessage("Файл содержит данные которые будут перезаписаны. Оставить выбранный файл?", "Файл для записи данных", NotificationButton.YesNo) == NotificationResult.Yes || content.Length == 0)
                 {
                     FilePathFile = _filePathFile;
                 }
