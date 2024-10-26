@@ -54,7 +54,7 @@ namespace PixelCrypt.ProgramData
 
                 if (limit < avrage)
                 {
-                    throw new Exception($"A lot of data");
+                    throw new Exception($"В изображении {Path.GetFileName(filepath)} недостаточно места для импорта данных.\nЗамените изображение и попробуйте снова");
                 }
 
                 var newPixels = new Color[width, height];

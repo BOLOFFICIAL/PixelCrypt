@@ -76,7 +76,7 @@
 
                                             <Grid Grid.Column="0"
                                                   Margin="0,0,5,0">
-                                                <Button ToolTip = "Помещение информации в картинку"
+                                                <Button ToolTip = "Помещение даннных в картинку"
                                                         BorderThickness="0"
                                                         IsEnabled="{Binding Path=IsButtonFree,UpdateSourceTrigger=PropertyChanged}"
                                                         Background="{Binding Path=ImportButtonBackgroundColor}"
@@ -110,7 +110,7 @@
 
                                             <Grid Grid.Column="1"
                                                   Margin="5,0,5,0">
-                                                <Button ToolTip = "Получение информации из картинки"
+                                                <Button ToolTip = "Получение даннных из картинки"
                                                         BorderThickness="0"
                                                         IsEnabled="{Binding Path=IsButtonFree,UpdateSourceTrigger=PropertyChanged}"
                                                         Background="{Binding Path=ExportButtonBackgroundColor}"

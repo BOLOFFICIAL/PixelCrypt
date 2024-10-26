@@ -205,11 +205,11 @@
 
                                         <Grid Grid.Column="0">
                                             <Button Margin="0,0,0,0"
-                                                    Background="Transparent"
+                                                    Background="{Binding Path=Color4}"
                                                     IsEnabled="{Binding Path=IsButtonFree,UpdateSourceTrigger=PropertyChanged}"
                                                     Command="{Binding Path=DoActionCommand}"
                                                     CommandParameter="Encrypt"
-                                                    BorderBrush="{Binding Path=Color3}"
+                                                    BorderThickness="0"
                                                     Padding="5">
                                                 <fa:ImageAwesome Icon="Solid_Lock"
                                                                  Foreground="{Binding Path=Color3}"
@@ -220,11 +220,11 @@
 
                                         <Grid Grid.Column="1">
                                             <Button Margin="10,0,0,0"
-                                                    Background="Transparent"
+                                                    Background="{Binding Path=Color4}"
                                                     IsEnabled="{Binding Path=IsButtonFree,UpdateSourceTrigger=PropertyChanged}"
                                                     Command="{Binding Path=DoActionCommand}"
                                                     CommandParameter="Decrypt"
-                                                    BorderBrush="{Binding Path=Color3}"
+                                                    BorderThickness="0"
                                                     Padding="5">
                                                 <fa:ImageAwesome Icon="Solid_LockOpen"
                                                                  Foreground="{Binding Path=Color3}"

@@ -81,7 +81,7 @@ namespace PixelCrypt.ViewModel.Base
         protected StackPanel LoadFilePathImages(List<string> filePathImages, ICommand showImageCommand, ICommand removeImageCommand, int selectedElementIndex, bool isButtonFree, int count = 0)
         {
             var stackPanel = new StackPanel();
-            int index = 0;
+            var index = 0;
 
             foreach (var image in filePathImages)
             {
@@ -100,7 +100,7 @@ namespace PixelCrypt.ViewModel.Base
                     Width = 25,
                     Height = 25,
                     Margin = new Thickness(0, 0, 10, 0),
-                    Foreground = (System.Windows.Media.Brush)new BrushConverter().ConvertFromString(Color5)
+                    Foreground = (Brush)new BrushConverter().ConvertFromString(Color5)
                 };
 
                 Grid.SetColumn(icon, 0);
@@ -151,8 +151,8 @@ namespace PixelCrypt.ViewModel.Base
                     Command = removeImageCommand,
                     IsEnabled = isButtonFree,
                     CommandParameter = index,
-                    Background = System.Windows.Media.Brushes.Transparent,
-                    BorderBrush = System.Windows.Media.Brushes.Transparent,
+                    Background = Brushes.Transparent,
+                    BorderBrush = Brushes.Transparent,
                 };
 
                 Grid.SetColumn(deleteButton, 2);
