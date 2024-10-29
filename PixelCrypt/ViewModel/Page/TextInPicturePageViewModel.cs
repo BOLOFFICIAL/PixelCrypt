@@ -24,6 +24,7 @@ namespace PixelCrypt.ViewModel.Page
         private GridLength _imagesWidth = new GridLength(0, GridUnitType.Pixel);
         private GridLength _clearWidth = new GridLength(0, GridUnitType.Pixel);
         public bool _isSuccessAction = false;
+        private string[] _exportFileData = new string[0];
         private bool _isButtonFree = true;
         private bool _canBack = true;
         public ICommand ClosePageCommand { get; }
@@ -252,7 +253,7 @@ namespace PixelCrypt.ViewModel.Page
             {
                 if (_isImport)
                 {
-                    if (Program.SaveDataToFolder(_filePathImages, _resultImages))
+                    if (Program.SaveBitmapToFolder(_filePathImages, _resultImages))
                     {
                         Notification.MakeMessage("Картинки сохранены", "Сохранение изображений");
                     }
@@ -387,7 +388,44 @@ namespace PixelCrypt.ViewModel.Page
             _resultImages.Clear();
 
             if (_isImport) { await ImportData(); }
-            else { await ExportData(); }
+            else
+            {
+                await ExportData();
+
+                if (_exportFileData.Length == 3)
+                {
+                    if (Context.MainWindow.IsActive &&
+                        Context.MainWindowViewModel.CurrentPage is TextInPicturePage &&
+                        Notification.MakeMessage("Экспортированные данные являются файлом.\nCохранить файл?", "Экспорт данных", NotificationButton.YesNo) == NotificationResult.Yes)
+                    {
+                        var saveFileDialog = new SaveFileDialog
+                        {
+                            Title = "Выбрать файл для сохранения данных",
+                            FileName = _exportFileData[0],
+                            Filter = $"Файлы (*{_exportFileData[1]})|*{_exportFileData[1]}"
+                        };
+
+                        if (saveFileDialog.ShowDialog() ?? false)
+                        {
+                            var selectedFilePath = saveFileDialog.FileName;
+
+                            if (!File.Exists(selectedFilePath))
+                            {
+                                using (File.Create(selectedFilePath)) { }
+                            }
+
+                            byte[] fileBytes = Convert.FromBase64String(_exportFileData[2]);
+                            File.WriteAllBytes(selectedFilePath, fileBytes);
+
+                            Notification.MakeMessage("Фаил сохранен", "Экспорт данных");
+                        }
+                    }
+                    else
+                    {
+                        FileData = _exportFileData[2];
+                    }
+                }
+            }
 
             IsButtonFree = true;
 
@@ -584,16 +622,29 @@ namespace PixelCrypt.ViewModel.Page
 
                 var exportData = Converter.ConvertBinaryStringToText(allData.ToString());
 
-                exportData = Cryptography.DecryptText(exportData, hashPassword);
+                _exportFileData = exportData.Split("[*]");
+
+                if (_exportFileData.Length > 1)
+                {
+                    _exportFileData[2] = Cryptography.DecryptText(_exportFileData[2], hashPassword);
+
+                    if (!Context.MainWindow.IsActive || Context.MainWindowViewModel.CurrentPage.GetType() != typeof(TextInPicturePage))
+                    {
+                        message += ".\nДанные являются файлом. Необходимо перейти на cтраницу для его формирования";
+                    }
+                }
+                else
+                {
+                    FileData = Cryptography.DecryptText(exportData, hashPassword);
+                }
 
                 _isSuccessAction = true;
-
-                FileData = exportData;
             }
             catch
             {
                 message = "Не удалось экспортировать данные";
                 _bynaryData.Clear();
+                _exportFileData = new string[0];
                 _isSuccessAction = false;
                 FilePathImageStackPanel = LoadFilePathImages(_filePathImages, ShowImageCommand, RemoveImageCommand, _selectedElementIndex, IsButtonFree);
             }
@@ -614,7 +665,20 @@ namespace PixelCrypt.ViewModel.Page
 
             try
             {
-                var inportData = Cryptography.EncryptText(FileData, hashPassword);
+                var inportData = FileData;
+
+                if (FilePathFile.Length > 0)
+                {
+                    inportData = Convert.ToBase64String(File.ReadAllBytes(_filePathFile));
+                    inportData = Cryptography.EncryptText(inportData, hashPassword);
+
+                    var fileInfo = new FileInfo(_filePathFile);
+                    inportData = $"{fileInfo.Name}[*]{fileInfo.Extension}[*]" + inportData;
+                }
+                else
+                {
+                    inportData = Cryptography.EncryptText(inportData, hashPassword);
+                }
 
                 string binary = Converter.ConvertTextToBinaryString(inportData);
 

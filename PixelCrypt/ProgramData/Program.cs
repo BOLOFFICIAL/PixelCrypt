@@ -52,14 +52,14 @@ namespace PixelCrypt.ProgramData
             }
         }
 
-        public static bool SaveDataToFolder(List<string> filePathImages, List<Bitmap> resultImages)
+        public static bool SaveBitmapToFolder(List<string> filePathImages, List<Bitmap> resultImages)
         {
             CommonOpenFileDialog folderPicker = new CommonOpenFileDialog();
 
             folderPicker.IsFolderPicker = true;
             folderPicker.Title = "Выбор папки для хранения данных";
             var now = DateTime.Now;
-            folderPicker.DefaultFileName = $"PixelCrypt_{now.ToString().Replace(":", "").Replace(" ", "").Replace(".", "")}";
+            folderPicker.DefaultFileName = $"PixelCrypt_{now:yyyyMMddHHmmss}";
             folderPicker.InitialDirectory = Path.GetDirectoryName(filePathImages[0]);
 
             CommonFileDialogResult dialogResult = folderPicker.ShowDialog();
@@ -73,13 +73,8 @@ namespace PixelCrypt.ProgramData
 
                 for (int i = 0; i < resultImages.Count; i++)
                 {
-                    var name = Path.Combine(folderPicker.FileName, Path.GetFileNameWithoutExtension(filePathImages[i]) + $"_PixelCrypt_{now.ToString().Replace(":", "").Replace(" ", "").Replace(".", "")}");
-                    var format = ImageFormat.Png;
-
-                    format = ImageFormat.Png;
-                    name += ".png";
-
-                    resultImages[i].Save(name, format);
+                    var name = Path.Combine(folderPicker.FileName, Path.GetFileNameWithoutExtension(filePathImages[i]) + $"_PixelCrypt_{now:yyyyMMddHHmmss}.png");
+                    resultImages[i].Save(name, ImageFormat.Png);
                 }
 
                 return true;
