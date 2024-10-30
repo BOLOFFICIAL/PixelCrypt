@@ -205,7 +205,7 @@
 
                                         <Grid Grid.Column="0">
                                             <Button Margin="0,0,0,0"
-                                                    Background="{Binding Path=Color4}"
+                                                    Background="{Binding Path=EncryptButtonBackgroundColor,UpdateSourceTrigger=PropertyChanged}"
                                                     IsEnabled="{Binding Path=IsButtonFree,UpdateSourceTrigger=PropertyChanged}"
                                                     Command="{Binding Path=DoActionCommand}"
                                                     CommandParameter="Encrypt"
@@ -220,7 +220,7 @@
 
                                         <Grid Grid.Column="1">
                                             <Button Margin="10,0,0,0"
-                                                    Background="{Binding Path=Color4}"
+                                                    Background="{Binding Path=DecryptButtonBackgroundColor,UpdateSourceTrigger=PropertyChanged}"
                                                     IsEnabled="{Binding Path=IsButtonFree,UpdateSourceTrigger=PropertyChanged}"
                                                     Command="{Binding Path=DoActionCommand}"
                                                     CommandParameter="Decrypt"

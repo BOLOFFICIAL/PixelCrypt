@@ -16,6 +16,8 @@ namespace PixelCrypt.ViewModel.Page
         private string _password = "";
         private string _showPasword = "";
         private string _imageData = "";
+        private string _encryptButtonBackgroundColor = "";
+        private string _decryptButtonBackgroundColor = "";
         private bool _isOpenPassword = false;
         public string _filePathImage = "";
         public bool _isSuccessAction = false;
@@ -58,6 +60,9 @@ namespace PixelCrypt.ViewModel.Page
             ClearAllCommand = new LambdaCommand(OnClearAllCommandExecuted);
 
             OnShowPaswordCommandExecuted(null);
+
+            EncryptButtonBackgroundColor = Color4;
+            DecryptButtonBackgroundColor = Color4;
         }
 
         public string PageTitle => "Cryptography";
@@ -164,6 +169,18 @@ namespace PixelCrypt.ViewModel.Page
             set => Set(ref _clearWidth, value);
         }
 
+        public string EncryptButtonBackgroundColor
+        {
+            get => _encryptButtonBackgroundColor;
+            set => Set(ref _encryptButtonBackgroundColor, value);
+        }
+
+        public string DecryptButtonBackgroundColor
+        {
+            get => _decryptButtonBackgroundColor;
+            set => Set(ref _decryptButtonBackgroundColor, value);
+        }
+
         public void OnChoseImageCommandExecuted(object p = null)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog()
@@ -213,6 +230,9 @@ namespace PixelCrypt.ViewModel.Page
 
         public async void OnDoActionCommandExecuted(object p = null)
         {
+            EncryptButtonBackgroundColor = Color4;
+            DecryptButtonBackgroundColor = Color4;
+
             try
             {
                 if (p is not string action) return;
@@ -231,8 +251,18 @@ namespace PixelCrypt.ViewModel.Page
 
                 switch (action)
                 {
-                    case "Encrypt": await Encrypt(); break;
-                    case "Decrypt": await Decrypt(); break;
+                    case "Encrypt":
+                        {
+                            EncryptButtonBackgroundColor = Color2;
+                            await Encrypt(); 
+                            break;
+                        }
+                    case "Decrypt":
+                        {
+                            DecryptButtonBackgroundColor = Color2;
+                            await Decrypt(); 
+                            break;
+                        }
                 }
 
                 IsButtonFree = true;
@@ -252,6 +282,9 @@ namespace PixelCrypt.ViewModel.Page
             catch (Exception ex)
             {
                 Notification.MakeMessage("Не удалось выполнить действие");
+
+                EncryptButtonBackgroundColor = Color4;
+                DecryptButtonBackgroundColor = Color4;
 
                 IsButtonFree = true;
 
@@ -437,6 +470,9 @@ namespace PixelCrypt.ViewModel.Page
 
             _selectedElementIndex = -1;
             FilePathImageStackPanel = new StackPanel();
+
+            EncryptButtonBackgroundColor = Color4;
+            DecryptButtonBackgroundColor = Color4;
         }
 
         public void InitializeImage()

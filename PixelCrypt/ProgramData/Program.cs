@@ -1,4 +1,5 @@
-﻿using Microsoft.WindowsAPICodePack.Dialogs;
+﻿using Microsoft.Win32;
+using Microsoft.WindowsAPICodePack.Dialogs;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -39,14 +40,34 @@ namespace PixelCrypt.ProgramData
             return output = Convert.ToHexString(hash);
         }
 
-        public static bool SaveDataToFile(string filePath, string data)
+        public static bool SaveDataToFile(string data)
         {
-            if (File.Exists(filePath))
+            try
             {
-                File.WriteAllText(filePath, data);
-                return true;
+                var saveFileDialog = new SaveFileDialog
+                {
+                    Title = "Выбрать файл для сохранения данных",
+                    FileName = $"PixelCrypt_{DateTime.Now:yyyyMMddHHmmss}",
+                    Filter = $"Файлы (*.txt)|*.txt"
+                };
+
+                if (saveFileDialog.ShowDialog() ?? false)
+                {
+                    var selectedFilePath = saveFileDialog.FileName;
+
+                    if (!File.Exists(selectedFilePath))
+                    {
+                        using (File.Create(selectedFilePath)) { }
+                    }
+
+                    File.WriteAllText(selectedFilePath, data);
+
+                    return true;
+                }
+
+                return false;
             }
-            else
+            catch 
             {
                 return false;
             }

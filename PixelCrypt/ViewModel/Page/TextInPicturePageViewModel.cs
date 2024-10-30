@@ -30,7 +30,6 @@ namespace PixelCrypt.ViewModel.Page
         public ICommand ClosePageCommand { get; }
         public ICommand ShowPaswordCommand { get; }
         public ICommand ChoseImageCommand { get; set; }
-        public ICommand DoActionCommand { get; set; }
         public ICommand SaveCommand { get; set; }
         private ICommand ShowImageCommand { get; }
         private readonly int slash = 8;
@@ -38,9 +37,7 @@ namespace PixelCrypt.ViewModel.Page
         private string _filePathFile = "";
         private string _fileData = "";
         private string _importButtonBackgroundColor = "";
-        private string _importButtonForegroundColor = "";
         private string _exportButtonBackgroundColor = "";
-        private string _exportButtonForegroundColor = "";
         private string _actionButtonBackgroundColor = "";
         private string _actionButtonForegroundColor = "";
         private string _errorDoActionMessage = "";
@@ -66,7 +63,6 @@ namespace PixelCrypt.ViewModel.Page
             SaveCommand = new LambdaCommand(OnSaveCommandExecuted);
             ChoseFileCommand = new LambdaCommand(OnChoseFileCommandExecuted);
             ChoseImageCommand = new LambdaCommand(OnChoseImageCommandExecuted);
-            DoActionCommand = new LambdaCommand(OnDoActionCommandExecuted);
             ClosePageCommand = new LambdaCommand(OnClosePageCommandExecuted);
             ShowPaswordCommand = new LambdaCommand(OnShowPaswordCommandExecuted);
             ShowImageCommand = new LambdaCommand(OnShowImageCommandExecuted);
@@ -74,10 +70,11 @@ namespace PixelCrypt.ViewModel.Page
             RemoveImageCommand = new LambdaCommand(OnRemoveImageCommandExecuted);
 
             OnShowPaswordCommandExecuted();
-            OnActionCommandExecuted("Import");
 
             ActionButtonBackgroundColor = Color2;
             ActionButtonForegroundColor = Color3;
+            ImportButtonBackgroundColor = Color4;
+            ExportButtonBackgroundColor = Color4;
         }
 
         public string PageTitle => "Steganography";
@@ -118,22 +115,10 @@ namespace PixelCrypt.ViewModel.Page
             set => Set(ref _importButtonBackgroundColor, value);
         }
 
-        public string ImportButtonForegroundColor
-        {
-            get => _importButtonForegroundColor;
-            set => Set(ref _importButtonForegroundColor, value);
-        }
-
         public string ExportButtonBackgroundColor
         {
             get => _exportButtonBackgroundColor;
             set => Set(ref _exportButtonBackgroundColor, value);
-        }
-
-        public string ExportButtonForegroundColor
-        {
-            get => _exportButtonForegroundColor;
-            set => Set(ref _exportButtonForegroundColor, value);
         }
 
         public string ActionButtonBackgroundColor
@@ -220,24 +205,59 @@ namespace PixelCrypt.ViewModel.Page
             set => Set(ref _openPasswordWidth, value);
         }
 
-        private void OnActionCommandExecuted(object p = null)
+        private async void OnActionCommandExecuted(object p = null)
         {
             if (p is not string actionName) return;
 
-            if (_isSuccessAction && Notification.MakeMessage("Смена режима приведет к потере прогресса.\nПродолжить?", NotificationButton.YesNo) != NotificationResult.Yes) return;
+            ImportButtonBackgroundColor = Color4;
+            ExportButtonBackgroundColor = Color4;
 
-            switch (actionName)
+            _isImport = actionName == "Import";
+
+            var currentElementIndex = _selectedElementIndex;
+            _isSuccessAction = false;
+            IsButtonFree = false;
+            IsFileDataReadonly = true;
+            CanBack = false;
+            UpdateSaveWidth();
+            _selectedElementIndex = -1;
+            FilePathImageStackPanel = LoadFilePathImages(_filePathImages, ShowImageCommand, RemoveImageCommand, _selectedElementIndex, IsButtonFree);
+            _bynaryData.Clear();
+            _resultImages.Clear();
+
+            try
             {
-                case "Import": ImportAction(); break;
-                case "Export": ExportAction(); break;
+                if (_isImport)
+                {
+                    await ImportAction();
+                }
+                else
+                {
+                    await ExportAction();
+                }
+            }
+            catch
+            {
+                Notification.MakeMessage("Не удалось выполнить действие");
+
+                ImportButtonBackgroundColor = Color4;
+                ExportButtonBackgroundColor = Color4;
+
+                _isSuccessAction = false;
+                IsButtonFree = true;
+                CanBack = true;
+                _bynaryData.Clear();
+                _resultImages.Clear();
+                UpdateSaveWidth();
+                FilePathImageStackPanel = LoadFilePathImages(_filePathImages, ShowImageCommand, RemoveImageCommand, _selectedElementIndex, IsButtonFree);
             }
 
-            _resultImages.Clear();
-            _bynaryData.Clear();
-            _isSuccessAction = false;
+            IsFileDataReadonly = false;
+            IsButtonFree = true;
+            var count = _isSuccessAction ? _filePathImages.Count : 0;
+            _selectedElementIndex = currentElementIndex;
+            FilePathImageStackPanel = LoadFilePathImages(_filePathImages, ShowImageCommand, RemoveImageCommand, _selectedElementIndex, IsButtonFree, count);
             UpdateSaveWidth();
-
-            FilePathImageStackPanel = LoadFilePathImages(_filePathImages, ShowImageCommand, RemoveImageCommand, _selectedElementIndex, IsButtonFree);
         }
 
         private void OnClearPathFileCommandExecuted(object p = null)
@@ -249,30 +269,32 @@ namespace PixelCrypt.ViewModel.Page
 
         private void OnSaveCommandExecuted(object p = null)
         {
+            var title = "Сохранение данных";
+
             try
             {
                 if (_isImport)
                 {
                     if (Program.SaveBitmapToFolder(_filePathImages, _resultImages))
                     {
-                        Notification.MakeMessage("Картинки сохранены", "Сохранение изображений");
+                        Notification.MakeMessage("Картинки сохранены", title);
                     }
                 }
                 else
                 {
-                    var message = "Нет данных для сохранения";
-
-                    if (FileData.Length > 0)
+                    if (FileData.Length == 0)
                     {
-                        message = Program.SaveDataToFile(_filePathFile, FileData) ? "Данные успешно сохранены" : "Не удалось сохранить данные";
+                        Notification.MakeMessage("Нет данных для сохранения", title);
                     }
-
-                    Notification.MakeMessage(message, "Сохранение данных");
+                    else if (Program.SaveDataToFile(FileData))
+                    {
+                        Notification.MakeMessage("Файл сохранен", title);
+                    }
                 }
             }
             catch (Exception)
             {
-                Notification.MakeMessage("Возникла ошибка при сохранении", "Сохранение");
+                Notification.MakeMessage("Возникла ошибка при сохранении", title);
             }
         }
 
@@ -280,38 +302,26 @@ namespace PixelCrypt.ViewModel.Page
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
 
-            if (_isImport)
+            openFileDialog.Title = "Выбрать файл для чтения данных";
+
+            if (openFileDialog.ShowDialog() ?? false)
             {
-                openFileDialog.Title = "Выбрать файл для чтения данных";
-
-                if (openFileDialog.ShowDialog() ?? false)
+                if (FileData == null || FileData.Length == 0 || (FileData.Length > 0 && Notification.MakeMessage("Заменить текст на данные из файла?", "Файл для чтения данных", NotificationButton.YesNo) == NotificationResult.Yes))
                 {
-                    if (FileData == null || FileData.Length == 0 || (FileData.Length > 0 && Notification.MakeMessage("Заменить текст на данные из файла?", "Файл для чтения данных", NotificationButton.YesNo) == NotificationResult.Yes))
-                    {
-                        IsFileDataReadonly = true;
+                    IsFileDataReadonly = true;
 
-                        FilePathFile = openFileDialog.FileName;
+                    FilePathFile = openFileDialog.FileName;
 
-                        FileData = File.ReadAllText(_filePathFile);
-                    }
+                    FileData = File.ReadAllText(_filePathFile);
+
+                    IsSuccessAction = false;
+                    UpdateSaveWidth();
+                    FilePathImageStackPanel = LoadFilePathImages(_filePathImages, ShowImageCommand, RemoveImageCommand, _selectedElementIndex, IsButtonFree);
+
+                    ImportButtonBackgroundColor = Color4;
+                    ExportButtonBackgroundColor = Color4;
                 }
             }
-            else
-            {
-                openFileDialog.Title = "Выбрать файл для записи данных";
-
-                if (openFileDialog.ShowDialog() ?? false)
-                {
-                    string content = File.ReadAllText(openFileDialog.FileName);
-
-                    if (content.Length == 0 || content.Length > 0 && Notification.MakeMessage("Файл содержит данные которые будут перезаписаны.\nПродолжить?", "Файл для записи данных", NotificationButton.YesNo) == NotificationResult.Yes)
-                    {
-                        FilePathFile = openFileDialog.FileName;
-                    }
-                }
-            }
-
-            UpdateSaveWidth();
         }
 
         public void OnChoseImageCommandExecuted(object p = null)
@@ -362,80 +372,6 @@ namespace PixelCrypt.ViewModel.Page
                 UpdateClearWidth();
                 UpdateSaveWidth();
             }
-        }
-
-        public async void OnDoActionCommandExecuted(object p = null)
-        {
-            if (_isImport && FileData.Length == 0)
-            {
-                Notification.MakeMessage("Нет данных для импорта", ActionButtonName);
-                return;
-            };
-
-            _isSuccessAction = false;
-            IsButtonFree = false;
-            CanBack = false;
-
-            UpdateSaveWidth();
-
-            var currentElementIndex = _selectedElementIndex;
-
-            _selectedElementIndex = -1;
-
-            FilePathImageStackPanel = LoadFilePathImages(_filePathImages, ShowImageCommand, RemoveImageCommand, _selectedElementIndex, IsButtonFree);
-
-            _bynaryData.Clear();
-            _resultImages.Clear();
-
-            if (_isImport) { await ImportData(); }
-            else
-            {
-                await ExportData();
-
-                if (_exportFileData.Length == 3)
-                {
-                    if (Context.MainWindow.IsActive &&
-                        Context.MainWindowViewModel.CurrentPage is TextInPicturePage &&
-                        Notification.MakeMessage("Экспортированные данные являются файлом.\nCохранить файл?", "Экспорт данных", NotificationButton.YesNo) == NotificationResult.Yes)
-                    {
-                        var saveFileDialog = new SaveFileDialog
-                        {
-                            Title = "Выбрать файл для сохранения данных",
-                            FileName = _exportFileData[0],
-                            Filter = $"Файлы (*{_exportFileData[1]})|*{_exportFileData[1]}"
-                        };
-
-                        if (saveFileDialog.ShowDialog() ?? false)
-                        {
-                            var selectedFilePath = saveFileDialog.FileName;
-
-                            if (!File.Exists(selectedFilePath))
-                            {
-                                using (File.Create(selectedFilePath)) { }
-                            }
-
-                            byte[] fileBytes = Convert.FromBase64String(_exportFileData[2]);
-                            File.WriteAllBytes(selectedFilePath, fileBytes);
-
-                            Notification.MakeMessage("Фаил сохранен", "Экспорт данных");
-                        }
-                    }
-                    else
-                    {
-                        FileData = _exportFileData[2];
-                    }
-                }
-            }
-
-            IsButtonFree = true;
-
-            var count = _isSuccessAction ? _filePathImages.Count : 0;
-
-            _selectedElementIndex = currentElementIndex;
-
-            FilePathImageStackPanel = LoadFilePathImages(_filePathImages, ShowImageCommand, RemoveImageCommand, _selectedElementIndex, IsButtonFree, count);
-
-            UpdateSaveWidth();
         }
 
         public void OnRemoveImageCommandExecuted(object p = null)
@@ -533,61 +469,67 @@ namespace PixelCrypt.ViewModel.Page
 
             _selectedElementIndex = -1;
             FilePathImageStackPanel = new StackPanel();
-        }
 
-        private void ImportAction()
-        {
-            ActionButtonName = "Импортировать";
-
-            ImportButtonBackgroundColor = Color2;
-            ImportButtonForegroundColor = Color3;
-            ExportButtonBackgroundColor = Color4;
-            ExportButtonForegroundColor = Color3;
-
-            if (FilePathFile.Length > 0)
-            {
-                if (FileData == null || FileData?.Length == 0 || (FileData?.Length > 0 && Notification.MakeMessage("Заменить текст на данные из файла?", "Файл для чтения данных", NotificationButton.YesNo) == NotificationResult.Yes))
-                {
-                    IsFileDataReadonly = true;
-
-                    FilePathFile = _filePathFile;
-
-                    FileData = File.ReadAllText(_filePathFile);
-                }
-                else
-                {
-                    FilePathFile = "";
-                }
-            }
-
-            _isImport = true;
-        }
-
-        private void ExportAction()
-        {
-            ActionButtonName = "Экспортировать";
-
-            ExportButtonBackgroundColor = Color2;
-            ExportButtonForegroundColor = Color3;
             ImportButtonBackgroundColor = Color4;
-            ImportButtonForegroundColor = Color3;
+            ExportButtonBackgroundColor = Color4;
+        }
 
-            if (_filePathFile != null && _filePathFile.Length > 0)
+        private async Task ImportAction()
+        {
+            ImportButtonBackgroundColor = Color2;
+
+            if (FileData.Length > 0)
             {
-                string content = File.ReadAllText(_filePathFile);
+                await ImportData();
+            }
+            else
+            {
+                Notification.MakeMessage("Нет данных для импорта", "Испорт данных");
+            }
+        }
 
-                if (content.Length > 0 && Notification.MakeMessage("Файл содержит данные которые будут перезаписаны.\nОставить выбранный файл?", "Файл для записи данных", NotificationButton.YesNo) == NotificationResult.Yes || content.Length == 0)
+        private async Task ExportAction()
+        {
+            ExportButtonBackgroundColor = Color2;
+
+            FileData = "";
+            FilePathFile = "";
+
+            await ExportData();
+
+            if (_exportFileData.Length == 3)
+            {
+                if (Context.MainWindow.IsActive &&
+                    Context.MainWindowViewModel.CurrentPage is TextInPicturePage &&
+                    Notification.MakeMessage("Экспортированные данные являются файлом.\nСформировать файл?", "Экспорт данных", NotificationButton.YesNo) == NotificationResult.Yes)
                 {
-                    FilePathFile = _filePathFile;
+                    var saveFileDialog = new SaveFileDialog
+                    {
+                        Title = "Выбрать файл для сохранения данных",
+                        FileName = _exportFileData[0],
+                        Filter = $"Файлы (*{_exportFileData[1]})|*{_exportFileData[1]}"
+                    };
+
+                    if (saveFileDialog.ShowDialog() ?? false)
+                    {
+                        var selectedFilePath = saveFileDialog.FileName;
+
+                        if (!File.Exists(selectedFilePath))
+                        {
+                            using (File.Create(selectedFilePath)) { }
+                        }
+
+                        byte[] fileBytes = Convert.FromBase64String(_exportFileData[2]);
+                        File.WriteAllBytes(selectedFilePath, fileBytes);
+
+                        Notification.MakeMessage("Фаил сохранен", "Экспорт данных");
+                    }
                 }
                 else
                 {
-                    FilePathFile = "";
+                    FileData = _exportFileData[2];
                 }
             }
-
-            _isImport = false;
-            IsFileDataReadonly = false;
         }
 
         private async Task ExportData()
@@ -674,6 +616,8 @@ namespace PixelCrypt.ViewModel.Page
 
                     var fileInfo = new FileInfo(_filePathFile);
                     inportData = $"{fileInfo.Name}[*]{fileInfo.Extension}[*]" + inportData;
+
+                    message = $"Файл {FilePathFile} импортирован";
                 }
                 else
                 {
@@ -729,15 +673,9 @@ namespace PixelCrypt.ViewModel.Page
 
             res = res && IsSuccessAction;
 
-            if (_isImport)
+            if (IsSuccessAction && FileData.Length == 0)
             {
-                res = res && _resultImages.Count > 0;
-            }
-            else
-            {
-                res = res && FilePathFile.Length > 0;
-
-                res = res && FileData.Length > 0;
+                res = false;
             }
 
             if (res)
