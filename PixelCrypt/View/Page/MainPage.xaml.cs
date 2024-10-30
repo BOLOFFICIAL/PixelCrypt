@@ -1,5 +1,4 @@
 ﻿using PixelCrypt.ProgramData;
-using PixelCrypt.ViewModel.Page;
 
 namespace PixelCrypt.View
 {
