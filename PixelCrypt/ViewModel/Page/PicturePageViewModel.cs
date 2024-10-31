@@ -310,7 +310,7 @@ namespace PixelCrypt.ViewModel.Page
 
         private async Task Decrypt()
         {
-            var hashPassword = Program.GetHash32(Password?.Length > 0 ? Password : "PyxelCrypt");
+            var hashPassword = Program.GetHash32(Password?.Length > 0 ? Password : "PixelCrypt");
 
             CanBack = true;
 
@@ -345,7 +345,7 @@ namespace PixelCrypt.ViewModel.Page
 
         private async Task Encrypt()
         {
-            var hashPassword = Program.GetHash32(Password?.Length > 0 ? Password : "PyxelCrypt");
+            var hashPassword = Program.GetHash32(Password?.Length > 0 ? Password : "PixelCrypt");
 
             CanBack = true;
 

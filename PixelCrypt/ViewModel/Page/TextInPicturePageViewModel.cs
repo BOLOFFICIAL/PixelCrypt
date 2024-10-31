@@ -209,10 +209,16 @@ namespace PixelCrypt.ViewModel.Page
         {
             if (p is not string actionName) return;
 
+            _isImport = actionName == "Import";
+
+            if (_isImport && FileData.Length == 0)
+            {
+                Notification.MakeMessage("Нет данных для импорта", "Испорт данных");
+                return;
+            }
+
             ImportButtonBackgroundColor = Color4;
             ExportButtonBackgroundColor = Color4;
-
-            _isImport = actionName == "Import";
 
             var currentElementIndex = _selectedElementIndex;
             _isSuccessAction = false;
@@ -227,14 +233,8 @@ namespace PixelCrypt.ViewModel.Page
 
             try
             {
-                if (_isImport)
-                {
-                    await ImportAction();
-                }
-                else
-                {
-                    await ExportAction();
-                }
+                if (_isImport) { await ImportAction(); }
+                else { await ExportAction(); }
             }
             catch
             {
@@ -252,7 +252,8 @@ namespace PixelCrypt.ViewModel.Page
                 FilePathImageStackPanel = LoadFilePathImages(_filePathImages, ShowImageCommand, RemoveImageCommand, _selectedElementIndex, IsButtonFree);
             }
 
-            IsFileDataReadonly = false;
+            IsFileDataReadonly = FilePathFile.Length > 0;
+
             IsButtonFree = true;
             var count = _isSuccessAction ? _filePathImages.Count : 0;
             _selectedElementIndex = currentElementIndex;
@@ -285,6 +286,7 @@ namespace PixelCrypt.ViewModel.Page
                     if (FileData.Length == 0)
                     {
                         Notification.MakeMessage("Нет данных для сохранения", title);
+                        UpdateSaveWidth();
                     }
                     else if (Program.SaveDataToFile(FileData))
                     {
@@ -318,7 +320,7 @@ namespace PixelCrypt.ViewModel.Page
                     UpdateSaveWidth();
                     FilePathImageStackPanel = LoadFilePathImages(_filePathImages, ShowImageCommand, RemoveImageCommand, _selectedElementIndex, IsButtonFree);
 
-                    ImportButtonBackgroundColor = Color4;
+                    ImportButtonBackgroundColor = Color2;
                     ExportButtonBackgroundColor = Color4;
                 }
             }
@@ -478,14 +480,9 @@ namespace PixelCrypt.ViewModel.Page
         {
             ImportButtonBackgroundColor = Color2;
 
-            if (FileData.Length > 0)
-            {
-                await ImportData();
-            }
-            else
-            {
-                Notification.MakeMessage("Нет данных для импорта", "Испорт данных");
-            }
+            await ImportData();
+
+            IsFileDataReadonly = false;
         }
 
         private async Task ExportAction()
@@ -523,6 +520,9 @@ namespace PixelCrypt.ViewModel.Page
                         File.WriteAllBytes(selectedFilePath, fileBytes);
 
                         Notification.MakeMessage("Фаил сохранен", "Экспорт данных");
+
+                        FileData = File.ReadAllText(selectedFilePath);
+                        FilePathFile = selectedFilePath;
                     }
                 }
                 else
@@ -534,7 +534,7 @@ namespace PixelCrypt.ViewModel.Page
 
         private async Task ExportData()
         {
-            var hashPassword = Program.GetHash32(Password?.Length > 0 ? Password : "PyxelCrypt");
+            var hashPassword = Program.GetHash32(Password?.Length > 0 ? Password : "PixelCrypt");
 
             CanBack = true;
 
@@ -598,7 +598,7 @@ namespace PixelCrypt.ViewModel.Page
 
         private async Task ImportData()
         {
-            var hashPassword = Program.GetHash32(Password?.Length > 0 ? Password : "PyxelCrypt");
+            var hashPassword = Program.GetHash32(Password?.Length > 0 ? Password : "PixelCrypt");
 
             CanBack = true;
 
@@ -673,9 +673,9 @@ namespace PixelCrypt.ViewModel.Page
 
             res = res && IsSuccessAction;
 
-            if (IsSuccessAction && FileData.Length == 0)
+            if (IsSuccessAction && !_isImport)
             {
-                res = false;
+                res = FileData.Length > 0 && FilePathFile.Length == 0;
             }
 
             if (res)

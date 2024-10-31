@@ -7,7 +7,7 @@ namespace PixelCrypt.ProgramData
     {
         public static NotificationResult MakeMessage(string content)
         {
-            return MakeMessage(content, "PyxelCrypt", NotificationButton.Ok);
+            return MakeMessage(content, "PixelCrypt", NotificationButton.Ok);
         }
 
         public static NotificationResult MakeMessage(string content, string title)
@@ -17,7 +17,7 @@ namespace PixelCrypt.ProgramData
 
         public static NotificationResult MakeMessage(string content, NotificationButton notificationButton)
         {
-            return MakeMessage(content, "PyxelCrypt", notificationButton);
+            return MakeMessage(content, "PixelCrypt", notificationButton);
         }
 
         public static NotificationResult MakeMessage(string content, string title, NotificationButton messageBoxButton)
