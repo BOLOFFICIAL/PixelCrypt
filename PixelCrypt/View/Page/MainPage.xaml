@@ -5,6 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:PixelCrypt.View"
       Background="{Binding Path=Color1}"
+      Focusable="True" 
       mc:Ignorable="d">
 
     <Grid HorizontalAlignment="Center"
@@ -35,7 +36,7 @@
                         Margin="0,0,0,10"
                         VerticalContentAlignment="Center"
                         Command="{Binding Path=OpenPageCommand}"
-                        CommandParameter="TextInPicturePage"
+                        CommandParameter="Steganography"
                         FontSize="20"/>
 
                 <Button Content="Cryptography"
@@ -47,7 +48,7 @@
                         Margin="0,0,0,10"
                         VerticalContentAlignment="Center"
                         Command="{Binding Path=OpenPageCommand}"
-                        CommandParameter="PicturePage"
+                        CommandParameter="Cryptography"
                         FontSize="20"/>
             </StackPanel>
         </Grid>

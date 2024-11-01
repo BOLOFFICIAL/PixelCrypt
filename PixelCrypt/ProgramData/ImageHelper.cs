@@ -48,13 +48,13 @@ namespace PixelCrypt.ProgramData
                 var dataG = l2 + spl[2];
                 var dataB = l3 + spl[3];
 
-                var limit = listPixels.Count / slash;
+                double limit = listPixels.Count / slash;
 
-                var avrage = (dataA.Length + dataR.Length + dataG.Length + dataB.Length) / 4;
+                double avrage = (dataA.Length + dataR.Length + dataG.Length + dataB.Length) / 4;
 
                 if (limit < avrage)
                 {
-                    throw new Exception($"Недостаточно места для импорта данных в изображение '{Path.GetFileName(filepath)}'.\nЗамените изображение на другое или используйте несколько изображений и повторите попытку.");
+                    throw new Exception($"Недостаточно места для импорта данных в изображение '{Path.GetFileName(filepath)}'.\nЛимит изображения превышен в {(avrage / limit).ToString("F2")}.\nЗамените изображение на другое или используйте несколько изображений и повторите попытку.");
                 }
 
                 var newPixels = new Color[width, height];

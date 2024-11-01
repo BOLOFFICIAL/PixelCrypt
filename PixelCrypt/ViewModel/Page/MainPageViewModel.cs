@@ -20,8 +20,8 @@ namespace PixelCrypt.ViewModel.Page
 
             switch (pageName)
             {
-                case "TextInPicturePage": Context.MainWindowViewModel.CurrentPage = new TextInPicturePage(); break;
-                case "PicturePage": Context.MainWindowViewModel.CurrentPage = new PicturePage(); break;
+                case "Steganography": Context.MainWindowViewModel.CurrentPage = new TextInPicturePage(); break;
+                case "Cryptography": Context.MainWindowViewModel.CurrentPage = new PicturePage(); break;
             }
         }
     }
