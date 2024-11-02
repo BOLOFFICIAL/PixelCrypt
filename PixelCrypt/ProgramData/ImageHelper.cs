@@ -7,83 +7,42 @@ namespace PixelCrypt.ProgramData
 {
     internal class ImageHelper
     {
-        private static readonly int slash = 8;
+        private const int rgb = 3;
 
         public static async Task<Bitmap> ImportDataToImage(string data, string filepath)
         {
             var importDataImage = await Task.Run(() =>
             {
-                var pixels = GetArrayPixelsFromImage(filepath);
+                var pixelIndex = 0;
+                var imagePixels = GetArrayPixelsFromImage(filepath);
+                var imageWidth = imagePixels.GetLength(0);
+                var imageHeight = imagePixels.GetLength(1);
+                var modifiedPixels = new Color[imageWidth, imageHeight];
+                var totalPixels = imageWidth * imageHeight;
+                var binaryLength = Converter.ConvertIntToBinaryString(totalPixels).Length;
+                var splitData = Program.SplitStringIntoParts(data, rgb);
+                var binaryDataList = splitData.Select(el => Converter.ConvertIntToBinaryString(el.Length).PadLeft(binaryLength, '0') + el).ToList();
+                var averageDataLength = binaryDataList.Average(el => el.Length);
 
-                var listPixels = new List<Color>();
-
-                int width = pixels.GetLength(0);
-                int height = pixels.GetLength(1);
-
-                for (int x = 0; x < width; x++)
+                if (totalPixels < averageDataLength)
                 {
-                    for (int y = 0; y < height; y++)
-                    {
-                        var color = Color.FromArgb(
-                            NormalizeColorByte(pixels[x, y].A),
-                            NormalizeColorByte(pixels[x, y].R),
-                            NormalizeColorByte(pixels[x, y].G),
-                            NormalizeColorByte(pixels[x, y].B));
+                    throw new Exception($"Недостаточно места для импорта данных в изображение '{Path.GetFileName(filepath)}'.\nЛимит изображения превышен в {(averageDataLength / totalPixels).ToString("F2")}.\nЗамените изображение на другое или используйте несколько изображений и повторите попытку.");
+                }
 
-                        listPixels.Add(color);
+                for (int x = 0; x < imageWidth; x++)
+                {
+                    for (int y = 0; y < imageHeight; y++, pixelIndex++)
+                    {
+                        var color = Color.FromArgb(NormalizeColorByte(imagePixels[x, y].R), NormalizeColorByte(imagePixels[x, y].G), NormalizeColorByte(imagePixels[x, y].B));
+
+                        modifiedPixels[x, y] = Color.FromArgb(
+                            (pixelIndex < binaryDataList[0].Length) ? (byte)(color.R - byte.Parse(binaryDataList[0][pixelIndex].ToString())) : color.R,
+                            (pixelIndex < binaryDataList[1].Length) ? (byte)(color.G - byte.Parse(binaryDataList[1][pixelIndex].ToString())) : color.G,
+                            (pixelIndex < binaryDataList[2].Length) ? (byte)(color.B - byte.Parse(binaryDataList[2][pixelIndex].ToString())) : color.B);
                     }
                 }
 
-                var uniqBinaryLength = Converter.ConvertIntToBinaryString(listPixels.Count).Length;
-
-                var spl = Program.SplitStringIntoParts(data, 4);
-
-                var l0 = Converter.ConvertIntToBinaryString(spl[0].Length).PadLeft(uniqBinaryLength, '0');
-                var l1 = Converter.ConvertIntToBinaryString(spl[1].Length).PadLeft(uniqBinaryLength, '0');
-                var l2 = Converter.ConvertIntToBinaryString(spl[2].Length).PadLeft(uniqBinaryLength, '0');
-                var l3 = Converter.ConvertIntToBinaryString(spl[3].Length).PadLeft(uniqBinaryLength, '0');
-
-                var dataA = l0 + spl[0];
-                var dataR = l1 + spl[1];
-                var dataG = l2 + spl[2];
-                var dataB = l3 + spl[3];
-
-                double limit = listPixels.Count / slash;
-
-                double avrage = (dataA.Length + dataR.Length + dataG.Length + dataB.Length) / 4;
-
-                if (limit < avrage)
-                {
-                    throw new Exception($"Недостаточно места для импорта данных в изображение '{Path.GetFileName(filepath)}'.\nЛимит изображения превышен в {(avrage / limit).ToString("F2")}.\nЗамените изображение на другое или используйте несколько изображений и повторите попытку.");
-                }
-
-                var newPixels = new Color[width, height];
-
-                int index = 0;
-                int elementIndex = 0;
-
-                for (int x = 0; x < width; x++)
-                {
-                    for (int y = 0; y < height; y++)
-                    {
-                        var color = Color.FromArgb(listPixels[index].A, listPixels[index].R, listPixels[index].G, listPixels[index].B);
-
-                        if (index % slash == 0)
-                        {
-                            color = Color.FromArgb(
-                                (elementIndex < dataA.Length) ? (byte)(color.A - byte.Parse(dataA[elementIndex].ToString())) : color.A,
-                                (elementIndex < dataR.Length) ? (byte)(color.R - byte.Parse(dataR[elementIndex].ToString())) : color.R,
-                                (elementIndex < dataG.Length) ? (byte)(color.G - byte.Parse(dataG[elementIndex].ToString())) : color.G,
-                                (elementIndex < dataB.Length) ? (byte)(color.B - byte.Parse(dataB[elementIndex].ToString())) : color.B);
-
-                            elementIndex++;
-                        }
-
-                        newPixels[x, y] = color;
-                        index++;
-                    }
-                }
-                return newPixels;
+                return modifiedPixels;
             });
 
             return Converter.ConvertPixelsToBitmap(importDataImage);
@@ -93,76 +52,33 @@ namespace PixelCrypt.ProgramData
         {
             var exportDataImage = await Task.Run(() =>
             {
-                var pixels = GetArrayPixelsFromImage(path);
+                var imagePixels = GetArrayPixelsFromImage(path);
+                var pixelList = GetListPixelsFromArrayPixels(imagePixels);
+                var binaryDataBuilders = Enumerable.Range(0, rgb).Select(_ => new StringBuilder()).ToList();
+                var binaryLength = Converter.ConvertIntToBinaryString(pixelList.Count).Length;
 
-                var listPixels = GetListPixelsFromArrayPixels(pixels);
-
-                var uniqBinaryLength = Converter.ConvertIntToBinaryString(listPixels.Count).Length;
-
-                var A = new StringBuilder();
-                var R = new StringBuilder();
-                var G = new StringBuilder();
-                var B = new StringBuilder();
-
-                var index = 0;
-
-                for (index = 0; index < slash * uniqBinaryLength - (slash - 1); index += slash)
+                for (var i = 0; i < binaryLength; i++)
                 {
-                    A.Append((listPixels[index].A % 2 == 0) ? "1" : "0");
-                    R.Append((listPixels[index].R % 2 == 0) ? "1" : "0");
-                    G.Append((listPixels[index].G % 2 == 0) ? "1" : "0");
-                    B.Append((listPixels[index].B % 2 == 0) ? "1" : "0");
+                    foreach (var data in binaryDataBuilders)
+                    {
+                        data.Append(GetBinaryColorIndicator(pixelList[i], binaryDataBuilders.IndexOf(data)));
+                    }
                 }
 
-                var SizeA = Converter.ConvertBinaryStringToInt(A.ToString()); A.Clear();
-                var SizeR = Converter.ConvertBinaryStringToInt(R.ToString()); R.Clear();
-                var SizeG = Converter.ConvertBinaryStringToInt(G.ToString()); G.Clear();
-                var SizeB = Converter.ConvertBinaryStringToInt(B.ToString()); B.Clear();
-
-                for (int i = index; i < index + (slash * SizeA - (slash - 1)); i += slash)
+                foreach (var binaryData in binaryDataBuilders)
                 {
-                    A.Append((listPixels[i].A % 2 == 0) ? "1" : "0");
+                    var dataSize = Converter.ConvertBinaryStringToInt(binaryData.ToString());
+                    binaryData.Clear();
+                    for (int i = binaryLength; i < binaryLength + dataSize; i++)
+                    {
+                        binaryData.Append(GetBinaryColorIndicator(pixelList[i], binaryDataBuilders.IndexOf(binaryData)));
+                    }
                 }
 
-                for (int i = index; i < index + (slash * SizeR - (slash - 1)); i += slash)
-                {
-                    R.Append((listPixels[i].R % 2 == 0) ? "1" : "0");
-                }
-
-                for (int i = index; i < index + (slash * SizeG - (slash - 1)); i += slash)
-                {
-                    G.Append((listPixels[i].G % 2 == 0) ? "1" : "0");
-                }
-
-                for (int i = index; i < index + (slash * SizeB - (slash - 1)); i += 8)
-                {
-                    B.Append((listPixels[i].B % 2 == 0) ? "1" : "0");
-                }
-
-                return A.Append(R.Append(G.Append(B))).ToString();
+                return string.Concat(binaryDataBuilders);
             });
 
             return exportDataImage;
-        }
-
-        private static byte NormalizeColorByte(byte value)
-        {
-            var res = value;
-            if (res % 2 != 0)
-            {
-                return res;
-            }
-            else
-            {
-                if (res == 0)
-                {
-                    return 1;
-                }
-                else
-                {
-                    return (byte)(res - 1);
-                }
-            }
         }
 
         public static Color[,] GetArrayPixelsFromImage(string imagePath)
@@ -224,6 +140,23 @@ namespace PixelCrypt.ProgramData
                 ".ico" => ImageFormat.Icon,
                 _ => ImageFormat.Png
             };
+        }
+
+
+        private static byte GetColorByIndex(Color color, int index)
+        {
+            return (byte)(index == 0 ? color.R : index == 1 ? color.G : index == 2 ? color.B : 0);
+        }
+
+        private static string GetBinaryColorIndicator(Color color, int index)
+        {
+            return (GetColorByIndex(color, index) % 2 == 0) ? "1" : "0";
+        }
+
+        private static byte NormalizeColorByte(byte value)
+        {
+            if (value % 2 != 0) return value;
+            return (byte)((value == 0) ? 1 : value - 1);
         }
     }
 }

@@ -264,8 +264,15 @@ namespace PixelCrypt.ViewModel.Page
         private void OnClearPathFileCommandExecuted(object p = null)
         {
             IsFileDataReadonly = false;
-            FilePathFile = "";
-            UpdateSaveWidth();
+            if (FilePathFile.Length == 0)
+            {
+                FileData = "";
+            }
+            else
+            {
+                FilePathFile = "";
+                UpdateSaveWidth();
+            }
         }
 
         private void OnSaveCommandExecuted(object p = null)
