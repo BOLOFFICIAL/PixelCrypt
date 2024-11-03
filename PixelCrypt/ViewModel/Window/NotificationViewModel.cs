@@ -1,4 +1,5 @@
 ﻿using PixelCrypt.Commands.Base;
+using PixelCrypt.Model;
 using PixelCrypt.ProgramData;
 using System.Windows;
 using System.Windows.Input;
@@ -7,6 +8,8 @@ namespace PixelCrypt.ViewModel.Window
 {
     internal class NotificationViewModel : Base.ViewModel
     {
+        private string _notificationResultText = "";
+
         public ICommand CloseNotificationCommand { get; }
         public string Title { get; set; }
         public string Content { get; set; }
@@ -15,15 +18,17 @@ namespace PixelCrypt.ViewModel.Window
 
         public string FirstButtonContent { get; set; }
         public string SecondButtonContent { get; set; }
-        public GridLength SecondButtonWidth { get; set; }
-        public NotificationResult NotificationResult { get; private set; }
+        public GridLength FirstButtonWidth { get; set; } = new GridLength(0, GridUnitType.Pixel);
+        public GridLength SecondButtonWidth { get; set; } = new GridLength(0, GridUnitType.Pixel);
+        public GridLength EnterButtonWidth { get; set; } = new GridLength(0, GridUnitType.Pixel);
+        public NotificationResult NotificationResult { get; private set; } = new NotificationResult();
 
-        private Dictionary<string, NotificationResult> _buttonContents = new()
+        private Dictionary<string, NotificationResultType> _buttonContents = new()
         {
-            {"Ок",NotificationResult.Ok },
-            {"Да",NotificationResult.Yes },
-            {"Нет",NotificationResult.No },
-            {"Close",NotificationResult.Close },
+            {"Ок",NotificationResultType.Ok },
+            {"Да",NotificationResultType.Yes },
+            {"Нет",NotificationResultType.No },
+            {"Close",NotificationResultType.Close },
         };
 
         public NotificationViewModel(Action closeWindow, string content, string title = "PixelCrypt", NotificationButton messageBoxButton = NotificationButton.Ok)
@@ -37,10 +42,22 @@ namespace PixelCrypt.ViewModel.Window
             UpdateParams(messageBoxButton);
         }
 
+        public string NotificationResultText
+        {
+            get => _notificationResultText;
+            set => Set(ref _notificationResultText, value);
+        }
+
         private void OnCloseNotificationCommandExecuted(object p = null)
         {
             if (p is not string parametr) return;
-            NotificationResult = _buttonContents[parametr];
+
+            NotificationResult = new NotificationResult()
+            {
+                NotificationResultType = _buttonContents[parametr],
+                NotificationResultText = NotificationResultText,
+            };
+
             _closeWindow();
         }
 
@@ -50,15 +67,22 @@ namespace PixelCrypt.ViewModel.Window
             {
                 case NotificationButton.Ok:
                     {
-                        SecondButtonWidth = new GridLength(0, GridUnitType.Pixel);
-                        FirstButtonContent = _buttonContents.FirstOrDefault(x => x.Value == NotificationResult.Ok).Key;
+                        FirstButtonWidth = new GridLength(1, GridUnitType.Auto);
+                        FirstButtonContent = _buttonContents.FirstOrDefault(x => x.Value == NotificationResultType.Ok).Key;
                         break;
                     }
                 case NotificationButton.YesNo:
                     {
+                        FirstButtonWidth = new GridLength(1, GridUnitType.Auto);
                         SecondButtonWidth = new GridLength(1, GridUnitType.Auto);
-                        FirstButtonContent = _buttonContents.FirstOrDefault(x => x.Value == NotificationResult.Yes).Key;
-                        SecondButtonContent = _buttonContents.FirstOrDefault(x => x.Value == NotificationResult.No).Key;
+                        FirstButtonContent = _buttonContents.FirstOrDefault(x => x.Value == NotificationResultType.Yes).Key;
+                        SecondButtonContent = _buttonContents.FirstOrDefault(x => x.Value == NotificationResultType.No).Key;
+                        break;
+                    }
+                case NotificationButton.Enter:
+                    {
+                        EnterButtonWidth = new GridLength(1, GridUnitType.Auto);
+                        FirstButtonContent = _buttonContents.FirstOrDefault(x => x.Value == NotificationResultType.Ok).Key;
                         break;
                     }
             }

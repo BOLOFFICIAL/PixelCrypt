@@ -283,9 +283,10 @@ namespace PixelCrypt.ViewModel.Page
             {
                 if (_isImport)
                 {
-                    if (Program.SaveBitmapToFolder(_filePathImages, _resultImages))
+                    var res = Program.SaveBitmapToFolder(_filePathImages, _resultImages);
+                    if (res.Result)
                     {
-                        Notification.MakeMessage("Картинки сохранены", title);
+                        Notification.MakeMessage($"Картинки сохранены в папке {res.FileName}", title);
                     }
                 }
                 else
@@ -293,11 +294,14 @@ namespace PixelCrypt.ViewModel.Page
                     if (FileData.Length == 0)
                     {
                         Notification.MakeMessage("Нет данных для сохранения", title);
-                        UpdateSaveWidth();
                     }
-                    else if (Program.SaveDataToFile(FileData))
+                    else
                     {
-                        Notification.MakeMessage("Файл сохранен", title);
+                        var res = Program.SaveDataToFile($"PixelCrypt_{DateTime.Now:yyyyMMddHHmmss}", $"Файлы (*.txt)|*.txt", FileData);
+                        if (res.Result)
+                        {
+                            Notification.MakeMessage($"Файл {res.FileName} сохранен", title);
+                        }
                     }
                 }
             }
@@ -315,7 +319,7 @@ namespace PixelCrypt.ViewModel.Page
 
             if (openFileDialog.ShowDialog() ?? false)
             {
-                if (FileData == null || FileData.Length == 0 || (FileData.Length > 0 && Notification.MakeMessage("Заменить текст на данные из файла?", "Файл для чтения данных", NotificationButton.YesNo) == NotificationResult.Yes))
+                if (FileData == null || FileData.Length == 0 || (FileData.Length > 0 && Notification.MakeMessage("Заменить текст на данные из файла?", "Файл для чтения данных", NotificationButton.YesNo).NotificationResultType == NotificationResultType.Yes))
                 {
                     IsFileDataReadonly = true;
 
@@ -505,31 +509,15 @@ namespace PixelCrypt.ViewModel.Page
             {
                 if (Context.MainWindow.IsActive &&
                     Context.MainWindowViewModel.CurrentPage is TextInPicturePage &&
-                    Notification.MakeMessage("Экспортированные данные являются файлом.\nСформировать файл?", "Экспорт данных", NotificationButton.YesNo) == NotificationResult.Yes)
+                    Notification.MakeMessage("Экспортированные данные являются файлом.\nСформировать файл?", "Экспорт данных", NotificationButton.YesNo).NotificationResultType == NotificationResultType.Yes)
                 {
-                    var saveFileDialog = new SaveFileDialog
+                    var res = Program.SaveDataToFile(_exportFileData[0], $"Файлы (*{_exportFileData[1]})|*{_exportFileData[1]}", Convert.FromBase64String(_exportFileData[2]));
+                    if (res.Result)
                     {
-                        Title = "Выбрать файл для сохранения данных",
-                        FileName = _exportFileData[0],
-                        Filter = $"Файлы (*{_exportFileData[1]})|*{_exportFileData[1]}"
-                    };
+                        Notification.MakeMessage($"Фаил {res.FileName} сохранен", "Экспорт данных");
 
-                    if (saveFileDialog.ShowDialog() ?? false)
-                    {
-                        var selectedFilePath = saveFileDialog.FileName;
-
-                        if (!File.Exists(selectedFilePath))
-                        {
-                            using (File.Create(selectedFilePath)) { }
-                        }
-
-                        byte[] fileBytes = Convert.FromBase64String(_exportFileData[2]);
-                        File.WriteAllBytes(selectedFilePath, fileBytes);
-
-                        Notification.MakeMessage("Фаил сохранен", "Экспорт данных");
-
-                        FileData = File.ReadAllText(selectedFilePath);
-                        FilePathFile = selectedFilePath;
+                        FileData = File.ReadAllText(res.FilePath);
+                        FilePathFile = res.FilePath;
                     }
                 }
                 else

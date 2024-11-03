@@ -297,9 +297,10 @@ namespace PixelCrypt.ViewModel.Page
             var title = "Сохранение изображений";
             try
             {
-                if (Program.SaveBitmapToFolder(_filePathImages, _resultImages))
+                var res = Program.SaveBitmapToFolder(_filePathImages, _resultImages);
+                if (res.Result)
                 {
-                    Notification.MakeMessage("Картинки сохранены", title);
+                    Notification.MakeMessage($"Картинки сохранены в папке {res.FileName}", title);
                 }
             }
             catch (Exception)

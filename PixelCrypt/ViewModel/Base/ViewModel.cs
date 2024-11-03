@@ -51,7 +51,7 @@ namespace PixelCrypt.ViewModel.Base
 
             message += isWindowMinimized ? $".\nОткрыть окно и перейти на страницу {pageTitle}?" : $".\nПерейти на страницу {pageTitle}?";
 
-            if (Notification.MakeMessage(message, title, NotificationButton.YesNo) == NotificationResult.Yes)
+            if (Notification.MakeMessage(message, title, NotificationButton.YesNo).NotificationResultType == NotificationResultType.Yes)
             {
                 isWindowMinimized = Context.MainWindow.WindowState == WindowState.Minimized;
 
@@ -81,7 +81,7 @@ namespace PixelCrypt.ViewModel.Base
         protected StackPanel LoadFilePathImages(List<string> filePathImages, ICommand showImageCommand, ICommand removeImageCommand, int selectedElementIndex, bool isButtonFree, int count = 0)
         {
             var stackPanel = new StackPanel();
-            var index = 0;
+            int index = 0;
 
             foreach (var image in filePathImages)
             {
@@ -100,7 +100,7 @@ namespace PixelCrypt.ViewModel.Base
                     Width = 25,
                     Height = 25,
                     Margin = new Thickness(0, 0, 10, 0),
-                    Foreground = (Brush)new BrushConverter().ConvertFromString(Color5)
+                    Foreground = (System.Windows.Media.Brush)new BrushConverter().ConvertFromString(Color5)
                 };
 
                 Grid.SetColumn(icon, 0);
@@ -151,8 +151,8 @@ namespace PixelCrypt.ViewModel.Base
                     Command = removeImageCommand,
                     IsEnabled = isButtonFree,
                     CommandParameter = index,
-                    Background = Brushes.Transparent,
-                    BorderBrush = Brushes.Transparent,
+                    Background = System.Windows.Media.Brushes.Transparent,
+                    BorderBrush = System.Windows.Media.Brushes.Transparent,
                 };
 
                 Grid.SetColumn(deleteButton, 2);
