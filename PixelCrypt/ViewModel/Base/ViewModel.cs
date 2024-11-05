@@ -100,7 +100,7 @@ namespace PixelCrypt.ViewModel.Base
                     Width = 25,
                     Height = 25,
                     Margin = new Thickness(0, 0, 10, 0),
-                    Foreground = (System.Windows.Media.Brush)new BrushConverter().ConvertFromString(Color5)
+                    Foreground = (Brush)new BrushConverter().ConvertFromString(Color5)
                 };
 
                 Grid.SetColumn(icon, 0);
@@ -121,7 +121,7 @@ namespace PixelCrypt.ViewModel.Base
                     Foreground = (Brush)new BrushConverter().ConvertFromString(Color3),
                     Background = (Brush)new BrushConverter().ConvertFromString(Color4),
                     BorderBrush = (Brush)new BrushConverter().ConvertFromString(Color3),
-                    BorderThickness = new Thickness(3, 1, 3, 1)
+                    BorderThickness = new Thickness(2)
                 };
 
                 if (index == selectedElementIndex)

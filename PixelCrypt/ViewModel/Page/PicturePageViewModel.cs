@@ -222,6 +222,9 @@ namespace PixelCrypt.ViewModel.Page
                     _resultImages = new List<Bitmap>();
 
                     FilePathImageStackPanel = LoadFilePathImages(_filePathImages, ShowImageCommand, RemoveImageCommand, _selectedElementIndex, IsButtonFree);
+
+                    EncryptButtonBackgroundColor = Color4;
+                    DecryptButtonBackgroundColor = Color4;
                 }
 
                 UpdateElementWidth();

@@ -380,6 +380,9 @@ namespace PixelCrypt.ViewModel.Page
                     ImageData = _filePathImages[_selectedElementIndex];
 
                     FilePathImageStackPanel = LoadFilePathImages(_filePathImages, ShowImageCommand, RemoveImageCommand, _selectedElementIndex, IsButtonFree);
+
+                    ImportButtonBackgroundColor = Color4;
+                    ExportButtonBackgroundColor = Color4;
                 }
 
                 UpdateClearWidth();

@@ -11,46 +11,49 @@
       Focusable="True"
       Title="PicturePage">
 
-    <Grid Margin="10">
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
         <Grid Grid.Row="0"
-              Margin="0,0,0,10"
+              Background="{Binding Path=Color4}"
               KeyboardNavigation.TabNavigation="Cycle">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="25"/>
-                <ColumnDefinition Width="auto"/>
-            </Grid.ColumnDefinitions>
+            <Grid Margin="10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="25"/>
+                    <ColumnDefinition Width="auto"/>
+                </Grid.ColumnDefinitions>
 
-            <Grid Grid.Column="0">
-                <Button BorderThickness="0"
-                        IsEnabled="{Binding Path=CanBack,UpdateSourceTrigger=PropertyChanged}"
-                        Background="Transparent"
-                        BorderBrush="Transparent"
-                        Command="{Binding Path=ClosePageCommand}"
-                        Padding="0">
-                    <fa:ImageAwesome Icon="Regular_ArrowAltCircleLeft"
-                                     Foreground="{Binding Path=Color3}"
-                                     Width="25"
-                                     Height="25"/>
-                </Button>
-            </Grid>
+                <Grid Grid.Column="0">
+                    <Button BorderThickness="0"
+                            IsEnabled="{Binding Path=CanBack,UpdateSourceTrigger=PropertyChanged}"
+                            Background="Transparent"
+                            BorderBrush="Transparent"
+                            Command="{Binding Path=ClosePageCommand}"
+                            Padding="0">
+                        <fa:ImageAwesome Icon="Regular_ArrowAltCircleLeft"
+                         Foreground="{Binding Path=Color3}"
+                         Width="25"
+                         Height="25"/>
+                    </Button>
+                </Grid>
 
-            <Grid Grid.Column="1">
-                <TextBlock Text="{Binding Path=PageTitle}"
-                           Foreground="{Binding Path=Color3}"
-                           FontSize="20"
-                           Margin="10,0,0,0"
-                           FontWeight="Black"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center"/>
+                <Grid Grid.Column="1">
+                    <TextBlock Text="{Binding Path=PageTitle}"
+                               Foreground="{Binding Path=Color3}"
+                               FontSize="20"
+                               Margin="10,0,0,0"
+                               FontWeight="Black"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"/>
+                </Grid>
             </Grid>
         </Grid>
 
         <Grid Grid.Row="1"
+              Margin="10"
               KeyboardNavigation.TabNavigation="None">
             <Grid HorizontalAlignment="Center">
                 <Grid.ColumnDefinitions>
