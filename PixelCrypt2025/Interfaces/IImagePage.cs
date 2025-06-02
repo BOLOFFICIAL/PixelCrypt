@@ -2,6 +2,6 @@
 {
     internal interface IImagePage
     {
-        
+        public List<Model.Image> InputImage { get; }
     }
 }

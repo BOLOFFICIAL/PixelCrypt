@@ -205,14 +205,14 @@ namespace PixelCrypt2025.ViewModel.Page
 
             if (openFileDialog.ShowDialog() ?? false)
             {
-                var prefCount = _cryptography.ContextImage.Count;
-
+                var prefCount = _cryptography.InputImage.Count;
+            
                 foreach (var filepath in openFileDialog.FileNames.Where(file => filterList.Contains(file.Split('.')[1])))
                 {
                     _cryptography.AddElement(filepath);
                 }
 
-                if (_cryptography.ContextImage.Count != prefCount)
+                if (_cryptography.InputImage.Count != prefCount)
                 {
                     SaveDataWidth = new GridLength(0, GridUnitType.Star);
                     FilePathImageStackPanel = UpdateImageList();
@@ -220,9 +220,9 @@ namespace PixelCrypt2025.ViewModel.Page
                 else
                 {
                     MessageBox.Show("Не удалось добавить элементы", openFileDialog.Title);
-                }
+        }
             }
-            if (_cryptography.ContextImage.Count > 0)
+            if (_cryptography.InputImage.Count > 0)
             {
                 AddGridHeight = new GridLength(0, GridUnitType.Star);
                 DataGridHeight = new GridLength(1, GridUnitType.Star);
@@ -242,7 +242,7 @@ namespace PixelCrypt2025.ViewModel.Page
                 ViewImageWidth = new GridLength(0, GridUnitType.Star);
             }
 
-            if (_cryptography.ContextImage.Count == 0)
+            if (_cryptography.InputImage.Count == 0)
             {
                 AddGridHeight = new GridLength(1, GridUnitType.Star);
                 DataGridHeight = new GridLength(0, GridUnitType.Star);
@@ -252,7 +252,7 @@ namespace PixelCrypt2025.ViewModel.Page
 
         private void OnClearImageCommandExecuted(object p = null)
         {
-            _cryptography.ContextImage.Clear();
+            _cryptography.InputImage.Clear();
 
             AddGridHeight = new GridLength(1, GridUnitType.Star);
             DataGridHeight = new GridLength(0, GridUnitType.Star);
@@ -311,7 +311,7 @@ namespace PixelCrypt2025.ViewModel.Page
         {
             var stackPanel = new StackPanel();
 
-            foreach (var imagePath in _cryptography.ContextImage)
+            foreach (var imagePath in _cryptography.InputImage)
             {
                 var grid = new Grid()
                 {

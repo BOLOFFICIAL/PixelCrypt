@@ -242,24 +242,24 @@ namespace PixelCrypt2025.ViewModel.Page
 
             if (openFileDialog.ShowDialog() ?? false)
             {
-                var prefCount = _steganography.ContextImage.Count;
+                var prefCount = _steganography.InputImage.Count;
 
                 foreach (var filepath in openFileDialog.FileNames.Where(file=> filterList.Contains(file.Split('.')[1])))
                 {
                     _steganography.AddElement(filepath);
                 }
 
-                if (_steganography.ContextImage.Count != prefCount)
+                if (_steganography.InputImage.Count != prefCount)
                 {
                     SaveDataWidth = new GridLength(0, GridUnitType.Star);
                     FilePathImageStackPanel = UpdateImageList();
-                }
+        }
                 else
                 {
                     MessageBox.Show("Не удалось добавить элементы", openFileDialog.Title);
                 }
             }
-            if (_steganography.ContextImage.Count > 0)
+            if (_steganography.InputImage.Count > 0)
             {
                 AddGridHeight = new GridLength(0, GridUnitType.Star);
                 DataGridHeight = new GridLength(1, GridUnitType.Star);
@@ -269,27 +269,27 @@ namespace PixelCrypt2025.ViewModel.Page
         private void OnRemoveImageCommandExecuted(object p = null)
         {
             if (p is not Model.Image parametr) return;
-
+            
             _steganography.RemoveElement(parametr);
             FilePathImageStackPanel = UpdateImageList();
-
+            
             if (SelecedImage == parametr)
             {
                 SelecedImage = null;
                 ViewImageWidth = new GridLength(0, GridUnitType.Star);
             }
 
-            if (_steganography.ContextImage.Count == 0)
+            if (_steganography.InputImage.Count == 0)
             {
                 AddGridHeight = new GridLength(1, GridUnitType.Star);
                 DataGridHeight = new GridLength(0, GridUnitType.Star);
                 SelecedImage = null;
-            }
+        }
         }
 
         private void OnClearImageCommandExecuted(object p = null)
         {
-            _steganography.ContextImage.Clear();
+            _steganography.InputImage.Clear();
 
             AddGridHeight = new GridLength(1, GridUnitType.Star);
             DataGridHeight = new GridLength(0, GridUnitType.Star);
@@ -374,7 +374,7 @@ namespace PixelCrypt2025.ViewModel.Page
         {
             var stackPanel = new StackPanel();
 
-            foreach (var imagePath in _steganography.ContextImage)
+            foreach (var imagePath in _steganography.InputImage)
             {
                 var grid = new Grid()
                 {
