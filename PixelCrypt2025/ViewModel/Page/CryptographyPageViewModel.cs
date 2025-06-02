@@ -14,7 +14,7 @@ namespace PixelCrypt2025.ViewModel.Page
 {
     internal class CryptographyPageViewModel : ImagePageViewModel
     {
-        private Steganography<Model.File> _steganography;
+        private Cryptography _cryptography;
 
         private string _showPasword = "";
         private string _password = "";
@@ -23,8 +23,6 @@ namespace PixelCrypt2025.ViewModel.Page
         private string _imageLength = "";
         private string _imageExtension = "";
         private string _imagePermission = "";
-
-        private bool _isReadOnlyInputData = false;
 
         private Model.Image _selecedImage = null;
 
@@ -50,12 +48,10 @@ namespace PixelCrypt2025.ViewModel.Page
         public ICommand ClearImageCommand { get; }
         public ICommand DoActionCommand { get; }
         public ICommand PaswordViewCommand { get; }
-        public ICommand ChooseFileCommand { get; }
-        public ICommand RemoveFileCommand { get; }
 
         public CryptographyPageViewModel()
         {
-            _steganography = new Steganography<Model.File>(new Model.File());
+            _cryptography = new Cryptography();
 
             ClosePageCommand = new LambdaCommand(OnClosePageCommandExecuted);
             AddImageCommand = new LambdaCommand(OnAddImageCommandExecuted);
@@ -64,14 +60,12 @@ namespace PixelCrypt2025.ViewModel.Page
             ClearImageCommand = new LambdaCommand(OnClearImageCommandExecuted);
             DoActionCommand = new LambdaCommand(OnDoActionCommandExecuted);
             ShowImageCommand = new LambdaCommand(OnShowImageCommandExecuted);
-            ChooseFileCommand = new LambdaCommand(OnChooseFileCommandExecuted);
-            RemoveFileCommand = new LambdaCommand(OnRemoveFileCommandExecuted);
 
             OnPaswordViewCommandExecuted();
 
             AddGridHeight = new GridLength(1, GridUnitType.Star);
-            Encrypt = _steganography.EncryptAction;
-            Decrypt = _steganography.DecryptAction;
+            Encrypt = _cryptography.EncryptAction;
+            Decrypt = _cryptography.DecryptAction;
         }
 
         public StackPanel FilePathImageStackPanel
@@ -104,30 +98,6 @@ namespace PixelCrypt2025.ViewModel.Page
             set => Set(ref _password, value);
         }
 
-        public string InputFileName
-        {
-            get => _steganography.InputData.Name;
-            set => Set(ref _steganography.InputData.Name, value);
-        }
-
-        public string InputFilePath
-        {
-            get => _steganography.InputData.Path;
-            set
-            {
-                if (Set(ref _steganography.InputData.Path, value))
-                {
-                    InputFileName = System.IO.Path.GetFileName(value);
-                }
-            }
-        }
-
-        public string InputData
-        {
-            get => _steganography.InputData.Content;
-            set => Set(ref _steganography.InputData.Content, value);
-        }
-
         public string ImageName
         {
             get => _imageName;
@@ -156,12 +126,6 @@ namespace PixelCrypt2025.ViewModel.Page
         {
             get => _imagePermission;
             set => Set(ref _imagePermission, value);
-        }
-
-        public bool IsReadOnlyInputData
-        {
-            get => _isReadOnlyInputData;
-            set => Set(ref _isReadOnlyInputData, value);
         }
 
         public GridLength ClosePasswordWidth
@@ -241,14 +205,14 @@ namespace PixelCrypt2025.ViewModel.Page
 
             if (openFileDialog.ShowDialog() ?? false)
             {
-                var prefCount = _steganography.ContextImage.Count;
+                var prefCount = _cryptography.ContextImage.Count;
 
                 foreach (var filepath in openFileDialog.FileNames.Where(file => filterList.Contains(file.Split('.')[1])))
                 {
-                    _steganography.AddElement(filepath);
+                    _cryptography.AddElement(filepath);
                 }
 
-                if (_steganography.ContextImage.Count != prefCount)
+                if (_cryptography.ContextImage.Count != prefCount)
                 {
                     SaveDataWidth = new GridLength(0, GridUnitType.Star);
                     FilePathImageStackPanel = UpdateImageList();
@@ -258,7 +222,7 @@ namespace PixelCrypt2025.ViewModel.Page
                     MessageBox.Show("Не удалось добавить элементы", openFileDialog.Title);
                 }
             }
-            if (_steganography.ContextImage.Count > 0)
+            if (_cryptography.ContextImage.Count > 0)
             {
                 AddGridHeight = new GridLength(0, GridUnitType.Star);
                 DataGridHeight = new GridLength(1, GridUnitType.Star);
@@ -269,7 +233,7 @@ namespace PixelCrypt2025.ViewModel.Page
         {
             if (p is not Model.Image parametr) return;
 
-            _steganography.RemoveElement(parametr);
+            _cryptography.RemoveElement(parametr);
             FilePathImageStackPanel = UpdateImageList();
 
             if (SelecedImage == parametr)
@@ -278,7 +242,7 @@ namespace PixelCrypt2025.ViewModel.Page
                 ViewImageWidth = new GridLength(0, GridUnitType.Star);
             }
 
-            if (_steganography.ContextImage.Count == 0)
+            if (_cryptography.ContextImage.Count == 0)
             {
                 AddGridHeight = new GridLength(1, GridUnitType.Star);
                 DataGridHeight = new GridLength(0, GridUnitType.Star);
@@ -288,7 +252,7 @@ namespace PixelCrypt2025.ViewModel.Page
 
         private void OnClearImageCommandExecuted(object p = null)
         {
-            _steganography.ContextImage.Clear();
+            _cryptography.ContextImage.Clear();
 
             AddGridHeight = new GridLength(1, GridUnitType.Star);
             DataGridHeight = new GridLength(0, GridUnitType.Star);
@@ -343,40 +307,11 @@ namespace PixelCrypt2025.ViewModel.Page
             FilePathImageStackPanel = UpdateImageList();
         }
 
-        private void OnChooseFileCommandExecuted(object p = null)
-        {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-
-            openFileDialog.Title = "Выбрать файл для чтения данных";
-
-            if (openFileDialog.ShowDialog() ?? false)
-            {
-                if (InputData == null || InputData?.Length == 0 || (InputData?.Length > 0 && MessageBox.Show("Заменить текст на данные из файла?", "Файл для чтения данных", MessageBoxButton.YesNo) == MessageBoxResult.Yes))
-                {
-                    InputFilePath = openFileDialog.FileName;
-
-                    var fileData = System.IO.File.ReadAllText(InputFilePath);
-
-                    if (fileData.Length > 10000) fileData = new string(fileData.Take(10000).ToArray());
-
-                    InputData = fileData;
-
-                    IsReadOnlyInputData = true;
-                }
-            }
-        }
-
-        private void OnRemoveFileCommandExecuted(object p = null)
-        {
-            InputFilePath = "";
-            IsReadOnlyInputData = false;
-        }
-
         private StackPanel UpdateImageList()
         {
             var stackPanel = new StackPanel();
 
-            foreach (var imagePath in _steganography.ContextImage)
+            foreach (var imagePath in _cryptography.ContextImage)
             {
                 var grid = new Grid()
                 {
@@ -410,6 +345,7 @@ namespace PixelCrypt2025.ViewModel.Page
                 {
                     Style = (Style)Application.Current.FindResource("ToolButtonStyle"),
                     Margin = new Thickness(5, 0, 0, 0),
+                    VerticalAlignment = VerticalAlignment.Top,
                     Width = 35,
                     Height = 35,
                     Padding = new Thickness(0),

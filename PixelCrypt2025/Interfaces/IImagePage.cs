@@ -1,10 +1,7 @@
 ﻿namespace PixelCrypt2025.Interfaces
 {
-    internal interface IImagePage<T>
+    internal interface IImagePage
     {
-        public List<Model.Image> ContextImage { get; }
-        public void AddElement(string path);
-        public void RemoveElement(Model.Image path);
-        public T InputData { get; }
+        
     }
 }

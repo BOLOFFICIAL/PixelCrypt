@@ -1,12 +1,15 @@
 ﻿using PixelCrypt2025.Interfaces;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace PixelCrypt2025.Model
 {
-    internal class Steganography : IImagePage
+    class Cryptography : IImagePage
     {
         public List<Model.Image> ContextImage { get; } = new List<Model.Image>();
-
-        public Model.File InputFile { get; } = new Model.File();
 
         public void AddElement(string path)
         {
@@ -23,12 +26,12 @@ namespace PixelCrypt2025.Model
             ContextImage.Remove(image);
         }
 
-        public void ImportAction()
+        public void EncryptAction()
         {
 
         }
 
-        public void ExportAction()
+        public void DecryptAction()
         {
 
         }

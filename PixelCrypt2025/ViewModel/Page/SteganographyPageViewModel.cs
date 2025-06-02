@@ -14,7 +14,7 @@ namespace PixelCrypt2025.ViewModel.Page
 {
     internal class SteganographyPageViewModel : ImagePageViewModel
     {
-        private Steganography<Model.File> _steganography;
+        private Steganography _steganography;
 
         private string _showPasword = "";
         private string _password = "";
@@ -55,7 +55,7 @@ namespace PixelCrypt2025.ViewModel.Page
 
         public SteganographyPageViewModel()
         {
-            _steganography = new Steganography<Model.File>(new Model.File());
+            _steganography = new Steganography();
 
             ClosePageCommand = new LambdaCommand(OnClosePageCommandExecuted);
             AddImageCommand = new LambdaCommand(OnAddImageCommandExecuted);
@@ -70,8 +70,8 @@ namespace PixelCrypt2025.ViewModel.Page
             OnPaswordViewCommandExecuted();
 
             AddGridHeight = new GridLength(1, GridUnitType.Star);
-            Encrypt = _steganography.EncryptAction;
-            Decrypt = _steganography.DecryptAction;
+            Import = _steganography.ImportAction;
+            Export = _steganography.ExportAction;
         }
 
         public StackPanel FilePathImageStackPanel
@@ -80,13 +80,13 @@ namespace PixelCrypt2025.ViewModel.Page
             set => Set(ref _filePathImageStackPanel, value);
         }
 
-        public Action Encrypt
+        public Action Import
         {
             get => _encrypt;
             set => Set(ref _encrypt, value);
         }
 
-        public Action Decrypt
+        public Action Export
         {
             get => _decrypt;
             set => Set(ref _decrypt, value);
@@ -106,26 +106,27 @@ namespace PixelCrypt2025.ViewModel.Page
 
         public string InputFileName
         {
-            get => _steganography.InputData.Name;
-            set => Set(ref _steganography.InputData.Name, value);
+            get => _steganography.InputFile.Name;
+            set => Set(ref _steganography.InputFile.Name, value);
         }
 
         public string InputFilePath
         {
-            get => _steganography.InputData.Path;
+            get => _steganography.InputFile.Path;
             set
             {
-                if (Set(ref _steganography.InputData.Path, value))
+                if (Set(ref _steganography.InputFile.Path, value))
                 {
                     InputFileName = System.IO.Path.GetFileName(value);
+                    IsReadOnlyInputData = value?.Length > 0;
                 }
             }
         }
 
         public string InputData
         {
-            get => _steganography.InputData.Content;
-            set => Set(ref _steganography.InputData.Content, value);
+            get => _steganography.InputFile.Content;
+            set => Set(ref _steganography.InputFile.Content, value);
         }
 
         public string ImageName
@@ -360,8 +361,6 @@ namespace PixelCrypt2025.ViewModel.Page
                     if (fileData.Length > 10000) fileData = new string(fileData.Take(10000).ToArray());
 
                     InputData = fileData;
-
-                    IsReadOnlyInputData = true;
                 }
             }
         }
@@ -369,7 +368,6 @@ namespace PixelCrypt2025.ViewModel.Page
         private void OnRemoveFileCommandExecuted(object p = null)
         {
             InputFilePath = "";
-            IsReadOnlyInputData = false;
         }
 
         private StackPanel UpdateImageList()
@@ -410,6 +408,7 @@ namespace PixelCrypt2025.ViewModel.Page
                 {
                     Style = (Style)Application.Current.FindResource("ToolButtonStyle"),
                     Margin = new Thickness(5, 0, 0, 0),
+                    VerticalAlignment = VerticalAlignment.Top,
                     Width = 35,
                     Height = 35,
                     Padding = new Thickness(0),
