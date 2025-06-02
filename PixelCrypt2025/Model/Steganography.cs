@@ -8,21 +8,6 @@ namespace PixelCrypt2025.Model
 
         public Model.File InputFile { get; } = new Model.File();
 
-        public void AddElement(string path)
-        {
-            foreach (var image in InputImage)
-            {
-                if (image.Path == path) return;
-            }
-
-            InputImage.Add(new Image(path));
-        }
-
-        public void RemoveElement(Image image)
-        {
-            InputImage.Remove(image);
-        }
-
         public void ImportAction()
         {
 

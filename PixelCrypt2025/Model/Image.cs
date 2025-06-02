@@ -1,5 +1,4 @@
-﻿using System.Drawing.Imaging;
-using System.IO;
+﻿using System.IO;
 
 namespace PixelCrypt2025.Model
 {

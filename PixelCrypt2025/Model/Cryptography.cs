@@ -6,21 +6,6 @@ namespace PixelCrypt2025.Model
     {
         public List<Model.Image> InputImage { get; } = new List<Model.Image>();
 
-        public void AddElement(string path)
-        {
-            foreach (var image in InputImage)
-            {
-                if (image.Path == path) return;
-            }
-
-            InputImage.Add(new Image(path));
-        }
-
-        public void RemoveElement(Image image)
-        {
-            InputImage.Remove(image);
-        }
-
         public void EncryptAction()
         {
 
