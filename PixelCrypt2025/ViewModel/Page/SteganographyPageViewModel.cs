@@ -1,16 +1,16 @@
 ﻿using FontAwesome5;
 using Microsoft.Win32;
-using PixelCrypt.Commands.Base;
-using PixelCrypt.Model;
-using PixelCrypt.ProgramData;
-using PixelCrypt.View.Page;
-using PixelCrypt.ViewModel.Base;
+using PixelCrypt2025.Commands.Base;
+using PixelCrypt2025.Model;
+using PixelCrypt2025.ProgramData;
+using PixelCrypt2025.View.Page;
+using PixelCrypt2025.ViewModel.Base;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 
-namespace PixelCrypt.ViewModel.Page
+namespace PixelCrypt2025.ViewModel.Page
 {
     internal class SteganographyPageViewModel : ImagePageViewModel
     {

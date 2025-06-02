@@ -1,7 +1,7 @@
-﻿using PixelCrypt.ProgramData;
-using PixelCrypt.ViewModel.Window;
+﻿using PixelCrypt2025.ProgramData;
+using PixelCrypt2025.ViewModel.Window;
 
-namespace PixelCrypt.View.Window
+namespace PixelCrypt2025.View.Window
 {
     /// <summary>
     /// Логика взаимодействия для MainWindow.xaml

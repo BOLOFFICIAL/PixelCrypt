@@ -1,4 +1,4 @@
-﻿namespace PixelCrypt.Model
+﻿namespace PixelCrypt2025.Model
 {
     internal class Theme
     {

@@ -1,7 +1,7 @@
-﻿using PixelCrypt.View.Window;
-using PixelCrypt.ViewModel.Window;
+﻿using PixelCrypt2025.View.Window;
+using PixelCrypt2025.ViewModel.Window;
 
-namespace PixelCrypt.ProgramData
+namespace PixelCrypt2025.ProgramData
 {
     class Context
     {

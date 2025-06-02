@@ -1,8 +1,8 @@
-﻿using PixelCrypt.Commands.Base;
-using PixelCrypt.ProgramData;
+﻿using PixelCrypt2025.Commands.Base;
+using PixelCrypt2025.ProgramData;
 using System.Windows.Input;
 
-namespace PixelCrypt.ViewModel.Page
+namespace PixelCrypt2025.ViewModel.Page
 {
     class MainPageViewModel : Base.ViewModel
     {

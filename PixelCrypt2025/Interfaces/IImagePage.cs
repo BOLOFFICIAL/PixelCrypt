@@ -1,4 +1,4 @@
-﻿namespace PixelCrypt.Interfaces
+﻿namespace PixelCrypt2025.Interfaces
 {
     internal interface IImagePage<T>
     {

@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace PixelCrypt
+namespace PixelCrypt2025
 {
     /// <summary>
     /// Interaction logic for App.xaml

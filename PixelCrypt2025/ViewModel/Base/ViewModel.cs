@@ -1,8 +1,8 @@
-﻿using PixelCrypt.Model;
+﻿using PixelCrypt2025.Model;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace PixelCrypt.ViewModel.Base
+namespace PixelCrypt2025.ViewModel.Base
 {
     internal abstract class ViewModel : INotifyPropertyChanged
     {

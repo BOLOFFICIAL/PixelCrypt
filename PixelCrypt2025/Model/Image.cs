@@ -1,7 +1,7 @@
 ﻿using System.Drawing.Imaging;
 using System.IO;
 
-namespace PixelCrypt.Model
+namespace PixelCrypt2025.Model
 {
     internal class Image
     {

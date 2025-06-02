@@ -2,7 +2,7 @@
 using System.Windows.Controls;
 using System.Windows.Data;
 
-namespace PixelCrypt.Components
+namespace PixelCrypt2025.Components
 {
     /// <summary>
     /// Логика взаимодействия для BindablePasswordBox.xaml

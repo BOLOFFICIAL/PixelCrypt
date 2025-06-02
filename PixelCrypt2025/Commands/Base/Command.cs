@@ -1,6 +1,6 @@
 ﻿using System.Windows.Input;
 
-namespace PixelCrypt.Commands.Base
+namespace PixelCrypt2025.Commands.Base
 {
     internal abstract class Command : ICommand
     {

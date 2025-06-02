@@ -1,4 +1,4 @@
-﻿namespace PixelCrypt.Commands.Base
+﻿namespace PixelCrypt2025.Commands.Base
 {
     internal class LambdaCommand : Command
     {

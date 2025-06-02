@@ -1,7 +1,7 @@
-﻿<Application x:Class="PixelCrypt.App"
+﻿<Application x:Class="PixelCrypt2025.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:PixelCrypt"
+             xmlns:local="clr-namespace:PixelCrypt2025"
              StartupUri="View/Window/MainWindow.xaml">
     <Application.Resources>
 

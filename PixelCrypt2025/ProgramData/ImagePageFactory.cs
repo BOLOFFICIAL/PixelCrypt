@@ -1,7 +1,7 @@
-﻿using PixelCrypt.View.Page;
+﻿using PixelCrypt2025.View.Page;
 using System.Windows.Controls;
 
-namespace PixelCrypt.ProgramData
+namespace PixelCrypt2025.ProgramData
 {
     internal static class ImagePageFactory
     {

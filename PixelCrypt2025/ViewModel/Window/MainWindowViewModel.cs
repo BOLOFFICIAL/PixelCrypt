@@ -1,7 +1,7 @@
-﻿using PixelCrypt.ProgramData;
-using PixelCrypt.View.Page;
+﻿using PixelCrypt2025.ProgramData;
+using PixelCrypt2025.View.Page;
 
-namespace PixelCrypt.ViewModel.Window
+namespace PixelCrypt2025.ViewModel.Window
 {
     internal class MainWindowViewModel : Base.ViewModel
     {

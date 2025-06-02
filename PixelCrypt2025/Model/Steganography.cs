@@ -1,6 +1,6 @@
-﻿using PixelCrypt.Interfaces;
+﻿using PixelCrypt2025.Interfaces;
 
-namespace PixelCrypt.Model
+namespace PixelCrypt2025.Model
 {
     internal class Steganography<T> : IImagePage<T>
     {
