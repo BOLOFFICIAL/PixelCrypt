@@ -10,7 +10,6 @@ namespace PixelCrypt.Model
         public long Length { get; private set; }
         public string Extension { get; private set; }
         public string Permission { get; private set; }
-        public ImageFormat RawFormat { get; private set; }
 
         public Image(string filepath)
         {
@@ -42,9 +41,9 @@ namespace PixelCrypt.Model
                 using (System.Drawing.Image img = System.Drawing.Image.FromFile(imagePath))
                 {
                     Permission = $"{img.Width} x {img.Height}";
-                    RawFormat = img.RawFormat;
                 }
             }
+            catch { }
             finally { }
         }
     }

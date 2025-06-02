@@ -4,6 +4,7 @@ using PixelCrypt.Commands.Base;
 using PixelCrypt.Model;
 using PixelCrypt.ProgramData;
 using PixelCrypt.View.Page;
+using PixelCrypt.ViewModel.Base;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -11,13 +12,19 @@ using System.Windows.Media;
 
 namespace PixelCrypt.ViewModel.Page
 {
-    internal class SteganographyPageViewModel : Base.ViewModel
+    internal class SteganographyPageViewModel : ImagePageViewModel
     {
         private Steganography<Model.File> _steganography;
 
         private string _showPasword = "";
         private string _password = "";
-        private string _inputFile = "";
+        private string _imageName = "";
+        private string _imagePath = "";
+        private string _imageLength = "";
+        private string _imageExtension = "";
+        private string _imagePermission = "";
+
+        private bool _isReadOnlyInputData = false;
 
         private Model.Image _selecedImage = null;
 
@@ -44,6 +51,7 @@ namespace PixelCrypt.ViewModel.Page
         public ICommand DoActionCommand { get; }
         public ICommand PaswordViewCommand { get; }
         public ICommand ChooseFileCommand { get; }
+        public ICommand RemoveFileCommand { get; }
 
         public SteganographyPageViewModel()
         {
@@ -57,6 +65,7 @@ namespace PixelCrypt.ViewModel.Page
             DoActionCommand = new LambdaCommand(OnDoActionCommandExecuted);
             ShowImageCommand = new LambdaCommand(OnShowImageCommandExecuted);
             ChooseFileCommand = new LambdaCommand(OnChooseFileCommandExecuted);
+            RemoveFileCommand = new LambdaCommand(OnRemoveFileCommandExecuted);
 
             OnPaswordViewCommandExecuted();
 
@@ -95,16 +104,64 @@ namespace PixelCrypt.ViewModel.Page
             set => Set(ref _password, value);
         }
 
-        public string InputFile
+        public string InputFileName
         {
-            get => _inputFile;
-            set => Set(ref _inputFile, value);
+            get => _steganography.InputData.Name;
+            set => Set(ref _steganography.InputData.Name, value);
+        }
+
+        public string InputFilePath
+        {
+            get => _steganography.InputData.Path;
+            set
+            {
+                if (Set(ref _steganography.InputData.Path, value))
+                {
+                    InputFileName = System.IO.Path.GetFileName(value);
+                }
+            }
         }
 
         public string InputData
         {
             get => _steganography.InputData.Content;
             set => Set(ref _steganography.InputData.Content, value);
+        }
+
+        public string ImageName
+        {
+            get => _imageName;
+            set => Set(ref _imageName, value);
+        }
+
+        public string ImagePath
+        {
+            get => _imagePath;
+            set => Set(ref _imagePath, value);
+        }
+
+        public string ImageLength
+        {
+            get => _imageLength;
+            set => Set(ref _imageLength, value);
+        }
+
+        public string ImageExtension
+        {
+            get => _imageExtension;
+            set => Set(ref _imageExtension, value);
+        }
+
+        public string ImagePermission
+        {
+            get => _imagePermission;
+            set => Set(ref _imagePermission, value);
+        }
+
+        public bool IsReadOnlyInputData
+        {
+            get => _isReadOnlyInputData;
+            set => Set(ref _isReadOnlyInputData, value);
         }
 
         public GridLength ClosePasswordWidth
@@ -143,6 +200,28 @@ namespace PixelCrypt.ViewModel.Page
             set => Set(ref _viewImageWidth, value);
         }
 
+        private Model.Image SelecedImage
+        {
+            get => _selecedImage;
+            set
+            {
+                _selecedImage = value;
+
+                if (value != null)
+                {
+                    ImageName = $"{_selecedImage.Name}";
+                    ImagePath = $"{_selecedImage.Path}";
+                    ImageLength = $"{_selecedImage.Length} Kb";
+                    ImageExtension = $"{_selecedImage.Extension}";
+                    ImagePermission = $"{_selecedImage.Permission}";
+                }
+                else 
+                {
+                    ImagePath = "";
+                }
+            }
+        }
+
         private void OnClosePageCommandExecuted(object p = null)
         {
             Context.MainWindowViewModel.CurrentPage = new MainPage();
@@ -150,9 +229,11 @@ namespace PixelCrypt.ViewModel.Page
 
         private void OnAddImageCommandExecuted(object p = null)
         {
+            var filterList = new List<string>() { "jpg", "jpeg", "png" };
+
             OpenFileDialog openFileDialog = new OpenFileDialog()
             {
-                Filter = "Изображения|*.jpg;*.jpeg;*.png",
+                Filter = "Изображения|" + string.Join(";", filterList.Select(ext => $"*.{ext}")),
                 Multiselect = true,
             };
 
@@ -162,7 +243,7 @@ namespace PixelCrypt.ViewModel.Page
             {
                 var prefCount = _steganography.ContextImage.Count;
 
-                foreach (var filepath in openFileDialog.FileNames)
+                foreach (var filepath in openFileDialog.FileNames.Where(file=> filterList.Contains(file.Split('.')[1])))
                 {
                     _steganography.AddElement(filepath);
                 }
@@ -171,6 +252,10 @@ namespace PixelCrypt.ViewModel.Page
                 {
                     SaveDataWidth = new GridLength(0, GridUnitType.Star);
                     FilePathImageStackPanel = UpdateImageList();
+                }
+                else
+                {
+                    MessageBox.Show("Не удалось добавить элементы", openFileDialog.Title);
                 }
             }
             if (_steganography.ContextImage.Count > 0)
@@ -187,9 +272,9 @@ namespace PixelCrypt.ViewModel.Page
             _steganography.RemoveElement(parametr);
             FilePathImageStackPanel = UpdateImageList();
 
-            if (_selecedImage == parametr)
+            if (SelecedImage == parametr)
             {
-                _selecedImage = null;
+                SelecedImage = null;
                 ViewImageWidth = new GridLength(0, GridUnitType.Star);
             }
 
@@ -197,7 +282,7 @@ namespace PixelCrypt.ViewModel.Page
             {
                 AddGridHeight = new GridLength(1, GridUnitType.Star);
                 DataGridHeight = new GridLength(0, GridUnitType.Star);
-                _selecedImage = null;
+                SelecedImage = null;
             }
         }
 
@@ -207,7 +292,7 @@ namespace PixelCrypt.ViewModel.Page
 
             AddGridHeight = new GridLength(1, GridUnitType.Star);
             DataGridHeight = new GridLength(0, GridUnitType.Star);
-            _selecedImage = null;
+            SelecedImage = null;
             ViewImageWidth = new GridLength(0, GridUnitType.Star);
         }
 
@@ -240,22 +325,51 @@ namespace PixelCrypt.ViewModel.Page
         {
             if (p is not Model.Image parametr) return;
 
-            if (_selecedImage == parametr)
+            if (SelecedImage == parametr)
             {
-                _selecedImage = null;
+                SelecedImage = null;
                 ViewImageWidth = new GridLength(0, GridUnitType.Star);
             }
-            else
+            else if (System.IO.File.Exists(parametr.Path))
             {
-                _selecedImage = parametr;
+                SelecedImage = parametr;
                 ViewImageWidth = new GridLength(1, GridUnitType.Star);
+            }
+            else 
+            {
+                MessageBox.Show("Не удалось найти фаил, возможно он удален или перемещен");
+                OnRemoveImageCommandExecuted(parametr);
             }
             FilePathImageStackPanel = UpdateImageList();
         }
 
         private void OnChooseFileCommandExecuted(object p = null)
         {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
 
+            openFileDialog.Title = "Выбрать файл для чтения данных";
+
+            if (openFileDialog.ShowDialog() ?? false)
+            {
+                if (InputData == null || InputData?.Length == 0 || (InputData?.Length > 0 && MessageBox.Show("Заменить текст на данные из файла?", "Файл для чтения данных", MessageBoxButton.YesNo) == MessageBoxResult.Yes))
+                {
+                    InputFilePath = openFileDialog.FileName;
+
+                    var fileData = System.IO.File.ReadAllText(InputFilePath);
+
+                    if (fileData.Length > 10000) fileData = new string(fileData.Take(10000).ToArray());
+
+                    InputData = fileData;
+
+                    IsReadOnlyInputData = true;
+                }
+            }
+        }
+
+        private void OnRemoveFileCommandExecuted(object p = null)
+        {
+            InputFilePath = "";
+            IsReadOnlyInputData = false;
         }
 
         private StackPanel UpdateImageList()
@@ -276,7 +390,7 @@ namespace PixelCrypt.ViewModel.Page
                 var textBlock = new TextBlock()
                 {
                     Text = imagePath.ToString(),
-                    FontSize = 14,
+                    FontSize = 15,
                     TextWrapping = TextWrapping.Wrap,
                     Padding = new Thickness(10, 10, 10, 10),
                 };
@@ -285,7 +399,7 @@ namespace PixelCrypt.ViewModel.Page
                 {
                     Content = textBlock,
                     Command = ShowImageCommand,
-                    Style = (Style)Application.Current.FindResource(imagePath == _selecedImage ? "SelectedListButtonStyle" : "BaseListButtonStyle"),
+                    Style = (Style)Application.Current.FindResource(imagePath == SelecedImage ? "SelectedListButtonStyle" : "BaseListButtonStyle"),
                     CommandParameter = imagePath,
                     BorderThickness = new Thickness(1)
                 };
