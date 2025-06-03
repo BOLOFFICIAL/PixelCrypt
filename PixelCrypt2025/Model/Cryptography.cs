@@ -2,7 +2,7 @@
 
 namespace PixelCrypt2025.Model
 {
-    class Cryptography : IImagePage
+    internal class Cryptography : IImagePage
     {
         public List<Model.Image> InputImage { get; } = new List<Model.Image>();
 

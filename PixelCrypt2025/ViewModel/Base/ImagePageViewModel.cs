@@ -34,7 +34,10 @@ namespace PixelCrypt2025.ViewModel.Base
 
         private bool _isOpenPassword = false;
 
-        private ICommand ShowImageCommand { get; }
+        protected ICommand ShowImageCommand { get; init; }
+
+        private Action _inputAction;
+        private Action _outputAction;
 
         public IImagePage ImagePage { get; }
 
@@ -54,11 +57,22 @@ namespace PixelCrypt2025.ViewModel.Base
             RemoveImageCommand = new LambdaCommand(OnRemoveImageCommandExecuted);
             PaswordViewCommand = new LambdaCommand(OnPaswordViewCommandExecuted);
             ClearImageCommand = new LambdaCommand(OnClearImageCommandExecuted);
-            ShowImageCommand = new LambdaCommand(OnShowImageCommandExecuted);
 
             OnPaswordViewCommandExecuted();
 
             AddGridHeight = new GridLength(1, GridUnitType.Star);
+        }
+
+        public Action InputAction
+        {
+            get => _inputAction;
+            set => Set(ref _inputAction, value);
+        }
+
+        public Action OutputAction
+        {
+            get => _outputAction;
+            set => Set(ref _outputAction, value);
         }
 
         public StackPanel FilePathImageStackPanel
@@ -145,7 +159,7 @@ namespace PixelCrypt2025.ViewModel.Base
             set => Set(ref _viewImageWidth, value);
         }
 
-        private Model.Image SelecedImage
+        protected Model.Image SelecedImage
         {
             get => _selecedImage;
             set
@@ -187,8 +201,9 @@ namespace PixelCrypt2025.ViewModel.Base
             if (openFileDialog.ShowDialog() ?? false)
             {
                 var prefCount = ImagePage.InputImage.Count;
+                var imageList = openFileDialog.FileNames.Where(file => filterList.Contains(file.Split('.')[1]));
 
-                foreach (var filepath in openFileDialog.FileNames.Where(file => filterList.Contains(file.Split('.')[1])))
+                foreach (var filepath in imageList)
                 {
                     AddElement(filepath);
                 }
@@ -198,9 +213,9 @@ namespace PixelCrypt2025.ViewModel.Base
                     SaveDataWidth = new GridLength(0, GridUnitType.Star);
                     FilePathImageStackPanel = UpdateImageList();
                 }
-                else
+                else if(imageList.Count() == 0)
                 {
-                    MessageBox.Show("Не удалось добавить элементы", openFileDialog.Title);
+                    MessageBox.Show("Не удалось найти подходящие элементы", openFileDialog.Title);
                 }
             }
             if (ImagePage.InputImage.Count > 0)
@@ -210,7 +225,7 @@ namespace PixelCrypt2025.ViewModel.Base
             }
         }
 
-        private void OnRemoveImageCommandExecuted(object p = null)
+        protected void OnRemoveImageCommandExecuted(object p = null)
         {
             if (p is not Model.Image parametr) return;
 
@@ -260,29 +275,7 @@ namespace PixelCrypt2025.ViewModel.Base
             _isOpenPassword = !_isOpenPassword;
         }
 
-        private void OnShowImageCommandExecuted(object p = null)
-        {
-            if (p is not Model.Image parametr) return;
-
-            if (SelecedImage == parametr)
-            {
-                SelecedImage = null;
-                ViewImageWidth = new GridLength(0, GridUnitType.Star);
-            }
-            else if (System.IO.File.Exists(parametr.Path))
-            {
-                SelecedImage = parametr;
-                ViewImageWidth = new GridLength(1, GridUnitType.Star);
-            }
-            else
-            {
-                MessageBox.Show("Не удалось найти фаил, возможно он удален или перемещен");
-                OnRemoveImageCommandExecuted(parametr);
-            }
-            FilePathImageStackPanel = UpdateImageList();
-        }
-
-        private StackPanel UpdateImageList()
+        protected StackPanel UpdateImageList()
         {
             var stackPanel = new StackPanel();
 

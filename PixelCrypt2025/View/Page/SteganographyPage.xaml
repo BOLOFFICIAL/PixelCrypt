@@ -72,7 +72,7 @@
             <Grid Grid.Row="1">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="300"/>
-                    <ColumnDefinition Width="*" 
+                    <ColumnDefinition Width="5*" 
                                       MinWidth="250"/>
                     <ColumnDefinition Width="{Binding ViewImageWidth}"/>
                 </Grid.ColumnDefinitions>
@@ -223,7 +223,7 @@
                             <Grid HorizontalAlignment="Center"
                                   Margin="0,10">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="auto"/>
                                     <ColumnDefinition Width="{Binding SaveDataWidth}"/>
                                 </Grid.ColumnDefinitions>
 
@@ -233,13 +233,13 @@
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
 
-                                    <Grid Grid.Column="0">
+                                    <Grid Grid.Column="0"
+                                          Margin="10,0,5,0">
                                         <Button Style="{StaticResource ActionButtonStyle}" 
                                                 Command="{Binding DoActionCommand}"
-                                                CommandParameter="{Binding Import}"
+                                                CommandParameter="{Binding InputAction}"
                                                 HorizontalAlignment="Center"
                                                 ToolTip="Импортировать данные"
-                                                Margin="0,0,5,0"
                                                 Height="35"
                                                 Width="55">
                                             <fa:ImageAwesome Icon="Solid_SignInAlt"
@@ -249,13 +249,13 @@
                                         </Button>
                                     </Grid>
 
-                                    <Grid Grid.Column="1">
+                                    <Grid Grid.Column="1"
+                                          Margin="5,0,10,0">
                                         <Button Style="{StaticResource ActionButtonStyle}" 
                                                 Command="{Binding DoActionCommand}"
-                                                CommandParameter="{Binding Export}"
+                                                CommandParameter="{Binding OutputAction}"
                                                 HorizontalAlignment="Center"
                                                 ToolTip="Экспортировать данные"
-                                                Margin="5,0,0,0"
                                                 Height="35"
                                                 Width="55">
                                             <fa:ImageAwesome Icon="Solid_SignOutAlt"
@@ -266,13 +266,13 @@
                                     </Grid>
                                 </Grid>
 
-                                <Grid Grid.Column="1">
+                                <Grid Grid.Column="1"
+                                      Margin="0,0,10,0">
                                     <Button Style="{StaticResource ActionButtonStyle}" 
                                             Command="{Binding OpenImageProcessingPageCommand}"
                                             HorizontalAlignment="Center"
                                             Height="35"
-                                            Width="140"
-                                            Margin="10,0,0,0">
+                                            Width="150">
                                         <TextBlock Text="Сохранить"
                                                    FontSize="20"
                                                    TextAlignment="Center"/>

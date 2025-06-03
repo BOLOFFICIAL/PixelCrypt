@@ -13,9 +13,6 @@ namespace PixelCrypt2025.ViewModel.Page
 
         private bool _isReadOnlyInputData = false;
 
-        private Action _encrypt;
-        private Action _decrypt;
-
         public ICommand ChooseFileCommand { get; }
         public ICommand RemoveFileCommand { get; }
 
@@ -26,21 +23,10 @@ namespace PixelCrypt2025.ViewModel.Page
             ChooseFileCommand = new LambdaCommand(OnChooseFileCommandExecuted);
             RemoveFileCommand = new LambdaCommand(OnRemoveFileCommandExecuted);
             DoActionCommand = new LambdaCommand(OnDoActionCommandExecuted);
+            ShowImageCommand = new LambdaCommand(OnShowImageCommandExecuted);
 
-            Import = _steganography.ImportAction;
-            Export = _steganography.ExportAction;
-        }
-
-        public Action Import
-        {
-            get => _encrypt;
-            set => Set(ref _encrypt, value);
-        }
-
-        public Action Export
-        {
-            get => _decrypt;
-            set => Set(ref _decrypt, value);
+            InputAction = _steganography.ImportAction;
+            OutputAction = _steganography.ExportAction;
         }
 
         public string InputFileName
@@ -108,6 +94,28 @@ namespace PixelCrypt2025.ViewModel.Page
             if (p is not Action action) return;
             action();
             SaveDataWidth = new GridLength(1, GridUnitType.Star);
+        }
+
+        private void OnShowImageCommandExecuted(object p = null)
+        {
+            if (p is not Model.Image parametr) return;
+
+            if (SelecedImage == parametr)
+            {
+                SelecedImage = null;
+                ViewImageWidth = new GridLength(0, GridUnitType.Star);
+            }
+            else if (System.IO.File.Exists(parametr.Path))
+            {
+                SelecedImage = parametr;
+                ViewImageWidth = new GridLength(4, GridUnitType.Star);
+            }
+            else
+            {
+                MessageBox.Show("Не удалось найти фаил, возможно он удален или перемещен");
+                OnRemoveImageCommandExecuted(parametr);
+            }
+            FilePathImageStackPanel = UpdateImageList();
         }
     }
 }
