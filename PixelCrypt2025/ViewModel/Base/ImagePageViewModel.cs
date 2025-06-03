@@ -25,12 +25,12 @@ namespace PixelCrypt2025.ViewModel.Base
 
         private StackPanel _filePathImageStackPanel;
 
-        private GridLength _closePasswordWidth = new GridLength(0, GridUnitType.Pixel);
-        private GridLength _openPasswordWidth = new GridLength(0, GridUnitType.Pixel);
-        private GridLength _saveDataWidth = new GridLength(0, GridUnitType.Pixel);
-        private GridLength _addGridHeight = new GridLength(0, GridUnitType.Pixel);
-        private GridLength _dataGridHeight = new GridLength(0, GridUnitType.Pixel);
-        private GridLength _viewImageWidth = new GridLength(0, GridUnitType.Pixel);
+        private GridLength _closePasswordWidth = Constants.GridLengthZero;
+        private GridLength _openPasswordWidth = Constants.GridLengthZero;
+        private GridLength _saveDataWidth = Constants.GridLengthZero;
+        private GridLength _addGridHeight = Constants.GridLengthZero;
+        private GridLength _dataGridHeight = Constants.GridLengthZero;
+        private GridLength _viewImageWidth = Constants.GridLengthZero;
 
         private bool _isOpenPassword = false;
 
@@ -59,7 +59,7 @@ namespace PixelCrypt2025.ViewModel.Base
 
             OnPaswordViewCommandExecuted();
 
-            AddGridHeight = new GridLength(1, GridUnitType.Star);
+            AddGridHeight = Constants.GridLengthStar;
         }
 
         public Action InputAction
@@ -209,7 +209,7 @@ namespace PixelCrypt2025.ViewModel.Base
 
                 if (ImagePage.InputImage.Count != prefCount)
                 {
-                    SaveDataWidth = new GridLength(0, GridUnitType.Star);
+                    SaveDataWidth = Constants.GridLengthZero;
                     FilePathImageStackPanel = UpdateImageList();
                 }
                 else if(imageList.Count() == 0)
@@ -219,8 +219,8 @@ namespace PixelCrypt2025.ViewModel.Base
             }
             if (ImagePage.InputImage.Count > 0)
             {
-                AddGridHeight = new GridLength(0, GridUnitType.Star);
-                DataGridHeight = new GridLength(1, GridUnitType.Star);
+                AddGridHeight = Constants.GridLengthZero;
+                DataGridHeight = Constants.GridLengthStar;
             }
         }
 
@@ -228,24 +228,24 @@ namespace PixelCrypt2025.ViewModel.Base
         {
             ImagePage.InputImage.Clear();
 
-            AddGridHeight = new GridLength(1, GridUnitType.Star);
-            DataGridHeight = new GridLength(0, GridUnitType.Star);
+            AddGridHeight = Constants.GridLengthStar;
+            DataGridHeight = Constants.GridLengthZero;
             SelecedImage = null;
-            ViewImageWidth = new GridLength(0, GridUnitType.Star);
+            ViewImageWidth = Constants.GridLengthZero;
         }
 
         private void OnPaswordViewCommandExecuted(object p = null)
         {
             if (_isOpenPassword)
             {
-                OpenPasswordWidth = new GridLength(1, GridUnitType.Star);
-                ClosePasswordWidth = new GridLength(0, GridUnitType.Star);
+                OpenPasswordWidth = Constants.GridLengthStar;
+                ClosePasswordWidth = Constants.GridLengthZero;
                 ShowPasword = "Regular_Eye";
             }
             else
             {
-                OpenPasswordWidth = new GridLength(0, GridUnitType.Star);
-                ClosePasswordWidth = new GridLength(1, GridUnitType.Star);
+                OpenPasswordWidth = Constants.GridLengthZero;
+                ClosePasswordWidth = Constants.GridLengthStar;
                 ShowPasword = "Regular_EyeSlash";
             }
 
@@ -263,13 +263,13 @@ namespace PixelCrypt2025.ViewModel.Base
             if (SelecedImage == parametr)
             {
                 SelecedImage = null;
-                ViewImageWidth = new GridLength(0, GridUnitType.Star);
+                ViewImageWidth = Constants.GridLengthZero;
             }
 
             if (ImagePage.InputImage.Count == 0)
             {
-                AddGridHeight = new GridLength(1, GridUnitType.Star);
-                DataGridHeight = new GridLength(0, GridUnitType.Star);
+                AddGridHeight = Constants.GridLengthStar;
+                DataGridHeight = Constants.GridLengthZero;
                 SelecedImage = null;
             }
         }
@@ -281,7 +281,7 @@ namespace PixelCrypt2025.ViewModel.Base
             if (SelecedImage == parametr)
             {
                 SelecedImage = null;
-                ViewImageWidth = new GridLength(0, GridUnitType.Star);
+                ViewImageWidth = Constants.GridLengthZero;
             }
             else if (System.IO.File.Exists(parametr.Path))
             {
@@ -383,9 +383,9 @@ namespace PixelCrypt2025.ViewModel.Base
                     Margin = new Thickness(10, 5, 5, 5)
                 };
 
-                grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
-                grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-                grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
+                grid.ColumnDefinitions.Add(new ColumnDefinition { Width = Constants.GridLengthAuto });
+                grid.ColumnDefinitions.Add(new ColumnDefinition { Width = Constants.GridLengthStar });
+                grid.ColumnDefinitions.Add(new ColumnDefinition { Width = Constants.GridLengthAuto });
 
                 var textBlock = new TextBlock()
                 {

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32;
 using PixelCrypt2025.Commands.Base;
 using PixelCrypt2025.Model;
+using PixelCrypt2025.ProgramData;
 using PixelCrypt2025.ViewModel.Base;
 using System.Windows;
 using System.Windows.Input;
@@ -92,7 +93,7 @@ namespace PixelCrypt2025.ViewModel.Page
         {
             if (p is not Action action) return;
             action();
-            SaveDataWidth = new GridLength(1, GridUnitType.Star);
+            SaveDataWidth = Constants.GridLengthStar;
         }
     }
 }

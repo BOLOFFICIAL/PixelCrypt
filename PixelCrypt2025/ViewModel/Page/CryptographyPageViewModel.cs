@@ -1,5 +1,6 @@
 ﻿using PixelCrypt2025.Commands.Base;
 using PixelCrypt2025.Model;
+using PixelCrypt2025.ProgramData;
 using PixelCrypt2025.ViewModel.Base;
 using System.Windows;
 
@@ -9,7 +10,7 @@ namespace PixelCrypt2025.ViewModel.Page
     {
         private Cryptography _cryptography = new Cryptography();
 
-        private GridLength _viewResultImageWidth = new GridLength(0, GridUnitType.Pixel);
+        private GridLength _viewResultImageWidth = Constants.GridLengthZero;
 
         public CryptographyPageViewModel()
         {
@@ -32,7 +33,7 @@ namespace PixelCrypt2025.ViewModel.Page
         {
             if (p is not Action action) return;
             action();
-            SaveDataWidth = new GridLength(1, GridUnitType.Star);
+            SaveDataWidth = Constants.GridLengthStar;
         }
 
         protected override void OnRemoveImageCommandExecuted(object p = null)
