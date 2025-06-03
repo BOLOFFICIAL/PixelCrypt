@@ -1,5 +1,4 @@
-﻿using FontAwesome5;
-using Microsoft.Win32;
+﻿using Microsoft.Win32;
 using PixelCrypt2025.Commands.Base;
 using PixelCrypt2025.Interfaces;
 using PixelCrypt2025.ProgramData;
@@ -35,6 +34,10 @@ namespace PixelCrypt2025.ViewModel.Base
         private bool _isOpenPassword = false;
 
         protected ICommand ShowImageCommand { get; init; }
+        protected ICommand RemoveImageCommand { get; init; }
+
+        private ICommand MoveUpImageCommand { get; }
+        private ICommand MoveDownImageCommand { get; }
 
         private Action _inputAction;
         private Action _outputAction;
@@ -43,7 +46,6 @@ namespace PixelCrypt2025.ViewModel.Base
 
         public ICommand ClosePageCommand { get; }
         public ICommand AddImageCommand { get; }
-        protected ICommand RemoveImageCommand { get; init; }
         public ICommand PaswordViewCommand { get; }
         public ICommand ClearImageCommand { get; }
         public ICommand DoActionCommand { get; init; }
@@ -55,6 +57,8 @@ namespace PixelCrypt2025.ViewModel.Base
             PaswordViewCommand = new LambdaCommand(OnPaswordViewCommandExecuted);
             ClearImageCommand = new LambdaCommand(OnClearImageCommandExecuted);
             RemoveImageCommand = new LambdaCommand(OnRemoveImageCommandExecuted);
+            MoveUpImageCommand = new LambdaCommand(OnMoveUpImageCommandExecuted);
+            MoveDownImageCommand = new LambdaCommand(OnMoveDownImageCommandExecuted);
             ShowImageCommand = new LambdaCommand(OnShowImageCommandExecuted);
 
             OnPaswordViewCommandExecuted();
@@ -212,7 +216,7 @@ namespace PixelCrypt2025.ViewModel.Base
                     SaveDataWidth = Constants.GridLengthZero;
                     FilePathImageStackPanel = UpdateImageList();
                 }
-                else if(imageList.Count() == 0)
+                else if (imageList.Count() == 0)
                 {
                     MessageBox.Show("Не удалось найти подходящие элементы", openFileDialog.Title);
                 }
@@ -274,6 +278,18 @@ namespace PixelCrypt2025.ViewModel.Base
             }
         }
 
+        private void OnMoveUpImageCommandExecuted(object p = null)
+        {
+            if (p is Model.Image image)
+                MoveImage(image, -1);
+        }
+
+        private void OnMoveDownImageCommandExecuted(object p = null)
+        {
+            if (p is Model.Image image)
+                MoveImage(image, 1);
+        }
+
         protected virtual void OnShowImageCommandExecuted(object p = null)
         {
             if (p is not Model.Image parametr) return;
@@ -300,92 +316,79 @@ namespace PixelCrypt2025.ViewModel.Base
         {
             var stackPanel = new StackPanel();
 
+            var index = 0;
+
             foreach (var imagePath in ImagePage.InputImage)
             {
-                ContextMenu contextMenu = new ContextMenu();
-
+                ContextMenu contextMenu = new ContextMenu
                 {
-                    MenuItem deleteItem = new MenuItem();
+                    Style = (Style)Application.Current.FindResource("BaseContextMenuStyle"),
+                };
 
-                    Grid deleteItemGrid = new Grid();
-                    deleteItemGrid.HorizontalAlignment = HorizontalAlignment.Left;
-                    //deleteItemGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = Constants.Auto });
-                    //deleteItemGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = Constants.Auto });
-
-                    ImageAwesome deleteImageAwesome = new ImageAwesome();
-                    deleteImageAwesome.Height = 15;
-                    deleteImageAwesome.Width = 15;
-                    deleteImageAwesome.Icon = EFontAwesomeIcon.Solid_TrashAlt;
-                    deleteImageAwesome.Foreground = new SolidColorBrush(Colors.White);
-                    Grid.SetColumn(deleteImageAwesome, 0);
-
-                    Label deleteLabel = new Label();
-                    deleteLabel.FontSize = 11;
-                    //deleteLabel.Content = WordsDictionary.GetWord(WordsType.DeleteFromList);
-                    deleteLabel.Foreground = new SolidColorBrush(Colors.White);
-                    Grid.SetColumn(deleteLabel, 1);
-
-                    deleteItemGrid.Children.Add(deleteImageAwesome);
-                    deleteItemGrid.Children.Add(deleteLabel);
-
-                    deleteItem.Header = deleteItemGrid;
-
-                    //deleteItem.Command = _deleteItemCommand;
-                    deleteItem.Background = new SolidColorBrush(Color.FromRgb(44, 54, 70));
-                    deleteItem.Foreground = new SolidColorBrush(Colors.White);
-                    deleteItem.BorderBrush = new SolidColorBrush(Colors.White);
-                    deleteItem.BorderThickness = new Thickness(1);
-                    //deleteItem.CommandParameter = file.FilePath;
-                    deleteItem.Margin = new Thickness(1);
-
-                    contextMenu.Items.Add(deleteItem);
-                }
-
+                MenuItem deleteItem = new MenuItem()
                 {
-                    MenuItem openFolderItem = new MenuItem();
+                    Header = new Label()
+                    {
+                        FontSize = 13,
+                        Content = "Удалить",
+                        Foreground = new SolidColorBrush(Colors.White),
+                    },
+                    Command = RemoveImageCommand,
+                    Style = (Style)Application.Current.FindResource("BaseMenuItemStyle"),
+                    CommandParameter = imagePath,
+                    Margin = new Thickness(1)
+                };
 
-                    Grid openFolderItemGrid = new Grid();
-                    openFolderItemGrid.HorizontalAlignment = HorizontalAlignment.Left;
-                    //openFolderItemGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = Constants.Auto });
-                    //openFolderItemGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = Constants.Auto });
+                contextMenu.Items.Add(deleteItem);
 
-                    ImageAwesome openFolderImageAwesome = new ImageAwesome();
-                    openFolderImageAwesome.Height = 15;
-                    openFolderImageAwesome.Width = 15;
-                    openFolderImageAwesome.Icon = EFontAwesomeIcon.Solid_FolderOpen;
-                    openFolderImageAwesome.Foreground = new SolidColorBrush(Colors.White);
-                    Grid.SetColumn(openFolderImageAwesome, 0);
+                if (ImagePage.InputImage.Count > 1)
+                {
+                    if (index != 0)
+                    {
+                        MenuItem moveUpItem = new MenuItem()
+                        {
+                            Header = new Label()
+                            {
+                                FontSize = 13,
+                                Content = "Поднять",
+                                Foreground = new SolidColorBrush(Colors.White),
+                            },
+                            Command = MoveUpImageCommand,
+                            Style = (Style)Application.Current.FindResource("BaseMenuItemStyle"),
+                            CommandParameter = imagePath,
+                            Margin = new Thickness(1)
+                        };
 
-                    Label openFolderLabel = new Label();
-                    openFolderLabel.FontSize = 11;
-                    //openFolderLabel.Content = WordsDictionary.GetWord(WordsType.OpenInFolder);
-                    openFolderLabel.Foreground = new SolidColorBrush(Colors.White);
-                    Grid.SetColumn(openFolderLabel, 1);
+                        contextMenu.Items.Add(moveUpItem);
+                    }
 
-                    openFolderItemGrid.Children.Add(openFolderImageAwesome);
-                    openFolderItemGrid.Children.Add(openFolderLabel);
+                    if (index != ImagePage.InputImage.Count - 1)
+                    {
+                        MenuItem moveDownItem = new MenuItem()
+                        {
+                            Header = new Label()
+                            {
+                                FontSize = 13,
+                                Content = "Опусутить",
+                                Foreground = new SolidColorBrush(Colors.White),
+                            },
+                            Command = MoveDownImageCommand,
+                            Style = (Style)Application.Current.FindResource("BaseMenuItemStyle"),
+                            CommandParameter = imagePath,
+                            Margin = new Thickness(1)
+                        };
 
-                    openFolderItem.Header = openFolderItemGrid;
-
-                    //openFolderItem.Command = _openFolderCommand;
-                    openFolderItem.Background = new SolidColorBrush(Color.FromRgb(44, 54, 70));
-                    openFolderItem.Foreground = new SolidColorBrush(Colors.White);
-                    openFolderItem.BorderBrush = new SolidColorBrush(Colors.White);
-                    openFolderItem.BorderThickness = new Thickness(1);
-                    //openFolderItem.CommandParameter = file.FilePath;
-                    openFolderItem.Margin = new Thickness(1);
-
-                    contextMenu.Items.Add(openFolderItem);
+                        contextMenu.Items.Add(moveDownItem);
+                    }
                 }
 
                 var grid = new Grid()
                 {
-                    Margin = new Thickness(10, 5, 5, 5)
+                    Margin = new Thickness(10, 5, 10, 5)
                 };
 
                 grid.ColumnDefinitions.Add(new ColumnDefinition { Width = Constants.GridLengthAuto });
                 grid.ColumnDefinitions.Add(new ColumnDefinition { Width = Constants.GridLengthStar });
-                grid.ColumnDefinitions.Add(new ColumnDefinition { Width = Constants.GridLengthAuto });
 
                 var textBlock = new TextBlock()
                 {
@@ -407,32 +410,10 @@ namespace PixelCrypt2025.ViewModel.Base
 
                 Grid.SetColumn(button, 1);
 
-                var deleteButton = new Button
-                {
-                    Style = (Style)Application.Current.FindResource("ToolButtonStyle"),
-                    Margin = new Thickness(5, 0, 0, 0),
-                    VerticalAlignment = VerticalAlignment.Top,
-                    Width = 35,
-                    Height = 35,
-                    Padding = new Thickness(0),
-                    Content = new ImageAwesome
-                    {
-                        Icon = EFontAwesomeIcon.Regular_TimesCircle,
-                        Width = 25,
-                        Height = 25,
-                        Foreground = (Brush)new BrushConverter().ConvertFromString(Foreground)
-                    },
-                    Command = RemoveImageCommand,
-                    CommandParameter = imagePath,
-                    Background = Brushes.Transparent,
-                    BorderBrush = Brushes.Transparent,
-                };
-
-                Grid.SetColumn(deleteButton, 2);
-
                 grid.Children.Add(button);
-                grid.Children.Add(deleteButton);
                 stackPanel.Children.Add(grid);
+
+                index++;
             }
 
             return stackPanel;
@@ -451,6 +432,18 @@ namespace PixelCrypt2025.ViewModel.Base
         protected void RemoveElement(Model.Image parametr)
         {
             ImagePage.InputImage.Remove(parametr);
+        }
+
+        private void MoveImage(Model.Image image, int direction)
+        {
+            var list = ImagePage.InputImage;
+            var index = list.IndexOf(image);
+            var newIndex = index + direction;
+
+            if (image is null || index < 0 || newIndex < 0 || newIndex >= list.Count) return;
+
+            (list[index], list[newIndex]) = (list[newIndex], list[index]);
+            FilePathImageStackPanel = UpdateImageList();
         }
     }
 }

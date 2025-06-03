@@ -10,7 +10,7 @@ namespace PixelCrypt2025.ViewModel.Page
 {
     internal class SteganographyPageViewModel : ImagePageViewModel
     {
-        private static Steganography _steganography = new Steganography();
+        private Steganography _steganography = new Steganography();
 
         private bool _isReadOnlyInputData = false;
 
