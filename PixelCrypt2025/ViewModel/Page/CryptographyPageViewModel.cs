@@ -7,13 +7,13 @@ namespace PixelCrypt2025.ViewModel.Page
 {
     internal class CryptographyPageViewModel : ImagePageViewModel
     {
-        private Cryptography _cryptography;
+        private Cryptography _cryptography = new Cryptography();
 
         private GridLength _viewResultImageWidth = new GridLength(0, GridUnitType.Pixel);
 
-        public CryptographyPageViewModel() : base(new Cryptography())
+        public CryptographyPageViewModel()
         {
-            _cryptography = ImagePage as Cryptography;
+            ImagePage = _cryptography;
 
             DoActionCommand = new LambdaCommand(OnDoActionCommandExecuted);
             ShowImageCommand = new LambdaCommand(OnShowImageCommandExecuted);
@@ -35,29 +35,27 @@ namespace PixelCrypt2025.ViewModel.Page
             SaveDataWidth = new GridLength(1, GridUnitType.Star);
         }
 
-        private void OnShowImageCommandExecuted(object p = null)
+        protected override void OnRemoveImageCommandExecuted(object p = null)
+        {
+            base.OnRemoveImageCommandExecuted(p);
+
+            ViewResultImageWidth = ViewImageWidth;
+        }
+
+        protected override void OnShowImageCommandExecuted(object p = null)
         {
             if (p is not Model.Image parametr) return;
 
-            if (SelecedImage == parametr)
-            {
-                SelecedImage = null;
-                ViewImageWidth = new GridLength(0, GridUnitType.Star);
-                ViewResultImageWidth = new GridLength(0, GridUnitType.Star);
-            }
-            else if (System.IO.File.Exists(parametr.Path))
-            {
-                SelecedImage = parametr;
-                ViewImageWidth = new GridLength(4, GridUnitType.Star);
-                ViewResultImageWidth = new GridLength(5, GridUnitType.Star);
-            }
-            else
-            {
-                MessageBox.Show("Не удалось найти фаил, возможно он удален или перемещен");
-                OnRemoveImageCommandExecuted(parametr);
-            }
+            base.OnShowImageCommandExecuted(parametr);
 
-            FilePathImageStackPanel = UpdateImageList();
+            if (ViewImageWidth.Value == 0)
+            {
+                ViewResultImageWidth = ViewImageWidth;
+            }
+            else if (_cryptography.OutputImage.ContainsKey(parametr))
+            {
+                ViewResultImageWidth = ViewImageWidth;
+            }
         }
     }
 }

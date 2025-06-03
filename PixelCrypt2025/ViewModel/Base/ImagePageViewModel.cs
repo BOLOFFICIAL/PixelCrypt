@@ -39,24 +39,23 @@ namespace PixelCrypt2025.ViewModel.Base
         private Action _inputAction;
         private Action _outputAction;
 
-        public IImagePage ImagePage { get; }
+        public IImagePage ImagePage { get; init; }
 
         public ICommand ClosePageCommand { get; }
         public ICommand AddImageCommand { get; }
-        public ICommand RemoveImageCommand { get; }
+        protected ICommand RemoveImageCommand { get; init; }
         public ICommand PaswordViewCommand { get; }
         public ICommand ClearImageCommand { get; }
         public ICommand DoActionCommand { get; init; }
 
-        public ImagePageViewModel(IImagePage imagePage)
+        public ImagePageViewModel()
         {
-            ImagePage = imagePage;
-
             ClosePageCommand = new LambdaCommand(OnClosePageCommandExecuted);
             AddImageCommand = new LambdaCommand(OnAddImageCommandExecuted);
-            RemoveImageCommand = new LambdaCommand(OnRemoveImageCommandExecuted);
             PaswordViewCommand = new LambdaCommand(OnPaswordViewCommandExecuted);
             ClearImageCommand = new LambdaCommand(OnClearImageCommandExecuted);
+            RemoveImageCommand = new LambdaCommand(OnRemoveImageCommandExecuted);
+            ShowImageCommand = new LambdaCommand(OnShowImageCommandExecuted);
 
             OnPaswordViewCommandExecuted();
 
@@ -201,7 +200,7 @@ namespace PixelCrypt2025.ViewModel.Base
             if (openFileDialog.ShowDialog() ?? false)
             {
                 var prefCount = ImagePage.InputImage.Count;
-                var imageList = openFileDialog.FileNames.Where(file => filterList.Contains(file.Split('.')[1]));
+                var imageList = openFileDialog.FileNames.Where(file => filterList.Contains(file.Split('.')[1].ToLower()));
 
                 foreach (var filepath in imageList)
                 {
@@ -222,28 +221,6 @@ namespace PixelCrypt2025.ViewModel.Base
             {
                 AddGridHeight = new GridLength(0, GridUnitType.Star);
                 DataGridHeight = new GridLength(1, GridUnitType.Star);
-            }
-        }
-
-        protected void OnRemoveImageCommandExecuted(object p = null)
-        {
-            if (p is not Model.Image parametr) return;
-
-            RemoveElement(parametr);
-
-            FilePathImageStackPanel = UpdateImageList();
-
-            if (SelecedImage == parametr)
-            {
-                SelecedImage = null;
-                ViewImageWidth = new GridLength(0, GridUnitType.Star);
-            }
-
-            if (ImagePage.InputImage.Count == 0)
-            {
-                AddGridHeight = new GridLength(1, GridUnitType.Star);
-                DataGridHeight = new GridLength(0, GridUnitType.Star);
-                SelecedImage = null;
             }
         }
 
@@ -275,12 +252,132 @@ namespace PixelCrypt2025.ViewModel.Base
             _isOpenPassword = !_isOpenPassword;
         }
 
+        protected virtual void OnRemoveImageCommandExecuted(object p = null)
+        {
+            if (p is not Model.Image parametr) return;
+
+            RemoveElement(parametr);
+
+            FilePathImageStackPanel = UpdateImageList();
+
+            if (SelecedImage == parametr)
+            {
+                SelecedImage = null;
+                ViewImageWidth = new GridLength(0, GridUnitType.Star);
+            }
+
+            if (ImagePage.InputImage.Count == 0)
+            {
+                AddGridHeight = new GridLength(1, GridUnitType.Star);
+                DataGridHeight = new GridLength(0, GridUnitType.Star);
+                SelecedImage = null;
+            }
+        }
+
+        protected virtual void OnShowImageCommandExecuted(object p = null)
+        {
+            if (p is not Model.Image parametr) return;
+
+            if (SelecedImage == parametr)
+            {
+                SelecedImage = null;
+                ViewImageWidth = new GridLength(0, GridUnitType.Star);
+            }
+            else if (System.IO.File.Exists(parametr.Path))
+            {
+                SelecedImage = parametr;
+                ViewImageWidth = new GridLength(4, GridUnitType.Star);
+            }
+            else
+            {
+                MessageBox.Show("Не удалось найти фаил, возможно он удален или перемещен");
+                OnRemoveImageCommandExecuted(parametr);
+            }
+            FilePathImageStackPanel = UpdateImageList();
+        }
+
         protected StackPanel UpdateImageList()
         {
             var stackPanel = new StackPanel();
 
             foreach (var imagePath in ImagePage.InputImage)
             {
+                ContextMenu contextMenu = new ContextMenu();
+
+                {
+                    MenuItem deleteItem = new MenuItem();
+
+                    Grid deleteItemGrid = new Grid();
+                    deleteItemGrid.HorizontalAlignment = HorizontalAlignment.Left;
+                    //deleteItemGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = Constants.Auto });
+                    //deleteItemGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = Constants.Auto });
+
+                    ImageAwesome deleteImageAwesome = new ImageAwesome();
+                    deleteImageAwesome.Height = 15;
+                    deleteImageAwesome.Width = 15;
+                    deleteImageAwesome.Icon = EFontAwesomeIcon.Solid_TrashAlt;
+                    deleteImageAwesome.Foreground = new SolidColorBrush(Colors.White);
+                    Grid.SetColumn(deleteImageAwesome, 0);
+
+                    Label deleteLabel = new Label();
+                    deleteLabel.FontSize = 11;
+                    //deleteLabel.Content = WordsDictionary.GetWord(WordsType.DeleteFromList);
+                    deleteLabel.Foreground = new SolidColorBrush(Colors.White);
+                    Grid.SetColumn(deleteLabel, 1);
+
+                    deleteItemGrid.Children.Add(deleteImageAwesome);
+                    deleteItemGrid.Children.Add(deleteLabel);
+
+                    deleteItem.Header = deleteItemGrid;
+
+                    //deleteItem.Command = _deleteItemCommand;
+                    deleteItem.Background = new SolidColorBrush(Color.FromRgb(44, 54, 70));
+                    deleteItem.Foreground = new SolidColorBrush(Colors.White);
+                    deleteItem.BorderBrush = new SolidColorBrush(Colors.White);
+                    deleteItem.BorderThickness = new Thickness(1);
+                    //deleteItem.CommandParameter = file.FilePath;
+                    deleteItem.Margin = new Thickness(1);
+
+                    contextMenu.Items.Add(deleteItem);
+                }
+
+                {
+                    MenuItem openFolderItem = new MenuItem();
+
+                    Grid openFolderItemGrid = new Grid();
+                    openFolderItemGrid.HorizontalAlignment = HorizontalAlignment.Left;
+                    //openFolderItemGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = Constants.Auto });
+                    //openFolderItemGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = Constants.Auto });
+
+                    ImageAwesome openFolderImageAwesome = new ImageAwesome();
+                    openFolderImageAwesome.Height = 15;
+                    openFolderImageAwesome.Width = 15;
+                    openFolderImageAwesome.Icon = EFontAwesomeIcon.Solid_FolderOpen;
+                    openFolderImageAwesome.Foreground = new SolidColorBrush(Colors.White);
+                    Grid.SetColumn(openFolderImageAwesome, 0);
+
+                    Label openFolderLabel = new Label();
+                    openFolderLabel.FontSize = 11;
+                    //openFolderLabel.Content = WordsDictionary.GetWord(WordsType.OpenInFolder);
+                    openFolderLabel.Foreground = new SolidColorBrush(Colors.White);
+                    Grid.SetColumn(openFolderLabel, 1);
+
+                    openFolderItemGrid.Children.Add(openFolderImageAwesome);
+                    openFolderItemGrid.Children.Add(openFolderLabel);
+
+                    openFolderItem.Header = openFolderItemGrid;
+
+                    //openFolderItem.Command = _openFolderCommand;
+                    openFolderItem.Background = new SolidColorBrush(Color.FromRgb(44, 54, 70));
+                    openFolderItem.Foreground = new SolidColorBrush(Colors.White);
+                    openFolderItem.BorderBrush = new SolidColorBrush(Colors.White);
+                    openFolderItem.BorderThickness = new Thickness(1);
+                    //openFolderItem.CommandParameter = file.FilePath;
+                    openFolderItem.Margin = new Thickness(1);
+
+                    contextMenu.Items.Add(openFolderItem);
+                }
+
                 var grid = new Grid()
                 {
                     Margin = new Thickness(10, 5, 5, 5)
@@ -301,6 +398,7 @@ namespace PixelCrypt2025.ViewModel.Base
                 var button = new Button()
                 {
                     Content = textBlock,
+                    ContextMenu = contextMenu,
                     Command = ShowImageCommand,
                     Style = (Style)Application.Current.FindResource(imagePath == SelecedImage ? "SelectedListButtonStyle" : "BaseListButtonStyle"),
                     CommandParameter = imagePath,
@@ -350,7 +448,7 @@ namespace PixelCrypt2025.ViewModel.Base
             ImagePage.InputImage.Add(new Model.Image(filepath));
         }
 
-        private void RemoveElement(Model.Image parametr)
+        protected void RemoveElement(Model.Image parametr)
         {
             ImagePage.InputImage.Remove(parametr);
         }
