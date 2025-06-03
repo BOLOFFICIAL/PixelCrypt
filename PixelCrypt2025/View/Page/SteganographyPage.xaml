@@ -77,8 +77,7 @@
                     <ColumnDefinition Width="{Binding ViewImageWidth}"/>
                 </Grid.ColumnDefinitions>
 
-                <Grid Grid.Column="0"
-                      VerticalAlignment="Top">
+                <Grid Grid.Column="0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="auto"/>
