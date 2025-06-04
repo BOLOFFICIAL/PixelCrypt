@@ -21,6 +21,8 @@ namespace PixelCrypt2025.ViewModel.Page
 
             InputAction = _cryptography.EncryptAction;
             OutputAction = _cryptography.DecryptAction;
+
+            OnAddImageCommandExecuted();
         }
 
         public GridLength ViewResultImageWidth

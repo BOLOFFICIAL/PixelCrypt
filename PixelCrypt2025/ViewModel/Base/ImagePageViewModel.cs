@@ -189,7 +189,7 @@ namespace PixelCrypt2025.ViewModel.Base
             Context.MainWindowViewModel.CurrentPage = new MainPage();
         }
 
-        private void OnAddImageCommandExecuted(object p = null)
+        protected void OnAddImageCommandExecuted(object p = null)
         {
             var filterList = new List<string>() { "jpg", "jpeg", "png" };
 
@@ -384,7 +384,7 @@ namespace PixelCrypt2025.ViewModel.Base
 
                 var grid = new Grid()
                 {
-                    Margin = new Thickness(10, 5, 10, 5)
+                    Margin = new Thickness(10, 0, 10, (index != ImagePage.InputImage.Count - 1) ? 10 : 0)
                 };
 
                 grid.ColumnDefinitions.Add(new ColumnDefinition { Width = Constants.GridLengthAuto });

@@ -27,6 +27,8 @@ namespace PixelCrypt2025.ViewModel.Page
 
             InputAction = _steganography.ImportAction;
             OutputAction = _steganography.ExportAction;
+
+            OnAddImageCommandExecuted();
         }
 
         public string InputFileName
