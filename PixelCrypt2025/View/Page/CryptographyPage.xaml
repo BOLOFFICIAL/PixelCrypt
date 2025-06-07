@@ -523,7 +523,7 @@
                                     CornerRadius="5"
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center">
-                                <Image Source="{Binding ImagePath}"/>
+                                <Image Source="{Binding ImageResultPath}"/>
                             </Border>
                         </Border>
                     </Border>

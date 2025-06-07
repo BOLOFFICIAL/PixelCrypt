@@ -33,16 +33,16 @@ namespace PixelCrypt2025.ViewModel.Page
 
         public string InputFileName
         {
-            get => _steganography.InputFile.Name;
-            set => Set(ref _steganography.InputFile.Name, value);
+            get => _steganography.DataFile.Name;
+            set => Set(ref _steganography.DataFile.Name, value);
         }
 
         public string InputFilePath
         {
-            get => _steganography.InputFile.Path;
+            get => _steganography.DataFile.Path;
             set
             {
-                if (Set(ref _steganography.InputFile.Path, value))
+                if (Set(ref _steganography.DataFile.Path, value))
                 {
                     InputFileName = System.IO.Path.GetFileName(value);
                     IsReadOnlyInputData = value?.Length > 0;
@@ -52,8 +52,8 @@ namespace PixelCrypt2025.ViewModel.Page
 
         public string InputData
         {
-            get => _steganography.InputFile.Content;
-            set => Set(ref _steganography.InputFile.Content, value);
+            get => _steganography.DataFile.Content;
+            set => Set(ref _steganography.DataFile.Content, value);
         }
 
         public bool IsReadOnlyInputData
@@ -91,10 +91,10 @@ namespace PixelCrypt2025.ViewModel.Page
             InputFilePath = "";
         }
 
-        private void OnDoActionCommandExecuted(object p = null)
+        private async void OnDoActionCommandExecuted(object p = null)
         {
-            if (p is not Action action) return;
-            action();
+            if (p is not Func<string, Task> action) return;
+            await action(Password);
             SaveDataWidth = Constants.GridLengthStar;
         }
     }

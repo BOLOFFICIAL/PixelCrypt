@@ -39,8 +39,8 @@ namespace PixelCrypt2025.ViewModel.Base
         private ICommand MoveUpImageCommand { get; }
         private ICommand MoveDownImageCommand { get; }
 
-        private Action _inputAction;
-        private Action _outputAction;
+        private Func<string, Task> _inputAction;
+        private Func<string, Task> _outputAction;
 
         public IImagePage ImagePage { get; init; }
 
@@ -66,13 +66,13 @@ namespace PixelCrypt2025.ViewModel.Base
             AddGridHeight = Constants.GridLengthStar;
         }
 
-        public Action InputAction
+        public Func<string, Task> InputAction
         {
             get => _inputAction;
             set => Set(ref _inputAction, value);
         }
 
-        public Action OutputAction
+        public Func<string, Task> OutputAction
         {
             get => _outputAction;
             set => Set(ref _outputAction, value);
@@ -215,6 +215,10 @@ namespace PixelCrypt2025.ViewModel.Base
                 {
                     SaveDataWidth = Constants.GridLengthZero;
                     FilePathImageStackPanel = UpdateImageList();
+                    if (SelecedImage is null)
+                    {
+                        OnShowImageCommandExecuted(ImagePage.InputImage.Last());
+                    }
                 }
                 else if (imageList.Count() == 0)
                 {

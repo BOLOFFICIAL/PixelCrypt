@@ -1,16 +1,18 @@
 ﻿using PixelCrypt2025.Commands.Base;
-using PixelCrypt2025.Model;
 using PixelCrypt2025.ProgramData;
 using PixelCrypt2025.ViewModel.Base;
 using System.Windows;
+using System.Windows.Media;
 
 namespace PixelCrypt2025.ViewModel.Page
 {
     internal class CryptographyPageViewModel : ImagePageViewModel
     {
-        private Cryptography _cryptography = new Cryptography();
+        private Model.Cryptography _cryptography = new Model.Cryptography();
 
         private GridLength _viewResultImageWidth = Constants.GridLengthZero;
+
+        private ImageSource _imageResultPath;
 
         public CryptographyPageViewModel()
         {
@@ -25,17 +27,30 @@ namespace PixelCrypt2025.ViewModel.Page
             OnAddImageCommandExecuted();
         }
 
+        public ImageSource ImageResultPath
+        {
+            get => _imageResultPath;
+            set => Set(ref _imageResultPath, value);
+        }
+
         public GridLength ViewResultImageWidth
         {
             get => _viewResultImageWidth;
             set => Set(ref _viewResultImageWidth, value);
         }
 
-        private void OnDoActionCommandExecuted(object p = null)
+        private async void OnDoActionCommandExecuted(object p = null)
         {
-            if (p is not Action action) return;
-            action();
+            if (p is not Func<string, Task> action) return;
+            await action(Password);
             SaveDataWidth = Constants.GridLengthStar;
+
+            if (SelecedImage != null)
+            {
+                ViewResultImageWidth = new GridLength(5, GridUnitType.Star);
+                ImageResultPath = Converter.ConvertBitmapToImageSource(_cryptography.OutputImage[SelecedImage]);
+            }
+
         }
 
         protected override void OnRemoveImageCommandExecuted(object p = null)
@@ -57,7 +72,8 @@ namespace PixelCrypt2025.ViewModel.Page
             }
             else if (_cryptography.OutputImage.ContainsKey(parametr))
             {
-                ViewResultImageWidth = ViewImageWidth;
+                ViewResultImageWidth = new GridLength(5, GridUnitType.Star);
+                ImageResultPath = Converter.ConvertBitmapToImageSource(_cryptography.OutputImage[SelecedImage]);
             }
         }
     }
