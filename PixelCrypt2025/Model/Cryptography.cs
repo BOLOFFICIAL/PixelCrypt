@@ -53,7 +53,7 @@ namespace PixelCrypt2025.Model
             var title = "Сохранение изображений";
             try
             {
-                var res = ProgramHelper.SaveBitmapToFolder(OutputImage.Select(i => i.Key.Path).ToList(), OutputImage.Select(i => i.Value).ToList());
+                var res = ProgramHelper.SaveBitmapToFolder(OutputImage);
                 if (res.Result)
                 {
                     MessageBox.Show($"Картинки сохранены в папке {res.FileName}", title);

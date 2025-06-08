@@ -42,6 +42,8 @@ namespace PixelCrypt2025.ViewModel.Page
         private async void OnDoActionCommandExecuted(object p = null)
         {
             if (p is not Func<string, Task> action) return;
+            SaveDataWidth = Constants.GridLengthZero;
+            ViewResultImageWidth = Constants.GridLengthZero;
             await action(Password);
             SaveDataWidth = Constants.GridLengthStar;
 

@@ -118,7 +118,7 @@ namespace PixelCrypt2025.ProgramData
 
         }
 
-        public static SaveDataResult SaveBitmapToFolder(List<string> filePathImages, List<Bitmap> resultImages)
+        public static SaveDataResult SaveBitmapToFolder(Dictionary<Model.Image, Bitmap> images)
         {
             try
             {
@@ -128,7 +128,7 @@ namespace PixelCrypt2025.ProgramData
                 folderPicker.Title = "Выбор папки для хранения данных";
                 var now = DateTime.Now;
                 folderPicker.DefaultFileName = $"PixelCrypt_{now:yyyyMMddHHmmss}";
-                folderPicker.InitialDirectory = Path.GetDirectoryName(filePathImages[0]);
+                folderPicker.InitialDirectory = Path.GetDirectoryName(images.First().Key.Path);
 
                 CommonFileDialogResult dialogResult = folderPicker.ShowDialog();
 
@@ -139,10 +139,10 @@ namespace PixelCrypt2025.ProgramData
                         Directory.CreateDirectory(folderPicker.FileName);
                     }
 
-                    for (int i = 0; i < resultImages.Count; i++)
+                    foreach (var el in images)
                     {
-                        var name = Path.Combine(folderPicker.FileName, Path.GetFileNameWithoutExtension(filePathImages[i]) + $"_PixelCrypt_{now:yyyyMMddHHmmss}.png");
-                        resultImages[i].Save(name, ImageFormat.Png);
+                        var name = Path.Combine(folderPicker.FileName, Path.GetFileNameWithoutExtension(el.Key.Path) + $"_PixelCrypt_{now:yyyyMMddHHmmss}.png");
+                        el.Value.Save(name, ImageFormat.Png);
                     }
 
                     return new SaveDataResult()
