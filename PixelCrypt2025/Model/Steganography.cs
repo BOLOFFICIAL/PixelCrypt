@@ -3,11 +3,14 @@ using PixelCrypt2025.ProgramData;
 using System.Drawing;
 using System.IO;
 using System.Text;
+using System.Windows;
 
 namespace PixelCrypt2025.Model
 {
     internal class Steganography : IImagePage
     {
+        private Func<bool> _saveAction;
+
         public List<Model.Image> InputImage { get; } = new List<Model.Image>();
         public Dictionary<Model.Image, Bitmap> OutputImage { get; } = new Dictionary<Model.Image, Bitmap>();
         public Model.File DataFile { get; } = new Model.File();
@@ -43,6 +46,8 @@ namespace PixelCrypt2025.Model
                 {
                     OutputImage.Add(InputImage[i], await ImageHelper.ImportDataToImage(lines[i], InputImage[i].Path));
                 }
+
+                _saveAction = SaveImport;
             }
             catch (Exception ex)
             {
@@ -77,16 +82,67 @@ namespace PixelCrypt2025.Model
                 if (exportFileData.Length > 1)
                 {
                     exportFileData[2] = CryptoService.DecryptText(exportFileData[2], hashPassword);
+
+                    if (MessageBox.Show("Экспортированные данные являются файлом.\nСформировать файл?", "Экспорт данных") == MessageBoxResult.OK)
+                    {
+                        var res = ProgramHelper.SaveDataToFile(exportFileData[0], $"Файлы (*{exportFileData[1]})|*{exportFileData[1]}", Convert.FromBase64String(exportFileData[2]));
+                        if (res.Result)
+                        {
+                            MessageBox.Show($"Фаил {res.FileName} сохранен", "Экспорт данных");
+
+                            DataFile.Content = System.IO.File.ReadAllText(res.FilePath);
+                            DataFile.Path = res.FilePath;
+                        }
+                    }
+                    else
+                    {
+                        DataFile.Content = exportFileData[2];
+                    }
                 }
                 else
                 {
                     DataFile.Content = CryptoService.DecryptText(exportData, hashPassword);
                 }
+
+                _saveAction = SaveExport;
             }
             catch
             {
                 bynaryData.Clear();
             }
+        }
+
+        public bool SaveData()
+        {
+            return _saveAction.Invoke();
+        }
+
+        private bool SaveImport()
+        {
+            var res = ProgramHelper.SaveBitmapToFolder(OutputImage.Select(i => i.Key.Path).ToList(), OutputImage.Select(i => i.Value).ToList());
+            if (res.Result)
+            {
+                MessageBox.Show($"Картинки сохранены в папке {res.FileName}", "Импорт");
+            }
+            return true;
+        }
+
+        private bool SaveExport()
+        {
+            if (DataFile.Content.Length == 0)
+            {
+                MessageBox.Show("Нет данных для сохранения", "Экспорт");
+            }
+            else
+            {
+                var res = ProgramHelper.SaveDataToFile($"PixelCrypt_{DateTime.Now:yyyyMMddHHmmss}", $"Файлы (*.txt)|*.txt", DataFile.Content);
+                if (res.Result)
+                {
+                    MessageBox.Show($"Файл {res.FileName} сохранен", "Экспорт");
+                }
+            }
+
+            return true;
         }
     }
 }

@@ -1,4 +1,10 @@
-﻿using System.Security.Cryptography;
+﻿using Microsoft.Win32;
+using Microsoft.WindowsAPICodePack.Dialogs;
+using PixelCrypt2025.Model;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace PixelCrypt2025.ProgramData
@@ -33,6 +39,126 @@ namespace PixelCrypt2025.ProgramData
             }
 
             return result;
+        }
+
+        public static SaveDataResult SaveDataToFile(string fileName, string filter, string data)
+        {
+            try
+            {
+                var saveFileDialog = new SaveFileDialog
+                {
+                    Title = "Выбрать файл для сохранения данных",
+                    FileName = fileName,
+                    Filter = filter
+                };
+
+                if (saveFileDialog.ShowDialog() ?? false)
+                {
+                    var selectedFilePath = saveFileDialog.FileName;
+
+                    if (!System.IO.File.Exists(selectedFilePath))
+                    {
+                        using (System.IO.File.Create(selectedFilePath)) { }
+                    }
+
+                    System.IO.File.WriteAllText(selectedFilePath, data);
+
+                    return new SaveDataResult()
+                    {
+                        Result = true,
+                        FileName = Path.GetFileName(selectedFilePath),
+                        FilePath = selectedFilePath,
+                    };
+                }
+
+                return new SaveDataResult();
+            }
+            catch
+            {
+                return new SaveDataResult();
+            }
+        }
+
+        public static SaveDataResult SaveDataToFile(string fileName, string filter, byte[] data)
+        {
+            try
+            {
+                var saveFileDialog = new SaveFileDialog
+                {
+                    Title = "Выбрать файл для сохранения данных",
+                    FileName = fileName,
+                    Filter = filter
+                };
+
+                if (saveFileDialog.ShowDialog() ?? false)
+                {
+                    var selectedFilePath = saveFileDialog.FileName;
+
+                    if (!System.IO.File.Exists(selectedFilePath))
+                    {
+                        using (System.IO.File.Create(selectedFilePath)) { }
+                    }
+
+                    System.IO.File.WriteAllBytes(selectedFilePath, data);
+
+                    return new SaveDataResult()
+                    {
+                        Result = true,
+                        FileName = Path.GetFileName(selectedFilePath),
+                        FilePath = selectedFilePath,
+                    };
+                }
+
+                return new SaveDataResult();
+            }
+            catch
+            {
+                return new SaveDataResult();
+            }
+
+        }
+
+        public static SaveDataResult SaveBitmapToFolder(List<string> filePathImages, List<Bitmap> resultImages)
+        {
+            try
+            {
+                CommonOpenFileDialog folderPicker = new CommonOpenFileDialog();
+
+                folderPicker.IsFolderPicker = true;
+                folderPicker.Title = "Выбор папки для хранения данных";
+                var now = DateTime.Now;
+                folderPicker.DefaultFileName = $"PixelCrypt_{now:yyyyMMddHHmmss}";
+                folderPicker.InitialDirectory = Path.GetDirectoryName(filePathImages[0]);
+
+                CommonFileDialogResult dialogResult = folderPicker.ShowDialog();
+
+                if (dialogResult == CommonFileDialogResult.Ok)
+                {
+                    if (!Directory.Exists(folderPicker.FileName))
+                    {
+                        Directory.CreateDirectory(folderPicker.FileName);
+                    }
+
+                    for (int i = 0; i < resultImages.Count; i++)
+                    {
+                        var name = Path.Combine(folderPicker.FileName, Path.GetFileNameWithoutExtension(filePathImages[i]) + $"_PixelCrypt_{now:yyyyMMddHHmmss}.png");
+                        resultImages[i].Save(name, ImageFormat.Png);
+                    }
+
+                    return new SaveDataResult()
+                    {
+                        Result = true,
+                        FileName = Path.GetFileName(folderPicker.FileName),
+                        FilePath = folderPicker.FileName,
+                    };
+                }
+
+                return new SaveDataResult();
+            }
+            catch (Exception ex)
+            {
+                return new SaveDataResult();
+            }
         }
     }
 }

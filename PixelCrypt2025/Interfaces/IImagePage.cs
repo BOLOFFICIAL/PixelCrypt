@@ -4,7 +4,8 @@ namespace PixelCrypt2025.Interfaces
 {
     internal interface IImagePage
     {
-        public List<Model.Image> InputImage { get; }
-        public Dictionary<Model.Image, Bitmap> OutputImage { get; }
+        List<Model.Image> InputImage { get; }
+        Dictionary<Model.Image, Bitmap> OutputImage { get; }
+        bool SaveData();
     }
 }

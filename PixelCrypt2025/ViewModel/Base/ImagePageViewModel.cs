@@ -49,6 +49,7 @@ namespace PixelCrypt2025.ViewModel.Base
         public ICommand PaswordViewCommand { get; }
         public ICommand ClearImageCommand { get; }
         public ICommand DoActionCommand { get; init; }
+        public ICommand SaveCommand { get; }
 
         public ImagePageViewModel()
         {
@@ -60,6 +61,7 @@ namespace PixelCrypt2025.ViewModel.Base
             MoveUpImageCommand = new LambdaCommand(OnMoveUpImageCommandExecuted);
             MoveDownImageCommand = new LambdaCommand(OnMoveDownImageCommandExecuted);
             ShowImageCommand = new LambdaCommand(OnShowImageCommandExecuted);
+            SaveCommand = new LambdaCommand(OnSaveCommandExecuted);
 
             OnPaswordViewCommandExecuted();
 
@@ -314,6 +316,11 @@ namespace PixelCrypt2025.ViewModel.Base
                 OnRemoveImageCommandExecuted(parametr);
             }
             FilePathImageStackPanel = UpdateImageList();
+        }
+
+        private void OnSaveCommandExecuted(object obj)
+        {
+            ImagePage.SaveData();
         }
 
         protected StackPanel UpdateImageList()

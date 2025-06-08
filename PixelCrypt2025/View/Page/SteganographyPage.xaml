@@ -269,7 +269,7 @@
                                 <Grid Grid.Column="1"
                                       Margin="0,0,10,0">
                                     <Button Style="{StaticResource ActionButtonStyle}" 
-                                            Command="{Binding OpenImageProcessingPageCommand}"
+                                            Command="{Binding SaveCommand}"
                                             HorizontalAlignment="Center"
                                             Height="35"
                                             Width="150">

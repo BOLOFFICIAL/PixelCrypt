@@ -94,8 +94,20 @@ namespace PixelCrypt2025.ViewModel.Page
         private async void OnDoActionCommandExecuted(object p = null)
         {
             if (p is not Func<string, Task> action) return;
+            SaveDataWidth = Constants.GridLengthZero;
             await action(Password);
             SaveDataWidth = Constants.GridLengthStar;
+            var content = _steganography.DataFile.Content;
+            InputData = "";
+            InputData = content;
+
+            var path = _steganography.DataFile.Path;
+            InputFilePath = "";
+            InputFilePath = path;
+
+            var file = _steganography.DataFile.Name;
+            InputFileName = "";
+            InputFileName = file;
         }
     }
 }
