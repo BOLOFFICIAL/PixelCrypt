@@ -53,13 +53,14 @@
         <Grid Grid.Row="1"
               Margin="10">
             <Grid.RowDefinitions>
-                <RowDefinition Height="{Binding Path=AddGridHeight}"/>
-                <RowDefinition Height="{Binding Path=DataGridHeight}"/>
+                <RowDefinition Height="{Binding AddGridHeight}"/>
+                <RowDefinition Height="{Binding DataGridHeight}"/>
             </Grid.RowDefinitions>
 
             <Grid Grid.Row="0">
-                <Button Style="{StaticResource ActionButtonStyle}" 
+                <Button Style="{StaticResource ActionButtonStyle}"
                         Command="{Binding AddImageCommand}"
+                        IsEnabled="{Binding IsButtonFree}"
                         HorizontalAlignment="Center"
                         Height="30"
                         Width="110">
@@ -106,6 +107,7 @@
                                     <Grid Grid.Column="0">
                                         <Button Style="{StaticResource ActionButtonStyle}" 
                                                 Command="{Binding AddImageCommand}"
+                                                IsEnabled="{Binding IsButtonFree}"
                                                 HorizontalAlignment="Center"
                                                 Height="30"
                                                 Width="110"
@@ -119,6 +121,7 @@
                                     <Grid Grid.Column="1">
                                         <Button Style="{StaticResource ActionButtonStyle}" 
                                                 Command="{Binding ClearImageCommand}"
+                                                IsEnabled="{Binding IsButtonFree}"
                                                 HorizontalAlignment="Center"
                                                 Height="30"
                                                 Width="110"
@@ -133,7 +136,7 @@
                                 <Grid Grid.Row="1"
                                       Margin="0,10">
                                     <ScrollViewer VerticalScrollBarVisibility="Hidden"
-                                                  Content="{Binding Path=FilePathImageStackPanel,UpdateSourceTrigger=PropertyChanged}"/>
+                                                  Content="{Binding FilePathImageStackPanel,UpdateSourceTrigger=PropertyChanged}"/>
                                 </Grid>
                             </Grid>
                         </Border>
@@ -172,26 +175,27 @@
                                             CornerRadius="0,10,10,0">
                                         <Grid>
                                             <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="{Binding Path=ClosePasswordWidth,UpdateSourceTrigger=PropertyChanged}"/>
-                                                <ColumnDefinition Width="{Binding Path=OpenPasswordWidth,UpdateSourceTrigger=PropertyChanged}"/>
+                                                <ColumnDefinition Width="{Binding ClosePasswordWidth,UpdateSourceTrigger=PropertyChanged}"/>
+                                                <ColumnDefinition Width="{Binding OpenPasswordWidth,UpdateSourceTrigger=PropertyChanged}"/>
                                             </Grid.ColumnDefinitions>
 
                                             <Grid Grid.Column="0">
-                                                <components:BindablePasswordBox Password="{Binding Path=Password,UpdateSourceTrigger=PropertyChanged}"
-                                                                            FontSize="15"
-                                                                            Padding="10,0,0,0"
-                                                                            FontWeight="Bold"
-                                                                            BorderThickness="0"
-                                                                            VerticalContentAlignment="Center"
-                                                                            HorizontalAlignment="Stretch"/>
+                                                <components:BindablePasswordBox Password="{Binding Password,UpdateSourceTrigger=PropertyChanged}"
+                                                                                FontSize="15"
+                                                                                IsEnabled="{Binding IsButtonFree}"
+                                                                                Padding="10,0,0,0"
+                                                                                FontWeight="Bold"
+                                                                                BorderThickness="0"
+                                                                                VerticalContentAlignment="Center"
+                                                                                HorizontalAlignment="Stretch"/>
                                             </Grid>
 
                                             <Grid Grid.Column="1">
-                                                <TextBox Text="{Binding Path=Password,UpdateSourceTrigger=PropertyChanged}"
+                                                <TextBox Text="{Binding Password,UpdateSourceTrigger=PropertyChanged}"
                                                          FontSize="15"
+                                                         IsEnabled="{Binding IsButtonFree}"
                                                          Margin="1,0,0,0"
                                                          Padding="10,0,0,0"
-                                                         IsEnabled="{Binding Path=IsButtonFree,UpdateSourceTrigger=PropertyChanged}"
                                                          Background="{Binding ContentBackground}"
                                                          Foreground="{Binding Foreground}"
                                                          HorizontalAlignment="Stretch"
@@ -236,6 +240,7 @@
                                     <Grid Grid.Column="0"
                                           Margin="10,0,5,0">
                                         <Button Style="{StaticResource ActionButtonStyle}" 
+                                                IsEnabled="{Binding IsButtonFree}"
                                                 Command="{Binding DoActionCommand}"
                                                 CommandParameter="{Binding InputAction}"
                                                 HorizontalAlignment="Center"
@@ -252,6 +257,7 @@
                                     <Grid Grid.Column="1"
                                           Margin="5,0,10,0">
                                         <Button Style="{StaticResource ActionButtonStyle}" 
+                                                IsEnabled="{Binding IsButtonFree}"
                                                 Command="{Binding DoActionCommand}"
                                                 CommandParameter="{Binding OutputAction}"
                                                 HorizontalAlignment="Center"
@@ -304,6 +310,7 @@
                                 <Grid Grid.Column="0">
                                     <Button Style="{StaticResource ActionButtonStyle}" 
                                             Command="{Binding ChooseFileCommand}"
+                                            IsEnabled="{Binding IsButtonFree}"
                                             HorizontalAlignment="Center"
                                             Height="30"
                                             Width="100">
@@ -330,6 +337,7 @@
 
                                 <Grid Grid.Column="2">
                                     <Button Style="{StaticResource ToolButtonStyle}"
+                                            IsEnabled="{Binding IsButtonFree}"
                                             Command="{Binding RemoveFileCommand}">
                                         <fa:ImageAwesome Icon="Regular_TimesCircle"
                                                          Foreground="{Binding Foreground}"

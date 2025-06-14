@@ -6,6 +6,5 @@ namespace PixelCrypt2025.Interfaces
     {
         List<Model.Image> InputImage { get; }
         Dictionary<Model.Image, Bitmap> OutputImage { get; }
-        bool SaveData();
     }
 }
