@@ -3,7 +3,6 @@ using PixelCrypt2025.Commands.Base;
 using PixelCrypt2025.Interfaces;
 using PixelCrypt2025.ProgramData;
 using PixelCrypt2025.View.Page;
-using System.Drawing;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -43,9 +42,8 @@ namespace PixelCrypt2025.ViewModel.Base
         private ICommand MoveUpImageCommand { get; }
         private ICommand MoveDownImageCommand { get; }
 
-        private Func<Task<bool>> _inputAction;
-        private Func<Task<bool>> _outputAction;
-        protected Func<bool> saveAction;
+        private Func<string, Task<bool>> _inputAction;
+        private Func<string, Task<bool>> _outputAction;
 
         public IImagePage ImagePage { get; init; }
 
@@ -94,13 +92,13 @@ namespace PixelCrypt2025.ViewModel.Base
             }
         }
 
-        public Func<Task<bool>> InputAction
+        public Func<string, Task<bool>> InputAction
         {
             get => _inputAction;
             set => Set(ref _inputAction, value);
         }
 
-        public Func<Task<bool>> OutputAction
+        public Func<string, Task<bool>> OutputAction
         {
             get => _outputAction;
             set => Set(ref _outputAction, value);
@@ -358,7 +356,7 @@ namespace PixelCrypt2025.ViewModel.Base
 
         private void OnSaveCommandExecuted(object obj)
         {
-            saveAction();
+            ImagePage.SaveData();
         }
 
         protected async Task<StackPanel> UpdateImageList()

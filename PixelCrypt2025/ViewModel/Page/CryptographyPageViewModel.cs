@@ -21,8 +21,11 @@ namespace PixelCrypt2025.ViewModel.Page
             DoActionCommand = new LambdaCommand(OnDoActionCommandExecuted);
             ShowImageCommand = new LambdaCommand(OnShowImageCommandExecuted);
 
-            InputAction = Encrypt;
-            OutputAction = Decrypt;
+            InputAction = _cryptography.Encrypt;
+            OutputAction = _cryptography.Decrypt;
+
+            _cryptography.UpdateList = UpdateList;
+            _cryptography.ShowImage = OnShowImageCommandExecuted;
 
             OnAddImageCommandExecuted();
         }
@@ -41,9 +44,8 @@ namespace PixelCrypt2025.ViewModel.Page
 
         private async void OnDoActionCommandExecuted(object p = null)
         {
-            if (p is not Func<Task<bool>> doAction) return;
+            if (p is not Func<string, Task<bool>> doAction) return;
             SaveDataWidth = Constants.GridLengthZero;
-            saveAction = _cryptography.SaveData;
             if (SelecedImage != null)
             {
                 OnShowImageCommandExecuted(SelecedImage);
@@ -52,7 +54,7 @@ namespace PixelCrypt2025.ViewModel.Page
             IsButtonFree = false;
             isProcessing = true;
 
-            if (await doAction())
+            if (await doAction(Password))
             {
                 IsSuccessResult = true;
             }
@@ -102,54 +104,6 @@ namespace PixelCrypt2025.ViewModel.Page
                 {
                     ViewResultImageWidth = Constants.GridLengthZero;
                 }
-            }
-        }
-
-        private async Task<bool> Decrypt()
-        {
-            var hashPassword = ProgramHelper.GetHash32(Password);
-
-            _cryptography.OutputImage.Clear();
-            await UpdateList();
-
-            try
-            {
-                foreach (var file in _cryptography.InputImage)
-                {
-                    _cryptography.OutputImage.Add(file, await CryptoService.DecryptPhoto(file.Path, hashPassword));
-                    OnShowImageCommandExecuted(file);
-                    await UpdateList();
-                }
-                return true;
-            }
-            catch
-            {
-                _cryptography.OutputImage.Clear();
-                return false;
-            }
-        }
-
-        private async Task<bool> Encrypt()
-        {
-            var hashPassword = ProgramHelper.GetHash32(Password);
-
-            _cryptography.OutputImage.Clear();
-            await UpdateList();
-
-            try
-            {
-                foreach (var file in _cryptography.InputImage)
-                {
-                    _cryptography.OutputImage.Add(file, await CryptoService.EncryptPhoto(file.Path, hashPassword));
-                    OnShowImageCommandExecuted(file);
-                    await UpdateList();
-                }
-                return true;
-            }
-            catch (Exception ex)
-            {
-                _cryptography.OutputImage.Clear();
-                return false;
             }
         }
     }
