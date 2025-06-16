@@ -46,22 +46,18 @@ namespace PixelCrypt2025.ViewModel.Page
         {
             if (p is not Func<string, Task<bool>> doAction) return;
             SaveDataWidth = Constants.GridLengthZero;
-            if (SelecedImage != null)
-            {
-                OnShowImageCommandExecuted(SelecedImage);
-            }
+
+            if (SelecedImage != null) OnShowImageCommandExecuted(SelecedImage);
+
             IsSuccessResult = false;
             IsButtonFree = false;
             isProcessing = true;
 
-            if (await doAction(Password))
-            {
-                IsSuccessResult = true;
-            }
-            else
+            IsSuccessResult = await doAction(Password);
+
+            if (!IsSuccessResult)
             {
                 MessageBox.Show("Возникла ошибка");
-                IsSuccessResult = false;
             }
 
             isProcessing = false;
@@ -87,23 +83,20 @@ namespace PixelCrypt2025.ViewModel.Page
             UpdateResultImage(parametr);
         }
 
-        private void UpdateResultImage(Model.Image parametr)
+        private async void UpdateResultImage(Model.Image parametr)
         {
             if (ViewImageWidth.Value == 0)
             {
                 ViewResultImageWidth = Constants.GridLengthZero;
             }
+            else if (_cryptography.OutputImage.ContainsKey(parametr))
+            {
+                ViewResultImageWidth = new GridLength(5, GridUnitType.Star);
+                ImageResultPath = await Converter.ConvertBitmapToImageSource(_cryptography.OutputImage[SelecedImage]);
+            }
             else
             {
-                if (_cryptography.OutputImage.ContainsKey(parametr))
-                {
-                    ViewResultImageWidth = new GridLength(5, GridUnitType.Star);
-                    ImageResultPath = Converter.ConvertBitmapToImageSource(_cryptography.OutputImage[SelecedImage]);
-                }
-                else
-                {
-                    ViewResultImageWidth = Constants.GridLengthZero;
-                }
+                ViewResultImageWidth = Constants.GridLengthZero;
             }
         }
     }

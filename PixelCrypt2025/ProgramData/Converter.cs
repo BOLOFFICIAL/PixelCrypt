@@ -93,7 +93,7 @@ namespace PixelCrypt2025.ProgramData
             }
         }
 
-        public static ImageSource ConvertBitmapToImageSource(Bitmap bitmap)
+        public static async Task<ImageSource> ConvertBitmapToImageSource(Bitmap bitmap)
         {
             using (MemoryStream memory = new MemoryStream())
             {

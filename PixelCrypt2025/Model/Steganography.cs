@@ -20,26 +20,24 @@ namespace PixelCrypt2025.Model
         public bool SaveImport()
         {
             var res = ProgramHelper.SaveBitmapToFolder(OutputImage);
+
             if (res.Result)
-            {
                 MessageBox.Show($"Картинки сохранены в папке {res.FileName}", "Импорт");
-            }
+
             return true;
         }
 
         public bool SaveExport()
         {
             if (DataFile.Content.Length == 0)
-            {
                 MessageBox.Show("Нет данных для сохранения", "Экспорт");
-            }
+
             else
             {
                 var res = ProgramHelper.SaveDataToFile($"PixelCrypt_{DateTime.Now:yyyyMMddHHmmss}", $"Файлы (*.txt)|*.txt", DataFile.Content);
+
                 if (res.Result)
-                {
                     MessageBox.Show($"Файл {res.FileName} сохранен", "Экспорт");
-                }
             }
 
             return true;
@@ -52,13 +50,9 @@ namespace PixelCrypt2025.Model
                 _saveAction = SaveImport;
 
                 var hashPassword = ProgramHelper.GetHash32(password);
-
                 var inportData = DataFile.Content;
 
-                if (inportData.Length == 0)
-                {
-                    return false;
-                }
+                if (inportData.Length == 0) return false;
 
                 if (DataFile.Path.Length > 0)
                 {
@@ -100,8 +94,6 @@ namespace PixelCrypt2025.Model
 
         internal async Task<bool> Export(string password)
         {
-            //InputData = "";
-            //InputFilePath = "";
             _saveAction = SaveExport;
 
             var hashPassword = ProgramHelper.GetHash32(password);
@@ -122,10 +114,7 @@ namespace PixelCrypt2025.Model
 
                 var allData = new StringBuilder();
 
-                foreach (var item in bynaryData)
-                {
-                    allData.Append(item);
-                }
+                foreach (var item in bynaryData) allData.Append(item);
 
                 var exportData = Converter.ConvertBinaryStringToText(allData.ToString());
 
@@ -138,18 +127,15 @@ namespace PixelCrypt2025.Model
                     if (MessageBox.Show("Экспортированные данные являются файлом.\nСформировать файл?", "Экспорт данных", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                     {
                         var res = ProgramHelper.SaveDataToFile(exportFileData[0], $"Файлы (*{exportFileData[1]})|*{exportFileData[1]}", Convert.FromBase64String(exportFileData[2]));
+
                         if (res.Result)
                         {
                             MessageBox.Show($"Фаил {res.FileName} сохранен", "Экспорт данных");
 
-                            var fileData = System.IO.File.ReadAllText(res.FilePath);
+                            string fileData = System.IO.File.ReadAllText(res.FilePath) ?? string.Empty;
 
-                            if (fileData.Length > 10000)
-                            {
-                                fileData = new string(fileData.Take(10000).ToArray());
-                            }
+                            DataFile.Content = fileData.Length > 10000 ? fileData.Substring(0, 10000) : fileData;
 
-                            DataFile.Content = fileData;
                             DataFile.Path = res.FilePath;
                             DataFile.Name = System.IO.Path.GetFileName(res.FilePath);
                         }

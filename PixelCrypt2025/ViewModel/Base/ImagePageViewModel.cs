@@ -32,9 +32,10 @@ namespace PixelCrypt2025.ViewModel.Base
         private GridLength _viewImageWidth = Constants.GridLengthZero;
 
         private bool _isOpenPassword = false;
-        protected bool isProcessing = false;
         private bool _isSuccessResult = false;
         private bool _isButtonFree = true;
+
+        protected bool isProcessing = false;
 
         protected ICommand ShowImageCommand { get; init; }
         protected ICommand RemoveImageCommand { get; init; }
@@ -215,7 +216,8 @@ namespace PixelCrypt2025.ViewModel.Base
 
         private void OnClosePageCommandExecuted(object p = null)
         {
-            if (MessageBox.Show("Вы уверены что хотите закрыть страницу", "", MessageBoxButton.YesNo) == MessageBoxResult.No) return;
+            if (ImagePage.InputImage.Count > 0 && MessageBox.Show("Вы уверены что хотите закрыть страницу", "", MessageBoxButton.YesNo) == MessageBoxResult.No) return;
+
             Context.MainWindowViewModel.CurrentPage = new MainPage();
         }
 
@@ -238,20 +240,15 @@ namespace PixelCrypt2025.ViewModel.Base
                 var prefCount = ImagePage.InputImage.Count;
                 var imageList = openFileDialog.FileNames.Where(file => filterList.Contains(file.Split('.')[1].ToLower()));
 
-                foreach (var filepath in imageList)
-                {
-                    AddElement(filepath);
-                }
+                foreach (var filepath in imageList) AddImage(filepath);
 
                 if (ImagePage.InputImage.Count != prefCount)
                 {
                     IsSuccessResult = false;
                     SaveDataWidth = Constants.GridLengthZero;
                     UpdateList();
-                    if (SelecedImage is null)
-                    {
-                        OnShowImageCommandExecuted(ImagePage.InputImage.Last());
-                    }
+
+                    if (SelecedImage is null) OnShowImageCommandExecuted(ImagePage.InputImage.Last());
                 }
                 else if (imageList.Count() == 0)
                 {
@@ -268,13 +265,15 @@ namespace PixelCrypt2025.ViewModel.Base
         private void OnClearImageCommandExecuted(object p = null)
         {
             if (AccessReset("Очистка списка приведет к потере рузльтата")) return;
+
             IsSuccessResult = false;
             ImagePage.InputImage.Clear();
 
             AddGridHeight = Constants.GridLengthStar;
             DataGridHeight = Constants.GridLengthZero;
-            SelecedImage = null;
             ViewImageWidth = Constants.GridLengthZero;
+
+            SelecedImage = null;
         }
 
         private void OnPaswordViewCommandExecuted(object p = null)
@@ -302,7 +301,7 @@ namespace PixelCrypt2025.ViewModel.Base
             if (AccessReset("Удаление элемента приведет к потере рузльтата")) return;
             IsSuccessResult = false;
 
-            RemoveElement(parametr);
+            ImagePage.InputImage.Remove(parametr);
 
             UpdateList();
 
@@ -322,14 +321,12 @@ namespace PixelCrypt2025.ViewModel.Base
 
         protected virtual void OnMoveUpImageCommandExecuted(object p = null)
         {
-            if (p is Model.Image image)
-                MoveImage(image, -1);
+            if (p is Model.Image image) MoveImage(image, -1);
         }
 
         protected virtual void OnMoveDownImageCommandExecuted(object p = null)
         {
-            if (p is Model.Image image)
-                MoveImage(image, 1);
+            if (p is Model.Image image) MoveImage(image, 1);
         }
 
         protected virtual void OnShowImageCommandExecuted(object p = null)
@@ -351,6 +348,7 @@ namespace PixelCrypt2025.ViewModel.Base
                 MessageBox.Show("Не удалось найти фаил, возможно он удален или перемещен");
                 OnRemoveImageCommandExecuted(parametr);
             }
+
             UpdateList();
         }
 
@@ -359,7 +357,9 @@ namespace PixelCrypt2025.ViewModel.Base
             ImagePage.SaveData();
         }
 
-        protected async Task<StackPanel> UpdateImageList()
+
+
+        private async Task<StackPanel> UpdateImageList()
         {
             var stackPanel = new StackPanel();
 
@@ -372,61 +372,15 @@ namespace PixelCrypt2025.ViewModel.Base
                     Style = (Style)Application.Current.FindResource("BaseContextMenuStyle"),
                 };
 
-                MenuItem deleteItem = new MenuItem()
-                {
-                    Header = new Label()
-                    {
-                        FontSize = 13,
-                        Content = "Удалить",
-                        Foreground = (System.Windows.Media.Brush)new BrushConverter().ConvertFromString(Foreground),
-                    },
-                    Command = RemoveImageCommand,
-                    Style = (Style)Application.Current.FindResource("BaseMenuItemStyle"),
-                    CommandParameter = imageData,
-                    Margin = new Thickness(1)
-                };
-
-                contextMenu.Items.Add(deleteItem);
+                contextMenu.Items.Add(contextMenu.Items.Add(CreateMenuItem("Удалить", RemoveImageCommand, imageData)));
 
                 if (ImagePage.InputImage.Count > 1)
                 {
                     if (index != 0)
-                    {
-                        MenuItem moveUpItem = new MenuItem()
-                        {
-                            Header = new Label()
-                            {
-                                FontSize = 13,
-                                Content = "Поднять",
-                                Foreground = (System.Windows.Media.Brush)new BrushConverter().ConvertFromString(Foreground),
-                            },
-                            Command = MoveUpImageCommand,
-                            Style = (Style)Application.Current.FindResource("BaseMenuItemStyle"),
-                            CommandParameter = imageData,
-                            Margin = new Thickness(1)
-                        };
-
-                        contextMenu.Items.Add(moveUpItem);
-                    }
+                        contextMenu.Items.Add(contextMenu.Items.Add(CreateMenuItem("Поднять", MoveUpImageCommand, imageData)));
 
                     if (index != ImagePage.InputImage.Count - 1)
-                    {
-                        MenuItem moveDownItem = new MenuItem()
-                        {
-                            Header = new Label()
-                            {
-                                FontSize = 13,
-                                Content = "Опусутить",
-                                Foreground = (System.Windows.Media.Brush)new BrushConverter().ConvertFromString(Foreground),
-                            },
-                            Command = MoveDownImageCommand,
-                            Style = (Style)Application.Current.FindResource("BaseMenuItemStyle"),
-                            CommandParameter = imageData,
-                            Margin = new Thickness(1)
-                        };
-
-                        contextMenu.Items.Add(moveDownItem);
-                    }
+                        contextMenu.Items.Add(CreateMenuItem("Опусутить", MoveDownImageCommand, imageData));
                 }
 
                 var grid = new Grid()
@@ -439,41 +393,36 @@ namespace PixelCrypt2025.ViewModel.Base
 
                 if (ImagePage.OutputImage.ContainsKey(imageData))
                 {
-                    var resultStatus = new TextBlock()
-                    {
-                        Text = "Ok",
-                        FontSize = 15,
-                        Padding = new Thickness(10),
-                        Foreground = (System.Windows.Media.Brush)new BrushConverter().ConvertFromString(Foreground),
-                    };
-
                     var border = new Border
                     {
-                        BorderBrush = (System.Windows.Media.Brush)new BrushConverter().ConvertFromString(Foreground),
+                        BorderBrush = (Brush)new BrushConverter().ConvertFromString(Foreground),
                         BorderThickness = new Thickness(1),
                         VerticalAlignment = VerticalAlignment.Top,
                         CornerRadius = new CornerRadius(10),
                         Margin = new Thickness(0, 0, 10, 0),
+                        Child = new TextBlock()
+                        {
+                            Text = "Ok",
+                            FontSize = 15,
+                            Padding = new Thickness(10),
+                            Foreground = (Brush)new BrushConverter().ConvertFromString(Foreground),
+                        },
                     };
-
-                    border.Child = resultStatus;
 
                     Grid.SetColumn(border, 0);
 
                     grid.Children.Add(border);
                 }
 
-                var textBlock = new TextBlock()
-                {
-                    Text = imageData.ToString(),
-                    FontSize = 15,
-                    TextWrapping = TextWrapping.Wrap,
-                    Padding = new Thickness(10, 10, 10, 10),
-                };
-
                 var button = new Button()
                 {
-                    Content = textBlock,
+                    Content = new TextBlock()
+                    {
+                        Text = imageData.ToString(),
+                        FontSize = 15,
+                        TextWrapping = TextWrapping.Wrap,
+                        Padding = new Thickness(10, 10, 10, 10),
+                    },
                     ContextMenu = contextMenu,
                     IsEnabled = IsButtonFree,
                     Command = ShowImageCommand,
@@ -485,6 +434,7 @@ namespace PixelCrypt2025.ViewModel.Base
                 Grid.SetColumn(button, 1);
 
                 grid.Children.Add(button);
+
                 stackPanel.Children.Add(grid);
 
                 index++;
@@ -493,7 +443,24 @@ namespace PixelCrypt2025.ViewModel.Base
             return stackPanel;
         }
 
-        private void AddElement(string filepath)
+        private MenuItem CreateMenuItem(string title, ICommand command, object parametr)
+        {
+            return new MenuItem()
+            {
+                Header = new Label()
+                {
+                    FontSize = 13,
+                    Content = title,
+                    Foreground = (System.Windows.Media.Brush)new BrushConverter().ConvertFromString(Foreground),
+                },
+                Command = command,
+                Style = (Style)Application.Current.FindResource("BaseMenuItemStyle"),
+                CommandParameter = parametr,
+                Margin = new Thickness(1)
+            };
+        }
+
+        private void AddImage(string filepath)
         {
             foreach (var image in ImagePage.InputImage)
             {
@@ -503,12 +470,7 @@ namespace PixelCrypt2025.ViewModel.Base
             ImagePage.InputImage.Add(new Model.Image(filepath));
         }
 
-        protected void RemoveElement(Model.Image parametr)
-        {
-            ImagePage.InputImage.Remove(parametr);
-        }
-
-        protected void MoveImage(Model.Image image, int direction)
+        private void MoveImage(Model.Image image, int direction)
         {
             var list = ImagePage.InputImage;
             var index = list.IndexOf(image);

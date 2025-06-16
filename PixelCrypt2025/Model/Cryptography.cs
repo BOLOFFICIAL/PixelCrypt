@@ -18,10 +18,10 @@ namespace PixelCrypt2025.Model
             try
             {
                 var res = ProgramHelper.SaveBitmapToFolder(OutputImage);
+
                 if (res.Result)
-                {
                     MessageBox.Show($"Картинки сохранены в папке {res.FileName}", title);
-                }
+
                 return true;
             }
             catch
@@ -32,6 +32,16 @@ namespace PixelCrypt2025.Model
 
         internal async Task<bool> Decrypt(string password)
         {
+            return await Encryption(password, CryptoService.DecryptPhoto);
+        }
+
+        internal async Task<bool> Encrypt(string password)
+        {
+            return await Encryption(password, CryptoService.EncryptPhoto);
+        }
+
+        private async Task<bool> Encryption(string password, Func<string, string, Task<Bitmap>> action)
+        {
             var hashPassword = ProgramHelper.GetHash32(password);
 
             OutputImage.Clear();
@@ -41,33 +51,9 @@ namespace PixelCrypt2025.Model
             {
                 foreach (var file in InputImage)
                 {
-                    OutputImage.Add(file, await CryptoService.DecryptPhoto(file.Path, hashPassword));
+                    OutputImage.Add(file, await action(file.Path, hashPassword));
                     ShowImage(file);
-                    await UpdateList();
-                }
-                return true;
-            }
-            catch
-            {
-                OutputImage.Clear();
-                return false;
-            }
-        }
-
-        internal async Task<bool> Encrypt(string password)
-        {
-            var hashPassword = ProgramHelper.GetHash32(password);
-
-            OutputImage.Clear();
-            await UpdateList();
-
-            try
-            {
-                foreach (var file in InputImage)
-                {
-                    OutputImage.Add(file, await CryptoService.EncryptPhoto(file.Path, hashPassword));
-                    ShowImage(file);
-                    await UpdateList();
+                    await UpdateList.Invoke();
                 }
                 return true;
             }
