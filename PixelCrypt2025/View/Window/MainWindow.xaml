@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PixelCrypt2025.View.Window"
         mc:Ignorable="d"
-        Title="PixelCrypt"
+        Title="PixelCrypt 2025"
         WindowStartupLocation="CenterScreen"
         Height="600"
         Width="900"

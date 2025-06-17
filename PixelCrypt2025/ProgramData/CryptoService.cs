@@ -117,7 +117,6 @@ namespace PixelCrypt2025.ProgramData
             return decryptedCollection;
         }
 
-
         private static List<int> CreatePermutation(string password, int length)
         {
             using (var md5 = MD5.Create())

@@ -110,7 +110,7 @@ namespace PixelCrypt2025.ViewModel.Page
 
         private async void OnDoActionCommandExecuted(object p = null)
         {
-            if (p is not Func<string, Task<bool>> doAction) return;
+            if (p is not Func<string, Task<ActionResult>> doAction) return;
             SaveDataWidth = Constants.GridLengthZero;
 
             if (SelecedImage != null) OnShowImageCommandExecuted(SelecedImage);
@@ -120,19 +120,20 @@ namespace PixelCrypt2025.ViewModel.Page
             IsButtonFree = false;
             isProcessing = true;
 
-            IsSuccessResult = await doAction(Password);
+            var result = await doAction(Password);
+
+            IsSuccessResult = result.IsSuccessResult;
 
             if (IsSuccessResult)
             {
                 IsReadOnlyInputData = InputFilePath?.Length > 0;
             }
-            else
-            {
-                MessageBox.Show("Возникла ошибка");
-            }
+
+            MessageBox.Show($"{result.ResultMessage}", result.ResultTitle);
 
             OnPropertyChanged("InputData");
             OnPropertyChanged("InputFilePath");
+            OnPropertyChanged("InputFileName");
             isProcessing = false;
             IsButtonFree = true;
             UpdateList();

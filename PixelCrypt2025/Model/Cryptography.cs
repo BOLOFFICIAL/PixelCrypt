@@ -1,7 +1,6 @@
 ﻿using PixelCrypt2025.Interfaces;
 using PixelCrypt2025.ProgramData;
 using System.Drawing;
-using System.Windows;
 
 namespace PixelCrypt2025.Model
 {
@@ -12,36 +11,37 @@ namespace PixelCrypt2025.Model
         public Func<Task> UpdateList { get; set; }
         public Action<Image> ShowImage { get; set; }
 
-        public bool SaveData()
+        public ActionResult SaveData()
         {
-            var title = "Сохранение изображений";
-            try
-            {
-                var res = ProgramHelper.SaveBitmapToFolder(OutputImage);
-
-                if (res.Result)
-                    MessageBox.Show($"Картинки сохранены в папке {res.FileName}", title);
-
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
+            return ProgramHelper.SaveBitmapToFolder(OutputImage);
         }
 
-        internal async Task<bool> Decrypt(string password)
+        internal async Task<ActionResult> Decrypt(string password)
         {
-            return await Encryption(password, CryptoService.DecryptPhoto);
+            var res = await Encryption(password, CryptoService.DecryptPhoto);
+            res.ResultTitle = "Расшифровывание данных";
+
+            if (res.IsSuccessResult)
+                res.ResultMessage = "Данные успешно расшифрованы";
+
+            return res;
         }
 
-        internal async Task<bool> Encrypt(string password)
+        internal async Task<ActionResult> Encrypt(string password)
         {
-            return await Encryption(password, CryptoService.EncryptPhoto);
+            var res = await Encryption(password, CryptoService.EncryptPhoto);
+            res.ResultTitle = "Зашифровывание данных";
+
+            if (res.IsSuccessResult)
+                res.ResultMessage = "Данные успешно зашифрованы";
+
+            return res;
         }
 
-        private async Task<bool> Encryption(string password, Func<string, string, Task<Bitmap>> action)
+        private async Task<ActionResult> Encryption(string password, Func<string, string, Task<Bitmap>> action)
         {
+            var result = new ActionResult();
+
             var hashPassword = ProgramHelper.GetHash32(password);
 
             OutputImage.Clear();
@@ -55,12 +55,20 @@ namespace PixelCrypt2025.Model
                     ShowImage(file);
                     await UpdateList.Invoke();
                 }
-                return true;
+
+                result.IsSuccessResult = true;
+
+                return result;
             }
             catch (Exception ex)
             {
                 OutputImage.Clear();
-                return false;
+                return new ActionResult()
+                {
+                    IsSuccessResult = false,
+                    ResultMessage = $"Ошибка: {ex.Message}",
+                    ResultTitle = "",
+                };
             }
         }
     }

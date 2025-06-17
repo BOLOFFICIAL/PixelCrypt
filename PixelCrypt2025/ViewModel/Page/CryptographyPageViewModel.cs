@@ -1,4 +1,5 @@
 ﻿using PixelCrypt2025.Commands.Base;
+using PixelCrypt2025.Model;
 using PixelCrypt2025.ProgramData;
 using PixelCrypt2025.ViewModel.Base;
 using System.Windows;
@@ -44,7 +45,7 @@ namespace PixelCrypt2025.ViewModel.Page
 
         private async void OnDoActionCommandExecuted(object p = null)
         {
-            if (p is not Func<string, Task<bool>> doAction) return;
+            if (p is not Func<string, Task<ActionResult>> doAction) return;
             SaveDataWidth = Constants.GridLengthZero;
 
             if (SelecedImage != null) OnShowImageCommandExecuted(SelecedImage);
@@ -53,12 +54,11 @@ namespace PixelCrypt2025.ViewModel.Page
             IsButtonFree = false;
             isProcessing = true;
 
-            IsSuccessResult = await doAction(Password);
+            var result = await doAction(Password);
 
-            if (!IsSuccessResult)
-            {
-                MessageBox.Show("Возникла ошибка");
-            }
+            IsSuccessResult = result.IsSuccessResult;
+
+            MessageBox.Show($"{result.ResultMessage}", result.ResultTitle);
 
             isProcessing = false;
             IsButtonFree = true;

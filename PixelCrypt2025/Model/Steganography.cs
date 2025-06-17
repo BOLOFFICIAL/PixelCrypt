@@ -9,7 +9,7 @@ namespace PixelCrypt2025.Model
 {
     internal class Steganography : IImagePage
     {
-        private Func<bool> _saveAction;
+        private Func<ActionResult> _saveAction;
 
         public List<Model.Image> InputImage { get; } = new List<Model.Image>();
         public Dictionary<Model.Image, Bitmap> OutputImage { get; } = new Dictionary<Model.Image, Bitmap>();
@@ -17,33 +17,27 @@ namespace PixelCrypt2025.Model
         public Func<Task> UpdateList { get; set; }
         public Action<Model.Image> ShowImage { get; set; }
 
-        public bool SaveImport()
+        public ActionResult SaveImport()
         {
-            var res = ProgramHelper.SaveBitmapToFolder(OutputImage);
-
-            if (res.Result)
-                MessageBox.Show($"Картинки сохранены в папке {res.FileName}", "Импорт");
-
-            return true;
+            return ProgramHelper.SaveBitmapToFolder(OutputImage);
         }
 
-        public bool SaveExport()
+        public ActionResult SaveExport()
         {
             if (DataFile.Content.Length == 0)
-                MessageBox.Show("Нет данных для сохранения", "Экспорт");
-
-            else
             {
-                var res = ProgramHelper.SaveDataToFile($"PixelCrypt_{DateTime.Now:yyyyMMddHHmmss}", $"Файлы (*.txt)|*.txt", DataFile.Content);
-
-                if (res.Result)
-                    MessageBox.Show($"Файл {res.FileName} сохранен", "Экспорт");
+                return new ActionResult()
+                {
+                    IsSuccessResult = false,
+                    ResultMessage = "Ошибка: Нет данных для сохранения",
+                    ResultTitle = "Экспорт"
+                };
             }
 
-            return true;
+            return ProgramHelper.SaveDataToFile($"PixelCrypt_{DateTime.Now:yyyyMMddHHmmss}", $"Файлы (*.txt)|*.txt", DataFile.Content);
         }
 
-        internal async Task<bool> Import(string password)
+        internal async Task<ActionResult> Import(string password)
         {
             try
             {
@@ -52,7 +46,15 @@ namespace PixelCrypt2025.Model
                 var hashPassword = ProgramHelper.GetHash32(password);
                 var inportData = DataFile.Content;
 
-                if (inportData.Length == 0) return false;
+                if (inportData.Length == 0)
+                {
+                    return new ActionResult()
+                    {
+                        IsSuccessResult = false,
+                        ResultMessage = "Ошибка: Нет данных для импорта",
+                        ResultTitle = "Импорт данных",
+                    };
+                }
 
                 if (DataFile.Path.Length > 0)
                 {
@@ -82,18 +84,30 @@ namespace PixelCrypt2025.Model
                     await UpdateList.Invoke();
                 }
 
-                return true;
+                return new ActionResult()
+                {
+                    IsSuccessResult = true,
+                    ResultMessage = "Данные успешно импортированы",
+                    ResultTitle = "Импорт данных",
+                };
             }
             catch (Exception ex)
             {
                 OutputImage.Clear();
                 UpdateList.Invoke();
-                return false;
+                return new ActionResult()
+                {
+                    IsSuccessResult = false,
+                    ResultMessage = $"Ошибка: {ex.Message}",
+                    ResultTitle = "Импорт данных",
+                };
             }
         }
 
-        internal async Task<bool> Export(string password)
+        internal async Task<ActionResult> Export(string password)
         {
+            var result = new ActionResult();
+
             _saveAction = SaveExport;
 
             var hashPassword = ProgramHelper.GetHash32(password);
@@ -124,18 +138,19 @@ namespace PixelCrypt2025.Model
                 {
                     exportFileData[2] = CryptoService.DecryptText(exportFileData[2], hashPassword);
 
-                    if (MessageBox.Show("Экспортированные данные являются файлом.\nСформировать файл?", "Экспорт данных", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                    var doFile = MessageBox.Show("Экспортированные данные являются файлом.\nСформировать файл?", "Экспорт данных", MessageBoxButton.YesNo) == MessageBoxResult.Yes;
+
+                    if (doFile)
                     {
                         var res = ProgramHelper.SaveDataToFile(exportFileData[0], $"Файлы (*{exportFileData[1]})|*{exportFileData[1]}", Convert.FromBase64String(exportFileData[2]));
 
-                        if (res.Result)
-                        {
-                            MessageBox.Show($"Фаил {res.FileName} сохранен", "Экспорт данных");
+                        result = res.Result;
 
+                        if (result.IsSuccessResult)
+                        {
                             string fileData = System.IO.File.ReadAllText(res.FilePath) ?? string.Empty;
 
                             DataFile.Content = fileData.Length > 10000 ? fileData.Substring(0, 10000) : fileData;
-
                             DataFile.Path = res.FilePath;
                             DataFile.Name = System.IO.Path.GetFileName(res.FilePath);
                         }
@@ -143,25 +158,47 @@ namespace PixelCrypt2025.Model
                     else
                     {
                         DataFile.Content = exportFileData[2];
+                        DataFile.Path = "";
+                        DataFile.Name = "";
+
+                        result = new ActionResult()
+                        {
+                            IsSuccessResult = true,
+                            ResultMessage = "Фаил экспортирован без формирования",
+                            ResultTitle = "Экспорт данных",
+                        };
                     }
                 }
                 else
                 {
                     DataFile.Content = CryptoService.DecryptText(exportData, hashPassword);
+
+                    result = new ActionResult()
+                    {
+                        IsSuccessResult = true,
+                        ResultMessage = "Данные успешно экспортрованы",
+                        ResultTitle = "Экспорт данных",
+                    };
                 }
 
-                return true;
+                return result;
             }
-            catch
+            catch (Exception ex)
             {
                 bynaryData.Clear();
                 OutputImage.Clear();
                 await UpdateList.Invoke();
-                return false;
+
+                return new ActionResult()
+                {
+                    IsSuccessResult = false,
+                    ResultMessage = $"Ошибка: {ex.Message}",
+                    ResultTitle = "Экспорт данных",
+                };
             }
         }
 
-        public bool SaveData()
+        public ActionResult SaveData()
         {
             return _saveAction.Invoke();
         }

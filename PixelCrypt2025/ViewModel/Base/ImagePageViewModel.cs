@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32;
 using PixelCrypt2025.Commands.Base;
 using PixelCrypt2025.Interfaces;
+using PixelCrypt2025.Model;
 using PixelCrypt2025.ProgramData;
 using PixelCrypt2025.View.Page;
 using System.Windows;
@@ -43,8 +44,8 @@ namespace PixelCrypt2025.ViewModel.Base
         private ICommand MoveUpImageCommand { get; }
         private ICommand MoveDownImageCommand { get; }
 
-        private Func<string, Task<bool>> _inputAction;
-        private Func<string, Task<bool>> _outputAction;
+        private Func<string, Task<ActionResult>> _inputAction;
+        private Func<string, Task<ActionResult>> _outputAction;
 
         public IImagePage ImagePage { get; init; }
 
@@ -93,13 +94,13 @@ namespace PixelCrypt2025.ViewModel.Base
             }
         }
 
-        public Func<string, Task<bool>> InputAction
+        public Func<string, Task<ActionResult>> InputAction
         {
             get => _inputAction;
             set => Set(ref _inputAction, value);
         }
 
-        public Func<string, Task<bool>> OutputAction
+        public Func<string, Task<ActionResult>> OutputAction
         {
             get => _outputAction;
             set => Set(ref _outputAction, value);
@@ -354,7 +355,7 @@ namespace PixelCrypt2025.ViewModel.Base
 
         private void OnSaveCommandExecuted(object obj)
         {
-            ImagePage.SaveData();
+            var res = ImagePage.SaveData();
         }
 
 
@@ -372,12 +373,12 @@ namespace PixelCrypt2025.ViewModel.Base
                     Style = (Style)Application.Current.FindResource("BaseContextMenuStyle"),
                 };
 
-                contextMenu.Items.Add(contextMenu.Items.Add(CreateMenuItem("Удалить", RemoveImageCommand, imageData)));
+                contextMenu.Items.Add(CreateMenuItem("Удалить", RemoveImageCommand, imageData));
 
                 if (ImagePage.InputImage.Count > 1)
                 {
                     if (index != 0)
-                        contextMenu.Items.Add(contextMenu.Items.Add(CreateMenuItem("Поднять", MoveUpImageCommand, imageData)));
+                        contextMenu.Items.Add(CreateMenuItem("Поднять", MoveUpImageCommand, imageData));
 
                     if (index != ImagePage.InputImage.Count - 1)
                         contextMenu.Items.Add(CreateMenuItem("Опусутить", MoveDownImageCommand, imageData));
@@ -451,7 +452,7 @@ namespace PixelCrypt2025.ViewModel.Base
                 {
                     FontSize = 13,
                     Content = title,
-                    Foreground = (System.Windows.Media.Brush)new BrushConverter().ConvertFromString(Foreground),
+                    Foreground = (Brush)new BrushConverter().ConvertFromString(Foreground),
                 },
                 Command = command,
                 Style = (Style)Application.Current.FindResource("BaseMenuItemStyle"),
@@ -487,9 +488,6 @@ namespace PixelCrypt2025.ViewModel.Base
             FilePathImageStackPanel = await UpdateImageList();
         }
 
-        protected bool AccessReset(string message)
-        {
-            return IsSuccessResult && MessageBox.Show($"{message}.\nПродолжить?", "", MessageBoxButton.YesNo) == MessageBoxResult.No;
-        }
+        protected bool AccessReset(string message, string title = "") => IsSuccessResult && MessageBox.Show($"{message}.\nПродолжить?", title, MessageBoxButton.YesNo) == MessageBoxResult.No;
     }
 }

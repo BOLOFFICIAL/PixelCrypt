@@ -41,7 +41,7 @@ namespace PixelCrypt2025.ProgramData
             return result;
         }
 
-        public static SaveDataResult SaveDataToFile(string fileName, string filter, string data)
+        public static ActionResult SaveDataToFile(string fileName, string filter, string data)
         {
             try
             {
@@ -63,19 +63,27 @@ namespace PixelCrypt2025.ProgramData
 
                     System.IO.File.WriteAllText(selectedFilePath, data);
 
-                    return new SaveDataResult()
+                    return new ActionResult()
                     {
-                        Result = true,
-                        FileName = Path.GetFileName(selectedFilePath),
-                        FilePath = selectedFilePath,
+                        IsSuccessResult = true,
+                        ResultMessage = $"Данные сохранены в папке {Path.GetFileName(selectedFilePath)}",
+                        ResultTitle = "Сохранение данных",
                     };
                 }
 
-                return new SaveDataResult();
+                return new ActionResult()
+                {
+                    IsSuccessResult = true,
+                };
             }
-            catch
+            catch (Exception ex)
             {
-                return new SaveDataResult();
+                return new ActionResult()
+                {
+                    IsSuccessResult = false,
+                    ResultMessage = $"Ошибка: {ex.Message}",
+                    ResultTitle = "Сохранение данных",
+                };
             }
         }
 
@@ -103,22 +111,40 @@ namespace PixelCrypt2025.ProgramData
 
                     return new SaveDataResult()
                     {
-                        Result = true,
-                        FileName = Path.GetFileName(selectedFilePath),
-                        FilePath = selectedFilePath,
+                        Result = new ActionResult()
+                        {
+                            IsSuccessResult = true,
+                            ResultMessage = $"Фаил {Path.GetFileName(selectedFilePath)} успешно сохранен",
+                            ResultTitle = "Сохранение данных",
+                        },
+                        FilePath = selectedFilePath
                     };
                 }
 
-                return new SaveDataResult();
+                return new SaveDataResult()
+                {
+                    Result = new ActionResult()
+                    {
+                        IsSuccessResult = true,
+                    }
+                };
             }
-            catch
+            catch (Exception ex)
             {
-                return new SaveDataResult();
+                return new SaveDataResult()
+                {
+                    Result = new ActionResult()
+                    {
+                        IsSuccessResult = false,
+                        ResultMessage = $"Ошибка: {ex.Message}",
+                        ResultTitle = "Сохранение данных",
+                    },
+                };
             }
 
         }
 
-        public static SaveDataResult SaveBitmapToFolder(Dictionary<Model.Image, Bitmap> images)
+        public static ActionResult SaveBitmapToFolder(Dictionary<Model.Image, Bitmap> images)
         {
             try
             {
@@ -145,19 +171,27 @@ namespace PixelCrypt2025.ProgramData
                         el.Value.Save(name, ImageFormat.Png);
                     }
 
-                    return new SaveDataResult()
+                    return new ActionResult()
                     {
-                        Result = true,
-                        FileName = Path.GetFileName(folderPicker.FileName),
-                        FilePath = folderPicker.FileName,
+                        IsSuccessResult = true,
+                        ResultMessage = $"Данные сохранены в папке {Path.GetFileName(folderPicker.FileName)}",
+                        ResultTitle = "Сохраение данных",
                     };
                 }
 
-                return new SaveDataResult();
+                return new ActionResult()
+                {
+                    IsSuccessResult = true,
+                };
             }
             catch (Exception ex)
             {
-                return new SaveDataResult();
+                return new ActionResult()
+                {
+                    IsSuccessResult = false,
+                    ResultMessage = $"Ошибка: {ex.Message}",
+                    ResultTitle = "Сохранение данных",
+                };
             }
         }
     }
