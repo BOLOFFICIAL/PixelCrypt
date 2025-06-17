@@ -36,8 +36,6 @@ namespace PixelCrypt2025.ViewModel.Base
         private bool _isSuccessResult = false;
         private bool _isButtonFree = true;
 
-        protected bool isProcessing = false;
-
         protected ICommand ShowImageCommand { get; init; }
         protected ICommand RemoveImageCommand { get; init; }
 
@@ -121,10 +119,7 @@ namespace PixelCrypt2025.ViewModel.Base
         public string Password
         {
             get => _password;
-            set
-            {
-                Set(ref _password, value);
-            }
+            set => Set(ref _password, value);
         }
 
         public string ImageName
@@ -217,8 +212,6 @@ namespace PixelCrypt2025.ViewModel.Base
 
         private void OnClosePageCommandExecuted(object p = null)
         {
-            if (ImagePage.InputImage.Count > 0 && MessageBox.Show("Вы уверены что хотите закрыть страницу", "", MessageBoxButton.YesNo) == MessageBoxResult.No) return;
-
             Context.MainWindowViewModel.CurrentPage = new MainPage();
         }
 
@@ -299,8 +292,12 @@ namespace PixelCrypt2025.ViewModel.Base
         {
             if (p is not Model.Image parametr) return;
 
-            if (AccessReset("Удаление элемента приведет к потере рузльтата")) return;
-            IsSuccessResult = false;
+            if (ImagePage.OutputImage.ContainsKey(parametr) && AccessReset("Удаление элемента приведет к потере рузльтата")) return;
+
+            if (IsSuccessResult && ImagePage.OutputImage.ContainsKey(parametr))
+            {
+                IsSuccessResult = false;
+            }
 
             ImagePage.InputImage.Remove(parametr);
 
@@ -314,6 +311,7 @@ namespace PixelCrypt2025.ViewModel.Base
 
             if (ImagePage.InputImage.Count == 0)
             {
+                IsSuccessResult = false;
                 AddGridHeight = Constants.GridLengthStar;
                 DataGridHeight = Constants.GridLengthZero;
                 SelecedImage = null;
@@ -355,10 +353,10 @@ namespace PixelCrypt2025.ViewModel.Base
 
         private void OnSaveCommandExecuted(object obj)
         {
-            var res = ImagePage.SaveData();
+            var result = ImagePage.SaveData();
+
+            MessageBox.Show($"{result.ResultMessage}", result.ResultTitle);
         }
-
-
 
         private async Task<StackPanel> UpdateImageList()
         {

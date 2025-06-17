@@ -1,4 +1,5 @@
-﻿using PixelCrypt2025.ViewModel.Page;
+﻿using PixelCrypt2025.ProgramData;
+using PixelCrypt2025.ViewModel.Page;
 
 namespace PixelCrypt2025.View.Page
 {
@@ -11,6 +12,7 @@ namespace PixelCrypt2025.View.Page
         {
             InitializeComponent();
             DataContext = new CryptographyPageViewModel();
+            Context.CryptographyPage = Context.CryptographyPage ?? this;
         }
     }
 }

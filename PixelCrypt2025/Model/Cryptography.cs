@@ -1,5 +1,6 @@
 ﻿using PixelCrypt2025.Interfaces;
 using PixelCrypt2025.ProgramData;
+using PixelCrypt2025.View.Page;
 using System.Drawing;
 
 namespace PixelCrypt2025.Model
@@ -52,8 +53,12 @@ namespace PixelCrypt2025.Model
                 foreach (var file in InputImage)
                 {
                     OutputImage.Add(file, await action(file.Path, hashPassword));
-                    ShowImage(file);
-                    await UpdateList.Invoke();
+
+                    if (Context.MainWindowViewModel.CurrentPage.GetType() == typeof(CryptographyPage) && Context.MainWindow.IsActive)
+                    {
+                        ShowImage(file);
+                        await UpdateList.Invoke();
+                    }
                 }
 
                 result.IsSuccessResult = true;

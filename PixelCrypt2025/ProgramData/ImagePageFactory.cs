@@ -9,8 +9,8 @@ namespace PixelCrypt2025.ProgramData
         {
             return key switch
             {
-                "Сryptography" => new CryptographyPage(),
-                "Steganography" => new SteganographyPage(),
+                "Сryptography" => Context.CryptographyPage ?? new CryptographyPage(),
+                "Steganography" => Context.SteganographyPage ?? new SteganographyPage(),
                 _ => new MainPage()
             };
         }

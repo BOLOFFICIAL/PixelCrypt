@@ -74,6 +74,8 @@ namespace PixelCrypt2025.ProgramData
                 return new ActionResult()
                 {
                     IsSuccessResult = true,
+                    ResultMessage = $"Данные не сохранены",
+                    ResultTitle = "Сохранение данных",
                 };
             }
             catch (Exception ex)
@@ -148,6 +150,16 @@ namespace PixelCrypt2025.ProgramData
         {
             try
             {
+                if (images.Count == 0)
+                {
+                    return new ActionResult()
+                    {
+                        IsSuccessResult = false,
+                        ResultMessage = "Ошибка: Нет данных для сохранения",
+                        ResultTitle = "Сохраение данных",
+                    };
+                }
+
                 CommonOpenFileDialog folderPicker = new CommonOpenFileDialog();
 
                 folderPicker.IsFolderPicker = true;
@@ -182,6 +194,8 @@ namespace PixelCrypt2025.ProgramData
                 return new ActionResult()
                 {
                     IsSuccessResult = true,
+                    ResultMessage = $"Данные не сохранены",
+                    ResultTitle = "Сохраение данных",
                 };
             }
             catch (Exception ex)

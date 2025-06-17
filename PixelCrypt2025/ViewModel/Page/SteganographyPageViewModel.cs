@@ -118,7 +118,6 @@ namespace PixelCrypt2025.ViewModel.Page
             IsSuccessResult = false;
             IsReadOnlyInputData = true;
             IsButtonFree = false;
-            isProcessing = true;
 
             var result = await doAction(Password);
 
@@ -134,7 +133,6 @@ namespace PixelCrypt2025.ViewModel.Page
             OnPropertyChanged("InputData");
             OnPropertyChanged("InputFilePath");
             OnPropertyChanged("InputFileName");
-            isProcessing = false;
             IsButtonFree = true;
             UpdateList();
         }

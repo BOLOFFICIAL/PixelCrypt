@@ -125,7 +125,6 @@
             </Setter>
         </Style>
 
-
         <Style x:Key="BaseMenuItemStyle" 
                TargetType="MenuItem">
             <Setter Property="Background" Value="#a52a2a"/>

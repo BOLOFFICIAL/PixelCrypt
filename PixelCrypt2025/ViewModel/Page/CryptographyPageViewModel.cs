@@ -52,7 +52,6 @@ namespace PixelCrypt2025.ViewModel.Page
 
             IsSuccessResult = false;
             IsButtonFree = false;
-            isProcessing = true;
 
             var result = await doAction(Password);
 
@@ -60,7 +59,6 @@ namespace PixelCrypt2025.ViewModel.Page
 
             MessageBox.Show($"{result.ResultMessage}", result.ResultTitle);
 
-            isProcessing = false;
             IsButtonFree = true;
             UpdateList();
         }

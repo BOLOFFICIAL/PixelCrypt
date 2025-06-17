@@ -83,30 +83,21 @@ namespace PixelCrypt2025.ProgramData
 
         public static Color[,] GetArrayPixelsFromImage(string imagePath)
         {
-            if (!File.Exists(imagePath)) return new Color[0, 0];
-
-            try
+            using (var bitmap = new Bitmap(imagePath))
             {
-                using (var bitmap = new Bitmap(imagePath))
+                var width = bitmap.Width;
+                var height = bitmap.Height;
+                var pixels = new Color[width, height];
+
+                for (int x = 0; x < width; x++)
                 {
-                    var width = bitmap.Width;
-                    var height = bitmap.Height;
-                    var pixels = new Color[width, height];
-
-                    for (int x = 0; x < width; x++)
+                    for (int y = 0; y < height; y++)
                     {
-                        for (int y = 0; y < height; y++)
-                        {
-                            pixels[x, y] = bitmap.GetPixel(x, y);
-                        }
+                        pixels[x, y] = bitmap.GetPixel(x, y);
                     }
-
-                    return pixels;
                 }
-            }
-            catch (Exception ex)
-            {
-                return new Color[0, 0];
+
+                return pixels;
             }
         }
 

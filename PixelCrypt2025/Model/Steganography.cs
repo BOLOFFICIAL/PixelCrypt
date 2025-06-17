@@ -1,5 +1,6 @@
 ﻿using PixelCrypt2025.Interfaces;
 using PixelCrypt2025.ProgramData;
+using PixelCrypt2025.View.Page;
 using System.Drawing;
 using System.IO;
 using System.Text;
@@ -16,26 +17,6 @@ namespace PixelCrypt2025.Model
         public Model.File DataFile { get; } = new Model.File();
         public Func<Task> UpdateList { get; set; }
         public Action<Model.Image> ShowImage { get; set; }
-
-        public ActionResult SaveImport()
-        {
-            return ProgramHelper.SaveBitmapToFolder(OutputImage);
-        }
-
-        public ActionResult SaveExport()
-        {
-            if (DataFile.Content.Length == 0)
-            {
-                return new ActionResult()
-                {
-                    IsSuccessResult = false,
-                    ResultMessage = "Ошибка: Нет данных для сохранения",
-                    ResultTitle = "Экспорт"
-                };
-            }
-
-            return ProgramHelper.SaveDataToFile($"PixelCrypt_{DateTime.Now:yyyyMMddHHmmss}", $"Файлы (*.txt)|*.txt", DataFile.Content);
-        }
 
         internal async Task<ActionResult> Import(string password)
         {
@@ -80,8 +61,11 @@ namespace PixelCrypt2025.Model
                 {
                     var bitmapResult = await ImageHelper.ImportDataToImage(lines[i], InputImage[i].Path);
                     OutputImage.Add(InputImage[i], bitmapResult);
-                    ShowImage(InputImage[i]);
-                    await UpdateList.Invoke();
+                    if (Context.MainWindowViewModel.CurrentPage.GetType() == typeof(SteganographyPage) && Context.MainWindow.IsActive)
+                    {
+                        ShowImage(InputImage[i]);
+                        await UpdateList.Invoke();
+                    }
                 }
 
                 return new ActionResult()
@@ -201,6 +185,26 @@ namespace PixelCrypt2025.Model
         public ActionResult SaveData()
         {
             return _saveAction.Invoke();
+        }
+
+        private ActionResult SaveImport()
+        {
+            return ProgramHelper.SaveBitmapToFolder(OutputImage);
+        }
+
+        private ActionResult SaveExport()
+        {
+            if (DataFile.Content.Length == 0)
+            {
+                return new ActionResult()
+                {
+                    IsSuccessResult = false,
+                    ResultMessage = "Ошибка: Нет данных для сохранения",
+                    ResultTitle = "Экспорт"
+                };
+            }
+
+            return ProgramHelper.SaveDataToFile($"PixelCrypt_{DateTime.Now:yyyyMMddHHmmss}", $"Файлы (*.txt)|*.txt", DataFile.Content);
         }
     }
 }
