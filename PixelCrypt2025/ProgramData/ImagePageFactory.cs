@@ -1,4 +1,4 @@
-﻿using PixelCrypt2025.View.Page;
+﻿using PixelCrypt2025.View.Page.MainWindow;
 using System.Windows.Controls;
 
 namespace PixelCrypt2025.ProgramData

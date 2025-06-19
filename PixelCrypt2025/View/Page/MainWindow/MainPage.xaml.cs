@@ -1,6 +1,6 @@
-﻿using PixelCrypt2025.ViewModel.Page;
+﻿using PixelCrypt2025.ViewModel.Page.MainWindow;
 
-namespace PixelCrypt2025.View.Page
+namespace PixelCrypt2025.View.Page.MainWindow
 {
     /// <summary>
     /// Логика взаимодействия для MainPage.xaml

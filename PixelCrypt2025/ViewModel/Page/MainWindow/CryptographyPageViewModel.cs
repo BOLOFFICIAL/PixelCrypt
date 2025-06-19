@@ -5,11 +5,11 @@ using PixelCrypt2025.ViewModel.Base;
 using System.Windows;
 using System.Windows.Media;
 
-namespace PixelCrypt2025.ViewModel.Page
+namespace PixelCrypt2025.ViewModel.Page.MainWindow
 {
     internal class CryptographyPageViewModel : ImagePageViewModel
     {
-        private Model.Cryptography _cryptography = new Model.Cryptography();
+        private Cryptography _cryptography = new Cryptography();
 
         private GridLength _viewResultImageWidth = Constants.GridLengthZero;
 
@@ -65,7 +65,7 @@ namespace PixelCrypt2025.ViewModel.Page
 
         protected override void OnRemoveImageCommandExecuted(object p = null)
         {
-            if (p is not Model.Image parametr) return;
+            if (p is not Image parametr) return;
 
             base.OnRemoveImageCommandExecuted(parametr);
 
@@ -74,14 +74,14 @@ namespace PixelCrypt2025.ViewModel.Page
 
         protected override void OnShowImageCommandExecuted(object p = null)
         {
-            if (p is not Model.Image parametr) return;
+            if (p is not Image parametr) return;
 
             base.OnShowImageCommandExecuted(parametr);
 
             UpdateResultImage(parametr);
         }
 
-        private async void UpdateResultImage(Model.Image parametr)
+        private async void UpdateResultImage(Image parametr)
         {
             if (ViewImageWidth.Value == 0)
             {

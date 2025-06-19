@@ -2,9 +2,9 @@
 using PixelCrypt2025.ProgramData;
 using System.Windows.Input;
 
-namespace PixelCrypt2025.ViewModel.Page
+namespace PixelCrypt2025.ViewModel.Page.MainWindow
 {
-    class MainPageViewModel : Base.ViewModel
+    class MainPageViewModel : Base.BaseViewModel
     {
         public ICommand OpenImageProcessingPageCommand { get; }
 

@@ -1,15 +1,14 @@
 ﻿using PixelCrypt2025.ProgramData;
-using PixelCrypt2025.View.Page.MainWindow;
 
 namespace PixelCrypt2025.ViewModel.Window
 {
-    internal class MainWindowViewModel : Base.BaseViewModel
+    internal class NotificationWindowViewModel : Base.BaseViewModel
     {
-        private System.Windows.Controls.Page _currentPage = new MainPage();
+        private System.Windows.Controls.Page _currentPage;
 
-        public MainWindowViewModel()
+        public NotificationWindowViewModel()
         {
-            Context.MainWindowViewModel = this;
+            Context.NotificationWindowViewModel = this;
         }
 
         public System.Windows.Controls.Page CurrentPage

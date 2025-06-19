@@ -3,7 +3,7 @@ using PixelCrypt2025.Commands.Base;
 using PixelCrypt2025.Interfaces;
 using PixelCrypt2025.Model;
 using PixelCrypt2025.ProgramData;
-using PixelCrypt2025.View.Page;
+using PixelCrypt2025.View.Page.MainWindow;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -11,7 +11,7 @@ using System.Windows.Media;
 
 namespace PixelCrypt2025.ViewModel.Base
 {
-    internal class ImagePageViewModel : ViewModel
+    internal class ImagePageViewModel : BaseViewModel
     {
         private string _showPasword = "";
         private string _password = "";

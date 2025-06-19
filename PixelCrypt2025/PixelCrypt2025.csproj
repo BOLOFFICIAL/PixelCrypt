@@ -36,4 +36,9 @@
     </Resource>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="ViewModel\Page\NotificationWindow\" />
+    <Folder Include="View\Page\NotificationWindow\" />
+  </ItemGroup>
+
 </Project>

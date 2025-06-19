@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 
 namespace PixelCrypt2025.ViewModel.Base
 {
-    internal abstract class ViewModel : INotifyPropertyChanged
+    internal abstract class BaseViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler? PropertyChanged;
 

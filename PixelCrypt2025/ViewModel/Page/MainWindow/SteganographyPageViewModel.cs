@@ -6,7 +6,7 @@ using PixelCrypt2025.ViewModel.Base;
 using System.Windows;
 using System.Windows.Input;
 
-namespace PixelCrypt2025.ViewModel.Page
+namespace PixelCrypt2025.ViewModel.Page.MainWindow
 {
     internal class SteganographyPageViewModel : ImagePageViewModel
     {
@@ -80,7 +80,7 @@ namespace PixelCrypt2025.ViewModel.Page
 
             if (openFileDialog.ShowDialog() ?? false)
             {
-                if (InputData == null || InputData?.Length == 0 || (InputData?.Length > 0 && MessageBox.Show("Заменить текст на данные из файла?", "Файл для чтения данных", MessageBoxButton.YesNo) == MessageBoxResult.Yes))
+                if (InputData == null || InputData?.Length == 0 || InputData?.Length > 0 && MessageBox.Show("Заменить текст на данные из файла?", "Файл для чтения данных", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                 {
                     InputFilePath = openFileDialog.FileName;
 
