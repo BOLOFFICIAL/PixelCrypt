@@ -36,8 +36,4 @@
     </Resource>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="View\Page\MainWindow\" />
-  </ItemGroup>
-
 </Project>
