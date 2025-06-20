@@ -23,8 +23,8 @@ namespace PixelCrypt2025.ViewModel.Base
             return true;
         }
 
-        public string Background => Theme.Background;
-        public string ContentBackground => Theme.ContentBackground;
-        public string Foreground => Theme.Foreground;
+        public string Color1 => Theme.Color1;
+        public string Color2 => Theme.Color2;
+        public string Color3 => Theme.Color3;
     }
 }

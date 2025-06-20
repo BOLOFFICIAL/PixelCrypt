@@ -10,7 +10,7 @@
       d:DesignHeight="400" 
       d:DesignWidth="600"
       Style="{StaticResource PageStyle}" 
-      Background="{Binding Background}"
+      Background="{Binding Color1}"
       Title="PixelCrypt">
 
     <Grid>
@@ -20,7 +20,7 @@
         </Grid.RowDefinitions>
 
         <Grid Grid.Row="0"
-              Background="{Binding ContentBackground}">
+              Background="{Binding Color2}">
             <Grid Margin="10,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto"/>
@@ -31,7 +31,7 @@
                     <Button Style="{StaticResource ToolButtonStyle}"
                             Command="{Binding ClosePageCommand}">
                         <fa:ImageAwesome Icon="Regular_ArrowAltCircleLeft"
-                                         Foreground="{Binding Foreground}"
+                                         Foreground="{Binding Color3}"
                                          Width="25"
                                          Height="25"/>
                     </Button>
@@ -43,7 +43,7 @@
                            FontWeight="Black"
                            Margin="5,0,0,0"
                            FontSize="25"
-                           Foreground="{Binding Foreground}"
+                           Foreground="{Binding Color3}"
                            HorizontalAlignment="Left"
                            VerticalAlignment="Center"/>
                 </Grid>
@@ -88,7 +88,7 @@
                     <Grid Grid.Row="0"
                           VerticalAlignment="Top"
                           Margin="0,0,0,5">
-                        <Border Background="{Binding ContentBackground}"
+                        <Border Background="{Binding Color2}"
                                 CornerRadius="15">
                             <Grid>
                                 <Grid.RowDefinitions>
@@ -144,7 +144,7 @@
 
                     <Grid Grid.Row="1"
                           Margin="0,0,0,5">
-                        <Border Background="{Binding ContentBackground}"
+                        <Border Background="{Binding Color2}"
                                 CornerRadius="15"
                                 Padding="5,0,7,0">
                             <Grid Grid.Row="1"
@@ -163,14 +163,14 @@
                                             Margin="0,0,0,0"
                                             BorderThickness="0">
                                         <TextBlock Text="Пароль"
-                                                   Foreground="{Binding Foreground}"
+                                                   Foreground="{Binding Color3}"
                                                    VerticalAlignment="Center"
                                                    FontSize="15"/>
                                     </Border>
                                 </Grid>
 
                                 <Grid Grid.Column="1">
-                                    <Border BorderBrush="{Binding Foreground}"
+                                    <Border BorderBrush="{Binding Color3}"
                                             BorderThickness="1,0,0,0"
                                             CornerRadius="0,10,10,0">
                                         <Grid>
@@ -196,8 +196,8 @@
                                                          IsEnabled="{Binding IsButtonFree}"
                                                          Margin="1,0,0,0"
                                                          Padding="10,0,0,0"
-                                                         Background="{Binding ContentBackground}"
-                                                         Foreground="{Binding Foreground}"
+                                                         Background="{Binding Color2}"
+                                                         Foreground="{Binding Color3}"
                                                          HorizontalAlignment="Stretch"
                                                          HorizontalContentAlignment="Center"
                                                          BorderThickness="0"
@@ -212,7 +212,7 @@
                                     <Button Style="{StaticResource ToolButtonStyle}"
                                             Command="{Binding PaswordViewCommand}">
                                         <fa:ImageAwesome Icon="{Binding ShowPasword,UpdateSourceTrigger=PropertyChanged}"
-                                                         Foreground="{Binding Foreground}"
+                                                         Foreground="{Binding Color3}"
                                                          Width="25"
                                                          Height="25"/>
                                     </Button>
@@ -222,7 +222,7 @@
                     </Grid>
 
                     <Grid Grid.Row="2">
-                        <Border Background="{Binding ContentBackground}"
+                        <Border Background="{Binding Color2}"
                                 CornerRadius="15">
                             <Grid HorizontalAlignment="Center"
                                   Margin="0,10">
@@ -248,7 +248,7 @@
                                                 Height="35"
                                                 Width="55">
                                             <fa:ImageAwesome Icon="Solid_SignInAlt"
-                                                             Foreground="{Binding Foreground}"
+                                                             Foreground="{Binding Color3}"
                                                              Width="25"
                                                              Height="25"/>
                                         </Button>
@@ -265,7 +265,7 @@
                                                 Height="35"
                                                 Width="55">
                                             <fa:ImageAwesome Icon="Solid_SignOutAlt"
-                                                             Foreground="{Binding Foreground}"
+                                                             Foreground="{Binding Color3}"
                                                              Width="25"
                                                              Height="25"/>
                                         </Button>
@@ -291,7 +291,7 @@
 
                 <Grid Grid.Column="1"
                       VerticalAlignment="Top">
-                    <Border Background="{Binding ContentBackground}"
+                    <Border Background="{Binding Color2}"
                             CornerRadius="15"
                             Margin="10,0,0,0">
                         <Grid Margin="10">
@@ -321,7 +321,7 @@
                                 </Grid>
 
                                 <Grid Grid.Column="1">
-                                    <Border BorderBrush="{Binding Foreground}"
+                                    <Border BorderBrush="{Binding Color3}"
                                             BorderThickness="1"
                                             Margin="10,0"
                                             Padding="10,0"
@@ -329,7 +329,7 @@
                                         <TextBlock Text="{Binding InputFileName}"
                                                    HorizontalAlignment="Left"
                                                    VerticalAlignment="Center"
-                                                   Foreground="{Binding Foreground}"
+                                                   Foreground="{Binding Color3}"
                                                    FontSize="15"
                                                    ToolTip="{Binding InputFilePath}"/>
                                     </Border>
@@ -340,7 +340,7 @@
                                             IsEnabled="{Binding IsButtonFree}"
                                             Command="{Binding RemoveFileCommand}">
                                         <fa:ImageAwesome Icon="Regular_TimesCircle"
-                                                         Foreground="{Binding Foreground}"
+                                                         Foreground="{Binding Color3}"
                                                          Width="25"
                                                          Height="25"/>
                                     </Button>
@@ -348,13 +348,13 @@
                             </Grid>
 
                             <Grid Grid.Row="1">
-                                <Border BorderBrush="{Binding Foreground}"
+                                <Border BorderBrush="{Binding Color3}"
                                         BorderThickness="1"
                                         Margin="0,10,0,0"
                                         Padding="10"
                                         CornerRadius="10">
                                     <TextBox Text="{Binding InputData}"
-                                             Foreground="{Binding Foreground}"
+                                             Foreground="{Binding Color3}"
                                              IsReadOnly="{Binding IsReadOnlyInputData}"
                                              BorderThickness="0"
                                              TextWrapping="Wrap"
@@ -368,7 +368,7 @@
                 </Grid>
 
                 <Grid Grid.Column="2">
-                    <Border Background="{Binding ContentBackground}"
+                    <Border Background="{Binding Color2}"
                             CornerRadius="15"
                             Margin="10,0,0,0">
                         <Grid>
@@ -380,11 +380,11 @@
                             </Grid.RowDefinitions>
 
                             <Grid Grid.Row="0">
-                                <Border BorderBrush ="{Binding Foreground}"
+                                <Border BorderBrush ="{Binding Color3}"
                                         Margin="10"
                                         BorderThickness="1"
                                         CornerRadius="10">
-                                    <Border BorderBrush ="{Binding Foreground}"
+                                    <Border BorderBrush ="{Binding Color3}"
                                             Margin="10"
                                             BorderThickness="1"
                                             Padding="5"
@@ -416,19 +416,19 @@
                                             </Grid.ColumnDefinitions>
 
                                             <Grid Grid.Column="0">
-                                                <Border Background="{Binding Foreground}"
+                                                <Border Background="{Binding Color3}"
                                                         CornerRadius="10,0,0,10">
                                                     <Label Content="Имя"
                                                            FontSize="15"
                                                            Margin="10,0"
                                                            VerticalAlignment="Top"
                                                            HorizontalAlignment="Center"
-                                                           Foreground="{Binding Background}"/>
+                                                           Foreground="{Binding Color1}"/>
                                                 </Border>
                                             </Grid>
 
                                             <Grid Grid.Column="1">
-                                                <Border BorderBrush="{Binding Foreground}"
+                                                <Border BorderBrush="{Binding Color3}"
                                                         BorderThickness="0,1,1,1"
                                                         CornerRadius="0,10,10,0">
                                                     <TextBox Text ="{Binding ImageName}"
@@ -436,8 +436,8 @@
                                                              TextWrapping="Wrap"
                                                              BorderThickness="0"
                                                              IsReadOnly="True"
-                                                             Background="{Binding ContentBackground}"
-                                                             Foreground="{Binding Foreground}"
+                                                             Background="{Binding Color2}"
+                                                             Foreground="{Binding Color3}"
                                                              FontSize="15"/>
                                                 </Border>
                                             </Grid>
@@ -452,19 +452,19 @@
                                             </Grid.ColumnDefinitions>
 
                                             <Grid Grid.Column="0">
-                                                <Border Background="{Binding Foreground}"
+                                                <Border Background="{Binding Color3}"
                                                         CornerRadius="10,0,0,10">
                                                     <Label Content="Путь"
                                                            FontSize="15"
                                                            Margin="10,0"
                                                            VerticalAlignment="Top"
                                                            HorizontalAlignment="Center"
-                                                           Foreground="{Binding Background}"/>
+                                                           Foreground="{Binding Color1}"/>
                                                 </Border>
                                             </Grid>
 
                                             <Grid Grid.Column="1">
-                                                <Border BorderBrush="{Binding Foreground}"
+                                                <Border BorderBrush="{Binding Color3}"
                                                         BorderThickness="0,1,1,1"
                                                         CornerRadius="0,10,10,0">
                                                     <TextBox Text ="{Binding ImagePath}"
@@ -472,8 +472,8 @@
                                                              TextWrapping="Wrap"
                                                              BorderThickness="0"
                                                              IsReadOnly="True"
-                                                             Background="{Binding ContentBackground}"
-                                                             Foreground="{Binding Foreground}"
+                                                             Background="{Binding Color2}"
+                                                             Foreground="{Binding Color3}"
                                                              FontSize="15"/>
                                                 </Border>
                                             </Grid>
@@ -488,19 +488,19 @@
                                             </Grid.ColumnDefinitions>
 
                                             <Grid Grid.Column="0">
-                                                <Border Background="{Binding Foreground}"
+                                                <Border Background="{Binding Color3}"
                                                         CornerRadius="10,0,0,10">
                                                     <Label Content="Размер"
                                                            FontSize="15"
                                                            Margin="10,0"
                                                            VerticalAlignment="Top"
                                                            HorizontalAlignment="Center"
-                                                           Foreground="{Binding Background}"/>
+                                                           Foreground="{Binding Color1}"/>
                                                 </Border>
                                             </Grid>
 
                                             <Grid Grid.Column="1">
-                                                <Border BorderBrush="{Binding Foreground}"
+                                                <Border BorderBrush="{Binding Color3}"
                                                         BorderThickness="0,1,1,1"
                                                         CornerRadius="0,10,10,0">
                                                     <TextBox Text ="{Binding ImageLength}"
@@ -508,8 +508,8 @@
                                                              TextWrapping="Wrap"
                                                              BorderThickness="0"
                                                              IsReadOnly="True"
-                                                             Background="{Binding ContentBackground}"
-                                                             Foreground="{Binding Foreground}"
+                                                             Background="{Binding Color2}"
+                                                             Foreground="{Binding Color3}"
                                                              FontSize="15"/>
                                                 </Border>
                                             </Grid>
@@ -524,19 +524,19 @@
                                             </Grid.ColumnDefinitions>
 
                                             <Grid Grid.Column="0">
-                                                <Border Background="{Binding Foreground}"
+                                                <Border Background="{Binding Color3}"
                                                         CornerRadius="10,0,0,10">
                                                     <Label Content="Расширение"
                                                            FontSize="15"
                                                            Margin="10,0"
                                                            VerticalAlignment="Top"
                                                            HorizontalAlignment="Center"
-                                                           Foreground="{Binding Background}"/>
+                                                           Foreground="{Binding Color1}"/>
                                                 </Border>
                                             </Grid>
 
                                             <Grid Grid.Column="1">
-                                                <Border BorderBrush="{Binding Foreground}"
+                                                <Border BorderBrush="{Binding Color3}"
                                                         BorderThickness="0,1,1,1"
                                                         CornerRadius="0,10,10,0">
                                                     <TextBox Text ="{Binding ImageExtension}"
@@ -544,8 +544,8 @@
                                                              TextWrapping="Wrap"
                                                              BorderThickness="0"
                                                              IsReadOnly="True"
-                                                             Background="{Binding ContentBackground}"
-                                                             Foreground="{Binding Foreground}"
+                                                             Background="{Binding Color2}"
+                                                             Foreground="{Binding Color3}"
                                                              FontSize="15"/>
                                                 </Border>
                                             </Grid>
@@ -559,19 +559,19 @@
                                             </Grid.ColumnDefinitions>
 
                                             <Grid Grid.Column="0">
-                                                <Border Background="{Binding Foreground}"
+                                                <Border Background="{Binding Color3}"
                                                         CornerRadius="10,0,0,10">
                                                     <Label Content="Разрешение"
                                                            FontSize="15"
                                                            Margin="10,0"
                                                            VerticalAlignment="Top"
                                                            HorizontalAlignment="Center"
-                                                           Foreground="{Binding Background}"/>
+                                                           Foreground="{Binding Color1}"/>
                                                 </Border>
                                             </Grid>
 
                                             <Grid Grid.Column="1">
-                                                <Border BorderBrush="{Binding Foreground}"
+                                                <Border BorderBrush="{Binding Color3}"
                                                         BorderThickness="0,1,1,1"
                                                         CornerRadius="0,10,10,0">
                                                     <TextBox Text ="{Binding ImagePermission}"
@@ -579,8 +579,8 @@
                                                              TextWrapping="Wrap"
                                                              BorderThickness="0"
                                                              IsReadOnly="True"
-                                                             Background="{Binding ContentBackground}"
-                                                             Foreground="{Binding Foreground}"
+                                                             Background="{Binding Color2}"
+                                                             Foreground="{Binding Color3}"
                                                              FontSize="15"/>
                                                 </Border>
                                             </Grid>

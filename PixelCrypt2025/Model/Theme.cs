@@ -2,8 +2,8 @@
 {
     internal class Theme
     {
-        public static string Background = "#1E1E1E";
-        public static string ContentBackground = "#303336";
-        public static string Foreground = "#FFFFFF";
+        public static string Color1 = "#1E1E1E";
+        public static string Color2 = "#303336";
+        public static string Color3 = "#FFFFFF";
     }
 }

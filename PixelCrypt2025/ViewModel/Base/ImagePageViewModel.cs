@@ -394,7 +394,7 @@ namespace PixelCrypt2025.ViewModel.Base
                 {
                     var border = new Border
                     {
-                        BorderBrush = (Brush)new BrushConverter().ConvertFromString(Foreground),
+                        BorderBrush = (Brush)new BrushConverter().ConvertFromString(Color3),
                         BorderThickness = new Thickness(1),
                         VerticalAlignment = VerticalAlignment.Top,
                         CornerRadius = new CornerRadius(10),
@@ -404,7 +404,7 @@ namespace PixelCrypt2025.ViewModel.Base
                             Text = "Ok",
                             FontSize = 15,
                             Padding = new Thickness(10),
-                            Foreground = (Brush)new BrushConverter().ConvertFromString(Foreground),
+                            Foreground = (Brush)new BrushConverter().ConvertFromString(Color3),
                         },
                     };
 
@@ -450,7 +450,7 @@ namespace PixelCrypt2025.ViewModel.Base
                 {
                     FontSize = 13,
                     Content = title,
-                    Foreground = (Brush)new BrushConverter().ConvertFromString(Foreground),
+                    Foreground = (Brush)new BrushConverter().ConvertFromString(Color3),
                 },
                 Command = command,
                 Style = (Style)Application.Current.FindResource("BaseMenuItemStyle"),

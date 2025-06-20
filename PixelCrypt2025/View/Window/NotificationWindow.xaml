@@ -12,10 +12,10 @@
         MinHeight="200"
         MinWidth="300"
         MaxWidth="400"
-        Background="{Binding Background}"
+        Background="{Binding Color1}"
         SizeToContent="Height"
         VerticalAlignment="Center">
-    <Border BorderBrush="{Binding ContentBackground}"
+    <Border BorderBrush="{Binding Color2}"
             BorderThickness="10">
         <Grid>
             <Grid.RowDefinitions>
@@ -25,23 +25,23 @@
             </Grid.RowDefinitions>
 
             <Grid Grid.Row="0"
-                  Background="{Binding ContentBackground}">
+                  Background="{Binding Color2}">
                 <TextBlock Text="{Binding Title}"
                            Margin="0,0,5,10"
                            FontSize="15"
-                           Foreground="{Binding Foreground}"
+                           Foreground="{Binding Color3}"
                            TextWrapping="Wrap"/>
             </Grid>
 
             <Grid Grid.Row="1"
-                  Background="{Binding ContentBackground}">
+                  Background="{Binding Color2}">
                 <Border BorderThickness="1"
                         CornerRadius="10"
                         Padding="5"
-                        Background="{Binding Background}"
-                        BorderBrush="{Binding Foreground}">
+                        Background="{Binding Color1}"
+                        BorderBrush="{Binding Color3}">
                     <TextBlock Text="{Binding Content}"
-                               Foreground="{Binding Foreground}"
+                               Foreground="{Binding Color3}"
                                FontSize="15"
                                VerticalAlignment="Center"
                                HorizontalAlignment="Center"
@@ -50,7 +50,7 @@
             </Grid>
 
             <Grid Grid.Row="2"
-                  Background="{Binding ContentBackground}">
+                  Background="{Binding Color2}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="{Binding OkGridLength}"/>
                     <RowDefinition Height="{Binding YesNoGridLength}"/>

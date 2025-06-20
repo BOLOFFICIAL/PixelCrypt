@@ -8,7 +8,7 @@
       d:DesignHeight="400" 
       d:DesignWidth="600"
       Style="{StaticResource PageStyle}" 
-      Background="{Binding Background}"
+      Background="{Binding Color1}"
       Title="PixelCrypt">
 
     <Grid VerticalAlignment="Center"
@@ -23,7 +23,7 @@
                    Content="PixelCrypt"
                    FontWeight="Black"
                    FontSize="60"
-                   Foreground="{Binding Foreground}"
+                   Foreground="{Binding Color3}"
                    HorizontalAlignment="Center"
                    VerticalAlignment="Center"/>
         </Grid>
