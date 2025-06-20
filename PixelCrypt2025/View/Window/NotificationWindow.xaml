@@ -6,12 +6,103 @@
         xmlns:local="clr-namespace:PixelCrypt2025.View.Window"
         mc:Ignorable="d"
         WindowStyle="None"
-        WindowStartupLocation="CenterOwner"
-        Title="NotificationWindow" 
-        MinHeight="200" 
-        MinWidth="400">
-    <Grid>
-        <Frame Content="{Binding Path = NotificationPage}" 
-               NavigationUIVisibility = "Hidden"/>
-    </Grid>
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize"
+        Title="{Binding Title}" 
+        MinHeight="200"
+        MinWidth="300"
+        MaxWidth="400"
+        Background="{Binding Background}"
+        SizeToContent="Height"
+        VerticalAlignment="Center">
+    <Border BorderBrush="{Binding ContentBackground}"
+            BorderThickness="10">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0"
+                  Background="{Binding ContentBackground}">
+                <TextBlock Text="{Binding Title}"
+                           Margin="0,0,5,10"
+                           FontSize="15"
+                           Foreground="{Binding Foreground}"
+                           TextWrapping="Wrap"/>
+            </Grid>
+
+            <Grid Grid.Row="1"
+                  Background="{Binding ContentBackground}">
+                <Border BorderThickness="1"
+                        CornerRadius="10"
+                        Padding="5"
+                        Background="{Binding Background}"
+                        BorderBrush="{Binding Foreground}">
+                    <TextBlock Text="{Binding Content}"
+                               Foreground="{Binding Foreground}"
+                               FontSize="15"
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Center"
+                               TextWrapping="Wrap"/>
+                </Border>
+            </Grid>
+
+            <Grid Grid.Row="2"
+                  Background="{Binding ContentBackground}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="{Binding OkGridLength}"/>
+                    <RowDefinition Height="{Binding YesNoGridLength}"/>
+                    <RowDefinition Height="{Binding TextGridLength}"/>
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Row="0"
+                      Height="40"
+                      Margin="0,10,0,0"
+                      HorizontalAlignment="Center">
+                    <Button Content="Ok"
+                            FontSize="15"
+                            Width="60"
+                            Command="{Binding ReturnResultCommand}"
+                            CommandParameter="{Binding ResultTypeOk}"
+                            Style="{StaticResource ActionButtonStyle}" />
+                </Grid>
+
+                <Grid Grid.Row="1"
+                      Margin="0,10,0,0"
+                      Height="40"
+                      HorizontalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid Grid.Column="0"
+                          Margin="0,0,5,0">
+                        <Button Content="Да"
+                                FontSize="15"
+                                Width="60"
+                                Command="{Binding ReturnResultCommand}"
+                                CommandParameter="{Binding ResultTypeYes}"
+                                Style="{StaticResource ActionButtonStyle}" />
+                    </Grid>
+
+                    <Grid Grid.Column="1"
+                          Margin="5,0,0,0">
+                        <Button Content="Нет"
+                                FontSize="15"
+                                Width="60"
+                                Command="{Binding ReturnResultCommand}"
+                                CommandParameter="{Binding ResultTypeNo}"
+                                Style="{StaticResource ActionButtonStyle}" />
+                    </Grid>
+                </Grid>
+
+                <Grid Grid.Row="2">
+
+                </Grid>
+            </Grid>
+        </Grid>
+    </Border>
 </Window>

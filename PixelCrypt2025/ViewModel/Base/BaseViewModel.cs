@@ -26,6 +26,5 @@ namespace PixelCrypt2025.ViewModel.Base
         public string Background => Theme.Background;
         public string ContentBackground => Theme.ContentBackground;
         public string Foreground => Theme.Foreground;
-
     }
 }

@@ -1,5 +1,5 @@
 ﻿using PixelCrypt2025.ProgramData;
-using PixelCrypt2025.View.Page.MainWindow;
+using PixelCrypt2025.View.Page;
 
 namespace PixelCrypt2025.ViewModel.Window
 {

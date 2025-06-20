@@ -1,5 +1,7 @@
-﻿using PixelCrypt2025.ProgramData;
+﻿using PixelCrypt2025.Enum;
+using PixelCrypt2025.ProgramData;
 using PixelCrypt2025.ViewModel.Window;
+using System.Windows;
 
 namespace PixelCrypt2025.View.Window
 {
@@ -8,11 +10,11 @@ namespace PixelCrypt2025.View.Window
     /// </summary>
     public partial class NotificationWindow : System.Windows.Window
     {
-        public NotificationWindow()
+        public NotificationWindow(string content, string title, NotificationType type)
         {
             InitializeComponent();
-            Context.NotificationWindow = this;
-            DataContext = new NotificationWindowViewModel();
+            DataContext = new NotificationWindowViewModel(new Action(Close),content, title, type);
+            ShowDialog();
         }
     }
 }

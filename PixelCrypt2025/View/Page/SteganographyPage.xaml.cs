@@ -1,7 +1,7 @@
 ﻿using PixelCrypt2025.ProgramData;
-using PixelCrypt2025.ViewModel.Page.MainWindow;
+using PixelCrypt2025.ViewModel.Page;
 
-namespace PixelCrypt2025.View.Page.MainWindow
+namespace PixelCrypt2025.View.Page
 {
     /// <summary>
     /// Логика взаимодействия для SteganographyPage.xaml

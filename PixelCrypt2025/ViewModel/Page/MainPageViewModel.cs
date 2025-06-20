@@ -2,7 +2,7 @@
 using PixelCrypt2025.ProgramData;
 using System.Windows.Input;
 
-namespace PixelCrypt2025.ViewModel.Page.MainWindow
+namespace PixelCrypt2025.ViewModel.Page
 {
     class MainPageViewModel : Base.BaseViewModel
     {

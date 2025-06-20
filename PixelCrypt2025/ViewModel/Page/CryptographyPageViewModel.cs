@@ -5,7 +5,7 @@ using PixelCrypt2025.ViewModel.Base;
 using System.Windows;
 using System.Windows.Media;
 
-namespace PixelCrypt2025.ViewModel.Page.MainWindow
+namespace PixelCrypt2025.ViewModel.Page
 {
     internal class CryptographyPageViewModel : ImagePageViewModel
     {
@@ -57,7 +57,7 @@ namespace PixelCrypt2025.ViewModel.Page.MainWindow
 
             IsSuccessResult = result.IsSuccessResult;
 
-            MessageBox.Show($"{result.ResultMessage}", result.ResultTitle);
+            Notification.Show($"{result.ResultMessage}", result.ResultTitle);
 
             IsButtonFree = true;
             UpdateList();

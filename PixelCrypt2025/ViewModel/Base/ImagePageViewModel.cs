@@ -3,7 +3,7 @@ using PixelCrypt2025.Commands.Base;
 using PixelCrypt2025.Interfaces;
 using PixelCrypt2025.Model;
 using PixelCrypt2025.ProgramData;
-using PixelCrypt2025.View.Page.MainWindow;
+using PixelCrypt2025.View.Page;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -246,7 +246,7 @@ namespace PixelCrypt2025.ViewModel.Base
                 }
                 else if (imageList.Count() == 0)
                 {
-                    MessageBox.Show("Не удалось найти подходящие элементы", openFileDialog.Title);
+                    Notification.Show("Не удалось найти подходящие элементы", openFileDialog.Title);
                 }
             }
             if (ImagePage.InputImage.Count > 0)
@@ -344,7 +344,7 @@ namespace PixelCrypt2025.ViewModel.Base
             }
             else
             {
-                MessageBox.Show("Не удалось найти фаил, возможно он удален или перемещен");
+                Notification.Show("Не удалось найти фаил, возможно он удален или перемещен");
                 OnRemoveImageCommandExecuted(parametr);
             }
 
@@ -355,7 +355,7 @@ namespace PixelCrypt2025.ViewModel.Base
         {
             var result = ImagePage.SaveData();
 
-            MessageBox.Show($"{result.ResultMessage}", result.ResultTitle);
+            Notification.Show($"{result.ResultMessage}", result.ResultTitle);
         }
 
         private async Task<StackPanel> UpdateImageList()
@@ -486,6 +486,9 @@ namespace PixelCrypt2025.ViewModel.Base
             FilePathImageStackPanel = await UpdateImageList();
         }
 
-        protected bool AccessReset(string message, string title = "") => IsSuccessResult && MessageBox.Show($"{message}.\nПродолжить?", title, MessageBoxButton.YesNo) == MessageBoxResult.No;
+        protected bool AccessReset(string message, string title = "")
+        {
+            return IsSuccessResult && Notification.Show($"{message}.\nПродолжить?", title, Enum.NotificationType.YesNo).Result == Enum.NotificationResultType.No;
+        }
     }
 }

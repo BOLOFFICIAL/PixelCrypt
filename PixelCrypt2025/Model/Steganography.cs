@@ -1,6 +1,7 @@
-﻿using PixelCrypt2025.Interfaces;
+﻿using PixelCrypt2025.Enum;
+using PixelCrypt2025.Interfaces;
 using PixelCrypt2025.ProgramData;
-using PixelCrypt2025.View.Page.MainWindow;
+using PixelCrypt2025.View.Page;
 using System.Drawing;
 using System.IO;
 using System.Text;
@@ -122,7 +123,7 @@ namespace PixelCrypt2025.Model
                 {
                     exportFileData[2] = CryptoService.DecryptText(exportFileData[2], hashPassword);
 
-                    var doFile = MessageBox.Show("Экспортированные данные являются файлом.\nСформировать файл?", "Экспорт данных", MessageBoxButton.YesNo) == MessageBoxResult.Yes;
+                    var doFile = Notification.Show("Экспортированные данные являются файлом.\nСформировать файл?", "Экспорт данных", NotificationType.YesNo).Result == NotificationResultType.Yes;
 
                     if (doFile)
                     {

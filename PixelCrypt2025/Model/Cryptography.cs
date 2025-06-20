@@ -1,6 +1,6 @@
 ﻿using PixelCrypt2025.Interfaces;
 using PixelCrypt2025.ProgramData;
-using PixelCrypt2025.View.Page.MainWindow;
+using PixelCrypt2025.View.Page;
 using System.Drawing;
 
 namespace PixelCrypt2025.Model

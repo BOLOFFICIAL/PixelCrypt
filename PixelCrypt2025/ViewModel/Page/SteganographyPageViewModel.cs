@@ -1,12 +1,12 @@
 ﻿using Microsoft.Win32;
 using PixelCrypt2025.Commands.Base;
+using PixelCrypt2025.Enum;
 using PixelCrypt2025.Model;
 using PixelCrypt2025.ProgramData;
 using PixelCrypt2025.ViewModel.Base;
-using System.Windows;
 using System.Windows.Input;
 
-namespace PixelCrypt2025.ViewModel.Page.MainWindow
+namespace PixelCrypt2025.ViewModel.Page
 {
     internal class SteganographyPageViewModel : ImagePageViewModel
     {
@@ -80,7 +80,7 @@ namespace PixelCrypt2025.ViewModel.Page.MainWindow
 
             if (openFileDialog.ShowDialog() ?? false)
             {
-                if (InputData == null || InputData?.Length == 0 || InputData?.Length > 0 && MessageBox.Show("Заменить текст на данные из файла?", "Файл для чтения данных", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                if (InputData == null || InputData?.Length == 0 || InputData?.Length > 0 && Notification.Show("Заменить текст на данные из файла?", "Файл для чтения данных", NotificationType.YesNo).Result == NotificationResultType.Yes)
                 {
                     InputFilePath = openFileDialog.FileName;
 
@@ -128,7 +128,7 @@ namespace PixelCrypt2025.ViewModel.Page.MainWindow
                 IsReadOnlyInputData = InputFilePath?.Length > 0;
             }
 
-            MessageBox.Show($"{result.ResultMessage}", result.ResultTitle);
+            Notification.Show($"{result.ResultMessage}", result.ResultTitle);
 
             OnPropertyChanged("InputData");
             OnPropertyChanged("InputFilePath");
