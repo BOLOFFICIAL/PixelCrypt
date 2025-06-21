@@ -9,9 +9,9 @@ namespace PixelCrypt2025.ProgramData
 {
     internal class Notification
     {
-        public static NotificationResult Show(string content, string title = "PixelCrypt", NotificationType type = 0) 
+        public static NotificationResult Show(string content, string title = "PixelCrypt", NotificationType type = 0, NotificationStatus status = 0) 
         {
-            var notificationWindow = new NotificationWindow(content, title, type);
+            var notificationWindow = new NotificationWindow(content, title, type, status);
 
             var dataContext = notificationWindow.DataContext as NotificationWindowViewModel;
 

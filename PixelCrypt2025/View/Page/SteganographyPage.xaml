@@ -13,7 +13,7 @@
       Background="{Binding Color1}"
       Title="PixelCrypt">
 
-    <Grid>
+    <Grid KeyboardNavigation.TabNavigation="None">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>

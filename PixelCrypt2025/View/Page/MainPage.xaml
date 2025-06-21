@@ -12,6 +12,7 @@
       Title="PixelCrypt">
 
     <Grid VerticalAlignment="Center"
+          KeyboardNavigation.TabNavigation="None"
           HorizontalAlignment="Center">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>

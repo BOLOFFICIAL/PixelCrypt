@@ -1,5 +1,6 @@
 ﻿using Microsoft.Win32;
 using PixelCrypt2025.Commands.Base;
+using PixelCrypt2025.Enum;
 using PixelCrypt2025.Interfaces;
 using PixelCrypt2025.Model;
 using PixelCrypt2025.ProgramData;
@@ -246,7 +247,7 @@ namespace PixelCrypt2025.ViewModel.Base
                 }
                 else if (imageList.Count() == 0)
                 {
-                    Notification.Show("Не удалось найти подходящие элементы", openFileDialog.Title);
+                    Notification.Show("Не удалось найти подходящие элементы", openFileDialog.Title, status: NotificationStatus.Error);
                 }
             }
             if (ImagePage.InputImage.Count > 0)
@@ -344,7 +345,7 @@ namespace PixelCrypt2025.ViewModel.Base
             }
             else
             {
-                Notification.Show("Не удалось найти фаил, возможно он удален или перемещен");
+                Notification.Show("Не удалось найти фаил, возможно он удален или перемещен", "Просмотр изображения", status: NotificationStatus.Error);
                 OnRemoveImageCommandExecuted(parametr);
             }
 
@@ -355,7 +356,9 @@ namespace PixelCrypt2025.ViewModel.Base
         {
             var result = ImagePage.SaveData();
 
-            Notification.Show($"{result.ResultMessage}", result.ResultTitle);
+            var status = result.IsSuccessResult ? NotificationStatus.Success : NotificationStatus.Error;
+
+            Notification.Show($"{result.ResultMessage}", result.ResultTitle, status: status);
         }
 
         private async Task<StackPanel> UpdateImageList()
@@ -486,9 +489,9 @@ namespace PixelCrypt2025.ViewModel.Base
             FilePathImageStackPanel = await UpdateImageList();
         }
 
-        protected bool AccessReset(string message, string title = "")
+        protected bool AccessReset(string message, string title = "PixelCrypt")
         {
-            return IsSuccessResult && Notification.Show($"{message}.\nПродолжить?", title, Enum.NotificationType.YesNo).Result == Enum.NotificationResultType.No;
+            return IsSuccessResult && Notification.Show($"{message}.\nПродолжить?", title, NotificationType.YesNo, status: NotificationStatus.Question).Result == NotificationResultType.No;
         }
     }
 }

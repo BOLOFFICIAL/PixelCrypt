@@ -80,7 +80,7 @@ namespace PixelCrypt2025.ViewModel.Page
 
             if (openFileDialog.ShowDialog() ?? false)
             {
-                if (InputData == null || InputData?.Length == 0 || InputData?.Length > 0 && Notification.Show("Заменить текст на данные из файла?", "Файл для чтения данных", NotificationType.YesNo).Result == NotificationResultType.Yes)
+                if (InputData == null || InputData?.Length == 0 || InputData?.Length > 0 && Notification.Show("Заменить текст на данные из файла?", "Файл для чтения данных", NotificationType.YesNo, status: NotificationStatus.Question).Result == NotificationResultType.Yes)
                 {
                     InputFilePath = openFileDialog.FileName;
 
@@ -123,12 +123,16 @@ namespace PixelCrypt2025.ViewModel.Page
 
             IsSuccessResult = result.IsSuccessResult;
 
+            var status = NotificationStatus.Error;
+
             if (IsSuccessResult)
             {
-                IsReadOnlyInputData = InputFilePath?.Length > 0;
+                status = NotificationStatus.Success;
             }
 
-            Notification.Show($"{result.ResultMessage}", result.ResultTitle);
+            IsReadOnlyInputData = InputFilePath?.Length > 0;
+
+            Notification.Show($"{result.ResultMessage}", result.ResultTitle, status: status);
 
             OnPropertyChanged("InputData");
             OnPropertyChanged("InputFilePath");

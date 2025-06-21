@@ -123,7 +123,7 @@ namespace PixelCrypt2025.Model
                 {
                     exportFileData[2] = CryptoService.DecryptText(exportFileData[2], hashPassword);
 
-                    var doFile = Notification.Show("Экспортированные данные являются файлом.\nСформировать файл?", "Экспорт данных", NotificationType.YesNo).Result == NotificationResultType.Yes;
+                    var doFile = Notification.Show("Экспортированные данные являются файлом.\nСформировать файл?", "Экспорт данных", NotificationType.YesNo, NotificationStatus.Question).Result == NotificationResultType.Yes;
 
                     if (doFile)
                     {

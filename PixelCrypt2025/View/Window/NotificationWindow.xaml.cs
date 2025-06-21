@@ -10,10 +10,10 @@ namespace PixelCrypt2025.View.Window
     /// </summary>
     public partial class NotificationWindow : System.Windows.Window
     {
-        public NotificationWindow(string content, string title, NotificationType type)
+        public NotificationWindow(string content, string title, NotificationType type, NotificationStatus status)
         {
             InitializeComponent();
-            DataContext = new NotificationWindowViewModel(new Action(Close),content, title, type);
+            DataContext = new NotificationWindowViewModel(new Action(Close), content, title, type, status);
             ShowDialog();
         }
     }

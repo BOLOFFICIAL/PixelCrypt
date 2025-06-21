@@ -18,10 +18,11 @@ namespace PixelCrypt2025.ViewModel.Window
         private GridLength _okGridLength = Constants.GridLengthZero;
         private GridLength _yesNoGridLength = Constants.GridLengthZero;
         private GridLength _textGridLength = Constants.GridLengthZero;
+        private string _statusIcon;
 
         public ICommand ReturnResultCommand { get; }
 
-        public NotificationWindowViewModel(Action closeWindow, string content, string title, NotificationType type)
+        public NotificationWindowViewModel(Action closeWindow, string content, string title, NotificationType type, NotificationStatus status)
         {
             Content = content;
             Title = title;
@@ -31,6 +32,8 @@ namespace PixelCrypt2025.ViewModel.Window
             ReturnResultCommand = new LambdaCommand(OnReturnResultCommandExecuted);
 
             UpdateActions(type);
+
+            StatusIcon = UpdateStatus(status);
         }
 
         public NotificationResult NotificationResult { get; private set; } = new NotificationResult()
@@ -47,6 +50,12 @@ namespace PixelCrypt2025.ViewModel.Window
         {
             get => _content;
             set => Set(ref _content, value);
+        }
+
+        public string StatusIcon 
+        {
+            get => _statusIcon;
+            set => Set(ref _statusIcon, value);
         }
 
         public string Title
@@ -96,16 +105,27 @@ namespace PixelCrypt2025.ViewModel.Window
         {
             switch (type)
             {
-                case NotificationType.Ok: 
-                    OkGridLength = Constants.GridLengthStar; 
+                case NotificationType.Ok:
+                    OkGridLength = Constants.GridLengthStar;
                     break;
-                case NotificationType.YesNo: 
-                    YesNoGridLength = Constants.GridLengthStar; 
+                case NotificationType.YesNo:
+                    YesNoGridLength = Constants.GridLengthStar;
                     break;
-                case NotificationType.Text: 
-                    TextGridLength = Constants.GridLengthStar; 
+                case NotificationType.Text:
+                    TextGridLength = Constants.GridLengthStar;
                     break;
             }
+        }
+
+        private string UpdateStatus(NotificationStatus status)
+        {
+            return status switch
+            {
+                NotificationStatus.Success => "Solid_CheckCircle", //Solid_CheckSquare
+                NotificationStatus.Error => "Solid_TimesCircle", //Solid_Times
+                NotificationStatus.Question => "Solid_ExclamationCircle", //Solid_ExclamationTriangle
+                _ => "Solid_Ban"
+            };
         }
     }
 }
