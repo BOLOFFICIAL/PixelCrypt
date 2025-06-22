@@ -33,7 +33,7 @@ namespace PixelCrypt2025.Model
                     return new ActionResult()
                     {
                         IsSuccessResult = false,
-                        ResultMessage = "Ошибка: Нет данных для импорта",
+                        ResultMessage = "Нет данных для импорта",
                         ResultTitle = "Импорт данных",
                     };
                 }
@@ -83,12 +83,12 @@ namespace PixelCrypt2025.Model
                 return new ActionResult()
                 {
                     IsSuccessResult = false,
-                    ResultMessage = $"Ошибка: {ex.Message}",
+                    ResultMessage = $"{ex.Message}",
                     ResultTitle = "Импорт данных",
                 };
             }
         }
-
+         
         internal async Task<ActionResult> Export(string password)
         {
             var result = new ActionResult();
@@ -177,7 +177,7 @@ namespace PixelCrypt2025.Model
                 return new ActionResult()
                 {
                     IsSuccessResult = false,
-                    ResultMessage = $"Ошибка: {ex.Message}",
+                    ResultMessage = $"{ex.Message}",
                     ResultTitle = "Экспорт данных",
                 };
             }
@@ -200,7 +200,7 @@ namespace PixelCrypt2025.Model
                 return new ActionResult()
                 {
                     IsSuccessResult = false,
-                    ResultMessage = "Ошибка: Нет данных для сохранения",
+                    ResultMessage = "Нет данных для сохранения",
                     ResultTitle = "Экспорт"
                 };
             }

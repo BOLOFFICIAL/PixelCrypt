@@ -216,7 +216,7 @@ namespace PixelCrypt2025.ViewModel.Base
             Context.MainWindowViewModel.CurrentPage = new MainPage();
         }
 
-        protected void OnAddImageCommandExecuted(object p = null)
+        protected virtual void OnAddImageCommandExecuted(object p = null)
         {
             if (AccessReset("Добавление элемента приведет к потере рузльтата")) return;
 
@@ -341,7 +341,7 @@ namespace PixelCrypt2025.ViewModel.Base
             else if (System.IO.File.Exists(parametr.Path))
             {
                 SelecedImage = parametr;
-                ViewImageWidth = new GridLength(4, GridUnitType.Star);
+                ViewImageWidth = Constants.GridLengthStar;
             }
             else
             {
@@ -397,8 +397,7 @@ namespace PixelCrypt2025.ViewModel.Base
                 {
                     var border = new Border
                     {
-                        BorderBrush = (Brush)new BrushConverter().ConvertFromString(Color3),
-                        BorderThickness = new Thickness(1),
+                        Background = (Brush)new BrushConverter().ConvertFromString(Palette.Color5),
                         VerticalAlignment = VerticalAlignment.Top,
                         CornerRadius = new CornerRadius(10),
                         Margin = new Thickness(0, 0, 10, 0),

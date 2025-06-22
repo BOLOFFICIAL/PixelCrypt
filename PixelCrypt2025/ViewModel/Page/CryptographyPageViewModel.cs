@@ -63,12 +63,17 @@ namespace PixelCrypt2025.ViewModel.Page
             UpdateList();
         }
 
+        protected override void OnAddImageCommandExecuted(object p = null)
+        {
+            base.OnAddImageCommandExecuted(p);
+            UpdateResultImage(SelecedImage);
+        }
+
         protected override void OnRemoveImageCommandExecuted(object p = null)
         {
             if (p is not Image parametr) return;
 
             base.OnRemoveImageCommandExecuted(parametr);
-
             UpdateResultImage(parametr);
         }
 
@@ -77,7 +82,6 @@ namespace PixelCrypt2025.ViewModel.Page
             if (p is not Image parametr) return;
 
             base.OnShowImageCommandExecuted(parametr);
-
             UpdateResultImage(parametr);
         }
 

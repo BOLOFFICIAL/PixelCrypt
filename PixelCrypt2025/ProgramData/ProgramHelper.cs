@@ -83,7 +83,7 @@ namespace PixelCrypt2025.ProgramData
                 return new ActionResult()
                 {
                     IsSuccessResult = false,
-                    ResultMessage = $"Ошибка: {ex.Message}",
+                    ResultMessage = $"{ex.Message}",
                     ResultTitle = "Сохранение данных",
                 };
             }
@@ -138,7 +138,7 @@ namespace PixelCrypt2025.ProgramData
                     Result = new ActionResult()
                     {
                         IsSuccessResult = false,
-                        ResultMessage = $"Ошибка: {ex.Message}",
+                        ResultMessage = $"{ex.Message}",
                         ResultTitle = "Сохранение данных",
                     },
                 };
@@ -155,7 +155,7 @@ namespace PixelCrypt2025.ProgramData
                     return new ActionResult()
                     {
                         IsSuccessResult = false,
-                        ResultMessage = "Ошибка: Нет данных для сохранения",
+                        ResultMessage = "Нет данных для сохранения",
                         ResultTitle = "Сохраение данных",
                     };
                 }
@@ -193,7 +193,7 @@ namespace PixelCrypt2025.ProgramData
 
                 return new ActionResult()
                 {
-                    IsSuccessResult = true,
+                    IsSuccessResult = false,
                     ResultMessage = $"Данные не сохранены",
                     ResultTitle = "Сохраение данных",
                 };
@@ -203,7 +203,7 @@ namespace PixelCrypt2025.ProgramData
                 return new ActionResult()
                 {
                     IsSuccessResult = false,
-                    ResultMessage = $"Ошибка: {ex.Message}",
+                    ResultMessage = $"{ex.Message}",
                     ResultTitle = "Сохранение данных",
                 };
             }

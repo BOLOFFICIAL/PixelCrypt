@@ -71,7 +71,7 @@ namespace PixelCrypt2025.Model
                 return new ActionResult()
                 {
                     IsSuccessResult = false,
-                    ResultMessage = $"Ошибка: {ex.Message}",
+                    ResultMessage = $"{ex.Message}",
                     ResultTitle = "",
                 };
             }
