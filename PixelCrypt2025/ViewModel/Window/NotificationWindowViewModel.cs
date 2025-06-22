@@ -19,6 +19,7 @@ namespace PixelCrypt2025.ViewModel.Window
         private GridLength _yesNoGridLength = Constants.GridLengthZero;
         private GridLength _textGridLength = Constants.GridLengthZero;
         private string _statusIcon;
+        private string _statusColor;
 
         public ICommand ReturnResultCommand { get; }
 
@@ -32,8 +33,7 @@ namespace PixelCrypt2025.ViewModel.Window
             ReturnResultCommand = new LambdaCommand(OnReturnResultCommandExecuted);
 
             UpdateActions(type);
-
-            StatusIcon = UpdateStatus(status);
+            UpdateStatus(status);
         }
 
         public NotificationResult NotificationResult { get; private set; } = new NotificationResult()
@@ -46,13 +46,19 @@ namespace PixelCrypt2025.ViewModel.Window
         public NotificationResultType ResultTypeNo => NotificationResultType.No;
         public NotificationResultType ResultTypeText => NotificationResultType.Text;
 
+        public string StatusColor
+        {
+            get => _statusColor;
+            set => Set(ref _statusColor, value);
+        }
+
         public string Content
         {
             get => _content;
             set => Set(ref _content, value);
         }
 
-        public string StatusIcon 
+        public string StatusIcon
         {
             get => _statusIcon;
             set => Set(ref _statusIcon, value);
@@ -117,15 +123,35 @@ namespace PixelCrypt2025.ViewModel.Window
             }
         }
 
-        private string UpdateStatus(NotificationStatus status)
+        private void UpdateStatus(NotificationStatus status)
         {
-            return status switch
+            switch (status)
             {
-                NotificationStatus.Success => "Solid_CheckCircle", //Solid_CheckSquare
-                NotificationStatus.Error => "Solid_TimesCircle", //Solid_Times
-                NotificationStatus.Question => "Solid_ExclamationCircle", //Solid_ExclamationTriangle
-                _ => "Solid_Ban"
-            };
+                case NotificationStatus.Success:
+                    {
+                        StatusIcon = "Solid_CheckCircle";
+                        StatusColor = Palette.Color5;
+                    }
+                    break;
+                case NotificationStatus.Error:
+                    {
+                        StatusIcon = "Solid_TimesCircle";
+                        StatusColor = Palette.Color4;
+                    }
+                    break;
+                case NotificationStatus.Question:
+                    {
+                        StatusIcon = "Solid_ExclamationTriangle";
+                        StatusColor = Palette.Color6;
+                    }
+                    break;
+                default:
+                    {
+                        StatusIcon = "Solid_Ban";
+                        StatusColor = Palette.Color3;
+                    }
+                    break;
+            }
         }
     }
 }
