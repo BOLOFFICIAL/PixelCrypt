@@ -293,14 +293,8 @@ namespace PixelCrypt2025.ViewModel.Base
         {
             if (p is not Model.Image parametr) return;
 
-            if (ImagePage.OutputImage.ContainsKey(parametr) && AccessReset("Удаление элемента приведет к потере рузльтата")) return;
-
-            if (IsSuccessResult && ImagePage.OutputImage.ContainsKey(parametr))
-            {
-                IsSuccessResult = false;
-            }
-
             ImagePage.InputImage.Remove(parametr);
+            ImagePage.OutputImage.Remove(parametr);
 
             UpdateList();
 

@@ -73,7 +73,7 @@ namespace PixelCrypt2025.ProgramData
 
                 return new ActionResult()
                 {
-                    IsSuccessResult = true,
+                    IsSuccessResult = false,
                     ResultMessage = $"Данные не сохранены",
                     ResultTitle = "Сохранение данных",
                 };

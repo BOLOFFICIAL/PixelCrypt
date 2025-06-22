@@ -141,6 +141,20 @@ namespace PixelCrypt2025.ViewModel.Page
             UpdateList();
         }
 
+        protected override void OnRemoveImageCommandExecuted(object p = null)
+        {
+            if (p is not Model.Image parametr) return;
+
+            if (ImagePage.OutputImage.ContainsKey(parametr) && AccessReset("Удаление элемента приведет к потере рузльтата")) return;
+
+            if (IsSuccessResult && ImagePage.OutputImage.ContainsKey(parametr))
+            {
+                IsSuccessResult = false;
+            }
+
+            base.OnRemoveImageCommandExecuted(parametr);
+        }
+
         protected override void OnMoveUpImageCommandExecuted(object p = null)
         {
             if (AccessReset("Изменение порядка приведет к потере рузльтата")) return;
