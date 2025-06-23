@@ -123,12 +123,7 @@ namespace PixelCrypt2025.ViewModel.Page
 
             IsSuccessResult = result.IsSuccessResult;
 
-            var status = NotificationStatus.Error;
-
-            if (IsSuccessResult)
-            {
-                status = NotificationStatus.Success;
-            }
+            var status = IsSuccessResult ? NotificationStatus.Success : NotificationStatus.Error;
 
             IsReadOnlyInputData = InputFilePath?.Length > 0;
 

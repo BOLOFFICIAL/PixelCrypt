@@ -20,7 +20,7 @@ namespace PixelCrypt2025.Model
         internal async Task<ActionResult> Decrypt(string password)
         {
             var res = await Encryption(password, CryptoService.DecryptPhoto);
-            res.ResultTitle = "Расшифровывание данных";
+            res.ResultTitle = "Расшифрование";
 
             if (res.IsSuccessResult)
                 res.ResultMessage = "Данные успешно расшифрованы";
@@ -31,7 +31,7 @@ namespace PixelCrypt2025.Model
         internal async Task<ActionResult> Encrypt(string password)
         {
             var res = await Encryption(password, CryptoService.EncryptPhoto);
-            res.ResultTitle = "Зашифровывание данных";
+            res.ResultTitle = "Шифрование";
 
             if (res.IsSuccessResult)
                 res.ResultMessage = "Данные успешно зашифрованы";
@@ -71,7 +71,7 @@ namespace PixelCrypt2025.Model
                 return new ActionResult()
                 {
                     IsSuccessResult = false,
-                    ResultMessage = $"{ex.Message}",
+                    ResultMessage = $"Неизвестная ошибка: {ex.Message}",
                     ResultTitle = "",
                 };
             }

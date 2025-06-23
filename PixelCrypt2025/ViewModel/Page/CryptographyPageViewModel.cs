@@ -1,4 +1,5 @@
 ﻿using PixelCrypt2025.Commands.Base;
+using PixelCrypt2025.Enum;
 using PixelCrypt2025.Model;
 using PixelCrypt2025.ProgramData;
 using PixelCrypt2025.ViewModel.Base;
@@ -57,7 +58,9 @@ namespace PixelCrypt2025.ViewModel.Page
 
             IsSuccessResult = result.IsSuccessResult;
 
-            Notification.Show($"{result.ResultMessage}", result.ResultTitle);
+            var status = IsSuccessResult ? NotificationStatus.Success : NotificationStatus.Error;
+
+            Notification.Show($"{result.ResultMessage}", result.ResultTitle, status: status);
 
             IsButtonFree = true;
             UpdateList();

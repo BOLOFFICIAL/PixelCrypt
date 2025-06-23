@@ -21,6 +21,7 @@ namespace PixelCrypt2025.Model
 
         internal async Task<ActionResult> Import(string password)
         {
+            var title = "Импорт данных";
             try
             {
                 _saveAction = SaveImport;
@@ -34,7 +35,7 @@ namespace PixelCrypt2025.Model
                     {
                         IsSuccessResult = false,
                         ResultMessage = "Нет данных для импорта",
-                        ResultTitle = "Импорт данных",
+                        ResultTitle = title,
                     };
                 }
 
@@ -73,7 +74,7 @@ namespace PixelCrypt2025.Model
                 {
                     IsSuccessResult = true,
                     ResultMessage = "Данные успешно импортированы",
-                    ResultTitle = "Импорт данных",
+                    ResultTitle = title,
                 };
             }
             catch (Exception ex)
@@ -83,8 +84,8 @@ namespace PixelCrypt2025.Model
                 return new ActionResult()
                 {
                     IsSuccessResult = false,
-                    ResultMessage = $"{ex.Message}",
-                    ResultTitle = "Импорт данных",
+                    ResultMessage = $"Неизвестная ошибка: {ex.Message}",
+                    ResultTitle = title,
                 };
             }
         }
@@ -92,6 +93,8 @@ namespace PixelCrypt2025.Model
         internal async Task<ActionResult> Export(string password)
         {
             var result = new ActionResult();
+
+            var title = "Экспорт данных";
 
             _saveAction = SaveExport;
 
@@ -139,6 +142,19 @@ namespace PixelCrypt2025.Model
                             DataFile.Path = res.FilePath;
                             DataFile.Name = System.IO.Path.GetFileName(res.FilePath);
                         }
+                        else 
+                        {
+                            DataFile.Content = exportFileData[2];
+                            DataFile.Path = "";
+                            DataFile.Name = "";
+
+                            result = new ActionResult()
+                            {
+                                IsSuccessResult = true,
+                                ResultMessage = "Фаил экспортирован без формирования",
+                                ResultTitle = title,
+                            };
+                        }
                     }
                     else
                     {
@@ -150,7 +166,7 @@ namespace PixelCrypt2025.Model
                         {
                             IsSuccessResult = true,
                             ResultMessage = "Фаил экспортирован без формирования",
-                            ResultTitle = "Экспорт данных",
+                            ResultTitle = title,
                         };
                     }
                 }
@@ -162,7 +178,7 @@ namespace PixelCrypt2025.Model
                     {
                         IsSuccessResult = true,
                         ResultMessage = "Данные успешно экспортрованы",
-                        ResultTitle = "Экспорт данных",
+                        ResultTitle = title,
                     };
                 }
 
@@ -177,8 +193,8 @@ namespace PixelCrypt2025.Model
                 return new ActionResult()
                 {
                     IsSuccessResult = false,
-                    ResultMessage = $"{ex.Message}",
-                    ResultTitle = "Экспорт данных",
+                    ResultMessage = $"Неизвестная ошибка: {ex.Message}",
+                    ResultTitle = title,
                 };
             }
         }

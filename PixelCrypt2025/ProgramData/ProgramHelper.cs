@@ -43,6 +43,8 @@ namespace PixelCrypt2025.ProgramData
 
         public static ActionResult SaveDataToFile(string fileName, string filter, string data)
         {
+            var title = "Сохранение данных";
+
             try
             {
                 var saveFileDialog = new SaveFileDialog
@@ -66,8 +68,8 @@ namespace PixelCrypt2025.ProgramData
                     return new ActionResult()
                     {
                         IsSuccessResult = true,
-                        ResultMessage = $"Данные сохранены в папке {Path.GetFileName(selectedFilePath)}",
-                        ResultTitle = "Сохранение данных",
+                        ResultMessage = $"Данные сохранены в файле {Path.GetFileName(selectedFilePath)}",
+                        ResultTitle = title,
                     };
                 }
 
@@ -75,7 +77,7 @@ namespace PixelCrypt2025.ProgramData
                 {
                     IsSuccessResult = false,
                     ResultMessage = $"Данные не сохранены",
-                    ResultTitle = "Сохранение данных",
+                    ResultTitle = title,
                 };
             }
             catch (Exception ex)
@@ -83,14 +85,16 @@ namespace PixelCrypt2025.ProgramData
                 return new ActionResult()
                 {
                     IsSuccessResult = false,
-                    ResultMessage = $"{ex.Message}",
-                    ResultTitle = "Сохранение данных",
+                    ResultMessage = $"Неизвестная ошибка: {ex.Message}",
+                    ResultTitle = title,
                 };
             }
         }
 
         public static SaveDataResult SaveDataToFile(string fileName, string filter, byte[] data)
         {
+            var title = "Сохранение данных";
+
             try
             {
                 var saveFileDialog = new SaveFileDialog
@@ -117,7 +121,7 @@ namespace PixelCrypt2025.ProgramData
                         {
                             IsSuccessResult = true,
                             ResultMessage = $"Фаил {Path.GetFileName(selectedFilePath)} успешно сохранен",
-                            ResultTitle = "Сохранение данных",
+                            ResultTitle = title,
                         },
                         FilePath = selectedFilePath
                     };
@@ -127,7 +131,9 @@ namespace PixelCrypt2025.ProgramData
                 {
                     Result = new ActionResult()
                     {
-                        IsSuccessResult = true,
+                        IsSuccessResult = false,
+                        ResultMessage = "Данные не сохранены",
+                        ResultTitle = title,
                     }
                 };
             }
@@ -138,8 +144,8 @@ namespace PixelCrypt2025.ProgramData
                     Result = new ActionResult()
                     {
                         IsSuccessResult = false,
-                        ResultMessage = $"{ex.Message}",
-                        ResultTitle = "Сохранение данных",
+                        ResultMessage = $"Неизвестная ошибка: {ex.Message}",
+                        ResultTitle = title,
                     },
                 };
             }
@@ -148,6 +154,8 @@ namespace PixelCrypt2025.ProgramData
 
         public static ActionResult SaveBitmapToFolder(Dictionary<Model.Image, Bitmap> images)
         {
+            var title = "Сохранение данных";
+
             try
             {
                 if (images.Count == 0)
@@ -156,7 +164,7 @@ namespace PixelCrypt2025.ProgramData
                     {
                         IsSuccessResult = false,
                         ResultMessage = "Нет данных для сохранения",
-                        ResultTitle = "Сохраение данных",
+                        ResultTitle = title,
                     };
                 }
 
@@ -187,7 +195,7 @@ namespace PixelCrypt2025.ProgramData
                     {
                         IsSuccessResult = true,
                         ResultMessage = $"Данные сохранены в папке {Path.GetFileName(folderPicker.FileName)}",
-                        ResultTitle = "Сохраение данных",
+                        ResultTitle = title,
                     };
                 }
 
@@ -195,7 +203,7 @@ namespace PixelCrypt2025.ProgramData
                 {
                     IsSuccessResult = false,
                     ResultMessage = $"Данные не сохранены",
-                    ResultTitle = "Сохраение данных",
+                    ResultTitle = title,
                 };
             }
             catch (Exception ex)
@@ -203,8 +211,8 @@ namespace PixelCrypt2025.ProgramData
                 return new ActionResult()
                 {
                     IsSuccessResult = false,
-                    ResultMessage = $"{ex.Message}",
-                    ResultTitle = "Сохранение данных",
+                    ResultMessage = $"Неизвестная ошибка: {ex.Message}",
+                    ResultTitle = title,
                 };
             }
         }
