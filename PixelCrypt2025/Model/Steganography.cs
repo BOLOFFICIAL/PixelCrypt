@@ -5,7 +5,6 @@ using PixelCrypt2025.View.Page;
 using System.Drawing;
 using System.IO;
 using System.Text;
-using System.Windows;
 
 namespace PixelCrypt2025.Model
 {
@@ -89,7 +88,7 @@ namespace PixelCrypt2025.Model
                 };
             }
         }
-         
+
         internal async Task<ActionResult> Export(string password)
         {
             var result = new ActionResult();
@@ -142,7 +141,7 @@ namespace PixelCrypt2025.Model
                             DataFile.Path = res.FilePath;
                             DataFile.Name = System.IO.Path.GetFileName(res.FilePath);
                         }
-                        else 
+                        else
                         {
                             DataFile.Content = exportFileData[2];
                             DataFile.Path = "";
