@@ -125,7 +125,7 @@ namespace PixelCrypt2025.Model
                 {
                     exportFileData[2] = CryptoService.DecryptText(exportFileData[2], hashPassword);
 
-                    var doFile = Notification.Show("Экспортированные данные являются файлом.\nСформировать файл?", "Экспорт данных", NotificationType.YesNo, NotificationStatus.Question).Result == NotificationResultType.Yes;
+                    var doFile = Notification.Show("Экспортированные данные являются файлом.\nСобрать файл?", "Экспорт данных", NotificationType.YesNo, NotificationStatus.Question).Result == NotificationResultType.Yes;
 
                     if (doFile)
                     {
@@ -150,7 +150,7 @@ namespace PixelCrypt2025.Model
                             result = new ActionResult()
                             {
                                 IsSuccessResult = true,
-                                ResultMessage = "Фаил экспортирован без формирования",
+                                ResultMessage = "Фаил экспортирован без сборки",
                                 ResultTitle = title,
                             };
                         }
