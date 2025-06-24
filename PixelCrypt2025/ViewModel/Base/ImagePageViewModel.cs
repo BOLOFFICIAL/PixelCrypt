@@ -21,6 +21,7 @@ namespace PixelCrypt2025.ViewModel.Base
         private string _imageLength = "";
         private string _imageExtension = "";
         private string _imagePermission = "";
+        private string _progress = "";
 
         private Model.Image _selecedImage = null;
 
@@ -32,6 +33,7 @@ namespace PixelCrypt2025.ViewModel.Base
         private GridLength _addGridHeight = Constants.GridLengthZero;
         private GridLength _dataGridHeight = Constants.GridLengthZero;
         private GridLength _viewImageWidth = Constants.GridLengthZero;
+        private GridLength _progressWidth = Constants.GridLengthZero;
 
         private bool _isOpenPassword = false;
         private bool _isSuccessResult = false;
@@ -117,6 +119,12 @@ namespace PixelCrypt2025.ViewModel.Base
             set => Set(ref _showPasword, value);
         }
 
+        public string Progress 
+        {
+            get => _progress;
+            set => Set(ref _progress, value);
+        }
+
         public string Password
         {
             get => _password;
@@ -181,6 +189,12 @@ namespace PixelCrypt2025.ViewModel.Base
         {
             get => _dataGridHeight;
             set => Set(ref _dataGridHeight, value);
+        }
+
+        public GridLength ProgressWidth 
+        {
+            get => _progressWidth;
+            set => Set(ref _progressWidth, value);
         }
 
         public GridLength ViewImageWidth
@@ -360,6 +374,11 @@ namespace PixelCrypt2025.ViewModel.Base
             var stackPanel = new StackPanel();
 
             var index = 0;
+
+            var total = ImagePage.InputImage.Select(i => i.Width * i.Height).Sum();
+            var converted = ImagePage.OutputImage.Select(i => i.Key.Width * i.Key.Height).Sum();
+            
+            Progress = $"{converted * 100.0 / total:0.##} %";
 
             foreach (var imageData in ImagePage.InputImage)
             {

@@ -119,15 +119,17 @@ namespace PixelCrypt2025.ViewModel.Page
             IsReadOnlyInputData = true;
             IsButtonFree = false;
 
+            ProgressWidth = Constants.GridLengthAuto;
             var result = await doAction(Password);
-
-            IsSuccessResult = result.IsSuccessResult;
-
-            var status = IsSuccessResult ? NotificationStatus.Success : NotificationStatus.Error;
+            var successResult = result.IsSuccessResult;
+            var status = successResult ? NotificationStatus.Success : NotificationStatus.Error;
 
             IsReadOnlyInputData = InputFilePath?.Length > 0;
 
             Notification.Show($"{result.ResultMessage}", result.ResultTitle, status: status);
+            
+            ProgressWidth = Constants.GridLengthZero;
+            IsSuccessResult = successResult;
 
             OnPropertyChanged("InputData");
             OnPropertyChanged("InputFilePath");

@@ -14,7 +14,7 @@ namespace PixelCrypt2025.Model
 
         public ActionResult SaveData()
         {
-            return ProgramHelper.SaveBitmapToFolder(OutputImage);
+            return FileHelper.SaveBitmapToFolder(OutputImage);
         }
 
         internal async Task<ActionResult> Decrypt(string password)

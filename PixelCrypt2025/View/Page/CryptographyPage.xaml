@@ -229,6 +229,7 @@
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="auto"/>
                                     <ColumnDefinition Width="{Binding SaveDataWidth}"/>
+                                    <ColumnDefinition Width="{Binding ProgressWidth}"/>
                                 </Grid.ColumnDefinitions>
 
                                 <Grid Grid.Column="0">
@@ -283,6 +284,21 @@
                                                    FontSize="20"
                                                    TextAlignment="Center"/>
                                     </Button>
+                                </Grid>
+
+                                <Grid Grid.Column="2"
+                                      Margin="0,0,10,0">
+                                    <Border Height="35"
+                                            CornerRadius="10"
+                                            BorderThickness="1"
+                                            BorderBrush="{Binding Color3}"
+                                            Width="150">
+                                        <TextBlock Text="{Binding Progress}"
+                                                   Foreground="{Binding Color3}"
+                                                   VerticalAlignment="Center"
+                                                   FontSize="20"
+                                                   TextAlignment="Center"/>
+                                    </Border>
                                 </Grid>
                             </Grid>
                         </Border>

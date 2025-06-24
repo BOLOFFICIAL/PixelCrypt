@@ -72,6 +72,8 @@ namespace PixelCrypt2025.Model
 
                 var lines = ProgramHelper.SplitStringIntoParts(binary, distributeData);
 
+                binary = "";
+
                 if (lines == null) 
                 {
                     return new ActionResult()
@@ -85,6 +87,7 @@ namespace PixelCrypt2025.Model
                 for (int i = 0; i < InputImage.Count; i++)
                 {
                     var bitmapResult = await ImageHelper.ImportDataToImage(lines[i], InputImage[i].Path);
+                    lines[i] = "";
                     OutputImage.Add(InputImage[i], bitmapResult);
                     if (Context.MainWindowViewModel.CurrentPage.GetType() == typeof(SteganographyPage) && Context.MainWindow.IsActive)
                     {
@@ -153,7 +156,7 @@ namespace PixelCrypt2025.Model
 
                     if (doFile)
                     {
-                        var res = ProgramHelper.SaveDataToFile(exportFileData[0], $"Файлы (*{exportFileData[1]})|*{exportFileData[1]}", Convert.FromBase64String(exportFileData[2]));
+                        var res = FileHelper.SaveDataToFile(exportFileData[0], $"Файлы (*{exportFileData[1]})|*{exportFileData[1]}", Convert.FromBase64String(exportFileData[2]));
 
                         result = res.Result;
 
@@ -229,7 +232,7 @@ namespace PixelCrypt2025.Model
 
         private ActionResult SaveImport()
         {
-            return ProgramHelper.SaveBitmapToFolder(OutputImage);
+            return FileHelper.SaveBitmapToFolder(OutputImage);
         }
 
         private ActionResult SaveExport()
@@ -244,7 +247,7 @@ namespace PixelCrypt2025.Model
                 };
             }
 
-            return ProgramHelper.SaveDataToFile($"PixelCrypt_{DateTime.Now:yyyyMMddHHmmss}", $"Файлы (*.txt)|*.txt", DataFile.Content);
+            return FileHelper.SaveDataToFile($"PixelCrypt_{DateTime.Now:yyyyMMddHHmmss}", $"Файлы (*.txt)|*.txt", DataFile.Content).Result;
         }
     }
 }
