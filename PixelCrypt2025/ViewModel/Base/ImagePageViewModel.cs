@@ -457,12 +457,20 @@ namespace PixelCrypt2025.ViewModel.Base
 
         private void AddImage(string filepath)
         {
-            foreach (var image in ImagePage.InputImage)
+            foreach (var inputImage in ImagePage.InputImage)
             {
-                if (image.Path == filepath) return;
+                if (inputImage.Path == filepath) return;
             }
 
-            ImagePage.InputImage.Add(new Model.Image(filepath));
+            var image = new Model.Image(filepath);
+
+            if (image.Name.Length > 150) 
+            {
+                Notification.Show($"Файл\n\n{image.Name}\n\nимеет слишком длинное имя, измените имя или замените файл", "Добавление изображения", status: NotificationStatus.Error);
+                return;
+            }
+
+            ImagePage.InputImage.Add(image);
         }
 
         private void MoveImage(Model.Image image, int direction)

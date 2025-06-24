@@ -199,6 +199,7 @@ namespace PixelCrypt2025.ProgramData
         public static ActionResult SaveBitmapToFolder(Dictionary<Model.Image, Bitmap> images)
         {
             var title = "Сохранение данных";
+            Model.Image currentElement = null;
 
             try
             {
@@ -231,7 +232,8 @@ namespace PixelCrypt2025.ProgramData
 
                     foreach (var el in images)
                     {
-                        var name = Path.Combine(folderPicker.FileName, Path.GetFileNameWithoutExtension(el.Key.Path) + $"_PixelCrypt_{now:yyyyMMddHHmmss}.png");
+                        currentElement = el.Key;
+                        var name = Path.Combine(folderPicker.FileName, Path.GetFileNameWithoutExtension(currentElement.Path) + $"_PixelCrypt_{now:yyyyMMddHHmmss}.png");
                         el.Value.Save(name, ImageFormat.Png);
                     }
 
@@ -255,7 +257,7 @@ namespace PixelCrypt2025.ProgramData
                 return new ActionResult()
                 {
                     IsSuccessResult = false,
-                    ResultMessage = $"Неизвестная ошибка: {ex.Message}",
+                    ResultMessage = $"В процессе сохранения данных для\n\n{currentElement?.Name}\n\nвозникла неизвестная ошибка: {ex.Message}",
                     ResultTitle = title,
                 };
             }
