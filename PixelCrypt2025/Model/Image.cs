@@ -8,7 +8,9 @@ namespace PixelCrypt2025.Model
         public string Name { get; private set; }
         public long Length { get; private set; }
         public string Extension { get; private set; }
-        public string Permission { get; private set; }
+        public string Permission => $"{Width} x {Height}";
+        public int Width { get; private set; }
+        public int Height { get; private set; }
 
         public Image(string filepath)
         {
@@ -39,7 +41,8 @@ namespace PixelCrypt2025.Model
             {
                 using (System.Drawing.Image img = System.Drawing.Image.FromFile(imagePath))
                 {
-                    Permission = $"{img.Width} x {img.Height}";
+                    Width = img.Width;
+                    Height = img.Height;
                 }
             }
             catch { }

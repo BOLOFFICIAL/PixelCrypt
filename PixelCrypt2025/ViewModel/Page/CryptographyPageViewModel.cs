@@ -77,7 +77,7 @@ namespace PixelCrypt2025.ViewModel.Page
             if (p is not Image parametr) return;
 
             base.OnRemoveImageCommandExecuted(parametr);
-            UpdateResultImage(parametr);
+            UpdateResultImage(SelecedImage);
         }
 
         protected override void OnShowImageCommandExecuted(object p = null)

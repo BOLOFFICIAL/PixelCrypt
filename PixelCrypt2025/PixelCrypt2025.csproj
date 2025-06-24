@@ -7,6 +7,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
     <ApplicationIcon>PixelCryptLogo.ico</ApplicationIcon>
+    <LangVersion>preview</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>

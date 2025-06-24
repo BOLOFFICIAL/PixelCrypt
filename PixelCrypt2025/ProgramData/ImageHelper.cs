@@ -24,11 +24,6 @@ namespace PixelCrypt2025.ProgramData
                 var binaryDataList = splitData.Select(el => Converter.ConvertIntToBinaryString(el.Length).PadLeft(binaryLength, '0') + el).ToList();
                 var averageDataLength = binaryDataList.Average(el => el.Length);
 
-                if (totalPixels < averageDataLength)
-                {
-                    throw new Exception($"Недостаточно места для импорта данных в изображение '{Path.GetFileName(filepath)}'.\nЛимит изображения превышен в {(averageDataLength / totalPixels).ToString("F2")}.\nЗамените изображение на другое или используйте несколько изображений и повторите попытку.");
-                }
-
                 for (int x = 0; x < imageWidth; x++)
                 {
                     for (int y = 0; y < imageHeight; y++, pixelIndex++)

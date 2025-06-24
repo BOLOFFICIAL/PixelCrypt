@@ -56,7 +56,31 @@ namespace PixelCrypt2025.Model
                 OutputImage.Clear();
                 await UpdateList.Invoke();
 
-                var lines = ProgramHelper.SplitStringIntoParts(binary, InputImage.Count);
+                var datas = InputImage.Select(i => (int)(i.Width * i.Height * 3 * 0.9)).ToList();
+
+                var distributeData = ProgramHelper.DistributeData(datas, binary.Length);
+
+                if (distributeData == null)
+                {
+                    return new ActionResult()
+                    {
+                        IsSuccessResult = false,
+                        ResultMessage = "Недостаточно места для импорта",
+                        ResultTitle = title,
+                    };
+                }
+
+                var lines = ProgramHelper.SplitStringIntoParts(binary, distributeData);
+
+                if (lines == null) 
+                {
+                    return new ActionResult()
+                    {
+                        IsSuccessResult = false,
+                        ResultMessage = "Суммарная длина частей превышает длину строки",
+                        ResultTitle = title,
+                    };
+                }
 
                 for (int i = 0; i < InputImage.Count; i++)
                 {

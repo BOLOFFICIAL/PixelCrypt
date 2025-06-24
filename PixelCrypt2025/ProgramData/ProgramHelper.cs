@@ -41,6 +41,50 @@ namespace PixelCrypt2025.ProgramData
             return result;
         }
 
+        public static List<string> SplitStringIntoParts(string str, List<int> partsCount)
+        {
+            var result = new List<string>(partsCount.Count);
+            int start = 0;
+
+            foreach (int length in partsCount)
+            {
+                if (start + length > str.Length) return null;
+
+                result.Add(str.Substring(start, length));
+                start += length;
+            }
+
+            return result;
+        }
+
+        public static List<int> DistributeData(List<int> capacities, int data)
+        {
+            var result = new List<int>(new int[capacities.Count]);
+
+            while (data > 0)
+            {
+                bool anyFilled = false;
+
+                for (int i = 0; i < capacities.Count; i++)
+                {
+                    if (result[i] < capacities[i])
+                    {
+                        result[i]++;
+                        data--;
+                        anyFilled = true;
+
+                        if (data == 0)
+                            return result;
+                    }
+                }
+
+                if (!anyFilled)
+                    return null;
+            }
+
+            return result;
+        }
+
         public static ActionResult SaveDataToFile(string fileName, string filter, string data)
         {
             var title = "Сохранение данных";
