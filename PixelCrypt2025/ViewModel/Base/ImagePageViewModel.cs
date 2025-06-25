@@ -5,6 +5,7 @@ using PixelCrypt2025.Interfaces;
 using PixelCrypt2025.Model;
 using PixelCrypt2025.ProgramData;
 using PixelCrypt2025.View.Page;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -234,11 +235,11 @@ namespace PixelCrypt2025.ViewModel.Base
         {
             if (AccessReset("Добавление элемента приведет к потере рузльтата")) return;
 
-            var filterList = new List<string>() { "jpg", "jpeg", "png" };
+            var filterList = new List<string>() { ".jpg", ".jpeg", ".png" };
 
             OpenFileDialog openFileDialog = new OpenFileDialog()
             {
-                Filter = "Изображения|" + string.Join(";", filterList.Select(ext => $"*.{ext}")),
+                Filter = "Изображения|" + string.Join(";", filterList.Select(ext => $"*{ext}")),
                 Multiselect = true,
             };
 
@@ -247,7 +248,7 @@ namespace PixelCrypt2025.ViewModel.Base
             if (openFileDialog.ShowDialog() ?? false)
             {
                 var prefCount = ImagePage.InputImage.Count;
-                var imageList = openFileDialog.FileNames.Where(file => filterList.Contains(file.Split('.')[1].ToLower()));
+                var imageList = openFileDialog.FileNames.Where(file => filterList.Contains(Path.GetExtension(file).ToLower()));
 
                 foreach (var filepath in imageList) AddImage(filepath);
 
