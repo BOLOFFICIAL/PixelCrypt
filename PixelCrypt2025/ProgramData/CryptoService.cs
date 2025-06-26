@@ -54,41 +54,26 @@ namespace PixelCrypt2025.ProgramData
             }
         }
 
-        public static async Task<Bitmap> EncryptPhoto(string imagepath, string key)
+        public static Task<Bitmap> EncryptPhoto(string imagePath, string key) => EncryptionSequence(imagePath, key, EncryptSequence);
+
+        public static Task<Bitmap> DecryptPhoto(string imagePath, string key) => EncryptionSequence(imagePath, key, DecryptSequence);
+
+        private static Task<Bitmap> EncryptionSequence(string imagepath, string key, Func<List<Color>, string, List<Color>> action)
         {
-            var encryptedPixels = await Task.Run(() =>
+            return Task.Run(() =>
             {
                 var pixels = ImageHelper.GetArrayPixelsFromImage(imagepath);
                 int width = pixels.GetLength(0);
                 int height = pixels.GetLength(1);
 
                 var listPixels = ImageHelper.GetListPixelsFromArrayPixels(pixels);
-                var encrypt = EncryptSequence(listPixels, key);
+                var encrypt = action(listPixels, key);
 
                 return Converter.ConvertPixelsToBitmap(encrypt, width, height);
             });
-
-            return encryptedPixels;
         }
 
-        public static async Task<Bitmap> DecryptPhoto(string imagepath, string key)
-        {
-            var decryptedPixels = await Task.Run(() =>
-            {
-                var pixels = ImageHelper.GetArrayPixelsFromImage(imagepath);
-                int width = pixels.GetLength(0);
-                int height = pixels.GetLength(1);
-
-                var listPixels = ImageHelper.GetListPixelsFromArrayPixels(pixels);
-                var decrypt = DecryptSequence(listPixels, key);
-
-                return Converter.ConvertPixelsToBitmap(decrypt, width, height);
-            });
-
-            return decryptedPixels;
-        }
-
-        public static List<T> EncryptSequence<T>(List<T> collection, string password)
+        private static List<T> EncryptSequence<T>(List<T> collection, string password)
         {
             int length = collection.Count;
             List<int> perm = CreatePermutation(password, length);
@@ -100,7 +85,7 @@ namespace PixelCrypt2025.ProgramData
             return encryptedCollection;
         }
 
-        public static List<T> DecryptSequence<T>(List<T> encryptedCollection, string password)
+        private static List<T> DecryptSequence<T>(List<T> encryptedCollection, string password)
         {
             int length = encryptedCollection.Count;
             List<int> perm = CreatePermutation(password, length);

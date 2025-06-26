@@ -70,11 +70,11 @@ namespace PixelCrypt2025.Model
                     };
                 }
 
-                var lines = ProgramHelper.SplitStringIntoParts(binary, distributeData);
+                var lines = ProgramHelper.SplitString(binary, distributeData);
 
                 binary = "";
 
-                if (lines == null) 
+                if (lines == null)
                 {
                     return new ActionResult()
                     {
@@ -225,13 +225,20 @@ namespace PixelCrypt2025.Model
             }
         }
 
-        public ActionResult SaveData()
-        {
-            return _saveAction.Invoke();
-        }
+        public ActionResult SaveData() => _saveAction.Invoke();
 
         private ActionResult SaveImport()
         {
+            if (OutputImage.Count == 0)
+            {
+                return new ActionResult()
+                {
+                    IsSuccessResult = false,
+                    ResultMessage = "Нет данных для сохранения",
+                    ResultTitle = "Экспорт"
+                };
+            }
+
             return FileHelper.SaveBitmapToFolder(OutputImage);
         }
 

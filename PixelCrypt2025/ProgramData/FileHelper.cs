@@ -9,128 +9,9 @@ namespace PixelCrypt2025.ProgramData
 {
     internal static class FileHelper
     {
-        public static SaveDataResult SaveDataToFile(string fileName, string filter, string data)
-        {
-            var title = "Сохранение данных";
+        public static SaveDataResult SaveDataToFile(string fileName, string filter, string data) => SaveDataToFile(fileName, filter, data, System.IO.File.WriteAllText);
 
-            try
-            {
-                var saveFileDialog = new SaveFileDialog
-                {
-                    Title = "Выбрать файл для сохранения данных",
-                    FileName = fileName,
-                    Filter = filter
-                };
-
-                if (saveFileDialog.ShowDialog() ?? false)
-                {
-                    var selectedFilePath = saveFileDialog.FileName;
-
-                    if (!System.IO.File.Exists(selectedFilePath))
-                    {
-                        using (System.IO.File.Create(selectedFilePath)) { }
-                    }
-
-                    System.IO.File.WriteAllText(selectedFilePath, data);
-
-                    return new SaveDataResult()
-                    {
-                        Result = new ActionResult()
-                        {
-                            IsSuccessResult = true,
-                            ResultMessage = $"Данные сохранены в файле {Path.GetFileName(selectedFilePath)}",
-                            ResultTitle = title,
-                        },
-                        FilePath = selectedFilePath,
-                    };
-                }
-
-                return new SaveDataResult()
-                {
-                    Result = new ActionResult()
-                    {
-                        IsSuccessResult = false,
-                        ResultMessage = $"Данные не сохранены",
-                        ResultTitle = title,
-                    },
-                    FilePath = "",
-                };
-            }
-            catch (Exception ex)
-            {
-                return new SaveDataResult()
-                {
-                    Result = new ActionResult()
-                    {
-                        IsSuccessResult = false,
-                        ResultMessage = $"Неизвестная ошибка: {ex.Message}",
-                        ResultTitle = title,
-                    },
-                    FilePath = "",
-                };
-            }
-        }
-
-        public static SaveDataResult SaveDataToFile(string fileName, string filter, byte[] data)
-        {
-            var title = "Сохранение данных";
-
-            try
-            {
-                var saveFileDialog = new SaveFileDialog
-                {
-                    Title = "Выбрать файл для сохранения данных",
-                    FileName = fileName,
-                    Filter = filter
-                };
-
-                if (saveFileDialog.ShowDialog() ?? false)
-                {
-                    var selectedFilePath = saveFileDialog.FileName;
-
-                    if (!System.IO.File.Exists(selectedFilePath))
-                    {
-                        using (System.IO.File.Create(selectedFilePath)) { }
-                    }
-
-                    System.IO.File.WriteAllBytes(selectedFilePath, data);
-
-                    return new SaveDataResult()
-                    {
-                        Result = new ActionResult()
-                        {
-                            IsSuccessResult = true,
-                            ResultMessage = $"Фаил {Path.GetFileName(selectedFilePath)} успешно сохранен",
-                            ResultTitle = title,
-                        },
-                        FilePath = selectedFilePath
-                    };
-                }
-
-                return new SaveDataResult()
-                {
-                    Result = new ActionResult()
-                    {
-                        IsSuccessResult = false,
-                        ResultMessage = "Данные не сохранены",
-                        ResultTitle = title,
-                    }
-                };
-            }
-            catch (Exception ex)
-            {
-                return new SaveDataResult()
-                {
-                    Result = new ActionResult()
-                    {
-                        IsSuccessResult = false,
-                        ResultMessage = $"Неизвестная ошибка: {ex.Message}",
-                        ResultTitle = title,
-                    },
-                };
-            }
-
-        }
+        public static SaveDataResult SaveDataToFile(string fileName, string filter, byte[] data) => SaveDataToFile(fileName, filter, data, System.IO.File.WriteAllBytes);
 
         public static ActionResult SaveBitmapToFolder(Dictionary<Model.Image, Bitmap> images)
         {
@@ -195,6 +76,69 @@ namespace PixelCrypt2025.ProgramData
                     IsSuccessResult = false,
                     ResultMessage = $"В процессе сохранения данных для\n\n{currentElement?.Name}\n\nвозникла неизвестная ошибка: {ex.Message}",
                     ResultTitle = title,
+                };
+            }
+        }
+
+
+        private static SaveDataResult SaveDataToFile<T>(string fileName, string filter, T data, Action<string, T> action)
+        {
+            var title = "Сохранение данных";
+
+            try
+            {
+                var saveFileDialog = new SaveFileDialog
+                {
+                    Title = "Выбрать файл для сохранения данных",
+                    FileName = fileName,
+                    Filter = filter
+                };
+
+                if (saveFileDialog.ShowDialog() ?? false)
+                {
+                    var selectedFilePath = saveFileDialog.FileName;
+
+                    if (!System.IO.File.Exists(selectedFilePath))
+                    {
+                        using (System.IO.File.Create(selectedFilePath)) { }
+                    }
+
+                    action(selectedFilePath, data);
+
+                    return new SaveDataResult()
+                    {
+                        Result = new ActionResult()
+                        {
+                            IsSuccessResult = true,
+                            ResultMessage = $"Данные сохранены в файле {Path.GetFileName(selectedFilePath)}",
+                            ResultTitle = title,
+                        },
+                        FilePath = selectedFilePath,
+                    };
+                }
+
+                return new SaveDataResult()
+                {
+                    Result = new ActionResult()
+                    {
+                        IsSuccessResult = false,
+                        ResultMessage = $"Данные не сохранены",
+                        ResultTitle = title,
+                    },
+                    FilePath = "",
+                };
+            }
+            catch (Exception ex)
+            {
+                return new SaveDataResult()
+                {
+                    Result = new ActionResult()
+                    {
+                        IsSuccessResult = false,
+                        ResultMessage = $"Неизвестная ошибка: {ex.Message}",
+                        ResultTitle = title,
+                    },
+                    FilePath = "",
                 };
             }
         }

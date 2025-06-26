@@ -1,10 +1,4 @@
-﻿using Microsoft.Win32;
-using Microsoft.WindowsAPICodePack.Dialogs;
-using PixelCrypt2025.Model;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.IO;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using System.Text;
 
 namespace PixelCrypt2025.ProgramData
@@ -20,7 +14,7 @@ namespace PixelCrypt2025.ProgramData
             return output = Convert.ToHexString(hash);
         }
 
-        public static List<string> SplitStringIntoParts(string str, int partsCount)
+        public static List<string> SplitString(string str, int partsCount)
         {
             List<string> result = new List<string>();
 
@@ -41,7 +35,7 @@ namespace PixelCrypt2025.ProgramData
             return result;
         }
 
-        public static List<string> SplitStringIntoParts(string str, List<int> partsCount)
+        public static List<string> SplitString(string str, List<int> partsCount)
         {
             var result = new List<string>(partsCount.Count);
             int start = 0;
@@ -73,13 +67,11 @@ namespace PixelCrypt2025.ProgramData
                         data--;
                         anyFilled = true;
 
-                        if (data == 0)
-                            return result;
+                        if (data == 0) return result;
                     }
                 }
 
-                if (!anyFilled)
-                    return null;
+                if (!anyFilled) return null;
             }
 
             return result;

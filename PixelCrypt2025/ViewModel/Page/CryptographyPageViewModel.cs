@@ -65,7 +65,7 @@ namespace PixelCrypt2025.ViewModel.Page
             string formatted = string.Format("{0}:{1:D2}:{2:D2}.{3:D3}", elapsed.Hours, elapsed.Minutes, elapsed.Seconds, elapsed.Milliseconds);
 
             Notification.Show($"{result.ResultMessage}\n\nПотраченное время: {formatted}", result.ResultTitle, status: status);
-            
+
             ProgressWidth = Constants.GridLengthZero;
             IsSuccessResult = successResult;
 

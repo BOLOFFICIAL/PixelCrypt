@@ -65,15 +65,9 @@ namespace PixelCrypt2025.ProgramData
             return Encoding.UTF8.GetString(Convert.FromBase64String(text.ToString()));
         }
 
-        public static string ConvertIntToBinaryString(int number)
-        {
-            return Convert.ToString(number, 2);
-        }
+        public static string ConvertIntToBinaryString(int number) => Convert.ToString(number, 2);
 
-        public static int ConvertBinaryStringToInt(string binary)
-        {
-            return Convert.ToInt32(binary, 2);
-        }
+        public static int ConvertBinaryStringToInt(string binary) => Convert.ToInt32(binary, 2);
 
         public static Bitmap ConvertImageToBitmap(System.Windows.Controls.Image wpfImage)
         {

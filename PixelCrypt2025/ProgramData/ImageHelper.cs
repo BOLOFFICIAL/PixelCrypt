@@ -20,7 +20,7 @@ namespace PixelCrypt2025.ProgramData
                 var modifiedPixels = new Color[imageWidth, imageHeight];
                 var totalPixels = imageWidth * imageHeight;
                 var binaryLength = Converter.ConvertIntToBinaryString(totalPixels).Length;
-                var splitData = ProgramHelper.SplitStringIntoParts(data, rgb);
+                var splitData = ProgramHelper.SplitString(data, rgb);
                 var binaryDataList = splitData.Select(el => Converter.ConvertIntToBinaryString(el.Length).PadLeft(binaryLength, '0') + el).ToList();
                 var averageDataLength = binaryDataList.Average(el => el.Length);
 
@@ -28,7 +28,8 @@ namespace PixelCrypt2025.ProgramData
                 {
                     for (int y = 0; y < imageHeight; y++, pixelIndex++)
                     {
-                        var color = Color.FromArgb(NormalizeColorByte(imagePixels[x, y].R), NormalizeColorByte(imagePixels[x, y].G), NormalizeColorByte(imagePixels[x, y].B));
+                        var currentPixel = imagePixels[x, y];
+                        var color = Color.FromArgb(NormalizeColorByte(currentPixel.R), NormalizeColorByte(currentPixel.G), NormalizeColorByte(currentPixel.B));
 
                         modifiedPixels[x, y] = Color.FromArgb(
                             (pixelIndex < binaryDataList[0].Length) ? (byte)(color.R - byte.Parse(binaryDataList[0][pixelIndex].ToString())) : color.R,
@@ -129,15 +130,9 @@ namespace PixelCrypt2025.ProgramData
         }
 
 
-        private static byte GetColorByIndex(Color color, int index)
-        {
-            return (byte)(index == 0 ? color.R : index == 1 ? color.G : index == 2 ? color.B : 0);
-        }
+        private static byte GetColorByIndex(Color color, int index) => (byte)(index == 0 ? color.R : index == 1 ? color.G : index == 2 ? color.B : 0);
 
-        private static string GetBinaryColorIndicator(Color color, int index)
-        {
-            return (GetColorByIndex(color, index) % 2 == 0) ? "1" : "0";
-        }
+        private static string GetBinaryColorIndicator(Color color, int index) => (GetColorByIndex(color, index) % 2 == 0) ? "1" : "0";
 
         private static byte NormalizeColorByte(byte value)
         {

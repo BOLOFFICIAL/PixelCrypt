@@ -15,6 +15,8 @@ namespace PixelCrypt2025.ViewModel.Base
 {
     internal class ImagePageViewModel : BaseViewModel
     {
+        #region fields
+
         private string _showPasword = "";
         private string _password = "";
         private string _imageName = "";
@@ -58,6 +60,8 @@ namespace PixelCrypt2025.ViewModel.Base
         public ICommand DoActionCommand { get; init; }
         public ICommand SaveCommand { get; }
 
+        #endregion
+
         public ImagePageViewModel()
         {
             ClosePageCommand = new LambdaCommand(OnClosePageCommandExecuted);
@@ -74,6 +78,8 @@ namespace PixelCrypt2025.ViewModel.Base
 
             AddGridHeight = Constants.GridLengthStar;
         }
+
+        #region Properties
 
         public bool IsButtonFree
         {
@@ -120,7 +126,7 @@ namespace PixelCrypt2025.ViewModel.Base
             set => Set(ref _showPasword, value);
         }
 
-        public string Progress 
+        public string Progress
         {
             get => _progress;
             set => Set(ref _progress, value);
@@ -192,7 +198,7 @@ namespace PixelCrypt2025.ViewModel.Base
             set => Set(ref _dataGridHeight, value);
         }
 
-        public GridLength ProgressWidth 
+        public GridLength ProgressWidth
         {
             get => _progressWidth;
             set => Set(ref _progressWidth, value);
@@ -225,6 +231,10 @@ namespace PixelCrypt2025.ViewModel.Base
                 }
             }
         }
+
+        #endregion
+
+        #region Methods
 
         private void OnClosePageCommandExecuted(object p = null)
         {
@@ -376,9 +386,9 @@ namespace PixelCrypt2025.ViewModel.Base
 
             var index = 0;
 
-            var total = ImagePage.InputImage.Select(i => i.Width * i.Height).Sum();
-            var converted = ImagePage.OutputImage.Select(i => i.Key.Width * i.Key.Height).Sum();
-            
+            var total = ImagePage.InputImage.Select(i => (double)(i.Width * i.Height)).Sum();
+            var converted = ImagePage.OutputImage.Select(i => (double)(i.Key.Width * i.Key.Height)).Sum();
+
             Progress = $"{converted * 100.0 / total:0.##} %";
 
             foreach (var imageData in ImagePage.InputImage)
@@ -484,7 +494,7 @@ namespace PixelCrypt2025.ViewModel.Base
 
             var image = new Model.Image(filepath);
 
-            if (image.Name.Length > 150) 
+            if (image.Name.Length > 150)
             {
                 Notification.Show($"Файл\n\n{image.Name}\n\nимеет слишком длинное имя, измените имя или замените файл", "Добавление изображения", status: NotificationStatus.Error);
                 return;
@@ -512,7 +522,12 @@ namespace PixelCrypt2025.ViewModel.Base
 
         protected bool AccessReset(string message, string title = "PixelCrypt")
         {
+#if DEBUG
+            return false;
+#endif
             return IsSuccessResult && Notification.Show($"{message}.\nПродолжить?", title, NotificationType.YesNo, status: NotificationStatus.Question).Result == NotificationResultType.No;
         }
+
+#endregion
     }
 }
