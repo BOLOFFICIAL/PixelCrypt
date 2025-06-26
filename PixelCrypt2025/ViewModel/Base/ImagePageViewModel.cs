@@ -25,6 +25,10 @@ namespace PixelCrypt2025.ViewModel.Base
         private string _imageExtension = "";
         private string _imagePermission = "";
         private string _progress = "";
+        private string _timeStop;
+        private string _correlation;
+
+        protected DateTime? start = null;
 
         private Model.Image _selecedImage = null;
 
@@ -37,6 +41,7 @@ namespace PixelCrypt2025.ViewModel.Base
         private GridLength _dataGridHeight = Constants.GridLengthZero;
         private GridLength _viewImageWidth = Constants.GridLengthZero;
         private GridLength _progressWidth = Constants.GridLengthZero;
+        private GridLength _actionWidth = Constants.GridLengthAuto;
 
         private bool _isOpenPassword = false;
         private bool _isSuccessResult = false;
@@ -126,10 +131,22 @@ namespace PixelCrypt2025.ViewModel.Base
             set => Set(ref _showPasword, value);
         }
 
+        public string Correlation 
+        {
+            get => _correlation;
+            set => Set(ref _correlation, value);
+        }
+
         public string Progress
         {
             get => _progress;
             set => Set(ref _progress, value);
+        }
+
+        public string TimeStop
+        {
+            get => _timeStop;
+            set => Set(ref _timeStop, value);
         }
 
         public string Password
@@ -172,6 +189,12 @@ namespace PixelCrypt2025.ViewModel.Base
         {
             get => _closePasswordWidth;
             set => Set(ref _closePasswordWidth, value);
+        }
+
+        public GridLength ActionWidth
+        {
+            get => _actionWidth;
+            set => Set(ref _actionWidth, value);
         }
 
         public GridLength OpenPasswordWidth
@@ -386,10 +409,27 @@ namespace PixelCrypt2025.ViewModel.Base
 
             var index = 0;
 
-            var total = ImagePage.InputImage.Select(i => (double)(i.Width * i.Height)).Sum();
-            var converted = ImagePage.OutputImage.Select(i => (double)(i.Key.Width * i.Key.Height)).Sum();
+            if (start is not null)
+            {
+                var total = ImagePage.InputImage.Select(i => (double)(i.Width * i.Height)).Sum();
+                var converted = ImagePage.OutputImage.Select(i => (double)(i.Key.Width * i.Key.Height)).Sum();
 
-            Progress = $"{converted * 100.0 / total:0.##} %";
+                var now = DateTime.Now;
+
+                TimeSpan elapsed = now - start.Value;
+                double percentDone = converted * 100.0 / total;
+
+                if (percentDone > 0)
+                {
+                    TimeSpan estimatedTotalTime = elapsed * (100.0 / percentDone);
+                    DateTime estimatedEnd = now + (estimatedTotalTime - elapsed);
+
+                    TimeStop = estimatedEnd.Day != now.Day ? $"{estimatedEnd:dd.MM.yy в HH:mm:ss}" : $"{estimatedEnd:HH:mm:ss}";
+                }
+
+                Progress = $"{converted * 100.0 / total:0.##} %";
+                Correlation = $"({ImagePage.OutputImage.Count} из {ImagePage.InputImage.Count})";
+            }
 
             foreach (var imageData in ImagePage.InputImage)
             {
@@ -528,6 +568,6 @@ namespace PixelCrypt2025.ViewModel.Base
             return IsSuccessResult && Notification.Show($"{message}.\nПродолжить?", title, NotificationType.YesNo, status: NotificationStatus.Question).Result == NotificationResultType.No;
         }
 
-#endregion
+        #endregion
     }
 }

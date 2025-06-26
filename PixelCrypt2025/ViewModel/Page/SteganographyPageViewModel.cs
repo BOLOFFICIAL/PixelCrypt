@@ -112,28 +112,31 @@ namespace PixelCrypt2025.ViewModel.Page
         {
             if (p is not Func<string, Task<ActionResult>> doAction) return;
             SaveDataWidth = Constants.GridLengthZero;
-
+             
             if (SelecedImage != null) OnShowImageCommandExecuted(SelecedImage);
 
             IsSuccessResult = false;
             IsReadOnlyInputData = true;
             IsButtonFree = false;
-
+            start = DateTime.Now;
             ProgressWidth = Constants.GridLengthAuto;
-            var start = DateTime.Now;
+            ActionWidth = Constants.GridLengthZero;
+            
             var result = await doAction(Password);
             var successResult = result.IsSuccessResult;
             var status = successResult ? NotificationStatus.Success : NotificationStatus.Error;
 
             IsReadOnlyInputData = InputFilePath?.Length > 0;
 
-            TimeSpan elapsed = DateTime.Now - start;
+            TimeSpan elapsed = (TimeSpan)(DateTime.Now - start);
 
-            string formatted = string.Format("{0}:{1:D2}:{2:D2}.{3:D3}", elapsed.Hours, elapsed.Minutes, elapsed.Seconds, elapsed.Milliseconds);
+            start = null;
 
-            Notification.Show($"{result.ResultMessage}\n\nПотраченное время: {formatted}", result.ResultTitle, status: status);
+            Notification.Show($"{result.ResultMessage}", result.ResultTitle, status: status);
 
             ProgressWidth = Constants.GridLengthZero;
+            ActionWidth = Constants.GridLengthAuto;
+            TimeStop = "";
             IsSuccessResult = successResult;
 
             OnPropertyChanged("InputData");
