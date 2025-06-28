@@ -11,7 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Fonts\Comfortaa-VariableFont_wght.ttf" />
+    <None Remove="Fonts\Comfortaa.ttf" />
   </ItemGroup>
 
   <ItemGroup>
@@ -32,7 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Fonts\Comfortaa-VariableFont_wght.ttf">
+    <Resource Include="Fonts\Comfortaa.ttf">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>

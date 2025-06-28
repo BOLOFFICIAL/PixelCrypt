@@ -5,21 +5,26 @@
              StartupUri="View/Window/MainWindow.xaml">
     <Application.Resources>
 
+        <Style x:Key="WindowStyle" 
+               TargetType="Window">
+            <Setter Property="FontFamily" Value="pack://application:,,,/Fonts/#Comfortaa"/>
+        </Style>
+
         <Style x:Key="PageStyle" 
                TargetType="Page">
-            <Setter Property="FontFamily" Value="pack://application:,,,/Fonts/#SanFrancisco"/>
+            <Setter Property="FontFamily" Value="pack://application:,,,/Fonts/#Comfortaa"/>
         </Style>
 
         <Style x:Key="LabelStyle" 
                TargetType="Label">
-            <Setter Property="FontFamily" Value="pack://application:,,,/Fonts/#SanFrancisco"/>
+            <Setter Property="FontFamily" Value="pack://application:,,,/Fonts/#Comfortaa"/>
         </Style>
 
         <Style x:Key="ActionButtonStyle" 
                TargetType="Button">
             <Setter Property="Background" Value="#a52a2a"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="BorderBrush" Value="White"/>
+            <Setter Property="Foreground" Value="#FFFFFF"/>
+            <Setter Property="BorderBrush" Value="#FFFFFF"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Template">
                 <Setter.Value>
@@ -36,7 +41,7 @@
             </Setter>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="BorderBrush" Value="White"/>
+                    <Setter Property="BorderBrush" Value="#FFFFFF"/>
                     <Setter Property="BorderThickness" Value="1"/>
                 </Trigger>
             </Style.Triggers>
@@ -45,8 +50,8 @@
         <Style x:Key="ToolButtonStyle" 
                TargetType="Button">
             <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="BorderBrush" Value="White"/>
+            <Setter Property="Foreground" Value="#FFFFFF"/>
+            <Setter Property="BorderBrush" Value="#FFFFFF"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Template">
                 <Setter.Value>
@@ -65,10 +70,10 @@
 
         <Style x:Key="BaseListButtonStyle" 
                TargetType="Button">
-            <Setter Property="Background" Value="#303336"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="BorderBrush" Value="White"/>
-            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Background" Value="#3D3D3D"/>
+            <Setter Property="Foreground" Value="#FFFFFF"/>
+            <Setter Property="BorderBrush" Value="#3D3D3D"/>
+            <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
@@ -82,14 +87,19 @@
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="BorderBrush" Value="#FFFFFF"/>
+                </Trigger>
+            </Style.Triggers>
         </Style>
 
         <Style x:Key="SelectedListButtonStyle" 
                TargetType="Button">
-            <Setter Property="Background" Value="White"/>
+            <Setter Property="Background" Value="#FFFFFF"/>
             <Setter Property="Foreground" Value="#1E1E1E"/>
             <Setter Property="FontSize" Value="10"/>
-            <Setter Property="BorderBrush" Value="White"/>
+            <Setter Property="BorderBrush" Value="#FFFFFF"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
@@ -109,7 +119,7 @@
                TargetType="ContextMenu">
             <Setter Property="OverridesDefaultStyle" Value="True"/>
             <Setter Property="HasDropShadow" Value="False"/>
-            <Setter Property="Background" Value="#303336"/>
+            <Setter Property="Background" Value="#303030"/>
             <Setter Property="BorderBrush" Value="Transparent"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Width" Value="100"/>
@@ -129,7 +139,7 @@
                TargetType="MenuItem">
             <Setter Property="Background" Value="#a52a2a"/>
             <Setter Property="BorderBrush" Value="Transparent"/>
-            <Setter Property="FontFamily" Value="pack://application:,,,/Fonts/#SanFrancisco"/>
+            <Setter Property="FontFamily" Value="pack://application:,,,/Fonts/#Comfortaa"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Template">
                 <Setter.Value>
@@ -148,7 +158,7 @@
             </Setter>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="BorderBrush" Value="White"/>
+                    <Setter Property="BorderBrush" Value="#FFFFFF"/>
                 </Trigger>
             </Style.Triggers>
         </Style>

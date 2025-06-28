@@ -436,8 +436,7 @@
                                 </Grid>
 
                                 <Grid Grid.Column="1">
-                                    <Border BorderBrush="{Binding Color3}"
-                                            BorderThickness="1"
+                                    <Border Background="{Binding Color7}"
                                             Margin="10,0"
                                             Padding="10,0"
                                             CornerRadius="10">
@@ -463,8 +462,7 @@
                             </Grid>
 
                             <Grid Grid.Row="1">
-                                <Border BorderBrush="{Binding Color3}"
-                                        BorderThickness="1"
+                                <Border Background="{Binding Color7}"
                                         Margin="0,10,0,0"
                                         Padding="10"
                                         CornerRadius="10">
@@ -495,9 +493,8 @@
                             </Grid.RowDefinitions>
 
                             <Grid Grid.Row="0">
-                                <Border BorderBrush ="{Binding Color3}"
+                                <Border Background="{Binding Color7}"
                                         Margin="10"
-                                        BorderThickness="1"
                                         CornerRadius="10">
                                     <Border BorderBrush ="{Binding Color3}"
                                             Margin="10"
@@ -543,15 +540,14 @@
                                             </Grid>
 
                                             <Grid Grid.Column="1">
-                                                <Border BorderBrush="{Binding Color3}"
-                                                        BorderThickness="0,1,1,1"
+                                                <Border Background="{Binding Color7}"
                                                         CornerRadius="0,10,10,0">
                                                     <TextBox Text ="{Binding ImageName}"
                                                              Margin="5"
                                                              TextWrapping="Wrap"
                                                              BorderThickness="0"
                                                              IsReadOnly="True"
-                                                             Background="{Binding Color2}"
+                                                             Background="Transparent"
                                                              Foreground="{Binding Color3}"
                                                              FontSize="15"/>
                                                 </Border>
@@ -579,15 +575,14 @@
                                             </Grid>
 
                                             <Grid Grid.Column="1">
-                                                <Border BorderBrush="{Binding Color3}"
-                                                        BorderThickness="0,1,1,1"
+                                                <Border Background="{Binding Color7}"
                                                         CornerRadius="0,10,10,0">
                                                     <TextBox Text ="{Binding ImagePath}"
                                                              Margin="5"
                                                              TextWrapping="Wrap"
                                                              BorderThickness="0"
                                                              IsReadOnly="True"
-                                                             Background="{Binding Color2}"
+                                                             Background="Transparent"
                                                              Foreground="{Binding Color3}"
                                                              FontSize="15"/>
                                                 </Border>
@@ -615,15 +610,14 @@
                                             </Grid>
 
                                             <Grid Grid.Column="1">
-                                                <Border BorderBrush="{Binding Color3}"
-                                                        BorderThickness="0,1,1,1"
+                                                <Border Background="{Binding Color7}"
                                                         CornerRadius="0,10,10,0">
                                                     <TextBox Text ="{Binding ImageLength}"
                                                              Margin="5"
                                                              TextWrapping="Wrap"
                                                              BorderThickness="0"
                                                              IsReadOnly="True"
-                                                             Background="{Binding Color2}"
+                                                             Background="Transparent"
                                                              Foreground="{Binding Color3}"
                                                              FontSize="15"/>
                                                 </Border>
@@ -651,15 +645,14 @@
                                             </Grid>
 
                                             <Grid Grid.Column="1">
-                                                <Border BorderBrush="{Binding Color3}"
-                                                        BorderThickness="0,1,1,1"
+                                                <Border Background="{Binding Color7}"
                                                         CornerRadius="0,10,10,0">
                                                     <TextBox Text ="{Binding ImageExtension}"
                                                              Margin="5"
                                                              TextWrapping="Wrap"
                                                              BorderThickness="0"
                                                              IsReadOnly="True"
-                                                             Background="{Binding Color2}"
+                                                             Background="Transparent"
                                                              Foreground="{Binding Color3}"
                                                              FontSize="15"/>
                                                 </Border>
@@ -686,15 +679,14 @@
                                             </Grid>
 
                                             <Grid Grid.Column="1">
-                                                <Border BorderBrush="{Binding Color3}"
-                                                        BorderThickness="0,1,1,1"
+                                                <Border Background="{Binding Color7}"
                                                         CornerRadius="0,10,10,0">
                                                     <TextBox Text ="{Binding ImagePermission}"
                                                              Margin="5"
                                                              TextWrapping="Wrap"
                                                              BorderThickness="0"
                                                              IsReadOnly="True"
-                                                             Background="{Binding Color2}"
+                                                             Background="Transparent"
                                                              Foreground="{Binding Color3}"
                                                              FontSize="15"/>
                                                 </Border>

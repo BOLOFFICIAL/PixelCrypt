@@ -26,5 +26,6 @@ namespace PixelCrypt2025.ViewModel.Base
         public string Color1 => Palette.Color1;
         public string Color2 => Palette.Color2;
         public string Color3 => Palette.Color3;
+        public string Color7 => Palette.Color7;
     }
 }

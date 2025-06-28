@@ -11,7 +11,8 @@
         Height="600"
         Width="900"
         MinHeight="600"
-        MinWidth="900">
+        MinWidth="900"
+        Style="{StaticResource WindowStyle}">
     <Grid>
         <Frame Content="{Binding Path = CurrentPage}" 
                NavigationUIVisibility = "Hidden"/>

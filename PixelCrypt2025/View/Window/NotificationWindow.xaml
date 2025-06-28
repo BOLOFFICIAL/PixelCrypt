@@ -7,15 +7,17 @@
         xmlns:fa="http://schemas.fontawesome.com/icons/"
         mc:Ignorable="d"
         WindowStyle="None"
-        WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize"
         Title="{Binding Title}"
+        Style="{StaticResource WindowStyle}" 
         MinWidth="250"
         MaxWidth="300"
+        WindowStartupLocation="CenterOwner"
         MinHeight="300"
         AllowsTransparency="True"
         Background="Transparent"
         SizeToContent="WidthAndHeight">
+    
     <Grid KeyboardNavigation.TabNavigation="None">
         <Border BorderBrush="{Binding Color3}"
                 BorderThickness="2"

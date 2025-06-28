@@ -131,7 +131,7 @@ namespace PixelCrypt2025.ViewModel.Base
             set => Set(ref _showPasword, value);
         }
 
-        public string Correlation 
+        public string Correlation
         {
             get => _correlation;
             set => Set(ref _correlation, value);
@@ -424,7 +424,7 @@ namespace PixelCrypt2025.ViewModel.Base
                     TimeSpan estimatedTotalTime = elapsed * (100.0 / percentDone);
                     DateTime estimatedEnd = now + (estimatedTotalTime - elapsed);
 
-                    TimeStop = estimatedEnd.Day != now.Day ? $"{estimatedEnd:dd.MM.yy в HH:mm:ss}" : $"{estimatedEnd:HH:mm:ss}";
+                    TimeStop = $"{estimatedEnd:dd.MM.yy в HH:mm:ss}";
                 }
 
                 Progress = $"{converted * 100.0 / total:0.##} %";

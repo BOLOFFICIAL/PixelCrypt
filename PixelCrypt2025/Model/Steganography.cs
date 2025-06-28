@@ -136,8 +136,11 @@ namespace PixelCrypt2025.Model
                 {
                     bynaryData.Add(await ImageHelper.ExportDataFromImage(filePathImage.Path));
                     OutputImage.Add(filePathImage, null);
-                    ShowImage(filePathImage);
-                    await UpdateList.Invoke();
+                    if (Context.MainWindowViewModel.CurrentPage.GetType() == typeof(SteganographyPage) && Context.MainWindow.IsActive)
+                    {
+                        ShowImage(filePathImage);
+                        await UpdateList.Invoke();
+                    }
                 }
 
                 var allData = new StringBuilder();
