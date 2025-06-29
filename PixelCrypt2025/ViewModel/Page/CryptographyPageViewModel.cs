@@ -56,7 +56,7 @@ namespace PixelCrypt2025.ViewModel.Page
             start = DateTime.Now;
             ProgressWidth = Constants.GridLengthAuto;
             ActionWidth = Constants.GridLengthZero;
-            
+
             var result = await doAction(Password);
             var successResult = result.IsSuccessResult;
             var status = successResult ? NotificationStatus.Success : NotificationStatus.Error;
@@ -100,18 +100,18 @@ namespace PixelCrypt2025.ViewModel.Page
 
         private async void UpdateResultImage(Image parametr)
         {
-            if (ViewImageWidth.Value == 0)
+            ViewResultImageWidth = Constants.GridLengthZero;
+            ImageResultPath = null;
+
+            if (parametr is null || SelecedImage is null) return;
+
+            if (_cryptography.OutputImage.ContainsKey(parametr) && ViewImageWidth.Value != 0)
             {
-                ViewResultImageWidth = Constants.GridLengthZero;
-            }
-            else if (_cryptography.OutputImage.ContainsKey(parametr))
-            {
+                await Task.Run(() =>
+                {
+                    ImageResultPath = Converter.ConvertBitmapToImageSource(_cryptography.OutputImage[SelecedImage]);
+                });
                 ViewResultImageWidth = new GridLength(5, GridUnitType.Star);
-                ImageResultPath = await Converter.ConvertBitmapToImageSource(_cryptography.OutputImage[SelecedImage]);
-            }
-            else
-            {
-                ViewResultImageWidth = Constants.GridLengthZero;
             }
         }
     }

@@ -409,28 +409,6 @@ namespace PixelCrypt2025.ViewModel.Base
 
             var index = 0;
 
-            if (start is not null)
-            {
-                var total = ImagePage.InputImage.Select(i => (double)(i.Width * i.Height)).Sum();
-                var converted = ImagePage.OutputImage.Select(i => (double)(i.Key.Width * i.Key.Height)).Sum();
-
-                var now = DateTime.Now;
-
-                TimeSpan elapsed = now - start.Value;
-                double percentDone = converted * 100.0 / total;
-
-                if (percentDone > 0)
-                {
-                    TimeSpan estimatedTotalTime = elapsed * (100.0 / percentDone);
-                    DateTime estimatedEnd = now + (estimatedTotalTime - elapsed);
-
-                    TimeStop = $"{estimatedEnd:dd.MM.yy в HH:mm:ss}";
-                }
-
-                Progress = $"{converted * 100.0 / total:0.##} %";
-                Correlation = $"({ImagePage.OutputImage.Count} из {ImagePage.InputImage.Count})";
-            }
-
             foreach (var imageData in ImagePage.InputImage)
             {
                 ContextMenu contextMenu = new ContextMenu
@@ -508,6 +486,30 @@ namespace PixelCrypt2025.ViewModel.Base
             return stackPanel;
         }
 
+        private void UpdateProgress()
+        {
+            if (start is null) return;
+
+            var total = ImagePage.InputImage.Select(i => (double)(i.Width * i.Height)).Sum();
+            var converted = ImagePage.OutputImage.Select(i => (double)(i.Key.Width * i.Key.Height)).Sum();
+
+            var now = DateTime.Now;
+
+            TimeSpan elapsed = now - start.Value;
+            double percentDone = converted * 100.0 / total;
+
+            if (percentDone > 0)
+            {
+                TimeSpan estimatedTotalTime = elapsed * (100.0 / percentDone);
+                DateTime estimatedEnd = now + (estimatedTotalTime - elapsed);
+
+                TimeStop = $"{estimatedEnd:dd.MM.yy в HH:mm:ss}";
+            }
+
+            Progress = $"{converted * 100.0 / total:0.##} %";
+            Correlation = $"({ImagePage.OutputImage.Count} из {ImagePage.InputImage.Count})";
+        }
+
         private MenuItem CreateMenuItem(string title, ICommand command, object parametr)
         {
             return new MenuItem()
@@ -557,6 +559,8 @@ namespace PixelCrypt2025.ViewModel.Base
 
         protected async Task UpdateList()
         {
+            UpdateProgress();
+
             FilePathImageStackPanel = await UpdateImageList();
         }
 

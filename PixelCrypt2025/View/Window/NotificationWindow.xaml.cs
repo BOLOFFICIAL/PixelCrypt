@@ -1,4 +1,5 @@
 ﻿using PixelCrypt2025.Enum;
+using PixelCrypt2025.ProgramData;
 using PixelCrypt2025.ViewModel.Window;
 
 namespace PixelCrypt2025.View.Window
@@ -12,6 +13,9 @@ namespace PixelCrypt2025.View.Window
         {
             InitializeComponent();
             DataContext = new NotificationWindowViewModel(new Action(Close), content, title, type, status);
+
+            if (Context.MainWindow.Focusable) Owner = Context.MainWindow;
+
             ShowDialog();
         }
     }
