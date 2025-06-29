@@ -26,6 +26,7 @@ namespace PixelCrypt2025.ViewModel.Base
         private string _imagePermission = "";
         private string _progress = "";
         private string _timeStop;
+        private string _dateStop;
         private string _correlation;
 
         protected DateTime? start = null;
@@ -147,6 +148,12 @@ namespace PixelCrypt2025.ViewModel.Base
         {
             get => _timeStop;
             set => Set(ref _timeStop, value);
+        }
+
+        public string DateStop
+        {
+            get => _dateStop;
+            set => Set(ref _dateStop, value);
         }
 
         public string Password
@@ -503,11 +510,12 @@ namespace PixelCrypt2025.ViewModel.Base
                 TimeSpan estimatedTotalTime = elapsed * (100.0 / percentDone);
                 DateTime estimatedEnd = now + (estimatedTotalTime - elapsed);
 
-                TimeStop = $"{estimatedEnd:dd.MM.yy в HH:mm:ss}";
+                TimeStop = $"{estimatedEnd:HH:mm:ss}";
+                DateStop = $"( {estimatedEnd:dd.MM.yy} ) ";
             }
 
             Progress = $"{converted * 100.0 / total:0.##} %";
-            Correlation = $"({ImagePage.OutputImage.Count} из {ImagePage.InputImage.Count})";
+            Correlation = $"( {ImagePage.OutputImage.Count} из {ImagePage.InputImage.Count} )";
         }
 
         private MenuItem CreateMenuItem(string title, ICommand command, object parametr)

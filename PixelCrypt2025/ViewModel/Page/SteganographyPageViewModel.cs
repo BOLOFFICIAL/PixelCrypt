@@ -137,6 +137,7 @@ namespace PixelCrypt2025.ViewModel.Page
             ProgressWidth = Constants.GridLengthZero;
             ActionWidth = Constants.GridLengthAuto;
             TimeStop = "";
+            DateStop = "";
             IsSuccessResult = successResult;
 
             OnPropertyChanged("InputData");
