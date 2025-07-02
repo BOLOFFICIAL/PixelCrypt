@@ -53,7 +53,9 @@ namespace PixelCrypt2025.ViewModel.Page
 
             IsSuccessResult = false;
             IsButtonFree = false;
-            start = DateTime.Now;
+
+            StartTimer();
+
             ProgressWidth = Constants.GridLengthAuto;
             ActionWidth = Constants.GridLengthZero;
 
@@ -61,16 +63,12 @@ namespace PixelCrypt2025.ViewModel.Page
             var successResult = result.IsSuccessResult;
             var status = successResult ? NotificationStatus.Success : NotificationStatus.Error;
 
-            TimeSpan elapsed = (TimeSpan)(DateTime.Now - start);
-
-            start = null;
+            StopTimer();
 
             Notification.Show($"{result.ResultMessage}", result.ResultTitle, status: status);
 
             ProgressWidth = Constants.GridLengthZero;
             ActionWidth = Constants.GridLengthAuto;
-            TimeStop = "";
-            DateStop = "";
             IsSuccessResult = successResult;
 
             IsButtonFree = true;

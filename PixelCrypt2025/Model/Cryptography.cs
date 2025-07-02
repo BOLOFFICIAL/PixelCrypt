@@ -9,7 +9,7 @@ namespace PixelCrypt2025.Model
     {
         public List<Model.Image> InputImage { get; } = new List<Model.Image>();
         public Dictionary<Model.Image, Bitmap> OutputImage { get; } = new Dictionary<Model.Image, Bitmap>();
-        public Func<Task> UpdateList { get; set; }
+        public Action<bool> UpdateList { get; set; }
         public Action<Image> ShowImage { get; set; }
 
         public ActionResult SaveData()
@@ -46,7 +46,7 @@ namespace PixelCrypt2025.Model
             var hashPassword = ProgramHelper.GetHash32(password);
 
             OutputImage.Clear();
-            await UpdateList.Invoke();
+            UpdateList.Invoke(true);
 
             try
             {
@@ -54,11 +54,11 @@ namespace PixelCrypt2025.Model
                 {
                     OutputImage.Add(file, await action(file.Path, hashPassword));
 
-                    if (Context.MainWindowViewModel.CurrentPage.GetType() == typeof(CryptographyPage) && Context.MainWindow.IsActive)
-                    {
-                        ShowImage(file);
-                        await UpdateList.Invoke();
-                    }
+                    var fullUpdate = Context.MainWindowViewModel.CurrentPage.GetType() == typeof(CryptographyPage) && Context.MainWindow.IsActive;
+
+                    if (fullUpdate) ShowImage(file);
+
+                    UpdateList.Invoke(fullUpdate);
                 }
 
                 result.IsSuccessResult = true;

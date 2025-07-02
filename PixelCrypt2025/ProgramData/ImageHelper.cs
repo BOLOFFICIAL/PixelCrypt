@@ -38,10 +38,10 @@ namespace PixelCrypt2025.ProgramData
                     }
                 }
 
-                return modifiedPixels;
+                return Converter.ConvertPixelsToBitmap(modifiedPixels);
             });
 
-            return Converter.ConvertPixelsToBitmap(importDataImage);
+            return importDataImage;
         }
 
         public static async Task<string> ExportDataFromImage(string path)

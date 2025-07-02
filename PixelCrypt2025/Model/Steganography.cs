@@ -15,7 +15,7 @@ namespace PixelCrypt2025.Model
         public List<Model.Image> InputImage { get; } = new List<Model.Image>();
         public Dictionary<Model.Image, Bitmap> OutputImage { get; } = new Dictionary<Model.Image, Bitmap>();
         public Model.File DataFile { get; } = new Model.File();
-        public Func<Task> UpdateList { get; set; }
+        public Action<bool> UpdateList { get; set; }
         public Action<Model.Image> ShowImage { get; set; }
 
         internal async Task<ActionResult> Import(string password)
@@ -54,7 +54,7 @@ namespace PixelCrypt2025.Model
                 string binary = Converter.ConvertTextToBinaryString(inportData);
 
                 OutputImage.Clear();
-                await UpdateList.Invoke();
+                UpdateList.Invoke(true);
 
                 var datas = InputImage.Select(i => (int)(i.Width * i.Height * 3 * 0.9)).ToList();
 
@@ -89,11 +89,11 @@ namespace PixelCrypt2025.Model
                     var bitmapResult = await ImageHelper.ImportDataToImage(lines[i], InputImage[i].Path);
                     lines[i] = "";
                     OutputImage.Add(InputImage[i], bitmapResult);
-                    if (Context.MainWindowViewModel.CurrentPage.GetType() == typeof(SteganographyPage) && Context.MainWindow.IsActive)
-                    {
-                        ShowImage(InputImage[i]);
-                        await UpdateList.Invoke();
-                    }
+
+                    var fullUpdate = Context.MainWindowViewModel.CurrentPage.GetType() == typeof(SteganographyPage) && Context.MainWindow.IsActive;
+
+                    if (fullUpdate) ShowImage(InputImage[i]);
+                    UpdateList.Invoke(fullUpdate);
                 }
 
                 return new ActionResult()
@@ -106,7 +106,6 @@ namespace PixelCrypt2025.Model
             catch (Exception ex)
             {
                 OutputImage.Clear();
-                UpdateList.Invoke();
                 return new ActionResult()
                 {
                     IsSuccessResult = false,
@@ -128,7 +127,7 @@ namespace PixelCrypt2025.Model
 
             var bynaryData = new List<string>();
             OutputImage.Clear();
-            await UpdateList.Invoke();
+            UpdateList.Invoke(true);
 
             try
             {
@@ -136,11 +135,12 @@ namespace PixelCrypt2025.Model
                 {
                     bynaryData.Add(await ImageHelper.ExportDataFromImage(filePathImage.Path));
                     OutputImage.Add(filePathImage, null);
-                    if (Context.MainWindowViewModel.CurrentPage.GetType() == typeof(SteganographyPage) && Context.MainWindow.IsActive)
-                    {
-                        ShowImage(filePathImage);
-                        await UpdateList.Invoke();
-                    }
+
+                    var fullUpdate = Context.MainWindowViewModel.CurrentPage.GetType() == typeof(SteganographyPage) && Context.MainWindow.IsActive;
+
+                    if (fullUpdate) ShowImage(filePathImage);
+
+                    UpdateList.Invoke(fullUpdate);
                 }
 
                 var allData = new StringBuilder();
@@ -217,8 +217,6 @@ namespace PixelCrypt2025.Model
             {
                 bynaryData.Clear();
                 OutputImage.Clear();
-                await UpdateList.Invoke();
-
                 return new ActionResult()
                 {
                     IsSuccessResult = false,

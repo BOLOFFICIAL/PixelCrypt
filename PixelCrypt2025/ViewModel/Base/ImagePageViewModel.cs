@@ -25,9 +25,11 @@ namespace PixelCrypt2025.ViewModel.Base
         private string _imageExtension = "";
         private string _imagePermission = "";
         private string _progress = "";
-        private string _timeStop;
-        private string _dateStop;
-        private string _correlation;
+        private string _timerStop;
+
+        private TimeSpan _timer;
+
+        private CancellationTokenSource _cts;
 
         protected DateTime? start = null;
 
@@ -132,10 +134,10 @@ namespace PixelCrypt2025.ViewModel.Base
             set => Set(ref _showPasword, value);
         }
 
-        public string Correlation
+        public string TimerStop
         {
-            get => _correlation;
-            set => Set(ref _correlation, value);
+            get => _timerStop;
+            set => Set(ref _timerStop, value);
         }
 
         public string Progress
@@ -143,19 +145,6 @@ namespace PixelCrypt2025.ViewModel.Base
             get => _progress;
             set => Set(ref _progress, value);
         }
-
-        public string TimeStop
-        {
-            get => _timeStop;
-            set => Set(ref _timeStop, value);
-        }
-
-        public string DateStop
-        {
-            get => _dateStop;
-            set => Set(ref _dateStop, value);
-        }
-
         public string Password
         {
             get => _password;
@@ -410,7 +399,7 @@ namespace PixelCrypt2025.ViewModel.Base
             Notification.Show($"{result.ResultMessage}", result.ResultTitle, status: status);
         }
 
-        private async Task<StackPanel> UpdateImageList()
+        private StackPanel UpdateImageList()
         {
             var stackPanel = new StackPanel();
 
@@ -493,31 +482,6 @@ namespace PixelCrypt2025.ViewModel.Base
             return stackPanel;
         }
 
-        private void UpdateProgress()
-        {
-            if (start is null) return;
-
-            var total = ImagePage.InputImage.Select(i => (double)(i.Width * i.Height)).Sum();
-            var converted = ImagePage.OutputImage.Select(i => (double)(i.Key.Width * i.Key.Height)).Sum();
-
-            var now = DateTime.Now;
-
-            TimeSpan elapsed = now - start.Value;
-            double percentDone = converted * 100.0 / total;
-
-            if (percentDone > 0)
-            {
-                TimeSpan estimatedTotalTime = elapsed * (100.0 / percentDone);
-                DateTime estimatedEnd = now + (estimatedTotalTime - elapsed);
-
-                TimeStop = $"{estimatedEnd:HH:mm:ss}";
-                DateStop = $"( {estimatedEnd:dd.MM.yy} ) ";
-            }
-
-            Progress = $"{converted * 100.0 / total:0.##} %";
-            Correlation = $"( {ImagePage.OutputImage.Count} из {ImagePage.InputImage.Count} )";
-        }
-
         private MenuItem CreateMenuItem(string title, ICommand command, object parametr)
         {
             return new MenuItem()
@@ -565,11 +529,11 @@ namespace PixelCrypt2025.ViewModel.Base
             UpdateList();
         }
 
-        protected async Task UpdateList()
+        protected void UpdateList(bool fullUpdate = true)
         {
             UpdateProgress();
 
-            FilePathImageStackPanel = await UpdateImageList();
+            if (fullUpdate) FilePathImageStackPanel = UpdateImageList();
         }
 
         protected bool AccessReset(string message, string title = "PixelCrypt")
@@ -578,6 +542,62 @@ namespace PixelCrypt2025.ViewModel.Base
             return false;
 #endif
             return IsSuccessResult && Notification.Show($"{message}.\nПродолжить?", title, NotificationType.YesNo, status: NotificationStatus.Question).Result == NotificationResultType.No;
+        }
+
+        private void UpdateProgress()
+        {
+            if (start is null || ImagePage.InputImage.Count == 0) return;
+
+            double totalPixels = ImagePage.InputImage.Sum(i => (double)(i.Width * i.Height));
+
+            if (totalPixels == 0) return;
+
+            double convertedPixels = ImagePage.OutputImage.Sum(i => (double)(i.Key.Width * i.Key.Height));
+            double percentDone = convertedPixels * 100.0 / totalPixels;
+
+            if (percentDone > 0)
+            {
+                TimeSpan elapsed = DateTime.Now - start.Value;
+                _timer = elapsed * (100.0 / percentDone) - elapsed;
+            }
+
+            Progress = $"{percentDone:0.##} %";
+        }
+
+        protected void StartTimer()
+        {
+            TimerStop = "Анализ";
+            _cts = new CancellationTokenSource();
+            start = DateTime.Now;
+            RunTimerAsync(_cts.Token);
+        }
+
+        protected void StopTimer()
+        {
+            _cts?.Cancel();
+            _cts = null;
+            start = null;
+        }
+
+        private async void RunTimerAsync(CancellationToken token)
+        {
+            while (!token.IsCancellationRequested)
+            {
+                if (_timer > TimeSpan.Zero)
+                {
+                    _timer -= TimeSpan.FromSeconds(1);
+                    TimerStop = $"{_timer.Hours:D2}:{_timer.Minutes:D2}:{_timer.Seconds:D2}";
+                }
+
+                try
+                {
+                    await Task.Delay(1000, token);
+                }
+                catch (TaskCanceledException)
+                {
+                    break;
+                }
+            }
         }
 
         #endregion
