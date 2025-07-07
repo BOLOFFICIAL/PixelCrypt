@@ -104,12 +104,14 @@ namespace PixelCrypt2025.ViewModel.Page
 
             if (parametr is null || SelecedImage is null) return;
 
-            if (_cryptography.OutputImage.ContainsKey(parametr) && ViewImageWidth.Value != 0)
+            if (_cryptography.OutputImage.TryGetValue(parametr, out var image) && ViewImageWidth.Value != 0)
             {
-                await Task.Run(() =>
-                {
-                    ImageResultPath = Converter.ConvertBitmapToImageSource(_cryptography.OutputImage[SelecedImage]);
-                });
+                var previousImage = SelecedImage;
+
+                ImageResultPath = await Task.Run(() => Converter.ConvertBitmapToImageSource(image));
+
+                if (SelecedImage is null || !ReferenceEquals(previousImage, SelecedImage)) return;
+
                 ViewResultImageWidth = new GridLength(5, GridUnitType.Star);
             }
         }
