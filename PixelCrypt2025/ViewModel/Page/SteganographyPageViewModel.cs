@@ -20,6 +20,7 @@ namespace PixelCrypt2025.ViewModel.Page
         public SteganographyPageViewModel()
         {
             ImagePage = _steganography;
+            ImagePage.InputImage = Images;
 
             ChooseFileCommand = new LambdaCommand(OnChooseFileCommandExecuted);
             RemoveFileCommand = new LambdaCommand(OnRemoveFileCommandExecuted);
@@ -28,8 +29,7 @@ namespace PixelCrypt2025.ViewModel.Page
             InputAction = _steganography.Import;
             OutputAction = _steganography.Export;
 
-            _steganography.UpdateList = UpdateList;
-            _steganography.ShowImage = OnShowImageCommandExecuted;
+            _steganography.ShowImage = (img) => { SelectedImage = img; };
 
             OnAddImageCommandExecuted();
         }
@@ -113,7 +113,7 @@ namespace PixelCrypt2025.ViewModel.Page
             if (p is not Func<string, Task<ActionResult>> doAction) return;
             SaveDataWidth = Constants.GridLengthZero;
 
-            if (SelecedImage != null) OnShowImageCommandExecuted(SelecedImage);
+            if (SelectedImage != null) OnShowImageCommandExecuted(SelectedImage);
 
             IsSuccessResult = false;
             IsReadOnlyInputData = true;
@@ -142,7 +142,6 @@ namespace PixelCrypt2025.ViewModel.Page
             OnPropertyChanged("InputFilePath");
             OnPropertyChanged("InputFileName");
             IsButtonFree = true;
-            UpdateList();
         }
 
         protected override void OnRemoveImageCommandExecuted(object p = null)

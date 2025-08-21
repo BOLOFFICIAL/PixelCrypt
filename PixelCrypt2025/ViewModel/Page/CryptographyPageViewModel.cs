@@ -19,6 +19,7 @@ namespace PixelCrypt2025.ViewModel.Page
         public CryptographyPageViewModel()
         {
             ImagePage = _cryptography;
+            ImagePage.InputImage = Images;
 
             DoActionCommand = new LambdaCommand(OnDoActionCommandExecuted);
             ShowImageCommand = new LambdaCommand(OnShowImageCommandExecuted);
@@ -26,8 +27,7 @@ namespace PixelCrypt2025.ViewModel.Page
             InputAction = _cryptography.Encrypt;
             OutputAction = _cryptography.Decrypt;
 
-            _cryptography.UpdateList = UpdateList;
-            _cryptography.ShowImage = OnShowImageCommandExecuted;
+            _cryptography.ShowImage = (img) => { SelectedImage = img; };
 
             OnAddImageCommandExecuted();
         }
@@ -49,7 +49,7 @@ namespace PixelCrypt2025.ViewModel.Page
             if (p is not Func<string, Task<ActionResult>> doAction) return;
             SaveDataWidth = Constants.GridLengthZero;
 
-            if (SelecedImage != null) OnShowImageCommandExecuted(SelecedImage);
+            if (SelectedImage != null) OnShowImageCommandExecuted(SelectedImage);
 
             IsSuccessResult = false;
             IsButtonFree = false;
@@ -72,13 +72,12 @@ namespace PixelCrypt2025.ViewModel.Page
             IsSuccessResult = successResult;
 
             IsButtonFree = true;
-            UpdateList();
         }
 
         protected override void OnAddImageCommandExecuted(object p = null)
         {
             base.OnAddImageCommandExecuted(p);
-            UpdateResultImage(SelecedImage);
+            UpdateResultImage(SelectedImage);
         }
 
         protected override void OnRemoveImageCommandExecuted(object p = null)
@@ -86,7 +85,7 @@ namespace PixelCrypt2025.ViewModel.Page
             if (p is not Image parametr) return;
 
             base.OnRemoveImageCommandExecuted(parametr);
-            UpdateResultImage(SelecedImage);
+            UpdateResultImage(SelectedImage);
         }
 
         protected override void OnShowImageCommandExecuted(object p = null)
@@ -102,15 +101,15 @@ namespace PixelCrypt2025.ViewModel.Page
             ViewResultImageWidth = Constants.GridLengthZero;
             ImageResultPath = null;
 
-            if (parametr is null || SelecedImage is null) return;
+            if (parametr is null || SelectedImage is null) return;
 
             if (_cryptography.OutputImage.TryGetValue(parametr, out var image) && ViewImageWidth.Value != 0)
             {
-                var previousImage = SelecedImage;
+                var previousImage = SelectedImage;
 
                 ImageResultPath = await Task.Run(() => Converter.ConvertBitmapToImageSource(image));
 
-                if (SelecedImage is null || !ReferenceEquals(previousImage, SelecedImage)) return;
+                if (SelectedImage is null || !ReferenceEquals(previousImage, SelectedImage)) return;
 
                 ViewResultImageWidth = new GridLength(5, GridUnitType.Star);
             }
