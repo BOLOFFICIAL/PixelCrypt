@@ -1,18 +1,5 @@
-﻿using PixelCrypt2026.ViewModel.Page;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+﻿using PixelCrypt2026.Program;
+using PixelCrypt2026.ViewModel.Page;
 
 namespace PixelCrypt2026.View.Page
 {
@@ -21,10 +8,10 @@ namespace PixelCrypt2026.View.Page
     /// </summary>
     public partial class MainPage : System.Windows.Controls.Page
     {
-        public MainPage()
+        internal MainPage(NavigationService navigation)
         {
             InitializeComponent();
-            DataContext = new MainPageViewModel();
+            DataContext = new MainPageViewModel(navigation);
         }
     }
 }

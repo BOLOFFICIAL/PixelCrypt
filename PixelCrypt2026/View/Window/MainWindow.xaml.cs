@@ -1,17 +1,7 @@
-﻿using PixelCrypt2026.ViewModel.Window;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+﻿using PixelCrypt2026.Program;
+using PixelCrypt2026.View.Page;
+using PixelCrypt2026.ViewModel.Page;
+using PixelCrypt2026.ViewModel.Window;
 
 namespace PixelCrypt2026.View.Window
 {
@@ -20,10 +10,18 @@ namespace PixelCrypt2026.View.Window
     /// </summary>
     public partial class MainWindow : System.Windows.Window
     {
+        private readonly NavigationService _navigation;
+
         public MainWindow()
         {
             InitializeComponent();
-            DataContext = new MainWindowViewModel();
+
+            _navigation = new NavigationService(MainFrame);
+            _navigation.Register<MainPageViewModel>(new MainPage(_navigation));
+            _navigation.Register<CryptographyPageViewModel>(new CryptographyPage(_navigation));
+            _navigation.Register<SteganographyPageViewModel>(new SteganographyPage(_navigation));
+
+            DataContext = new MainWindowViewModel(_navigation);
         }
     }
 }
