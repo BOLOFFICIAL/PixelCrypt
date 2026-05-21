@@ -18,18 +18,16 @@ namespace PixelCrypt2026.ViewModel.Page
 
             Tools = new ObservableCollection<ToolCardViewModel>()
             {
-                new ToolCardViewModel()
+                new ToolCardViewModel<CryptographyPageViewModel>()
                 {
                     Title = "Шифрование",
                     Description = "Защита изображений",
-                    ToolCardParameter =  typeof(CryptographyPageViewModel),
                     ToolCardCommand = new LambdaCommand(OnNavigate)
                 },
-                new ToolCardViewModel()
+                new ToolCardViewModel<SteganographyPageViewModel>()
                 {
                     Title = "Стеганография",
                     Description = "Скрытие данных",
-                    ToolCardParameter = typeof(SteganographyPageViewModel),
                     ToolCardCommand = new LambdaCommand(OnNavigate)
                 }
             };
@@ -37,7 +35,8 @@ namespace PixelCrypt2026.ViewModel.Page
 
         private void OnNavigate(object parameter)
         {
-            if (parameter is Type type) _navigation.NavigateTo(type);
+            if (parameter is Type type) 
+                _navigation.NavigateTo(type);
         }
     }
 }

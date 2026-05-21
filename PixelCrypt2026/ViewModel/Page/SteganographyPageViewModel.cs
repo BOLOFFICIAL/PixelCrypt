@@ -1,13 +1,13 @@
 ﻿using PixelCrypt2026.Program;
-using PixelCrypt2026.ViewModel.Base;
+using PixelCrypt2026.ViewModel.UserControl;
 
 namespace PixelCrypt2026.ViewModel.Page
 {
-    class SteganographyPageViewModel : BaseViewModel
+    class SteganographyPageViewModel : BasePageLayoutViewModel
     {
-        public SteganographyPageViewModel(NavigationService navigation)
+        public SteganographyPageViewModel(NavigationService navigation) : base(navigation)
         {
-
+            Title = $"Стеганография создано в {DateTime.Now}";
         }
     }
 }

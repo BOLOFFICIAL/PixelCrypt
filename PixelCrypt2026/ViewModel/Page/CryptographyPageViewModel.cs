@@ -1,13 +1,13 @@
 ﻿using PixelCrypt2026.Program;
-using PixelCrypt2026.ViewModel.Base;
+using PixelCrypt2026.ViewModel.UserControl;
 
 namespace PixelCrypt2026.ViewModel.Page
 {
-    class CryptographyPageViewModel : BaseViewModel
+    internal class CryptographyPageViewModel : BasePageLayoutViewModel
     {
-        public CryptographyPageViewModel(NavigationService navigation)
+        public CryptographyPageViewModel(NavigationService navigation) : base(navigation)
         {
-
+            Title = $"Шифрование создано в {DateTime.Now}";
         }
     }
 }

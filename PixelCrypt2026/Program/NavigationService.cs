@@ -8,9 +8,9 @@ namespace PixelCrypt2026.Program
         private readonly Frame _frame;
         private readonly Dictionary<Type, Page> _pageCache = new();
 
-        public NavigationService(Frame frame) 
-        { 
-            _frame = frame; 
+        public NavigationService(Frame frame)
+        {
+            _frame = frame;
         }
 
         public void Register<TViewModel>(Page page) where TViewModel : BaseViewModel
