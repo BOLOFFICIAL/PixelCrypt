@@ -7,7 +7,7 @@ namespace PixelCrypt2026.ViewModel.Page
     {
         public CryptographyPageViewModel(NavigationService navigation) : base(navigation)
         {
-            Title = $"Шифрование создано в {DateTime.Now}";
+            Title = $"Шифрование";
         }
     }
 }

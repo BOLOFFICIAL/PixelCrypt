@@ -21,15 +21,15 @@ namespace PixelCrypt2026.ViewModel.Page
                 new ToolCardViewModel<CryptographyPageViewModel>()
                 {
                     Title = "Шифрование",
-                    Description = "Защита изображений",
+                    Description = "Защитите изображение паролем, превратив его в визуальный шум. Без ключа никто не увидит оригинал.",
                     ToolCardCommand = new LambdaCommand(OnNavigate)
                 },
                 new ToolCardViewModel<SteganographyPageViewModel>()
                 {
                     Title = "Стеганография",
-                    Description = "Скрытие данных",
+                    Description = "Спрячьте текст или файл внутри изображения незаметно. Внешне картинка остаётся прежней.",
                     ToolCardCommand = new LambdaCommand(OnNavigate)
-                }
+                },
             };
         }
 
