@@ -35,7 +35,7 @@ namespace PixelCrypt2026.ViewModel.Page
 
         private void OnNavigate(object parameter)
         {
-            if (parameter is Type type) 
+            if (parameter is Type type)
                 _navigation.NavigateTo(type);
         }
     }

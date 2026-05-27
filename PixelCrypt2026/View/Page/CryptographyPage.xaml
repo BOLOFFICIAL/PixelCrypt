@@ -13,10 +13,40 @@
     <controls:BasePageLayout>
         <controls:BasePageLayout.PageContent>
             <Grid>
-                <TextBlock Text="Контент страницы шифрования"
-                   FontSize="40"
-                   HorizontalAlignment="Center"
-                   VerticalAlignment="Center"/>
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="300"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Grid Grid.Column="0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="auto"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="0">
+                        <controls:ImageList DataContext="{Binding ImageList}"/>
+                    </Grid>
+
+                    <Grid Grid.Row="1">
+                        <Button Content="Do"
+                    Command="{Binding DoCommand}"/>
+                    </Grid>
+                </Grid>
+
+                <Grid Grid.Column="1">
+                    <Border Grid.Column="1"
+                            Margin="20,0,0,0"
+                            Background="#202020"
+                            CornerRadius="12">
+
+                        <Image Stretch="Uniform"
+                   Source="{Binding ImageList.SelectedImage.ImagePath}"/>
+
+                    </Border>
+                </Grid>
+
             </Grid>
         </controls:BasePageLayout.PageContent>
     </controls:BasePageLayout>
