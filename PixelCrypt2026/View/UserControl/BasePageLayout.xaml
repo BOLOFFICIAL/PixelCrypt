@@ -34,7 +34,7 @@
                    Height="2"/>
 
         <ContentPresenter Grid.Row="2"
-                          Content="{Binding RelativeSource={RelativeSource AncestorType=local:BasePageLayout}, Path=Content}"/>
+                          Content="{Binding RelativeSource={RelativeSource AncestorType=local:BasePageLayout}, Path=PageContent}"/>
     </Grid>
 
 </UserControl>

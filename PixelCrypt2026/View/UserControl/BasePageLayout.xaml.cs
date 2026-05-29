@@ -12,15 +12,15 @@ namespace PixelCrypt2026.View.UserControl
             InitializeComponent();
         }
 
-        public new object Content
+        public object PageContent
         {
-            get => GetValue(ContentProperty);
-            set => SetValue(ContentProperty, value);
+            get => GetValue(PageContentProperty);
+            set => SetValue(PageContentProperty, value);
         }
 
-        public static new readonly DependencyProperty ContentProperty =
+        public static readonly DependencyProperty PageContentProperty =
             DependencyProperty.Register(
-                nameof(Content),
+                nameof(PageContent),
                 typeof(object),
                 typeof(BasePageLayout),
                 new PropertyMetadata(null));

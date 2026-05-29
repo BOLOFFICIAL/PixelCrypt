@@ -11,13 +11,13 @@
       Title="SteganographyPage">
 
     <controls:BasePageLayout>
-
-        <Grid>
-            <TextBlock Text="Контент страницы стеганографии"
-                       FontSize="40"
-                       HorizontalAlignment="Center"
-                       VerticalAlignment="Center"/>
-        </Grid>
-
+        <controls:BasePageLayout.PageContent>
+            <Grid>
+                <TextBlock Text="Контент страницы стеганографии"
+                   FontSize="40"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center"/>
+            </Grid>
+        </controls:BasePageLayout.PageContent>
     </controls:BasePageLayout>
 </Page>
