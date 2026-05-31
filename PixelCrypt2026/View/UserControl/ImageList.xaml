@@ -7,7 +7,7 @@
              xmlns:controls="clr-namespace:PixelCrypt2026.View.UserControl" 
              mc:Ignorable="d" 
              d:DesignHeight="450" 
-             d:DesignWidth="800">
+             d:DesignWidth="300">
     
     <Grid Background="LightGray">
         <Grid.RowDefinitions>
@@ -38,6 +38,8 @@
                      BorderThickness="0"
                      VirtualizingPanel.IsVirtualizing="True"
                      ScrollViewer.CanContentScroll="True"
+                     ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                      SelectedItem="{Binding SelectedImage}"
                      Tag="{Binding}">
 
@@ -81,7 +83,7 @@
 
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <controls:ImageChip/>
+                        <controls:ImageChip Image="{Binding}"/>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
 

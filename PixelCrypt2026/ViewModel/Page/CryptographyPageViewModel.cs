@@ -1,5 +1,6 @@
 ﻿using PixelCrypt2026.Commands.Base;
 using PixelCrypt2026.Program;
+using PixelCrypt2026.ViewModel.Base;
 using PixelCrypt2026.ViewModel.UserControl;
 using System.Windows.Input;
 

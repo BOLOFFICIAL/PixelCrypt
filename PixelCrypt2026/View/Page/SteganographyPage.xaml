@@ -10,7 +10,9 @@
       d:DesignWidth="800"
       Title="SteganographyPage">
 
-    <controls:BasePageLayout>
+    <controls:BasePageLayout
+        Title="{Binding Title}"
+        BackCommand="{Binding BackCommand}">
         <controls:BasePageLayout.PageContent>
             <Grid>
                 <TextBlock Text="Контент страницы стеганографии"

@@ -10,7 +10,8 @@
       d:DesignWidth="800"
       Title="CryptographyPage">
 
-    <controls:BasePageLayout>
+    <controls:BasePageLayout Title="{Binding Title}"
+                             BackCommand="{Binding BackCommand}">
         <controls:BasePageLayout.PageContent>
             <Grid>
 

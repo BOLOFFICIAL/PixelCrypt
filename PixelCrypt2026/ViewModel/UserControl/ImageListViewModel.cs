@@ -1,5 +1,6 @@
 ﻿using Microsoft.Win32;
 using PixelCrypt2026.Commands.Base;
+using PixelCrypt2026.Model;
 using PixelCrypt2026.ViewModel.Base;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -7,11 +8,11 @@ using System.Windows.Input;
 
 namespace PixelCrypt2026.ViewModel.UserControl
 {
-    internal class ImageListViewModel : BaseViewModel
+    public class ImageListViewModel : BaseViewModel
     {
-        public ObservableCollection<ImageChipViewModel> Images { get; set; }
+        public ObservableCollection<ImageFile> Images { get; }
 
-        private ImageChipViewModel selectedImage;
+        private ImageFile? selectedImage;
 
         public ICommand AddImageCommand { get; set; }
 
@@ -27,7 +28,7 @@ namespace PixelCrypt2026.ViewModel.UserControl
 
         public ImageListViewModel()
         {
-            Images = new ObservableCollection<ImageChipViewModel>();
+            Images = new ObservableCollection<ImageFile>();
 
             AddImageCommand = new LambdaCommand(AddImage);
             ClearImagesCommand = new LambdaCommand(ClearImages);
@@ -38,7 +39,7 @@ namespace PixelCrypt2026.ViewModel.UserControl
             OpenOriginalCommand = new LambdaCommand(OnOpenOriginal);
         }
 
-        public ImageChipViewModel SelectedImage
+        public ImageFile? SelectedImage
         {
             get => selectedImage;
             set => Set(ref selectedImage, value);
@@ -46,13 +47,12 @@ namespace PixelCrypt2026.ViewModel.UserControl
 
         private void AddImage(object p)
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-
-            openFileDialog.Title = "Выберите изображение";
-
-            openFileDialog.Filter = "Изображение (*.png;*.jpg;*.jpeg;*.bmp)|*.png;*.jpg;*.jpeg;*.bmp";
-
-            openFileDialog.Multiselect = true;
+            OpenFileDialog openFileDialog = new OpenFileDialog()
+            {
+                Title = "Выберите изображение",
+                Filter = "Изображение (*.png;*.jpg;*.jpeg;*.bmp)|*.png;*.jpg;*.jpeg;*.bmp",
+                Multiselect = true,
+            };
 
             bool? result = openFileDialog.ShowDialog();
 
@@ -66,8 +66,10 @@ namespace PixelCrypt2026.ViewModel.UserControl
                 if (alreadyExists)
                     continue;
 
-                Images.Add(new ImageChipViewModel(filePath));
+                Images.Add(new ImageFile(filePath));
             }
+
+            SelectedImage = SelectedImage ?? Images.FirstOrDefault();
         }
 
         private void ClearImages(object p)
@@ -78,7 +80,7 @@ namespace PixelCrypt2026.ViewModel.UserControl
 
         private void OnMoveUp(object p)
         {
-            if (p is not ImageChipViewModel image) return;
+            if (p is not ImageFile image) return;
 
             int index = Images.IndexOf(image);
 
@@ -88,9 +90,9 @@ namespace PixelCrypt2026.ViewModel.UserControl
             Images.Move(index, index - 1);
         }
 
-        private bool CanMoveUp(object p) 
+        private bool CanMoveUp(object p)
         {
-            if (p is not ImageChipViewModel image)
+            if (p is not ImageFile image)
                 return false;
 
             return Images.IndexOf(image) > 0;
@@ -98,7 +100,7 @@ namespace PixelCrypt2026.ViewModel.UserControl
 
         private void OnMoveDown(object p)
         {
-            if (p is not ImageChipViewModel image) return;
+            if (p is not ImageFile image) return;
 
             int index = Images.IndexOf(image);
 
@@ -108,9 +110,9 @@ namespace PixelCrypt2026.ViewModel.UserControl
             Images.Move(index, index + 1);
         }
 
-        private bool CanMoveDown(object p) 
+        private bool CanMoveDown(object p)
         {
-            if (p is not ImageChipViewModel image)
+            if (p is not ImageFile image)
                 return false;
 
             return Images.IndexOf(image) < Images.Count - 1;
@@ -118,14 +120,14 @@ namespace PixelCrypt2026.ViewModel.UserControl
 
         private void OnRemove(object p)
         {
-            if (p is not ImageChipViewModel image) return;
+            if (p is not ImageFile image) return;
 
             Images.Remove(image);
         }
 
         private void OnOpenOriginal(object p)
         {
-            if (p is not ImageChipViewModel image) return;
+            if (p is not ImageFile image) return;
 
             Process.Start(new ProcessStartInfo()
             {

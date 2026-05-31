@@ -10,7 +10,6 @@
         MinWidth="800">
     <Grid>
         <Frame x:Name="MainFrame"
-               Content="{Binding Path = CurrentPage}" 
                NavigationUIVisibility = "Hidden"/>
     </Grid>
 </Window>

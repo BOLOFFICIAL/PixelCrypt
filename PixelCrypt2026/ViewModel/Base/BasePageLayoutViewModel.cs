@@ -1,10 +1,9 @@
 ﻿using PixelCrypt2026.Commands.Base;
 using PixelCrypt2026.Program;
-using PixelCrypt2026.ViewModel.Base;
 using PixelCrypt2026.ViewModel.Page;
 using System.Windows.Input;
 
-namespace PixelCrypt2026.ViewModel.UserControl
+namespace PixelCrypt2026.ViewModel.Base
 {
     internal abstract class BasePageLayoutViewModel : BaseViewModel
     {

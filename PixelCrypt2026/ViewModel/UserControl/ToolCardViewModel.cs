@@ -3,7 +3,7 @@ using System.Windows.Input;
 
 namespace PixelCrypt2026.ViewModel.UserControl
 {
-    class ToolCardViewModel : BaseViewModel
+    public class ToolCardViewModel : BaseViewModel
     {
         public string Title { get; set; }
         public string Status { get; set; }

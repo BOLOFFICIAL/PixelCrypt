@@ -1,4 +1,7 @@
-﻿namespace PixelCrypt2026.View.UserControl
+﻿using PixelCrypt2026.Model;
+using System.Windows;
+
+namespace PixelCrypt2026.View.UserControl
 {
     /// <summary>
     /// Логика взаимодействия для ImageChip.xaml
@@ -9,5 +12,17 @@
         {
             InitializeComponent();
         }
+
+        public ImageFile Image
+        {
+            get => (ImageFile)GetValue(ImageProperty);
+            set => SetValue(ImageProperty, value);
+        }
+
+        public static readonly DependencyProperty ImageProperty =
+            DependencyProperty.Register(
+                nameof(Image),
+                typeof(ImageFile),
+                typeof(ImageChip));
     }
 }

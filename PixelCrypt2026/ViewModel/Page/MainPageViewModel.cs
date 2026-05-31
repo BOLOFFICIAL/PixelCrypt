@@ -10,7 +10,7 @@ namespace PixelCrypt2026.ViewModel.Page
     {
         private readonly NavigationService _navigation;
 
-        public ObservableCollection<ToolCardViewModel> Tools { get; set; }
+        public ObservableCollection<ToolCardViewModel> Tools { get; }
 
         public MainPageViewModel(NavigationService navigation)
         {
