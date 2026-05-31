@@ -4,6 +4,7 @@ using PixelCrypt2026.Model;
 using PixelCrypt2026.ViewModel.Base;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Windows;
 using System.Windows.Input;
 
 namespace PixelCrypt2026.ViewModel.UserControl
@@ -12,7 +13,10 @@ namespace PixelCrypt2026.ViewModel.UserControl
     {
         public ObservableCollection<ImageFile> Images { get; }
 
-        private ImageFile? selectedImage;
+        private ImageFile? _selectedImage;
+        private bool _isEnable = true;
+
+        public GridLength _heightButtons = new GridLength(1, GridUnitType.Auto);
 
         public ICommand AddImageCommand { get; set; }
 
@@ -31,18 +35,51 @@ namespace PixelCrypt2026.ViewModel.UserControl
             Images = new ObservableCollection<ImageFile>();
 
             AddImageCommand = new LambdaCommand(AddImage);
-            ClearImagesCommand = new LambdaCommand(ClearImages);
+            ClearImagesCommand = new LambdaCommand(ClearImages, CanClearImages);
 
             MoveUpCommand = new LambdaCommand(OnMoveUp, CanMoveUp);
             MoveDownCommand = new LambdaCommand(OnMoveDown, CanMoveDown);
-            RemoveCommand = new LambdaCommand(OnRemove);
-            OpenOriginalCommand = new LambdaCommand(OnOpenOriginal);
+            RemoveCommand = new LambdaCommand(OnRemove, CanRemove);
+            OpenOriginalCommand = new LambdaCommand(OnOpenOriginal, CanOpenOriginal);
+        }
+
+        public GridLength HeightButtons 
+        {
+            get => _heightButtons;
+            set => Set(ref _heightButtons, value);
+        }
+
+        public bool IsEnable 
+        {
+            get => _isEnable;
+            set
+            {
+                Set(ref _isEnable, value);
+
+                if (_isEnable)
+                {
+                    HeightButtons = new GridLength(1, GridUnitType.Auto);
+                }
+                else 
+                {
+                    HeightButtons = new GridLength(0, GridUnitType.Star);
+                }
+            }
         }
 
         public ImageFile? SelectedImage
         {
-            get => selectedImage;
-            set => Set(ref selectedImage, value);
+            get => _selectedImage;
+            set
+            {
+                if (_selectedImage != null)
+                    _selectedImage.IsSelected = false;
+
+                Set(ref _selectedImage, value);
+
+                if (_selectedImage != null)
+                    _selectedImage.IsSelected = true;
+            }
         }
 
         private void AddImage(object p)
@@ -78,6 +115,9 @@ namespace PixelCrypt2026.ViewModel.UserControl
             SelectedImage = null;
         }
 
+        private bool CanClearImages(object p) 
+            => Images.Count > 0;
+
         private void OnMoveUp(object p)
         {
             if (p is not ImageFile image) return;
@@ -92,7 +132,7 @@ namespace PixelCrypt2026.ViewModel.UserControl
 
         private bool CanMoveUp(object p)
         {
-            if (p is not ImageFile image)
+            if (p is not ImageFile image || !IsEnable)
                 return false;
 
             return Images.IndexOf(image) > 0;
@@ -112,7 +152,7 @@ namespace PixelCrypt2026.ViewModel.UserControl
 
         private bool CanMoveDown(object p)
         {
-            if (p is not ImageFile image)
+            if (p is not ImageFile image || !IsEnable)
                 return false;
 
             return Images.IndexOf(image) < Images.Count - 1;
@@ -125,6 +165,9 @@ namespace PixelCrypt2026.ViewModel.UserControl
             Images.Remove(image);
         }
 
+        private bool CanRemove(object p)
+            => IsEnable;
+
         private void OnOpenOriginal(object p)
         {
             if (p is not ImageFile image) return;
@@ -135,5 +178,8 @@ namespace PixelCrypt2026.ViewModel.UserControl
                 UseShellExecute = true
             });
         }
+        
+        private bool CanOpenOriginal(object p) 
+            => IsEnable;
     }
 }

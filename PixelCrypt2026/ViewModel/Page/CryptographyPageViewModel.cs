@@ -17,17 +17,24 @@ namespace PixelCrypt2026.ViewModel.Page
             Title = $"Шифрование";
             ImageList = new ImageListViewModel();
 
-            DoCommand = new LambdaCommand(OnDoCommand);
+            DoCommand = new LambdaCommand(OnDoCommand, CanDoCommand);
         }
 
         private async void OnDoCommand(object obj)
         {
+            ImageList.IsEnable = false;
+
             foreach (var el in ImageList.Images)
             {
                 ImageList.SelectedImage = el;
 
-                await Task.Delay(100);
+                await Task.Delay(1000);
             }
+
+            ImageList.IsEnable = true;
         }
+
+        private bool CanDoCommand(object obj)
+            => ImageList.Images.Count > 0;
     }
 }

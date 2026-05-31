@@ -4,7 +4,7 @@
              xmlns:local="clr-namespace:PixelCrypt2026.View.UserControl">
 
     <Grid DataContext="{Binding Image, RelativeSource={RelativeSource AncestorType=local:ImageChip}}"
-          Margin="0,0,0,5">
+          Margin="0,5">
 
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
@@ -14,6 +14,7 @@
         <Border Grid.Column="0"
                 Margin="0,0,5,0"
                 Padding="10,5"
+                VerticalAlignment="Top"
                 BorderThickness="1"
                 BorderBrush="Black"
                 CornerRadius="10">
@@ -24,11 +25,15 @@
 
         <Border Grid.Column="1"
                 BorderThickness="1"
-                BorderBrush="Black"
+                BorderBrush="{Binding BorderBrush}"
+                Background="{Binding Background}"
                 CornerRadius="10">
 
             <TextBlock Text="{Binding FileName}"
+                       Foreground="{Binding Foreground}"
                        VerticalAlignment="Center"
+                       Padding="10,5"
+                       HorizontalAlignment="Center"
                        TextWrapping="Wrap"/>
 
         </Border>
