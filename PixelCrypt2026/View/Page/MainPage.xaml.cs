@@ -12,6 +12,11 @@ namespace PixelCrypt2026.View.Page
         {
             InitializeComponent();
             DataContext = new MainPageViewModel(navigation);
+
+        #if DEBUG
+            Version.Text = "DEBUG";
+        #endif
+
         }
     }
 }
