@@ -30,5 +30,10 @@ namespace PixelCrypt2026.ViewModel.Base
         {
             _navigation.NavigateTo<MainPageViewModel>();
         }
+
+        protected void SetStatus(string status = "")
+        {
+            OperationStatusService.Instance.UpdateStatus(GetType(), status);
+        }
     }
 }

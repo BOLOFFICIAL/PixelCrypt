@@ -37,7 +37,7 @@ namespace PixelCrypt2026.Model
             {
                 if (value)
                 {
-                    Background = "#000000";  
+                    Background = "#000000";
                     BorderBrush = "#000000";
                     Foreground = "#FFFFFF";
                 }

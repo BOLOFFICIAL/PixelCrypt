@@ -9,6 +9,7 @@ namespace PixelCrypt2026.ViewModel.Page
     class MainPageViewModel : BaseViewModel
     {
         private readonly NavigationService _navigation;
+        private readonly Dictionary<Type, ToolCardViewModel> _tools;
 
         public ObservableCollection<ToolCardViewModel> Tools { get; }
 
@@ -16,21 +17,36 @@ namespace PixelCrypt2026.ViewModel.Page
         {
             _navigation = navigation;
 
-            Tools = new ObservableCollection<ToolCardViewModel>()
+            _tools = new Dictionary<Type, ToolCardViewModel>()
             {
-                new ToolCardViewModel<CryptographyPageViewModel>()
                 {
-                    Title = "Шифрование",
-                    Description = "Защитите изображение паролем, превратив его в визуальный шум. Без ключа никто не увидит оригинал.",
-                    ToolCardCommand = new LambdaCommand(OnNavigate)
+                    typeof(CryptographyPageViewModel),
+                    new ToolCardViewModel<CryptographyPageViewModel>()
+                    {
+                        Title = "Шифрование",
+                        Description = "Защитите изображение паролем, превратив его в визуальный шум. Без ключа никто не увидит оригинал.",
+                        ToolCardCommand = new LambdaCommand(OnNavigate)
+                    }
                 },
-                new ToolCardViewModel<SteganographyPageViewModel>()
                 {
-                    Title = "Стеганография",
-                    Description = "Спрячьте текст или файл внутри изображения незаметно. Внешне картинка остаётся прежней.",
-                    ToolCardCommand = new LambdaCommand(OnNavigate)
-                },
+                    typeof(SteganographyPageViewModel),
+                    new ToolCardViewModel<SteganographyPageViewModel>()
+                    {
+                        Title = "Стеганография",
+                        Description = "Спрячьте текст или файл внутри изображения незаметно. Внешне картинка остаётся прежней.",
+                        ToolCardCommand = new LambdaCommand(OnNavigate)
+                    }
+                }
             };
+
+            Tools = new ObservableCollection<ToolCardViewModel>(_tools.Values);
+
+            OperationStatusService.Instance.StatusChanged += OnSetStatus;
+        }
+
+        private void OnSetStatus(Type type, string status)
+        {
+            _tools[type].Status = status;
         }
 
         private void OnNavigate(object parameter)

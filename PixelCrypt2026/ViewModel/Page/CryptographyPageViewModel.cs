@@ -1,4 +1,5 @@
-﻿using PixelCrypt2026.Commands.Base;
+﻿// FILE: ViewModel\Page\CryptographyPageViewModel.cs
+using PixelCrypt2026.Commands.Base;
 using PixelCrypt2026.Program;
 using PixelCrypt2026.ViewModel.Base;
 using PixelCrypt2026.ViewModel.UserControl;
@@ -38,6 +39,8 @@ namespace PixelCrypt2026.ViewModel.Page
 
             ImageList.IsEnable = false;
 
+            SetStatus("Выполняется");
+
             try
             {
                 int totalItems = ImageList.Images.Count;
@@ -50,7 +53,6 @@ namespace PixelCrypt2026.ViewModel.Page
 
                 foreach (var el in ImageList.Images)
                 {
-                    // Проверка на отмену
                     token.ThrowIfCancellationRequested();
 
                     ImageList.SelectedImage = el;
@@ -76,25 +78,31 @@ namespace PixelCrypt2026.ViewModel.Page
 
                     TimeSpan remaining = TimeSpan.FromSeconds(estimatedRemainingSeconds);
                     Progress.ProgressTime = $"{(int)remaining.TotalHours:D2}:{remaining.Minutes:D2}:{remaining.Seconds:D2}";
+
+                    SetStatus($"Выполняется {processedItems}/{totalItems} ({progressPercent:F0}%)");
                 }
 
                 if (token.IsCancellationRequested)
                 {
                     Progress.ProgressTime = $"Остановлено ({processedItems}/{totalItems})";
+                    SetStatus("Остановлено");
                 }
                 else
                 {
                     Progress.ProgressValue = 100;
                     Progress.ProgressTime = "Завершено";
+                    SetStatus("Завершено");
                 }
             }
             catch (OperationCanceledException)
             {
                 Progress.ProgressTime = "Операция отменена";
+                SetStatus("Отменено");
             }
             catch (Exception ex)
             {
                 Progress.ProgressTime = "Ошибка";
+                SetStatus("Ошибка");
                 System.Diagnostics.Debug.WriteLine($"Error: {ex.Message}");
             }
             finally
@@ -103,6 +111,10 @@ namespace PixelCrypt2026.ViewModel.Page
                 ImageList.IsEnable = true;
                 _cancellationTokenSource?.Dispose();
                 _cancellationTokenSource = null;
+
+                // Очищаем статус через 3 секунды
+                await Task.Delay(3000);
+                SetStatus();
             }
         }
 

@@ -43,13 +43,13 @@ namespace PixelCrypt2026.ViewModel.UserControl
             OpenOriginalCommand = new LambdaCommand(OnOpenOriginal, CanOpenOriginal);
         }
 
-        public GridLength HeightButtons 
+        public GridLength HeightButtons
         {
             get => _heightButtons;
             set => Set(ref _heightButtons, value);
         }
 
-        public bool IsEnable 
+        public bool IsEnable
         {
             get => _isEnable;
             set
@@ -60,7 +60,7 @@ namespace PixelCrypt2026.ViewModel.UserControl
                 {
                     HeightButtons = new GridLength(1, GridUnitType.Auto);
                 }
-                else 
+                else
                 {
                     HeightButtons = new GridLength(0, GridUnitType.Star);
                 }
@@ -115,7 +115,7 @@ namespace PixelCrypt2026.ViewModel.UserControl
             SelectedImage = null;
         }
 
-        private bool CanClearImages(object p) 
+        private bool CanClearImages(object p)
             => Images.Count > 0;
 
         private void OnMoveUp(object p)
@@ -178,8 +178,8 @@ namespace PixelCrypt2026.ViewModel.UserControl
                 UseShellExecute = true
             });
         }
-        
-        private bool CanOpenOriginal(object p) 
+
+        private bool CanOpenOriginal(object p)
             => IsEnable;
     }
 }

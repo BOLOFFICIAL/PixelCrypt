@@ -8,6 +8,8 @@ namespace PixelCrypt2026.ViewModel.Page
         public SteganographyPageViewModel(NavigationService navigation) : base(navigation)
         {
             Title = $"Стеганография";
+
+            SetStatus("Создано");
         }
     }
 }
