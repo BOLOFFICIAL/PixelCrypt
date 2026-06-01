@@ -14,7 +14,6 @@
                              BackCommand="{Binding BackCommand}">
         <controls:BasePageLayout.PageContent>
             <Grid>
-
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="300"/>
                     <ColumnDefinition Width="*"/>
@@ -22,18 +21,30 @@
 
                 <Grid Grid.Column="0">
                     <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
                         <RowDefinition Height="*"/>
+                        <RowDefinition Height="auto"/>
                         <RowDefinition Height="auto"/>
                     </Grid.RowDefinitions>
 
                     <Grid Grid.Row="0">
-                        <controls:ImageList DataContext="{Binding ImageList}"/>
+                        <controls:ProgressPanel DataContext="{Binding Progress}"/>
                     </Grid>
 
                     <Grid Grid.Row="1">
+                        <controls:ImageList DataContext="{Binding ImageList}"/>
+                    </Grid>
+
+                    <Grid Grid.Row="2">
                         <Button Content="Do"
                                 Command="{Binding DoCommand}"/>
                     </Grid>
+
+                    <Grid Grid.Row="3">
+                        <Button Content="Stop"
+                                Command="{Binding StopCommand}"/>
+                    </Grid>
+
                 </Grid>
 
                 <Grid Grid.Column="1">
