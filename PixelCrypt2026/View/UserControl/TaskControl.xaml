@@ -1,0 +1,23 @@
+﻿<UserControl x:Class="PixelCrypt2026.View.UserControl.TaskControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:PixelCrypt2026.View.UserControl">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="{Binding WidthStart}"/>
+            <ColumnDefinition Width="{Binding WidthStop}"/>
+        </Grid.ColumnDefinitions>
+
+        <Button Grid.Column="0"
+                Content="Выполнить"
+                Command="{Binding StartCommand}"
+                Padding="10,5"/>
+
+        <Button Grid.Column="1"
+                Content="Стоп"
+                Command="{Binding StopCommand}"
+                Padding="10,5"/>
+    </Grid>
+</UserControl>

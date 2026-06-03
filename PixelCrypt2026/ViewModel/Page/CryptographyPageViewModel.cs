@@ -1,45 +1,46 @@
-﻿// FILE: ViewModel\Page\CryptographyPageViewModel.cs
-using PixelCrypt2026.Commands.Base;
-using PixelCrypt2026.Program;
+﻿using PixelCrypt2026.Program;
 using PixelCrypt2026.ViewModel.Base;
 using PixelCrypt2026.ViewModel.UserControl;
-using System.Windows.Input;
+using System.Windows;
 
 namespace PixelCrypt2026.ViewModel.Page
 {
     internal class CryptographyPageViewModel : BasePageLayoutViewModel
     {
-        private CancellationTokenSource _cancellationTokenSource;
-        private bool _isProcessing;
+        private GridLength _progressHeight;
 
         public ImageListViewModel ImageList { get; set; }
         public ProgressPanelViewModel Progress { get; set; }
+        public TaskControlViewModel TaskControl { get; set; }
 
-        public ICommand DoCommand { get; set; }
-        public ICommand StopCommand { get; set; }
+        public GridLength ProgressHeight
+        {
+            get => _progressHeight;
+            set => Set(ref _progressHeight, value);
+        }
 
         public CryptographyPageViewModel(NavigationService navigation) : base(navigation)
         {
+            ProgressHeight = new GridLength(0, GridUnitType.Star);
             Title = $"Шифрование";
             ImageList = new ImageListViewModel();
             Progress = new ProgressPanelViewModel();
+            TaskControl = new TaskControlViewModel();
 
-            DoCommand = new LambdaCommand(OnDoCommand, CanDoCommand);
-            StopCommand = new LambdaCommand(OnStopCommand, CanStopCommand);
+            TaskControl.StartRequested += StartCommand;
+            TaskControl.StopRequested += StopCommand;
+            TaskControl.CanStart += () => ImageList.Images.Count > 0;
         }
 
-        private async void OnDoCommand(object obj)
+        private async void StartCommand()
         {
-            if (_isProcessing)
-                return;
-
-            _isProcessing = true;
-            _cancellationTokenSource = new CancellationTokenSource();
-            var token = _cancellationTokenSource.Token;
+            var token = TaskControl.CancellationTokenSource.Token;
 
             ImageList.IsEnable = false;
 
             SetStatus("Выполняется");
+
+            ProgressHeight = new GridLength(1, GridUnitType.Auto);
 
             try
             {
@@ -84,11 +85,13 @@ namespace PixelCrypt2026.ViewModel.Page
 
                 if (token.IsCancellationRequested)
                 {
+                    MessageBox.Show("Операция остановлена");
                     Progress.ProgressTime = $"Остановлено ({processedItems}/{totalItems})";
                     SetStatus("Остановлено");
                 }
                 else
                 {
+                    MessageBox.Show("Операция завершена");
                     Progress.ProgressValue = 100;
                     Progress.ProgressTime = "Завершено";
                     SetStatus("Завершено");
@@ -107,26 +110,17 @@ namespace PixelCrypt2026.ViewModel.Page
             }
             finally
             {
-                _isProcessing = false;
+                TaskControl.FinishCommand();
                 ImageList.IsEnable = true;
-                _cancellationTokenSource?.Dispose();
-                _cancellationTokenSource = null;
-
-                await Task.Delay(3000);
+                ProgressHeight = new GridLength(0, GridUnitType.Star);
                 SetStatus();
             }
         }
 
-        private bool CanDoCommand(object obj)
-            => !_isProcessing && ImageList.Images.Count > 0;
-
-        private void OnStopCommand(object obj)
+        private void StopCommand()
         {
-            _cancellationTokenSource?.Cancel();
             Progress.ProgressTime = "Остановка...";
+            ProgressHeight = new GridLength(0, GridUnitType.Star);
         }
-
-        private bool CanStopCommand(object obj)
-            => _isProcessing && _cancellationTokenSource != null;
     }
 }
