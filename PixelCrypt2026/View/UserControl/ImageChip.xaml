@@ -29,7 +29,7 @@
                 Background="{Binding Background}"
                 CornerRadius="10">
 
-            <TextBlock Text="{Binding FileName}"
+            <TextBlock Text="{Binding ImageFile.FileName}"
                        Foreground="{Binding Foreground}"
                        VerticalAlignment="Center"
                        Padding="10,5"

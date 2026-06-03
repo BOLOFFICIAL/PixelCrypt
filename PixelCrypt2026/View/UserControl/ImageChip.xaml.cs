@@ -1,4 +1,4 @@
-﻿using PixelCrypt2026.Model;
+﻿using PixelCrypt2026.ViewModel.UserControl;
 using System.Windows;
 
 namespace PixelCrypt2026.View.UserControl
@@ -13,16 +13,16 @@ namespace PixelCrypt2026.View.UserControl
             InitializeComponent();
         }
 
-        public ImageFile Image
+        public ImageChipViewModel Image
         {
-            get => (ImageFile)GetValue(ImageProperty);
+            get => (ImageChipViewModel)GetValue(ImageProperty);
             set => SetValue(ImageProperty, value);
         }
 
         public static readonly DependencyProperty ImageProperty =
             DependencyProperty.Register(
                 nameof(Image),
-                typeof(ImageFile),
+                typeof(ImageChipViewModel),
                 typeof(ImageChip));
     }
 }

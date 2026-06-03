@@ -112,14 +112,13 @@ namespace PixelCrypt2026.ViewModel.Page
                 _cancellationTokenSource?.Dispose();
                 _cancellationTokenSource = null;
 
-                // Очищаем статус через 3 секунды
                 await Task.Delay(3000);
                 SetStatus();
             }
         }
 
         private bool CanDoCommand(object obj)
-            => ImageList.Images.Count > 0;
+            => !_isProcessing && ImageList.Images.Count > 0;
 
         private void OnStopCommand(object obj)
         {

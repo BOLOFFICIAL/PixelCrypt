@@ -1,6 +1,5 @@
 ﻿using Microsoft.Win32;
 using PixelCrypt2026.Commands.Base;
-using PixelCrypt2026.Model;
 using PixelCrypt2026.ViewModel.Base;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -11,9 +10,9 @@ namespace PixelCrypt2026.ViewModel.UserControl
 {
     public class ImageListViewModel : BaseViewModel
     {
-        public ObservableCollection<ImageFile> Images { get; }
+        public ObservableCollection<ImageChipViewModel> Images { get; }
 
-        private ImageFile? _selectedImage;
+        private ImageChipViewModel? _selectedImage;
         private bool _isEnable = true;
 
         public GridLength _heightButtons = new GridLength(1, GridUnitType.Auto);
@@ -32,7 +31,7 @@ namespace PixelCrypt2026.ViewModel.UserControl
 
         public ImageListViewModel()
         {
-            Images = new ObservableCollection<ImageFile>();
+            Images = new ObservableCollection<ImageChipViewModel>();
 
             AddImageCommand = new LambdaCommand(AddImage);
             ClearImagesCommand = new LambdaCommand(ClearImages, CanClearImages);
@@ -67,7 +66,7 @@ namespace PixelCrypt2026.ViewModel.UserControl
             }
         }
 
-        public ImageFile? SelectedImage
+        public ImageChipViewModel? SelectedImage
         {
             get => _selectedImage;
             set
@@ -98,12 +97,12 @@ namespace PixelCrypt2026.ViewModel.UserControl
 
             foreach (string filePath in openFileDialog.FileNames)
             {
-                bool alreadyExists = Images.Any(x => x.ImagePath == filePath);
+                bool alreadyExists = Images.Any(x => x.ImageFile.ImagePath == filePath);
 
                 if (alreadyExists)
                     continue;
 
-                Images.Add(new ImageFile(filePath));
+                Images.Add(new ImageChipViewModel(filePath));
             }
 
             SelectedImage = SelectedImage ?? Images.FirstOrDefault();
@@ -120,7 +119,7 @@ namespace PixelCrypt2026.ViewModel.UserControl
 
         private void OnMoveUp(object p)
         {
-            if (p is not ImageFile image) return;
+            if (p is not ImageChipViewModel image) return;
 
             int index = Images.IndexOf(image);
 
@@ -132,7 +131,7 @@ namespace PixelCrypt2026.ViewModel.UserControl
 
         private bool CanMoveUp(object p)
         {
-            if (p is not ImageFile image || !IsEnable)
+            if (p is not ImageChipViewModel image || !IsEnable)
                 return false;
 
             return Images.IndexOf(image) > 0;
@@ -140,7 +139,7 @@ namespace PixelCrypt2026.ViewModel.UserControl
 
         private void OnMoveDown(object p)
         {
-            if (p is not ImageFile image) return;
+            if (p is not ImageChipViewModel image) return;
 
             int index = Images.IndexOf(image);
 
@@ -152,7 +151,7 @@ namespace PixelCrypt2026.ViewModel.UserControl
 
         private bool CanMoveDown(object p)
         {
-            if (p is not ImageFile image || !IsEnable)
+            if (p is not ImageChipViewModel image || !IsEnable)
                 return false;
 
             return Images.IndexOf(image) < Images.Count - 1;
@@ -160,7 +159,7 @@ namespace PixelCrypt2026.ViewModel.UserControl
 
         private void OnRemove(object p)
         {
-            if (p is not ImageFile image) return;
+            if (p is not ImageChipViewModel image) return;
 
             Images.Remove(image);
         }
@@ -170,11 +169,11 @@ namespace PixelCrypt2026.ViewModel.UserControl
 
         private void OnOpenOriginal(object p)
         {
-            if (p is not ImageFile image) return;
+            if (p is not ImageChipViewModel image) return;
 
             Process.Start(new ProcessStartInfo()
             {
-                FileName = image.ImagePath,
+                FileName = image.ImageFile.ImagePath,
                 UseShellExecute = true
             });
         }
