@@ -46,7 +46,7 @@
                             CornerRadius="12">
 
                         <Image Stretch="Uniform"
-                               Source="{Binding ImageList.SelectedImage.ImageFile.ImagePath}"/>
+                               Source="{Binding ImageList.SelectedImage.ImageFile.FilePath}"/>
                     </Border>
                 </Grid>
 

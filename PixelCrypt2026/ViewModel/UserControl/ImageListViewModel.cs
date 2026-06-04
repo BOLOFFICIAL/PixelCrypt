@@ -20,6 +20,8 @@ namespace PixelCrypt2026.ViewModel.UserControl
         public event Action ClearRequested;
         public event Action AddRequested;
 
+        public long TotalSize = 0;
+
         public GridLength _heightButtons = new GridLength(1, GridUnitType.Auto);
 
         public ICommand AddImageCommand { get; set; }
@@ -107,12 +109,17 @@ namespace PixelCrypt2026.ViewModel.UserControl
 
             foreach (string filePath in openFileDialog.FileNames)
             {
-                bool alreadyExists = Images.Any(x => x.ImageFile.ImagePath == filePath);
+                bool alreadyExists = Images.Any(x => x.ImageFile.FilePath == filePath);
 
                 if (alreadyExists)
                     continue;
 
-                Images.Add(new ImageChipViewModel(filePath));
+                var newItem = new ImageChipViewModel(filePath);
+
+                TotalSize += newItem.ImageFile.ImageWidth * newItem.ImageFile.ImageHeight;
+
+                Images.Add(newItem);
+
             }
 
             SelectedImage = SelectedImage ?? Images.FirstOrDefault();
@@ -123,10 +130,11 @@ namespace PixelCrypt2026.ViewModel.UserControl
             if ((!ConfirmationClearRequested?.Invoke()) ?? false)
                 return;
 
-            ClearRequested?.Invoke();
-
             Images.Clear();
             SelectedImage = null;
+            TotalSize = 0;
+
+            ClearRequested?.Invoke();
         }
 
         private bool CanClearImages(object p)
@@ -176,7 +184,12 @@ namespace PixelCrypt2026.ViewModel.UserControl
         {
             if (p is not ImageChipViewModel image) return;
 
+            TotalSize -= image.ImageFile.ImageWidth * image.ImageFile.ImageHeight;
+
             Images.Remove(image);
+
+            if (TotalSize == 0)
+                ClearRequested?.Invoke();
         }
 
         private bool CanRemove(object p)
@@ -188,7 +201,7 @@ namespace PixelCrypt2026.ViewModel.UserControl
 
             Process.Start(new ProcessStartInfo()
             {
-                FileName = image.ImageFile.ImagePath,
+                FileName = image.ImageFile.FilePath,
                 UseShellExecute = true
             });
         }

@@ -34,7 +34,63 @@
                        VerticalAlignment="Center"
                        Padding="10,5"
                        HorizontalAlignment="Center"
-                       TextWrapping="Wrap"/>
+                       TextWrapping="Wrap">
+                <TextBlock.ToolTip>
+                    <ToolTip BorderThickness="0"
+                             Background="Transparent">
+                        <Border Background="White" 
+                                BorderBrush="Black" 
+                                BorderThickness="1" 
+                                CornerRadius="5"
+                                Padding="10">
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal" 
+                                            Margin="0,0,0,5">
+                                    <TextBlock Text="{Binding ImageFile.FileName}" 
+                                               FontWeight="Bold" 
+                                               FontSize="15"/>
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal" 
+                                            Margin="0,0,0,5">
+                                    <StackPanel>
+                                        <TextBlock Text="File Size" 
+                                                   FontSize="10"
+                                                   FontWeight="Medium"/>
+                                        <TextBlock Text="{Binding ImageFile.FileSizeFormatted}" 
+                                                   FontWeight="SemiBold" 
+                                                   FontSize="13"/>
+                                    </StackPanel>
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal" 
+                                            Margin="0,0,0,5">
+                                    <StackPanel>
+                                        <TextBlock Text="Resolution" 
+                                                   FontSize="10"
+                                                   FontWeight="Medium"/>
+                                        <TextBlock Text="{Binding ImageFile.ImageResolution}" 
+                                                   FontWeight="SemiBold" 
+                                                   FontSize="13"/>
+                                    </StackPanel>
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal">
+                                    <StackPanel>
+                                        <TextBlock Text="Location" 
+                                                   FontSize="10"
+                                                   FontWeight="Medium"/>
+                                        <TextBlock Text="{Binding ImageFile.FilePath}" 
+                                                   TextWrapping="Wrap" 
+                                                   MaxWidth="500"
+                                                   FontSize="12"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                    </ToolTip>
+                </TextBlock.ToolTip>
+            </TextBlock>
 
         </Border>
 

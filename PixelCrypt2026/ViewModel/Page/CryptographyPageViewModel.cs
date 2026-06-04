@@ -174,7 +174,6 @@ namespace PixelCrypt2026.ViewModel.Page
                 MessageBoxImage.Question) 
             == MessageBoxResult.Yes;
 
-
         private void SaveCommand()
         {
             MessageBox.Show($"Сохранение изображений {ImageList.Images.Count(i => i.Status == Status.Success)}");
