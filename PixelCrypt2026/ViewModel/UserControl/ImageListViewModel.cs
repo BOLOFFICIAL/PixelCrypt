@@ -1,5 +1,6 @@
 ﻿using Microsoft.Win32;
 using PixelCrypt2026.Commands.Base;
+using PixelCrypt2026.View.UserControl;
 using PixelCrypt2026.ViewModel.Base;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -14,6 +15,10 @@ namespace PixelCrypt2026.ViewModel.UserControl
 
         private ImageChipViewModel? _selectedImage;
         private bool _isEnable = true;
+        public event Func<bool> ConfirmationAddRequested;
+        public event Func<bool> ConfirmationClearRequested;
+        public event Action ClearRequested;
+        public event Action AddRequested;
 
         public GridLength _heightButtons = new GridLength(1, GridUnitType.Auto);
 
@@ -83,6 +88,11 @@ namespace PixelCrypt2026.ViewModel.UserControl
 
         private void AddImage(object p)
         {
+            if ((!ConfirmationAddRequested?.Invoke()) ?? false)
+                return;
+
+            AddRequested?.Invoke();
+
             OpenFileDialog openFileDialog = new OpenFileDialog()
             {
                 Title = "Выберите изображение",
@@ -110,6 +120,11 @@ namespace PixelCrypt2026.ViewModel.UserControl
 
         private void ClearImages(object p)
         {
+            if ((!ConfirmationClearRequested?.Invoke()) ?? false)
+                return;
+
+            ClearRequested?.Invoke();
+
             Images.Clear();
             SelectedImage = null;
         }
@@ -180,5 +195,13 @@ namespace PixelCrypt2026.ViewModel.UserControl
 
         private bool CanOpenOriginal(object p)
             => IsEnable;
+
+        public void ResetImages() 
+        {
+            foreach (var image in Images)
+            {
+                image.Status = Program.Enum.Status.None;
+            }
+        }
     }
 }

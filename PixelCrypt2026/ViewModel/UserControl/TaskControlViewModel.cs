@@ -9,16 +9,22 @@ namespace PixelCrypt2026.ViewModel.UserControl
     {
         public ICommand StartCommand { get; }
         public ICommand StopCommand { get; }
+        public ICommand SaveCommand { get; }
 
         public event Func<bool> CanStart;
         public event Func<bool> CanStop;
+        public event Func<bool> CanSave;
         public event Action StartRequested;
         public event Action StopRequested;
+        public event Action SaveRequested;
+        public event Func<bool> ConfirmationStartRequested;
+        public event Func<bool> ConfirmationStopRequested;
 
         public CancellationTokenSource CancellationTokenSource { get; private set; }
 
         private GridLength _widthStart;
         private GridLength _widthStop;
+        private GridLength _widthSave;
         private bool _isProcessing = false;
 
         public bool IsProcessing
@@ -30,13 +36,11 @@ namespace PixelCrypt2026.ViewModel.UserControl
 
                 if (_isProcessing)
                 {
-                    WidthStart = new GridLength(0, GridUnitType.Star);
                     WidthStop = new GridLength(1, GridUnitType.Star);
                 }
                 else
                 {
                     WidthStart = new GridLength(1, GridUnitType.Star);
-                    WidthStop = new GridLength(0, GridUnitType.Star);
                 }
             }
         }
@@ -45,12 +49,17 @@ namespace PixelCrypt2026.ViewModel.UserControl
         {
             StartCommand = new LambdaCommand(OnStartExecute, OnCanStart);
             StopCommand = new LambdaCommand(OnStopExecute, OnCanStop);
+            SaveCommand = new LambdaCommand(OnSaveExecute, OnCanSave);
 
             IsProcessing = false;
+            WidthSave = new GridLength(0, GridUnitType.Star);
         }
 
         private void OnStartExecute(object parameter)
         {
+            if ((!ConfirmationStartRequested?.Invoke()) ?? false)
+                return;
+
             IsProcessing = true;
             CancellationTokenSource = new CancellationTokenSource();
             StartRequested?.Invoke();
@@ -65,10 +74,16 @@ namespace PixelCrypt2026.ViewModel.UserControl
             IsProcessing = false;
             CancellationTokenSource?.Dispose();
             CancellationTokenSource = null;
+
+            if (CanSave?.Invoke() ?? true)
+                WidthSave = new GridLength(1, GridUnitType.Star);
         }
 
         private void OnStopExecute(object parameter)
         {
+            if ((!ConfirmationStopRequested?.Invoke()) ?? false)
+                return;
+
             CancellationTokenSource?.Cancel();
             StopRequested?.Invoke();
             IsProcessing = false;
@@ -79,16 +94,50 @@ namespace PixelCrypt2026.ViewModel.UserControl
             && CancellationTokenSource != null
             && IsProcessing;
 
+        private void OnSaveExecute(object parameter)
+        {
+            SaveRequested?.Invoke();
+        }
+
+        private bool OnCanSave(object parameter)
+            => CanSave?.Invoke() ?? true;
+
         public GridLength WidthStart
         {
             get => _widthStart;
-            set => Set(ref _widthStart, value);
+            set
+            {
+                Set(ref _widthStart, value);
+
+                if (_widthStart.Value == 1)
+                {
+                    WidthStop = new GridLength(0, GridUnitType.Star);
+                }
+            }
         }
 
         public GridLength WidthStop
         {
             get => _widthStop;
-            set => Set(ref _widthStop, value);
+            set
+            {
+                Set(ref _widthStop, value);
+
+                if (_widthStop.Value == 1)
+                {
+                    WidthStart = new GridLength(0, GridUnitType.Star);
+                    WidthSave = new GridLength(0, GridUnitType.Star);
+                }
+            }
+        }
+
+        public GridLength WidthSave
+        {
+            get => _widthSave;
+            set
+            {
+                Set(ref _widthSave, value);
+            }
         }
     }
 }

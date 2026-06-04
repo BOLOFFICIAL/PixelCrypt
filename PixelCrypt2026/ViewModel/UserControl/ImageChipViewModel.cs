@@ -1,5 +1,7 @@
 ﻿using PixelCrypt2026.Model;
+using PixelCrypt2026.Program.Enum;
 using PixelCrypt2026.ViewModel.Base;
+using System.Windows;
 
 namespace PixelCrypt2026.ViewModel.UserControl
 {
@@ -8,6 +10,9 @@ namespace PixelCrypt2026.ViewModel.UserControl
         private string _background = "#FFFFFF";
         private string _borderBrush = "#000000";
         private string _foreground = "#000000";
+        private string _statusValue;
+        private GridLength _statusWidth;
+        private Status _status;
 
         public ImageFile ImageFile { get; set; }
         public string Background
@@ -26,6 +31,28 @@ namespace PixelCrypt2026.ViewModel.UserControl
         {
             get => _foreground;
             private set => Set(ref _foreground, value);
+        }
+
+        public GridLength StatusWidth
+        {
+            get => _statusWidth;
+            private set => Set(ref _statusWidth, value);
+        }
+
+        public string StatusValue
+        {
+            get => _statusValue;
+            private set => Set(ref _statusValue, value);
+        }
+
+        public Status Status
+        {
+            get => _status;
+            set
+            {
+                Set(ref _status, value);
+                SetStatus(_status);
+            }
         }
 
         public bool IsSelected
@@ -50,6 +77,44 @@ namespace PixelCrypt2026.ViewModel.UserControl
         public ImageChipViewModel(string filePath)
         {
             ImageFile = new ImageFile(filePath);
+            StatusWidth = new GridLength(0, GridUnitType.Star);
+        }
+
+        private void SetStatus(Status status = Status.None)
+        {
+            StatusWidth = status == Status.None
+                ? new GridLength(0, GridUnitType.Star)
+                : new GridLength(1, GridUnitType.Auto);
+
+            switch (status)
+            {
+                case Status.None:
+                    {
+                        StatusValue = "";
+                        break;
+                    }
+                case Status.InProgress:
+                    {
+                        StatusValue = "⏳";
+                        break;
+                    }
+                case Status.Success:
+                    {
+                        StatusValue = "Ok";
+                        break;
+                    }
+                case Status.Failed:
+                    {
+                        StatusValue = "No";
+                        break;
+                    }
+
+                default:
+                    {
+                        StatusValue = status.ToString();
+                        break;
+                    }
+            }
         }
     }
 }

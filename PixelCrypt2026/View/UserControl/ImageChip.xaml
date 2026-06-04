@@ -7,7 +7,7 @@
           Margin="0,5">
 
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="{Binding StatusWidth}"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
@@ -19,7 +19,7 @@
                 BorderBrush="Black"
                 CornerRadius="10">
 
-            <TextBlock Text="OK"/>
+            <TextBlock Text="{Binding StatusValue}"/>
 
         </Border>
 

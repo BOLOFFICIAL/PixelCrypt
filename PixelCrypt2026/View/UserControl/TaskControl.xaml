@@ -8,6 +8,7 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="{Binding WidthStart}"/>
             <ColumnDefinition Width="{Binding WidthStop}"/>
+            <ColumnDefinition Width="{Binding WidthSave}"/>
         </Grid.ColumnDefinitions>
 
         <Button Grid.Column="0"
@@ -16,8 +17,13 @@
                 Padding="10,5"/>
 
         <Button Grid.Column="1"
-                Content="Стоп"
+                Content="Остановить"
                 Command="{Binding StopCommand}"
+                Padding="10,5"/>
+        
+        <Button Grid.Column="2"
+                Content="Сохранить"
+                Command="{Binding SaveCommand}"
                 Padding="10,5"/>
     </Grid>
 </UserControl>

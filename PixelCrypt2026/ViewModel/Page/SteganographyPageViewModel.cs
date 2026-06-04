@@ -9,7 +9,7 @@ namespace PixelCrypt2026.ViewModel.Page
         {
             Title = $"Стеганография";
 
-            SetStatus("Создано");
+            SetToolStatus("Создано");
         }
     }
 }

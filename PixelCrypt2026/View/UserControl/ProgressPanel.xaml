@@ -7,7 +7,7 @@
              mc:Ignorable="d">
     <Grid>
         <Border BorderThickness="1"
-                Background="#F0F0F0"
+                Background="LightGray"
                 CornerRadius="10"
                 Padding="5">
             <Grid>

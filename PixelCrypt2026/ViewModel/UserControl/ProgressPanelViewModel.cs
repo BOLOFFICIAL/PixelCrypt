@@ -1,4 +1,5 @@
 ﻿using PixelCrypt2026.ViewModel.Base;
+using System;
 
 namespace PixelCrypt2026.ViewModel.UserControl
 {
@@ -6,7 +7,10 @@ namespace PixelCrypt2026.ViewModel.UserControl
     {
         private string _progressTime = "00:00:00";
         private string _progressPercent = "0%";
-        private double _progressValue;
+        private CancellationTokenSource _cts;
+        private DateTime? _startTime = null;
+
+        public TimeSpan Timer { get; set; }
 
         public string ProgressTime
         {
@@ -20,22 +24,50 @@ namespace PixelCrypt2026.ViewModel.UserControl
             private set => Set(ref _progressPercent, value);
         }
 
-        public double ProgressValue
+        public void StartTimer()
         {
-            get => _progressValue;
-            set
-            {
-                if (Set(ref _progressValue, value))
-                {
-                    ProgressPercent = $"{value:F1}%";
-                }
-            }
+            ProgressTime = "";
+            Timer = new TimeSpan();
+            ProgressPercent = $"{0:F1}%";
+            _startTime = DateTime.Now;
+            _cts = new CancellationTokenSource();
+            RunTimerAsync(_cts.Token);
+        }
+        public void UpdateTimer(int processedItems,int totalItems) 
+        {
+            if (_startTime is null || totalItems == 0 || processedItems == 0) return;
+
+            double percentDone = processedItems * 100.0 / totalItems;
+
+            TimeSpan elapsed = DateTime.Now - _startTime.Value;
+            Timer = elapsed * (100.0 / percentDone) - elapsed;
+            ProgressPercent = $"{percentDone:F1}%";
+        }
+        public void StopTimer()
+        {
+            _cts?.Cancel();
+            _cts = null;
         }
 
-        public ProgressPanelViewModel()
+        public async void RunTimerAsync(CancellationToken token)
         {
-            ProgressValue = 0;
-            ProgressTime = "--:--:--";
+            while (!token.IsCancellationRequested)
+            {
+                if (Timer > TimeSpan.Zero)
+                {
+                    Timer -= TimeSpan.FromSeconds(1);
+                    ProgressTime = $"{Timer.Hours:D2}:{Timer.Minutes:D2}:{Timer.Seconds:D2}";
+                }
+
+                try
+                {
+                    await Task.Delay(1000, token);
+                }
+                catch (TaskCanceledException)
+                {
+                    break;
+                }
+            }
         }
     }
 }

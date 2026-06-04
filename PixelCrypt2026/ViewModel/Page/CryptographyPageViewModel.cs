@@ -1,4 +1,5 @@
 ﻿using PixelCrypt2026.Program;
+using PixelCrypt2026.Program.Enum;
 using PixelCrypt2026.ViewModel.Base;
 using PixelCrypt2026.ViewModel.UserControl;
 using System.Windows;
@@ -22,14 +23,44 @@ namespace PixelCrypt2026.ViewModel.Page
         public CryptographyPageViewModel(NavigationService navigation) : base(navigation)
         {
             ProgressHeight = new GridLength(0, GridUnitType.Star);
-            Title = $"Шифрование";
-            ImageList = new ImageListViewModel();
+            Title = $"Cryptography";
+
             Progress = new ProgressPanelViewModel();
+
+            ImageList = new ImageListViewModel();
+
+            ImageList.ClearRequested += ClearCommand;
+            ImageList.ConfirmationClearRequested += ClearConfirmation;
+
             TaskControl = new TaskControlViewModel();
 
             TaskControl.StartRequested += StartCommand;
-            TaskControl.StopRequested += StopCommand;
             TaskControl.CanStart += () => ImageList.Images.Count > 0;
+            TaskControl.ConfirmationStartRequested += StartConfirmation;
+
+            TaskControl.StopRequested += StopCommand;
+            TaskControl.ConfirmationStopRequested += StopConfirmation;
+
+            TaskControl.SaveRequested += SaveCommand;
+            TaskControl.CanSave += () => ImageList.Images.Any(i => i.Status == Status.Success);
+        }
+
+        private void ClearCommand()
+        {
+            TaskControl.WidthSave = new GridLength(0, GridUnitType.Star);
+        }
+
+        private bool ClearConfirmation()
+        {
+            if (ImageList.Images.Any(i => i.Status == Status.Success))
+            {
+                var res = MessageBox.Show("Вы уверены что хотите очистить список?", "", MessageBoxButton.YesNo, MessageBoxImage.Question);
+
+                if (res != MessageBoxResult.Yes)
+                    return false;
+            }
+
+            return true;
         }
 
         private async void StartCommand()
@@ -38,89 +69,115 @@ namespace PixelCrypt2026.ViewModel.Page
 
             ImageList.IsEnable = false;
 
-            SetStatus("Выполняется");
+            SetToolStatus("Выполняется");
 
-            ProgressHeight = new GridLength(1, GridUnitType.Auto);
+            Progress.StartTimer();
 
             try
             {
                 int totalItems = ImageList.Images.Count;
+
+                if (totalItems > 1)
+                {
+                    ProgressHeight = new GridLength(1, GridUnitType.Auto);
+                }
+
                 int processedItems = 0;
 
-                Progress.ProgressValue = 0;
-                Progress.ProgressTime = "Вычисление...";
-
-                DateTime startTime = DateTime.Now;
+                ImageList.ResetImages();
 
                 foreach (var el in ImageList.Images)
                 {
                     token.ThrowIfCancellationRequested();
 
-                    ImageList.SelectedImage = el;
+                    el.Status = Status.InProgress;
 
                     try
                     {
-                        await Task.Delay(1000, token);
+                        await Task.Delay(1750, token);
                     }
                     catch (TaskCanceledException)
                     {
+                        el.Status = Status.None;
                         break;
                     }
 
                     processedItems++;
 
-                    double progressPercent = (double)processedItems / totalItems * 100;
-                    Progress.ProgressValue = progressPercent;
+                    el.Status = Status.Success;
 
-                    TimeSpan elapsed = DateTime.Now - startTime;
-                    double avgTimePerItem = elapsed.TotalSeconds / processedItems;
-                    int remainingItems = totalItems - processedItems;
-                    double estimatedRemainingSeconds = avgTimePerItem * remainingItems;
+                    ImageList.SelectedImage = el;
 
-                    TimeSpan remaining = TimeSpan.FromSeconds(estimatedRemainingSeconds);
-                    Progress.ProgressTime = $"{(int)remaining.TotalHours:D2}:{remaining.Minutes:D2}:{remaining.Seconds:D2}";
+                    Progress.UpdateTimer(processedItems, totalItems);
 
-                    SetStatus($"Выполняется {processedItems}/{totalItems} ({progressPercent:F0}%)");
+                    SetToolStatus($"Выполняется {processedItems}/{totalItems} ({Progress.ProgressPercent})");
                 }
 
                 if (token.IsCancellationRequested)
                 {
                     MessageBox.Show("Операция остановлена");
                     Progress.ProgressTime = $"Остановлено ({processedItems}/{totalItems})";
-                    SetStatus("Остановлено");
+                    SetToolStatus("Остановлено");
                 }
                 else
                 {
                     MessageBox.Show("Операция завершена");
-                    Progress.ProgressValue = 100;
                     Progress.ProgressTime = "Завершено";
-                    SetStatus("Завершено");
+                    SetToolStatus("Завершено");
                 }
             }
             catch (OperationCanceledException)
             {
                 Progress.ProgressTime = "Операция отменена";
-                SetStatus("Отменено");
+                SetToolStatus("Отменено");
             }
             catch (Exception ex)
             {
                 Progress.ProgressTime = "Ошибка";
-                SetStatus("Ошибка");
+                SetToolStatus("Ошибка");
                 System.Diagnostics.Debug.WriteLine($"Error: {ex.Message}");
             }
             finally
             {
+                Progress.StopTimer();
                 TaskControl.FinishCommand();
                 ImageList.IsEnable = true;
                 ProgressHeight = new GridLength(0, GridUnitType.Star);
-                SetStatus();
+                SetToolStatus();
             }
+        }
+
+        private bool StartConfirmation()
+        {
+            if (ImageList.Images.Any(i => i.Status == Status.Success))
+            {
+                var res = MessageBox.Show("Текущий прогресс будет потерян, продолжить?", "", MessageBoxButton.YesNo, MessageBoxImage.Question);
+
+                if (res != MessageBoxResult.Yes)
+                    return false;
+            }
+
+            return true;
         }
 
         private void StopCommand()
         {
             Progress.ProgressTime = "Остановка...";
             ProgressHeight = new GridLength(0, GridUnitType.Star);
+            Progress.StopTimer();
+        }
+
+        private bool StopConfirmation()
+            => MessageBox.Show("Вы уверены что хотите остановить?", 
+                "", 
+                MessageBoxButton.YesNo, 
+                MessageBoxImage.Question) 
+            == MessageBoxResult.Yes;
+
+
+        private void SaveCommand()
+        {
+            MessageBox.Show($"Сохранение изображений {ImageList.Images.Count(i => i.Status == Status.Success)}");
         }
     }
 }
