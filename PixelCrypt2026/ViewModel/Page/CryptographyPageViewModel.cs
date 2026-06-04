@@ -29,7 +29,6 @@ namespace PixelCrypt2026.ViewModel.Page
 
             ImageList = new ImageListViewModel();
 
-            ImageList.ClearRequested += ClearCommand;
             ImageList.ConfirmationClearRequested += ClearConfirmation;
 
             TaskControl = new TaskControlViewModel();
@@ -43,11 +42,6 @@ namespace PixelCrypt2026.ViewModel.Page
 
             TaskControl.SaveRequested += SaveCommand;
             TaskControl.CanSave += () => ImageList.Images.Any(i => i.Status == Status.Success);
-        }
-
-        private void ClearCommand()
-        {
-            TaskControl.WidthSave = new GridLength(0, GridUnitType.Star);
         }
 
         private bool ClearConfirmation()

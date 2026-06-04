@@ -17,7 +17,6 @@ namespace PixelCrypt2026.ViewModel.UserControl
         private bool _isEnable = true;
         public event Func<bool> ConfirmationAddRequested;
         public event Func<bool> ConfirmationClearRequested;
-        public event Action ClearRequested;
         public event Action AddRequested;
 
         public long TotalSize = 0;
@@ -133,8 +132,6 @@ namespace PixelCrypt2026.ViewModel.UserControl
             Images.Clear();
             SelectedImage = null;
             TotalSize = 0;
-
-            ClearRequested?.Invoke();
         }
 
         private bool CanClearImages(object p)
@@ -184,12 +181,17 @@ namespace PixelCrypt2026.ViewModel.UserControl
         {
             if (p is not ImageChipViewModel image) return;
 
+            var index = Images.IndexOf(image);
+
             TotalSize -= image.ImageFile.ImageWidth * image.ImageFile.ImageHeight;
 
             Images.Remove(image);
 
-            if (TotalSize == 0)
-                ClearRequested?.Invoke();
+            SelectedImage = index > 0
+                ? Images[index - 1]
+                : index < Images.Count - 1
+                    ? SelectedImage = Images[index + 1]
+                    : null;
         }
 
         private bool CanRemove(object p)

@@ -52,7 +52,6 @@ namespace PixelCrypt2026.ViewModel.UserControl
             SaveCommand = new LambdaCommand(OnSaveExecute, OnCanSave);
 
             IsProcessing = false;
-            WidthSave = new GridLength(0, GridUnitType.Star);
         }
 
         private void OnStartExecute(object parameter)
@@ -74,9 +73,6 @@ namespace PixelCrypt2026.ViewModel.UserControl
             IsProcessing = false;
             CancellationTokenSource?.Dispose();
             CancellationTokenSource = null;
-
-            if (CanSave?.Invoke() ?? true)
-                WidthSave = new GridLength(1, GridUnitType.Star);
         }
 
         private void OnStopExecute(object parameter)
@@ -100,7 +96,13 @@ namespace PixelCrypt2026.ViewModel.UserControl
         }
 
         private bool OnCanSave(object parameter)
-            => CanSave?.Invoke() ?? true;
+        {
+            var res = CanSave?.Invoke() ?? true;
+
+            WidthSave = new GridLength(res && !IsProcessing ? 1 : 0, GridUnitType.Star);
+
+            return res;
+        }
 
         public GridLength WidthStart
         {
@@ -126,7 +128,6 @@ namespace PixelCrypt2026.ViewModel.UserControl
                 if (_widthStop.Value == 1)
                 {
                     WidthStart = new GridLength(0, GridUnitType.Star);
-                    WidthSave = new GridLength(0, GridUnitType.Star);
                 }
             }
         }
