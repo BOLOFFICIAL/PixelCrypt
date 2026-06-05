@@ -30,8 +30,7 @@
         <Separator Grid.Row="1"/>
 
         <ContentPresenter Grid.Row="2"
-                          Content="{Binding PageContent,
-                                            RelativeSource={RelativeSource AncestorType=local:BasePageLayout}}"/>
+                          Content="{Binding PageContent, RelativeSource={RelativeSource AncestorType=local:BasePageLayout}}"/>
 
     </Grid>
 

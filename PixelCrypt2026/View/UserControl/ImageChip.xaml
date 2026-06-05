@@ -33,6 +33,7 @@
                        Foreground="{Binding Foreground}"
                        VerticalAlignment="Center"
                        Padding="10,5"
+                       FontSize="15"
                        HorizontalAlignment="Center"
                        TextWrapping="Wrap">
                 <TextBlock.ToolTip>

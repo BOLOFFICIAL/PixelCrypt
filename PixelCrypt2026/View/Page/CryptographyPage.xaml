@@ -13,7 +13,7 @@
     <controls:BasePageLayout Title="{Binding Title}"
                              BackCommand="{Binding BackCommand}">
         <controls:BasePageLayout.PageContent>
-            <Grid>
+            <Grid Margin="0,5,0,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="300"/>
                     <ColumnDefinition Width="*"/>
@@ -35,18 +35,20 @@
                         <controls:ImageList DataContext="{Binding ImageList}"/>
                     </Grid>
 
-                    <Grid Grid.Row="2">
+                    <Grid Grid.Row="2"
+                          Margin="0,5,0,0">
                         <controls:PasswordBox DataContext="{Binding PasswordBox}"/>
                     </Grid>
 
-                    <Grid Grid.Row="3">
+                    <Grid Grid.Row="3"
+                          Margin="0,5,0,0">
                         <controls:TaskControl DataContext="{Binding TaskControl}"/>
                     </Grid>
                 </Grid>
 
                 <Grid Grid.Column="1">
                     <Border Grid.Column="1"
-                            Margin="20,0,0,0"
+                            Margin="10,0,0,0"
                             Background="#202020"
                             CornerRadius="12">
 

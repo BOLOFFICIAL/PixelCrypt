@@ -11,6 +11,7 @@ namespace PixelCrypt2026.ViewModel.UserControl
         private GridLength _hideWidth;
         private GridLength _visibleWidth;
         private bool isVisible = true;
+        private string _toggleVisibilityIcon;
 
         public ICommand ToggleVisibilityCommand { get; }
 
@@ -38,6 +39,12 @@ namespace PixelCrypt2026.ViewModel.UserControl
             set => Set(ref _visibleWidth, value);
         }
 
+        public string ToggleVisibilityIcon
+        {
+            get => _toggleVisibilityIcon;
+            set => Set(ref _toggleVisibilityIcon, value);
+        }
+
         private void OnToggleVisibilityCommand(object obj)
         {
             isVisible = !isVisible;
@@ -46,11 +53,13 @@ namespace PixelCrypt2026.ViewModel.UserControl
             {
                 HideWidth = new GridLength(0, GridUnitType.Star);
                 VisibleWidth = new GridLength(1, GridUnitType.Star);
+                ToggleVisibilityIcon = "Regular_Eye";
             }
             else
             {
                 HideWidth = new GridLength(1, GridUnitType.Star);
                 VisibleWidth = new GridLength(0, GridUnitType.Star);
+                ToggleVisibilityIcon = "Regular_EyeSlash";
             }
         }
     }
