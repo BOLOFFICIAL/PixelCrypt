@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Data;
 
-namespace PixelCrypt2026.View.UserControl
+namespace PixelCrypt2026.View.UserControl.Base
 {
     /// <summary>
     /// Логика взаимодействия для BindablePasswordBox.xaml

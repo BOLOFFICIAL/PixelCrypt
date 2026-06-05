@@ -23,7 +23,8 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="{Binding ProgressHeight}"/>
                         <RowDefinition Height="*"/>
-                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="{Binding PasswordHeight}"/>
+                        <RowDefinition Height="{Binding TaskControlHeight}"/>
                     </Grid.RowDefinitions>
 
                     <Grid Grid.Row="0">
@@ -35,6 +36,10 @@
                     </Grid>
 
                     <Grid Grid.Row="2">
+                        <controls:PasswordBox DataContext="{Binding PasswordBox}"/>
+                    </Grid>
+
+                    <Grid Grid.Row="3">
                         <controls:TaskControl DataContext="{Binding TaskControl}"/>
                     </Grid>
                 </Grid>

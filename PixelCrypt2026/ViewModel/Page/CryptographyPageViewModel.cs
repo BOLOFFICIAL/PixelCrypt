@@ -9,9 +9,12 @@ namespace PixelCrypt2026.ViewModel.Page
     internal class CryptographyPageViewModel : BasePageLayoutViewModel
     {
         private GridLength _progressHeight;
+        private GridLength _passwordHeight;
+        private GridLength _taskControlHeight;
 
         public ImageListViewModel ImageList { get; set; }
         public ProgressPanelViewModel Progress { get; set; }
+        public PasswordBoxViewModel PasswordBox { get; set; }
         public TaskControlViewModel TaskControl { get; set; }
 
         public GridLength ProgressHeight
@@ -20,16 +23,35 @@ namespace PixelCrypt2026.ViewModel.Page
             set => Set(ref _progressHeight, value);
         }
 
+        public GridLength PasswordHeight
+        {
+            get => _passwordHeight;
+            set => Set(ref _passwordHeight, value);
+        }
+
+        public GridLength TaskControlHeight
+        {
+            get => _taskControlHeight;
+            set => Set(ref _taskControlHeight, value);
+        }
+
         public CryptographyPageViewModel(NavigationService navigation) : base(navigation)
         {
-            ProgressHeight = new GridLength(0, GridUnitType.Star);
             Title = $"Cryptography";
 
+            ProgressHeight = new GridLength(0, GridUnitType.Star);
+            PasswordHeight = new GridLength(0, GridUnitType.Star);
+            TaskControlHeight = new GridLength(0, GridUnitType.Star);
+
             Progress = new ProgressPanelViewModel();
+            PasswordBox = new PasswordBoxViewModel();
 
             ImageList = new ImageListViewModel();
 
             ImageList.ConfirmationClearRequested += ClearConfirmation;
+            ImageList.AddRequested += CheckImageCount;
+            ImageList.ClearRequested += CheckImageCount;
+            ImageList.RemoveRequested += CheckImageCount;
 
             TaskControl = new TaskControlViewModel();
 
@@ -42,6 +64,20 @@ namespace PixelCrypt2026.ViewModel.Page
 
             TaskControl.SaveRequested += SaveCommand;
             TaskControl.CanSave += () => ImageList.Images.Any(i => i.Status == Status.Success);
+        }
+
+        private void CheckImageCount()
+        {
+            if (ImageList.Images.Count > 0)
+            {
+                PasswordHeight = new GridLength(1, GridUnitType.Auto);
+                TaskControlHeight = new GridLength(1, GridUnitType.Auto);
+            }
+            else 
+            {
+                PasswordHeight = new GridLength(0, GridUnitType.Star);
+                TaskControlHeight = new GridLength(0, GridUnitType.Star);
+            }
         }
 
         private bool ClearConfirmation()
