@@ -20,7 +20,7 @@
                 Content="Остановить"
                 Command="{Binding StopCommand}"
                 Padding="10,5"/>
-        
+
         <Button Grid.Column="2"
                 Content="Сохранить"
                 Command="{Binding SaveCommand}"

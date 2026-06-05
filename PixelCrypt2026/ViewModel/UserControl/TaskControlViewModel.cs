@@ -20,6 +20,7 @@ namespace PixelCrypt2026.ViewModel.UserControl
         public event Action SaveRequested;
         public event Func<bool> ConfirmationStartRequested;
         public event Func<bool> ConfirmationStopRequested;
+        public event Func<bool> ConfirmationSaveRequested;
 
         public ICommand StartCommand { get; }
         public ICommand StopCommand { get; }
@@ -30,55 +31,19 @@ namespace PixelCrypt2026.ViewModel.UserControl
         public GridLength WidthStart
         {
             get => _widthStart;
-            set
-            {
-                Set(ref _widthStart, value);
-
-                if (_widthStart.Value == 1)
-                {
-                    WidthStop = new GridLength(0, GridUnitType.Star);
-                }
-            }
+            set => Set(ref _widthStart, value);
         }
 
         public GridLength WidthStop
         {
             get => _widthStop;
-            set
-            {
-                Set(ref _widthStop, value);
-
-                if (_widthStop.Value == 1)
-                {
-                    WidthStart = new GridLength(0, GridUnitType.Star);
-                }
-            }
+            set => Set(ref _widthStop, value);
         }
 
         public GridLength WidthSave
         {
             get => _widthSave;
-            set
-            {
-                Set(ref _widthSave, value);
-            }
-        }
-        public bool IsProcessing
-        {
-            get => _isProcessing;
-            private set
-            {
-                _isProcessing = value;
-
-                if (_isProcessing)
-                {
-                    WidthStop = new GridLength(1, GridUnitType.Star);
-                }
-                else
-                {
-                    WidthStart = new GridLength(1, GridUnitType.Star);
-                }
-            }
+            set => Set(ref _widthSave, value);
         }
 
         public TaskControlViewModel()
@@ -87,7 +52,14 @@ namespace PixelCrypt2026.ViewModel.UserControl
             StopCommand = new LambdaCommand(OnStopExecute, OnCanStop);
             SaveCommand = new LambdaCommand(OnSaveExecute, OnCanSave);
 
-            IsProcessing = false;
+            _isProcessing = false;
+        }
+
+        public void FinishCommand()
+        {
+            _isProcessing = false;
+            CancellationTokenSource?.Dispose();
+            CancellationTokenSource = null;
         }
 
         private void OnStartExecute(object parameter)
@@ -95,20 +67,10 @@ namespace PixelCrypt2026.ViewModel.UserControl
             if ((!ConfirmationStartRequested?.Invoke()) ?? false)
                 return;
 
-            IsProcessing = true;
+            _isProcessing = true;
             CancellationTokenSource = new CancellationTokenSource();
+
             StartRequested?.Invoke();
-        }
-
-        private bool OnCanStart(object parameter)
-            => CanStart?.Invoke() ?? true
-            && !IsProcessing;
-
-        public void FinishCommand()
-        {
-            IsProcessing = false;
-            CancellationTokenSource?.Dispose();
-            CancellationTokenSource = null;
         }
 
         private void OnStopExecute(object parameter)
@@ -117,25 +79,46 @@ namespace PixelCrypt2026.ViewModel.UserControl
                 return;
 
             CancellationTokenSource?.Cancel();
-            StopRequested?.Invoke();
-            IsProcessing = false;
-        }
+            _isProcessing = false;
 
-        private bool OnCanStop(object parameter)
-            => CanStop?.Invoke() ?? true
-            && CancellationTokenSource != null
-            && IsProcessing;
+            StopRequested?.Invoke();
+        }
 
         private void OnSaveExecute(object parameter)
         {
+            if ((!ConfirmationSaveRequested?.Invoke()) ?? false)
+                return;
+
             SaveRequested?.Invoke();
+        }
+
+        private bool OnCanStart(object parameter)
+        {
+            var res = (CanStart?.Invoke() ?? true) 
+                && (!_isProcessing);
+
+            WidthStart = new GridLength(res ? 1 : 0, GridUnitType.Star);
+
+            return res;
+        }
+
+        private bool OnCanStop(object parameter)
+        {
+            var res = (CanStop?.Invoke() ?? true)
+                && CancellationTokenSource != null
+                && _isProcessing;
+
+            WidthStop = new GridLength(res ? 1 : 0, GridUnitType.Star);
+
+            return res;
         }
 
         private bool OnCanSave(object parameter)
         {
-            var res = CanSave?.Invoke() ?? true;
+            var res = (CanSave?.Invoke() ?? true) 
+                && (!_isProcessing);
 
-            WidthSave = new GridLength(res && !IsProcessing ? 1 : 0, GridUnitType.Star);
+            WidthSave = new GridLength(res ? 1 : 0, GridUnitType.Star);
 
             return res;
         }

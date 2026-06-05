@@ -18,8 +18,8 @@
               HorizontalAlignment="Center" 
               Margin="0,0,0,0">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="auto"/>
-                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="{Binding WidthAdd}"/>
+                <ColumnDefinition Width="{Binding WidthClear}"/>
             </Grid.ColumnDefinitions>
             <Grid Grid.Column="0" 
                   Margin="0,0,10,0">

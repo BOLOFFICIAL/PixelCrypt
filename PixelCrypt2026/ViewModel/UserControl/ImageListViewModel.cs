@@ -12,11 +12,34 @@ namespace PixelCrypt2026.ViewModel.UserControl
     {
         private ImageChipViewModel? _selectedImage;
         private bool _isEnable = true;
-        private GridLength _heightButtons = new GridLength(1, GridUnitType.Auto);
+        private GridLength _heightButtons;
+        private GridLength _widthAdd;
+        private GridLength _widthClear;
+
+        public event Func<bool> CanAdd;
+        public event Func<bool> CanClear;
+
+        public event Func<bool> CanMoveUp;
+        public event Func<bool> CanMoveDown;
+        public event Func<bool> CanRemove;
+        public event Func<bool> CanOpenOriginal;
+
+        public event Action AddRequested;
+        public event Action ClearRequested;
+
+        public event Action MoveUpRequested;
+        public event Action MoveDownRequested;
+        public event Action RemoveRequested;
+        public event Action OpenOriginalRequested;
 
         public event Func<bool> ConfirmationAddRequested;
         public event Func<bool> ConfirmationClearRequested;
-        public event Action AddRequested;
+
+        public event Func<bool> ConfirmationMoveUpRequested;
+        public event Func<bool> ConfirmationMoveDownRequested;
+        public event Func<bool> ConfirmationRemoveRequested;
+        public event Func<bool> ConfirmationOpenOriginalRequested;
+
         public ObservableCollection<ImageChipViewModel> Images { get; }
         public long TotalSize = 0;
 
@@ -35,16 +58,28 @@ namespace PixelCrypt2026.ViewModel.UserControl
             AddImageCommand = new LambdaCommand(AddImage);
             ClearImagesCommand = new LambdaCommand(ClearImages, CanClearImages);
 
-            MoveUpCommand = new LambdaCommand(OnMoveUp, CanMoveUp);
-            MoveDownCommand = new LambdaCommand(OnMoveDown, CanMoveDown);
-            RemoveCommand = new LambdaCommand(OnRemove, CanRemove);
-            OpenOriginalCommand = new LambdaCommand(OnOpenOriginal, CanOpenOriginal);
+            MoveUpCommand = new LambdaCommand(OnMoveUp, OnCanMoveUp);
+            MoveDownCommand = new LambdaCommand(OnMoveDown, OnCanMoveDown);
+            RemoveCommand = new LambdaCommand(OnRemove, OnCanRemove);
+            OpenOriginalCommand = new LambdaCommand(OnOpenOriginal, OnCanOpenOriginal);
         }
 
         public GridLength HeightButtons
         {
             get => _heightButtons;
             set => Set(ref _heightButtons, value);
+        }
+
+        public GridLength WidthAdd
+        {
+            get => _widthAdd;
+            set => Set(ref _widthAdd, value);
+        }
+
+        public GridLength WidthClear
+        {
+            get => _widthClear;
+            set => Set(ref _widthClear, value);
         }
 
         public bool IsEnable
@@ -54,14 +89,7 @@ namespace PixelCrypt2026.ViewModel.UserControl
             {
                 Set(ref _isEnable, value);
 
-                if (_isEnable)
-                {
-                    HeightButtons = new GridLength(1, GridUnitType.Auto);
-                }
-                else
-                {
-                    HeightButtons = new GridLength(0, GridUnitType.Star);
-                }
+                HeightButtons = new GridLength(_isEnable ? 1 : 0, _isEnable ? GridUnitType.Auto : GridUnitType.Star);
             }
         }
 
@@ -115,6 +143,8 @@ namespace PixelCrypt2026.ViewModel.UserControl
             }
 
             SelectedImage = SelectedImage ?? Images.FirstOrDefault();
+
+            AddRequested?.Invoke();
         }
 
         private void ClearImages(object p)
@@ -125,13 +155,25 @@ namespace PixelCrypt2026.ViewModel.UserControl
             Images.Clear();
             SelectedImage = null;
             TotalSize = 0;
+
+            ClearRequested?.Invoke();
         }
 
         private bool CanClearImages(object p)
-            => Images.Count > 0;
+        {
+            var res = (CanClear?.Invoke() ?? true)
+                && Images.Count > 0;
+
+            WidthClear = new GridLength(res ? 1 : 0, GridUnitType.Star);
+
+            return res;
+        }
 
         private void OnMoveUp(object p)
         {
+            if ((!ConfirmationMoveUpRequested?.Invoke()) ?? false)
+                return;
+
             if (p is not ImageChipViewModel image) return;
 
             int index = Images.IndexOf(image);
@@ -140,18 +182,24 @@ namespace PixelCrypt2026.ViewModel.UserControl
                 return;
 
             Images.Move(index, index - 1);
+
+            MoveUpRequested?.Invoke();
         }
 
-        private bool CanMoveUp(object p)
+        private bool OnCanMoveUp(object p)
         {
             if (p is not ImageChipViewModel image || !IsEnable)
                 return false;
 
-            return Images.IndexOf(image) > 0;
+            return (CanMoveUp?.Invoke() ?? true)
+                && Images.IndexOf(image) > 0;
         }
 
         private void OnMoveDown(object p)
         {
+            if ((!ConfirmationMoveDownRequested?.Invoke()) ?? false)
+                return;
+
             if (p is not ImageChipViewModel image) return;
 
             int index = Images.IndexOf(image);
@@ -160,18 +208,24 @@ namespace PixelCrypt2026.ViewModel.UserControl
                 return;
 
             Images.Move(index, index + 1);
+
+            MoveDownRequested?.Invoke();
         }
 
-        private bool CanMoveDown(object p)
+        private bool OnCanMoveDown(object p)
         {
             if (p is not ImageChipViewModel image || !IsEnable)
                 return false;
 
-            return Images.IndexOf(image) < Images.Count - 1;
+            return (CanMoveDown?.Invoke() ?? true)
+                && Images.IndexOf(image) < Images.Count - 1;
         }
 
         private void OnRemove(object p)
         {
+            if ((!ConfirmationRemoveRequested?.Invoke()) ?? false)
+                return;
+
             if (p is not ImageChipViewModel image) return;
 
             var index = Images.IndexOf(image);
@@ -185,13 +239,19 @@ namespace PixelCrypt2026.ViewModel.UserControl
                 : index < Images.Count - 1
                     ? SelectedImage = Images[index + 1]
                     : null;
+
+            RemoveRequested?.Invoke();
         }
 
-        private bool CanRemove(object p)
-            => IsEnable;
+        private bool OnCanRemove(object p)
+            => (CanRemove?.Invoke() ?? true)
+                && IsEnable;
 
         private void OnOpenOriginal(object p)
         {
+            if ((!ConfirmationOpenOriginalRequested?.Invoke()) ?? false)
+                return;
+
             if (p is not ImageChipViewModel image) return;
 
             Process.Start(new ProcessStartInfo()
@@ -199,10 +259,13 @@ namespace PixelCrypt2026.ViewModel.UserControl
                 FileName = image.ImageFile.FilePath,
                 UseShellExecute = true
             });
+
+            OpenOriginalRequested?.Invoke();
         }
 
-        private bool CanOpenOriginal(object p)
-            => IsEnable;
+        private bool OnCanOpenOriginal(object p)
+            => (CanOpenOriginal?.Invoke() ?? true)
+                && IsEnable;
 
         public void ResetImages()
         {
