@@ -7,9 +7,10 @@ namespace PixelCrypt2026.ViewModel.UserControl
 {
     internal class TaskControlViewModel : BaseViewModel
     {
-        public ICommand StartCommand { get; }
-        public ICommand StopCommand { get; }
-        public ICommand SaveCommand { get; }
+        private bool _isProcessing = false;
+        private GridLength _widthStart;
+        private GridLength _widthStop;
+        private GridLength _widthSave;
 
         public event Func<bool> CanStart;
         public event Func<bool> CanStop;
@@ -20,13 +21,48 @@ namespace PixelCrypt2026.ViewModel.UserControl
         public event Func<bool> ConfirmationStartRequested;
         public event Func<bool> ConfirmationStopRequested;
 
+        public ICommand StartCommand { get; }
+        public ICommand StopCommand { get; }
+        public ICommand SaveCommand { get; }
+
         public CancellationTokenSource CancellationTokenSource { get; private set; }
 
-        private GridLength _widthStart;
-        private GridLength _widthStop;
-        private GridLength _widthSave;
-        private bool _isProcessing = false;
+        public GridLength WidthStart
+        {
+            get => _widthStart;
+            set
+            {
+                Set(ref _widthStart, value);
 
+                if (_widthStart.Value == 1)
+                {
+                    WidthStop = new GridLength(0, GridUnitType.Star);
+                }
+            }
+        }
+
+        public GridLength WidthStop
+        {
+            get => _widthStop;
+            set
+            {
+                Set(ref _widthStop, value);
+
+                if (_widthStop.Value == 1)
+                {
+                    WidthStart = new GridLength(0, GridUnitType.Star);
+                }
+            }
+        }
+
+        public GridLength WidthSave
+        {
+            get => _widthSave;
+            set
+            {
+                Set(ref _widthSave, value);
+            }
+        }
         public bool IsProcessing
         {
             get => _isProcessing;
@@ -102,43 +138,6 @@ namespace PixelCrypt2026.ViewModel.UserControl
             WidthSave = new GridLength(res && !IsProcessing ? 1 : 0, GridUnitType.Star);
 
             return res;
-        }
-
-        public GridLength WidthStart
-        {
-            get => _widthStart;
-            set
-            {
-                Set(ref _widthStart, value);
-
-                if (_widthStart.Value == 1)
-                {
-                    WidthStop = new GridLength(0, GridUnitType.Star);
-                }
-            }
-        }
-
-        public GridLength WidthStop
-        {
-            get => _widthStop;
-            set
-            {
-                Set(ref _widthStop, value);
-
-                if (_widthStop.Value == 1)
-                {
-                    WidthStart = new GridLength(0, GridUnitType.Star);
-                }
-            }
-        }
-
-        public GridLength WidthSave
-        {
-            get => _widthSave;
-            set
-            {
-                Set(ref _widthSave, value);
-            }
         }
     }
 }

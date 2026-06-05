@@ -162,10 +162,10 @@ namespace PixelCrypt2026.ViewModel.Page
         }
 
         private bool StopConfirmation()
-            => MessageBox.Show("Вы уверены что хотите остановить?", 
-                "", 
-                MessageBoxButton.YesNo, 
-                MessageBoxImage.Question) 
+            => MessageBox.Show("Вы уверены что хотите остановить?",
+                "",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question)
             == MessageBoxResult.Yes;
 
         private void SaveCommand()

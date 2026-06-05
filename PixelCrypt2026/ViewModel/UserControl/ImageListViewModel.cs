@@ -1,6 +1,5 @@
 ﻿using Microsoft.Win32;
 using PixelCrypt2026.Commands.Base;
-using PixelCrypt2026.View.UserControl;
 using PixelCrypt2026.ViewModel.Base;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -11,28 +10,22 @@ namespace PixelCrypt2026.ViewModel.UserControl
 {
     public class ImageListViewModel : BaseViewModel
     {
-        public ObservableCollection<ImageChipViewModel> Images { get; }
-
         private ImageChipViewModel? _selectedImage;
         private bool _isEnable = true;
+        private GridLength _heightButtons = new GridLength(1, GridUnitType.Auto);
+
         public event Func<bool> ConfirmationAddRequested;
         public event Func<bool> ConfirmationClearRequested;
         public event Action AddRequested;
-
+        public ObservableCollection<ImageChipViewModel> Images { get; }
         public long TotalSize = 0;
 
-        public GridLength _heightButtons = new GridLength(1, GridUnitType.Auto);
-
         public ICommand AddImageCommand { get; set; }
-
         public ICommand ClearImagesCommand { get; set; }
 
         public ICommand MoveUpCommand { get; }
-
         public ICommand MoveDownCommand { get; }
-
         public ICommand RemoveCommand { get; }
-
         public ICommand OpenOriginalCommand { get; }
 
         public ImageListViewModel()
@@ -211,7 +204,7 @@ namespace PixelCrypt2026.ViewModel.UserControl
         private bool CanOpenOriginal(object p)
             => IsEnable;
 
-        public void ResetImages() 
+        public void ResetImages()
         {
             foreach (var image in Images)
             {

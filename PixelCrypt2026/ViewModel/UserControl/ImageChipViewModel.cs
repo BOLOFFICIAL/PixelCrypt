@@ -14,6 +14,12 @@ namespace PixelCrypt2026.ViewModel.UserControl
         private GridLength _statusWidth;
         private Status _status;
 
+        public ImageChipViewModel(string filePath)
+        {
+            ImageFile = new ImageFile(filePath);
+            StatusWidth = new GridLength(0, GridUnitType.Star);
+        }
+
         public ImageFile ImageFile { get; set; }
         public string Background
         {
@@ -72,12 +78,6 @@ namespace PixelCrypt2026.ViewModel.UserControl
                     Foreground = "#000000";
                 }
             }
-        }
-
-        public ImageChipViewModel(string filePath)
-        {
-            ImageFile = new ImageFile(filePath);
-            StatusWidth = new GridLength(0, GridUnitType.Star);
         }
 
         private void SetStatus(Status status = Status.None)

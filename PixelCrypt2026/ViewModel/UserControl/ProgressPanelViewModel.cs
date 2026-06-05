@@ -1,5 +1,4 @@
 ﻿using PixelCrypt2026.ViewModel.Base;
-using System;
 
 namespace PixelCrypt2026.ViewModel.UserControl
 {
@@ -33,7 +32,7 @@ namespace PixelCrypt2026.ViewModel.UserControl
             _cts = new CancellationTokenSource();
             RunTimerAsync(_cts.Token);
         }
-        public void UpdateTimer(int processedItems,int totalItems) 
+        public void UpdateTimer(int processedItems, int totalItems)
         {
             if (_startTime is null || totalItems == 0 || processedItems == 0) return;
 
