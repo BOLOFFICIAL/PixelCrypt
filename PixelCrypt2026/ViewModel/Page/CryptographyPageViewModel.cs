@@ -40,18 +40,18 @@ namespace PixelCrypt2026.ViewModel.Page
             Title = $"Cryptography";
 
             ProgressHeight = new GridLength(0, GridUnitType.Star);
-            PasswordHeight = new GridLength(0, GridUnitType.Star);
-            TaskControlHeight = new GridLength(0, GridUnitType.Star);
 
             Progress = new ProgressPanelViewModel();
             PasswordBox = new PasswordBoxViewModel();
 
             ImageList = new ImageListViewModel();
 
+            UpdateImageCount();
+
             ImageList.ConfirmationClearRequested += ClearConfirmation;
-            ImageList.AddRequested += CheckImageCount;
-            ImageList.ClearRequested += CheckImageCount;
-            ImageList.RemoveRequested += CheckImageCount;
+            ImageList.AddRequested += UpdateImageCount;
+            ImageList.ClearRequested += UpdateImageCount;
+            ImageList.RemoveRequested += UpdateImageCount;
 
             TaskControl = new TaskControlViewModel();
 
@@ -66,7 +66,7 @@ namespace PixelCrypt2026.ViewModel.Page
             TaskControl.CanSave += () => ImageList.Images.Any(i => i.Status == Status.Success);
         }
 
-        private void CheckImageCount()
+        private void UpdateImageCount()
         {
             if (ImageList.Images.Count > 0)
             {
@@ -98,6 +98,7 @@ namespace PixelCrypt2026.ViewModel.Page
             var token = TaskControl.CancellationTokenSource.Token;
 
             ImageList.IsEnable = false;
+            PasswordHeight = new GridLength(0, GridUnitType.Star);
 
             SetToolStatus("Выполняется");
 
@@ -172,6 +173,7 @@ namespace PixelCrypt2026.ViewModel.Page
                 Progress.StopTimer();
                 TaskControl.FinishCommand();
                 ImageList.IsEnable = true;
+                PasswordHeight = new GridLength(1, GridUnitType.Auto);
                 ProgressHeight = new GridLength(0, GridUnitType.Star);
                 SetToolStatus();
             }

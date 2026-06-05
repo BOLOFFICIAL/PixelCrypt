@@ -230,15 +230,15 @@ namespace PixelCrypt2026.ViewModel.UserControl
 
             var index = Images.IndexOf(image);
 
-            TotalSize -= image.ImageFile.ImageWidth * image.ImageFile.ImageHeight;
-
-            Images.Remove(image);
-
             SelectedImage = index > 0
                 ? Images[index - 1]
                 : index < Images.Count - 1
                     ? SelectedImage = Images[index + 1]
                     : null;
+
+            TotalSize -= image.ImageFile.ImageWidth * image.ImageFile.ImageHeight;
+
+            Images.Remove(image);
 
             RemoveRequested?.Invoke();
         }

@@ -47,7 +47,7 @@
                                 <StackPanel Orientation="Horizontal" 
                                             Margin="0,0,0,5">
                                     <TextBlock Text="{Binding ImageFile.FileName}" 
-                                               FontWeight="Bold" 
+                                               FontWeight="Bold"
                                                FontSize="15"/>
                                 </StackPanel>
 
@@ -81,8 +81,7 @@
                                                    FontSize="10"
                                                    FontWeight="Medium"/>
                                         <TextBlock Text="{Binding ImageFile.FilePath}" 
-                                                   TextWrapping="Wrap" 
-                                                   MaxWidth="500"
+                                                   TextWrapping="Wrap"
                                                    FontSize="12"/>
                                     </StackPanel>
                                 </StackPanel>
