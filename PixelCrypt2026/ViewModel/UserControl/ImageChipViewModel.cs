@@ -2,15 +2,16 @@
 using PixelCrypt2026.Program.Enum;
 using PixelCrypt2026.ViewModel.Base;
 using System.Windows;
+using System.Windows.Media;
 
 namespace PixelCrypt2026.ViewModel.UserControl
 {
     public class ImageChipViewModel : BaseViewModel
     {
-        private string _background = "#FFFFFF";
-        private string _borderBrush = "#000000";
-        private string _foreground = "#000000";
+        private string _background;
+        private string _foreground;
         private string _statusValue;
+        private string _statusBackground;
         private GridLength _statusWidth;
         private Status _status;
 
@@ -18,6 +19,9 @@ namespace PixelCrypt2026.ViewModel.UserControl
         {
             ImageFile = new ImageFile(filePath);
             StatusWidth = new GridLength(0, GridUnitType.Star);
+
+            Background = (Application.Current.TryFindResource("Background2") as SolidColorBrush).Color.ToString();
+            Foreground = (Application.Current.TryFindResource("Foreground") as SolidColorBrush).Color.ToString();
         }
 
         public ImageFile ImageFile { get; set; }
@@ -25,12 +29,6 @@ namespace PixelCrypt2026.ViewModel.UserControl
         {
             get => _background;
             private set => Set(ref _background, value);
-        }
-
-        public string BorderBrush
-        {
-            get => _borderBrush;
-            private set => Set(ref _borderBrush, value);
         }
 
         public string Foreground
@@ -51,6 +49,12 @@ namespace PixelCrypt2026.ViewModel.UserControl
             private set => Set(ref _statusValue, value);
         }
 
+        public string StatusBackground
+        {
+            get => _statusBackground;
+            private set => Set(ref _statusBackground, value);
+        }
+
         public Status Status
         {
             get => _status;
@@ -67,15 +71,26 @@ namespace PixelCrypt2026.ViewModel.UserControl
             {
                 if (value)
                 {
-                    Background = "#000000";
-                    BorderBrush = "#000000";
-                    Foreground = "#FFFFFF";
+                    var originalBackground = (Application.Current.TryFindResource("Background2") as SolidColorBrush).Color;
+
+                    Background = Color.FromRgb(
+                        (byte)(255 - originalBackground.R),
+                        (byte)(255 - originalBackground.G),
+                        (byte)(255 - originalBackground.B)
+                    ).ToString();
+
+                    var originalForeground = (Application.Current.TryFindResource("Foreground") as SolidColorBrush).Color;
+
+                    Foreground = Color.FromRgb(
+                        (byte)(255 - originalForeground.R),
+                        (byte)(255 - originalForeground.G),
+                        (byte)(255 - originalForeground.B)
+                    ).ToString();
                 }
                 else
                 {
-                    Background = "#FFFFFF";
-                    BorderBrush = "#000000";
-                    Foreground = "#000000";
+                    Background = (Application.Current.TryFindResource("Background2") as SolidColorBrush).Color.ToString();
+                    Foreground = (Application.Current.TryFindResource("Foreground") as SolidColorBrush).Color.ToString();
                 }
             }
         }
@@ -91,27 +106,32 @@ namespace PixelCrypt2026.ViewModel.UserControl
                 case Status.None:
                     {
                         StatusValue = "";
+                        StatusBackground = "#00000000";
                         break;
                     }
                 case Status.InProgress:
                     {
                         StatusValue = "⏳";
+                        StatusBackground = (Application.Current.TryFindResource("Background2") as SolidColorBrush).Color.ToString();
                         break;
                     }
                 case Status.Success:
                     {
                         StatusValue = "Ok";
+                        StatusBackground = "#228B22";
                         break;
                     }
                 case Status.Failed:
                     {
                         StatusValue = "No";
+                        StatusBackground = "#DC143C";
                         break;
                     }
 
                 default:
                     {
                         StatusValue = status.ToString();
+                        StatusBackground = "#00000000";
                         break;
                     }
             }

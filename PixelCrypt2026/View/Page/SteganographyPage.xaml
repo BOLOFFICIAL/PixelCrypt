@@ -4,21 +4,146 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:PixelCrypt2026.View.Page" 
-      xmlns:controls="clr-namespace:PixelCrypt2026.View.UserControl"
+      xmlns:controls="clr-namespace:PixelCrypt2026.View.UserControl" xmlns:fa="http://schemas.fontawesome.com/icons/"
       mc:Ignorable="d" 
-      d:DesignHeight="450" 
-      d:DesignWidth="800"
       Title="SteganographyPage">
 
-    <controls:BasePageLayout
-        Title="{Binding Title}"
-        BackCommand="{Binding BackCommand}">
+    <controls:BasePageLayout Title="{Binding Title}"
+                         BackCommand="{Binding BackCommand}">
         <controls:BasePageLayout.PageContent>
-            <Grid>
-                <TextBlock Text="Контент страницы стеганографии"
-                   FontSize="40"
-                   HorizontalAlignment="Center"
-                   VerticalAlignment="Center"/>
+            <Grid Margin="0,10,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="300"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Grid Grid.Column="0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="{Binding ProgressHeight}"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="{Binding SettingsHeight}"/>
+                        <RowDefinition Height="{Binding TaskControlHeight}"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="0"
+                      Margin="0,0,0,10">
+                        <controls:ProgressPanel DataContext="{Binding Progress}"/>
+                    </Grid>
+
+                    <Grid Grid.Row="1">
+                        <controls:ImageList DataContext="{Binding ImageList}"/>
+                    </Grid>
+
+                    <Grid Grid.Row="2"
+                          Margin="0,10,0,0">
+                        <controls:PasswordBox DataContext="{Binding PasswordBox}"/>
+                    </Grid>
+
+                    <Grid Grid.Row="3"
+                          Margin="0,10,0,0">
+                        <controls:TaskControl DataContext="{Binding TaskControl}"/>
+                    </Grid>
+                </Grid>
+
+                <Grid Grid.Column="1">
+                    <Border Grid.Column="1"
+                            Margin="10,0,0,0"
+                            Background="{StaticResource Background1}"
+                            CornerRadius="15">
+
+                        <Grid Margin="10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" MinWidth="300"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*" MinWidth="300"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Grid Grid.Column="0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+
+                                <Grid Grid.Row="0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <Grid Grid.Column="0">
+                                        <Button Content="Выбрать"
+                                                Command="{Binding SelectFileCommand}"/> 
+                                    </Grid>
+
+                                    <Grid Grid.Column="1"
+                                          Margin="5,0,0,0">
+                                        <Border Background="{StaticResource Background2}"
+                                                CornerRadius="10"
+                                                Padding="10,0">
+                                            <TextBlock Text="{Binding FileName}"
+                                                       ToolTip="{Binding FilePath}"
+                                                       FontSize="15"
+                                                       FontWeight="Medium"
+                                                       VerticalAlignment="Center"
+                                                       HorizontalAlignment="Center"
+                                                       Foreground="{StaticResource Foreground}"/>
+                                        </Border>
+                                    </Grid>
+
+                                    <Grid Grid.Column="2"
+                                          Margin="5,0,0,0">
+                                        <Grid Grid.Column="0">
+                                            <Button Padding="5"
+                                                    Command="{Binding ClearFileCommand}">
+                                                <fa:ImageAwesome Icon="Regular_TimesCircle"
+                                                                 Foreground="{StaticResource Foreground}"
+                                                                 Width="25"
+                                                                 Height="25"/>
+                                            </Button>
+                                        </Grid>
+                                    </Grid>
+                                </Grid>
+
+                                <Grid Grid.Row="1"
+                                      Margin="0,5,0,0">
+                                    <Border Background="{StaticResource Background2}"
+                                            Padding="10"
+                                            CornerRadius="10">
+                                        <TextBox Text="{Binding Content,UpdateSourceTrigger=PropertyChanged}"
+                                                 BorderThickness="0"
+                                                 FontSize="15"
+                                                 IsReadOnly="{Binding IsReadOnly}"
+                                                 Foreground="{StaticResource Foreground}"
+                                                 TextWrapping="Wrap"
+                                                 Background="Transparent"/>
+                                    </Border>
+                                </Grid>
+                            </Grid>
+
+                            <GridSplitter Grid.Column="1" 
+                                          Margin="10,0"
+                                          Width="3" 
+                                          HorizontalAlignment="Center" 
+                                          VerticalAlignment="Stretch"
+                                          Background="{StaticResource Accent}"
+                                          Cursor="SizeWE">
+                            </GridSplitter>
+
+                            <Grid Grid.Column="2">
+                                <Border Background="{StaticResource Background2}"
+                                        CornerRadius="10">
+                                    <Image Source="{Binding ImageList.SelectedImage.ImageFile.FilePath}"
+                                           Stretch="Uniform"
+                                           Margin="10"
+                                           VerticalAlignment="Center"
+                                           HorizontalAlignment="Center"/>
+                                </Border>
+                            </Grid>
+                        </Grid>
+                    </Border>
+                </Grid>
+
             </Grid>
         </controls:BasePageLayout.PageContent>
     </controls:BasePageLayout>

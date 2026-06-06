@@ -4,7 +4,7 @@
              xmlns:local="clr-namespace:PixelCrypt2026.View.UserControl">
 
     <Grid DataContext="{Binding Image, RelativeSource={RelativeSource AncestorType=local:ImageChip}}"
-          Margin="0,5">
+          Margin="0,0,0,10">
 
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="{Binding StatusWidth}"/>
@@ -15,17 +15,16 @@
                 Margin="0,0,5,0"
                 Padding="10,5"
                 VerticalAlignment="Top"
-                BorderThickness="1"
-                BorderBrush="Black"
+                Background="{Binding StatusBackground}"
                 CornerRadius="10">
 
-            <TextBlock Text="{Binding StatusValue}"/>
+            <TextBlock Text="{Binding StatusValue}"
+                       FontSize="15"
+                       Foreground="White"/>
 
         </Border>
 
         <Border Grid.Column="1"
-                BorderThickness="1"
-                BorderBrush="{Binding BorderBrush}"
                 Background="{Binding Background}"
                 CornerRadius="10">
 
@@ -39,68 +38,116 @@
                 <TextBlock.ToolTip>
                     <ToolTip BorderThickness="0"
                              Background="Transparent"
-                             MaxWidth="600">
-                        <Border Background="White" 
-                                BorderBrush="Black" 
-                                BorderThickness="1" 
-                                CornerRadius="5"
-                                Padding="10">
+                             MaxWidth="620"
+                             Placement="Mouse">
+                        <Border Background="{StaticResource Background2}" 
+                                BorderBrush="{StaticResource Foreground}"
+                                BorderThickness="2" 
+                                CornerRadius="10">
+                            <Border.Effect>
+                                <DropShadowEffect BlurRadius="15" 
+                                                  ShadowDepth="3" 
+                                                  Opacity="0.15"
+                                                  Color="Black"/>
+                            </Border.Effect>
+
                             <Grid>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"
-                                  MinWidth="150"/>
+                                    <ColumnDefinition Width="*" MinWidth="180"/>
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
 
-                                <Grid Grid.Column="0"
-                                      Margin="0,0,10,0">
+                                <Border Grid.Column="0" 
+                                        Padding="15,10">
                                     <StackPanel>
                                         <TextBlock Text="{Binding ImageFile.FileName}" 
-                                                   FontWeight="Bold"
-                                                   FontSize="15"
+                                                   Foreground="{StaticResource Foreground}"
+                                                   FontWeight="SemiBold"
+                                                   FontSize="20"
                                                    TextWrapping="Wrap"
-                                                   Margin="0,0,0,5"/>
+                                                   Margin="0,0,0,10"/>
 
-                                        <StackPanel Margin="0,0,0,5">
-                                            <TextBlock Text="File Size" 
-                                                       FontSize="10"
-                                                       FontWeight="Medium"/>
-                                            <TextBlock Text="{Binding ImageFile.FileSizeFormatted}" 
-                                                       FontWeight="SemiBold" 
-                                                       FontSize="13"
-                                                       TextWrapping="Wrap"/>
-                                        </StackPanel>
+                                        <Border Height="3" 
+                                                Background="{StaticResource Accent}" 
+                                                Opacity="0.5"
+                                                Margin="0,0,0,10"/>
 
-                                        <StackPanel Margin="0,0,0,5">
-                                            <TextBlock Text="Resolution" 
-                                                       FontSize="10"
-                                                       FontWeight="Medium"/>
-                                            <TextBlock Text="{Binding ImageFile.ImageResolution}" 
-                                                       FontWeight="SemiBold" 
-                                                       FontSize="13"
-                                                       TextWrapping="Wrap"/>
-                                        </StackPanel>
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                            </Grid.RowDefinitions>
 
-                                        <StackPanel>
-                                            <TextBlock Text="Location" 
-                                                       FontSize="10"
-                                                       FontWeight="Medium"/>
-                                            <TextBlock Text="{Binding ImageFile.FilePath}" 
-                                                       TextWrapping="Wrap"
-                                                       FontSize="12"/>
-                                        </StackPanel>
+                                            <StackPanel Grid.Row="0" 
+                                                        Margin="0,0,0,10">
+                                                <TextBlock Text="FILE SIZE" 
+                                                           Foreground="{StaticResource Accent}"
+                                                           FontSize="10"
+                                                           FontWeight="Bold"
+                                                           Margin="0,0,0,5"/>
+                                                <TextBlock Text="{Binding ImageFile.FileSizeFormatted}" 
+                                                           Foreground="{StaticResource Foreground}"
+                                                           FontWeight="Regular"
+                                                           FontSize="15"
+                                                           TextWrapping="Wrap"/>
+                                            </StackPanel>
+
+                                            <StackPanel Grid.Row="1" 
+                                                        Margin="0,0,0,10">
+                                                <TextBlock Text="RESOLUTION" 
+                                                           Foreground="{StaticResource Accent}"
+                                                           FontSize="10"
+                                                           FontWeight="Bold"
+                                                           Margin="0,0,0,5"/>
+                                                <TextBlock Text="{Binding ImageFile.ImageResolution}" 
+                                                           Foreground="{StaticResource Foreground}"
+                                                           FontWeight="Regular"
+                                                           FontSize="15"
+                                                           TextWrapping="Wrap"/>
+                                            </StackPanel>
+
+                                            <StackPanel Grid.Row="2">
+                                                <TextBlock Text="LOCATION" 
+                                                           Foreground="{StaticResource Accent}"
+                                                           FontSize="10"
+                                                           FontWeight="Bold"
+                                                           Margin="0,0,0,5"/>
+                                                <TextBlock Text="{Binding ImageFile.FilePath}" 
+                                                           Foreground="{StaticResource Foreground}"
+                                                           FontWeight="Regular"
+                                                           TextWrapping="Wrap"
+                                                           FontSize="15"
+                                                           ToolTip="{Binding ImageFile.FilePath}"/>
+                                            </StackPanel>
+                                        </Grid>
                                     </StackPanel>
-                                </Grid>
+                                </Border>
 
-                                <Border Grid.Column="1"
-                                        BorderBrush="Black"
-                                        BorderThickness="1"
-                                        CornerRadius="5"
-                                        Padding="3">
+                                <Border Grid.Column="1" 
+                                        Width="1" 
+                                        Background="{StaticResource Background1}" 
+                                        Opacity="0.5"
+                                        Margin="0,10"/>
+
+                                <Border Grid.Column="2"
+                                        Background="{StaticResource Background3}"
+                                        CornerRadius="10"
+                                        Padding="10"
+                                        Margin="5"
+                                        Width="220">
                                     <Image Stretch="Uniform"
                                            MaxWidth="200"
-                                           MaxHeight="500"
-                                           Source="{Binding ImageFile.FilePath}"/>
+                                           MaxHeight="400"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Source="{Binding ImageFile.FilePath}">
+                                        <Image.Clip>
+                                            <RectangleGeometry RadiusX="5" 
+                                                               RadiusY="5" 
+                                                               Rect="0,0,200,400"/>
+                                        </Image.Clip>
+                                    </Image>
                                 </Border>
                             </Grid>
                         </Border>

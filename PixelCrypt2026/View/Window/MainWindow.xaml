@@ -7,7 +7,8 @@
         mc:Ignorable="d"
         Title="PixelCrypt" 
         MinHeight="600"
-        MinWidth="1000">
+        MinWidth="1000"
+        Background="{StaticResource Background}">
     <Grid>
         <Frame x:Name="MainFrame"
                NavigationUIVisibility = "Hidden"/>

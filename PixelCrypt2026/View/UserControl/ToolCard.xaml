@@ -8,12 +8,10 @@
              MinWidth="300" 
              mc:Ignorable="d">
 
-    <Border CornerRadius="8"
+    <Border CornerRadius="10"
             Margin="10"
             Padding="10"
-            BorderThickness="1"
-            BorderBrush="Black"
-            Background="White"
+            Background="{StaticResource Background1}"
             RenderTransformOrigin="0.5,0.5">
 
         <Border.RenderTransform>
@@ -62,12 +60,13 @@
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
             <Grid Grid.Row="0"
-                  Margin="0,0,0,10" >
+                  Margin="0,0,0,5">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="auto"/>
@@ -76,28 +75,36 @@
                 <TextBlock Text="{Binding Title}" 
                            Grid.Column="0"
                            FontSize="15" 
+                           Foreground="{StaticResource Foreground}"
                            FontWeight="SemiBold" 
                            TextWrapping="Wrap"/>
 
                 <TextBlock Text="{Binding Status}" 
                            Grid.Column="1"
                            FontSize="10" 
+                           Foreground="{StaticResource Foreground}"
                            VerticalAlignment="Top"
                            FontWeight="SemiBold"
                            TextWrapping="Wrap"/>
             </Grid>
 
-            <Grid Grid.Row="1"
+            <Grid Grid.Row="1" 
+                  Margin="0,0,0,5">
+                <Separator/>
+            </Grid>
+
+            <Grid Grid.Row="2"
                   Margin="0,0,0,10">
                 <TextBlock Text="{Binding Description}" 
                            FontSize="13" 
+                           Foreground="{StaticResource Foreground}"
                            TextWrapping="Wrap"
                            TextAlignment="Left"
                            TextTrimming="CharacterEllipsis"
                            VerticalAlignment="Top"/>
             </Grid>
 
-            <Grid Grid.Row="2">
+            <Grid Grid.Row="3">
                 <Button Content="Выбрать" 
                         HorizontalAlignment="Center" 
                         VerticalAlignment="Bottom" 

@@ -3,14 +3,17 @@ using PixelCrypt2026.Program.Enum;
 using PixelCrypt2026.ViewModel.Base;
 using PixelCrypt2026.ViewModel.UserControl;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace PixelCrypt2026.ViewModel.Page
 {
     internal class CryptographyPageViewModel : BasePageLayoutViewModel
     {
         private GridLength _progressHeight;
-        private GridLength _passwordHeight;
+        private GridLength _settingsHeightHeight;
         private GridLength _taskControlHeight;
+        private List<int> _comboBoxItem;
+        private int _comboBoxValue;
 
         public ImageListViewModel ImageList { get; set; }
         public ProgressPanelViewModel Progress { get; set; }
@@ -23,10 +26,10 @@ namespace PixelCrypt2026.ViewModel.Page
             set => Set(ref _progressHeight, value);
         }
 
-        public GridLength PasswordHeight
+        public GridLength SettingsHeight
         {
-            get => _passwordHeight;
-            set => Set(ref _passwordHeight, value);
+            get => _settingsHeightHeight;
+            set => Set(ref _settingsHeightHeight, value);
         }
 
         public GridLength TaskControlHeight
@@ -35,9 +38,24 @@ namespace PixelCrypt2026.ViewModel.Page
             set => Set(ref _taskControlHeight, value);
         }
 
+        public List<int> ComboBoxItem => _comboBoxItem;
+
+        public int ComboBoxValue 
+        {
+            get => _comboBoxValue;
+            set => Set(ref _comboBoxValue, value);
+        }
+
         public CryptographyPageViewModel(NavigationService navigation) : base(navigation)
         {
             Title = $"Cryptography";
+
+            _comboBoxItem = Enumerable.Range(0, 21)
+                .Select(i => i * 5 == 0 ? 1 : i * 5)
+                .Where(x => x <= 100)
+                .ToList();
+
+            ComboBoxValue = ComboBoxItem.Last();
 
             ProgressHeight = new GridLength(0, GridUnitType.Star);
 
@@ -70,12 +88,12 @@ namespace PixelCrypt2026.ViewModel.Page
         {
             if (ImageList.Images.Count > 0)
             {
-                PasswordHeight = new GridLength(1, GridUnitType.Auto);
+                SettingsHeight = new GridLength(1, GridUnitType.Auto);
                 TaskControlHeight = new GridLength(1, GridUnitType.Auto);
             }
             else 
             {
-                PasswordHeight = new GridLength(0, GridUnitType.Star);
+                SettingsHeight = new GridLength(0, GridUnitType.Star);
                 TaskControlHeight = new GridLength(0, GridUnitType.Star);
             }
         }
@@ -98,7 +116,7 @@ namespace PixelCrypt2026.ViewModel.Page
             var token = TaskControl.CancellationTokenSource.Token;
 
             ImageList.IsEnable = false;
-            PasswordHeight = new GridLength(0, GridUnitType.Star);
+            SettingsHeight = new GridLength(0, GridUnitType.Star);
 
             SetToolStatus("Выполняется");
 
@@ -125,7 +143,7 @@ namespace PixelCrypt2026.ViewModel.Page
 
                     try
                     {
-                        await Task.Delay(1750, token);
+                        await Task.Delay(500, token);
                     }
                     catch (TaskCanceledException)
                     {
@@ -173,7 +191,7 @@ namespace PixelCrypt2026.ViewModel.Page
                 Progress.StopTimer();
                 TaskControl.FinishCommand();
                 ImageList.IsEnable = true;
-                PasswordHeight = new GridLength(1, GridUnitType.Auto);
+                SettingsHeight = new GridLength(1, GridUnitType.Auto);
                 ProgressHeight = new GridLength(0, GridUnitType.Star);
                 SetToolStatus();
             }
@@ -203,8 +221,7 @@ namespace PixelCrypt2026.ViewModel.Page
             => MessageBox.Show("Вы уверены что хотите остановить?",
                 "",
                 MessageBoxButton.YesNo,
-                MessageBoxImage.Question)
-            == MessageBoxResult.Yes;
+                MessageBoxImage.Question) == MessageBoxResult.Yes;
 
         private void SaveCommand()
         {

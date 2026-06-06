@@ -4,26 +4,31 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:PixelCrypt2026.View.UserControl">
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="{Binding WidthStart}"/>
-            <ColumnDefinition Width="{Binding WidthStop}"/>
-            <ColumnDefinition Width="{Binding WidthSave}"/>
-        </Grid.ColumnDefinitions>
+    <Border Background="{StaticResource Background1}"
+            Padding="5"
+            CornerRadius="15">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="{Binding WidthStart}"/>
+                <ColumnDefinition Width="{Binding WidthStop}"/>
+                <ColumnDefinition Width="{Binding WidthSave}"/>
+            </Grid.ColumnDefinitions>
 
-        <Button Grid.Column="0"
-                Content="Выполнить"
-                Command="{Binding StartCommand}"
-                Padding="10,5"/>
+            <Button Grid.Column="0"
+                    Content="Выполнить"
+                    Command="{Binding StartCommand}"
+                    Padding="10,5"/>
 
-        <Button Grid.Column="1"
-                Content="Остановить"
-                Command="{Binding StopCommand}"
-                Padding="10,5"/>
+            <Button Grid.Column="1"
+                    Content="Остановить"
+                    Command="{Binding StopCommand}"
+                    Padding="10,5"/>
 
-        <Button Grid.Column="2"
-                Content="Сохранить"
-                Command="{Binding SaveCommand}"
-                Padding="10,5"/>
-    </Grid>
+            <Button Grid.Column="2"
+                    Margin="5,0,0,0"
+                    Content="Сохранить"
+                    Command="{Binding SaveCommand}"
+                    Padding="10,5"/>
+        </Grid>
+    </Border>
 </UserControl>

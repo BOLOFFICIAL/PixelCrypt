@@ -7,8 +7,7 @@
       xmlns:controls="clr-namespace:PixelCrypt2026.View.UserControl"
       mc:Ignorable="d"
       d:DesignHeight="720"
-      d:DesignWidth="1280"
-      Title="MainPage">
+      d:DesignWidth="1280">
 
     <Grid Margin="20">
         <Grid.RowDefinitions>
@@ -33,12 +32,14 @@
                 <StackPanel VerticalAlignment="Center">
 
                     <TextBlock Text="PixelCrypt"
-                               FontSize="45"
+                               FontSize="50"
+                               Foreground="{StaticResource Foreground}"
                                FontWeight="Bold"
                                HorizontalAlignment="Center"/>
 
                     <TextBlock Text="Encryption • Security • Utilities"
-                               FontSize="14"
+                               FontSize="15"
+                               Foreground="{StaticResource Foreground}"
                                Margin="0,5,0,0"
                                Opacity="0.5"
                                HorizontalAlignment="Center"/>
@@ -76,6 +77,7 @@
         <Grid Grid.Row="2">
             <TextBlock Text="v1.0"
                        x:Name="Version"
+                       Foreground="{StaticResource Foreground}"
                        FontSize="14"
                        Opacity="0.5"
                        HorizontalAlignment="Right"

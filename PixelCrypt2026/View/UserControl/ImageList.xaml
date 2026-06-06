@@ -5,111 +5,117 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:PixelCrypt2026.View.UserControl" 
              xmlns:controls="clr-namespace:PixelCrypt2026.View.UserControl" 
-             mc:Ignorable="d" 
-             d:DesignHeight="450" 
-             d:DesignWidth="300">
-    
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="{Binding HeightButtons}"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-        <Grid Grid.Row="0" 
-              HorizontalAlignment="Center" 
-              Margin="0,0,0,0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="{Binding WidthAdd}"/>
-                <ColumnDefinition Width="{Binding WidthClear}"/>
-            </Grid.ColumnDefinitions>
-            <Grid Grid.Column="0" 
-                  Margin="0,0,10,0">
-                <Button Content="Добавить" 
-                        Command="{Binding AddImageCommand}"/>
+             mc:Ignorable="d">
+    <Border Background="{StaticResource Background1}"
+            Padding="10"
+            CornerRadius="15">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="{Binding HeightButtons}"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            
+            <Grid Grid.Row="0" 
+                  Margin="0,0,0,5"
+                  HorizontalAlignment="Center">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="{Binding WidthAdd}"/>
+                    <ColumnDefinition Width="{Binding WidthClear}"/>
+                </Grid.ColumnDefinitions>
+                
+                <Grid Grid.Column="0" 
+                      Margin="0,0,10,0">
+                    <Button Content="Добавить" 
+                            Command="{Binding AddImageCommand}"/>
+                </Grid>
+                
+                <Grid Grid.Column="1">
+                    <Button Content="Очистить" 
+                            Command="{Binding ClearImagesCommand}"/>
+                </Grid>
             </Grid>
-            <Grid Grid.Column="1">
-                <Button Content="Очистить" 
-                        Command="{Binding ClearImagesCommand}"/>
+
+            <Grid Grid.Row="1">
+                <ListBox ItemsSource="{Binding Images}"
+                         Background="Transparent"
+                         BorderThickness="0"
+                         VirtualizingPanel.IsVirtualizing="True"
+                         ScrollViewer.CanContentScroll="True"
+                         ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                         SelectedItem="{Binding SelectedImage}"
+                         Tag="{Binding}">
+
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem">
+
+                            <Setter Property="HorizontalContentAlignment"
+                            Value="Stretch"/>
+
+                            <Setter Property="Background" 
+                                    Value="Transparent"/>
+                            <Setter Property="BorderBrush" 
+                                    Value="Transparent"/>
+                            <Setter Property="BorderThickness" 
+                                    Value="0"/>
+                            <Setter Property="Padding" 
+                                    Value="0"/>
+
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="ListBoxItem">
+                                        <Border Background="{TemplateBinding Background}"
+                                                BorderBrush="{TemplateBinding BorderBrush}"
+                                                BorderThickness="{TemplateBinding BorderThickness}"
+                                                Padding="{TemplateBinding Padding}"
+                                                SnapsToDevicePixels="True">
+                                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+
+                            <Setter Property="Tag"
+                                    Value="{Binding DataContext, RelativeSource={RelativeSource AncestorType=ListBox}}"/>
+
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Tag.IsEnable, RelativeSource={RelativeSource Self}}" Value="True">
+                                    <Setter Property="ContextMenu">
+                                        <Setter.Value>
+                                            <ContextMenu DataContext="{Binding PlacementTarget, RelativeSource={RelativeSource Self}}">
+                                                <MenuItem Header="Поднять"
+                                                          Command="{Binding Tag.MoveUpCommand}"
+                                                          CommandParameter="{Binding DataContext}"/>
+
+                                                <MenuItem Header="Опустить"
+                                                          Command="{Binding Tag.MoveDownCommand}"
+                                                          CommandParameter="{Binding DataContext}"/>
+
+                                                <MenuItem Header="Удалить"
+                                                          Command="{Binding Tag.RemoveCommand}"
+                                                          CommandParameter="{Binding DataContext}"/>
+
+                                                <MenuItem Header="Открыть"
+                                                          Command="{Binding Tag.OpenOriginalCommand}"
+                                                          CommandParameter="{Binding DataContext}"/>
+                                            </ContextMenu>
+                                        </Setter.Value>
+                                    </Setter>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <controls:ImageChip Image="{Binding}"/>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+
+                </ListBox>
             </Grid>
         </Grid>
-        
-        <Grid Grid.Row="1">
-            <ListBox ItemsSource="{Binding Images}"
-                     Background="Transparent"
-                     BorderThickness="0"
-                     VirtualizingPanel.IsVirtualizing="True"
-                     ScrollViewer.CanContentScroll="True"
-                     ScrollViewer.VerticalScrollBarVisibility="Hidden"
-                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                     SelectedItem="{Binding SelectedImage}"
-                     Tag="{Binding}">
-
-                <ListBox.ItemContainerStyle>
-                    <Style TargetType="ListBoxItem">
-
-                        <Setter Property="HorizontalContentAlignment"
-                                Value="Stretch"/>
-
-                        <Setter Property="Background" Value="Transparent"/>
-                        <Setter Property="BorderBrush" Value="Transparent"/>
-                        <Setter Property="BorderThickness" Value="0"/>
-                        <Setter Property="Padding" Value="0"/>
-
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="ListBoxItem">
-                                    <Border Background="{TemplateBinding Background}"
-                                            BorderBrush="{TemplateBinding BorderBrush}"
-                                            BorderThickness="{TemplateBinding BorderThickness}"
-                                            Padding="{TemplateBinding Padding}"
-                                            SnapsToDevicePixels="True">
-                                        <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                                          SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
-                                    </Border>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-
-                        <Setter Property="Tag"
-                                Value="{Binding DataContext, RelativeSource={RelativeSource AncestorType=ListBox}}"/>
-
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding Tag.IsEnable, RelativeSource={RelativeSource Self}}" Value="True">
-                                <Setter Property="ContextMenu">
-                                    <Setter.Value>
-                                        <ContextMenu DataContext="{Binding PlacementTarget, RelativeSource={RelativeSource Self}}">
-                                            <MenuItem Header="Поднять"
-                                                      Command="{Binding Tag.MoveUpCommand}"
-                                                      CommandParameter="{Binding DataContext}"/>
-
-                                            <MenuItem Header="Опустить"
-                                                      Command="{Binding Tag.MoveDownCommand}"
-                                                      CommandParameter="{Binding DataContext}"/>
-                                            <Separator/>
-
-                                            <MenuItem Header="Удалить"
-                                                      Command="{Binding Tag.RemoveCommand}"
-                                                      CommandParameter="{Binding DataContext}"/>
-                                            <Separator/>
-
-                                            <MenuItem Header="Открыть"
-                                                      Command="{Binding Tag.OpenOriginalCommand}"
-                                                      CommandParameter="{Binding DataContext}"/>
-                                        </ContextMenu>
-                                    </Setter.Value>
-                                </Setter>
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </ListBox.ItemContainerStyle>
-
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <controls:ImageChip Image="{Binding}"/>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-
-            </ListBox>
-        </Grid>
-    </Grid>
+    </Border>
 </UserControl>

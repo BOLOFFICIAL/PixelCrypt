@@ -3,14 +3,13 @@
 
     <Style TargetType="Button">
         <Setter Property="Padding" Value="10,5"/>
-        <Setter Property="Margin" Value="2"/>
         <Setter Property="FontSize" Value="15"/>
         <Setter Property="FontWeight" Value="SemiBold"/>
         <Setter Property="Cursor" Value="Hand"/>
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="BorderBrush" Value="Transparent"/>
-        <Setter Property="Background" Value="#FFE0E0E0"/>
-        <Setter Property="Foreground" Value="#FF333333"/>
+        <Setter Property="Background" Value="{StaticResource Accent}"/>
+        <Setter Property="Foreground" Value="White"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
