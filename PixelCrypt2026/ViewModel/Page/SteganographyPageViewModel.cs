@@ -26,6 +26,7 @@ namespace PixelCrypt2026.ViewModel.Page
         private string _filePath;
         private string _content;
         private bool _isReadOnly;
+        private bool _isEnable = true;
 
         public ICommand SelectFileCommand { get; }
         public ICommand ClearFileCommand { get; }
@@ -98,6 +99,12 @@ namespace PixelCrypt2026.ViewModel.Page
         private void OnClearFileCommand(object obj)
         {
             FilePath = "";
+        }
+
+        public bool IsEnable 
+        {
+            get => _isEnable;
+            set => Set(ref _isEnable, value);
         }
 
         public GridLength ProgressHeight
@@ -193,7 +200,10 @@ namespace PixelCrypt2026.ViewModel.Page
         {
             var token = TaskControl.CancellationTokenSource.Token;
 
-            ImageList.IsEnable = false;
+            IsEnable = false;
+            IsReadOnly = true;
+            ImageList.IsEnable = IsEnable;
+            
             SettingsHeight = new GridLength(0, GridUnitType.Star);
 
             SetToolStatus("Выполняется");
@@ -268,7 +278,9 @@ namespace PixelCrypt2026.ViewModel.Page
             {
                 Progress.StopTimer();
                 TaskControl.FinishCommand();
-                ImageList.IsEnable = true;
+                IsEnable = true;
+                IsReadOnly = !string.IsNullOrEmpty(FilePath);
+                ImageList.IsEnable = IsEnable;
                 SettingsHeight = new GridLength(1, GridUnitType.Auto);
                 ProgressHeight = new GridLength(0, GridUnitType.Star);
                 SetToolStatus();
