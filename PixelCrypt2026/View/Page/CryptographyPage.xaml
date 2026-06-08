@@ -90,10 +90,18 @@
                                 <Border Background="{StaticResource Background2}"
                                         CornerRadius="10"
                                         Padding="10">
-                                    <Image Stretch="Uniform"
-                                           Source="{Binding ImageList.SelectedImage.ImageFile.FilePath}"
-                                           VerticalAlignment="Center"
-                                           HorizontalAlignment="Center"/>
+                                    <Border Background="{StaticResource Background3}"
+                                            BorderBrush="{StaticResource Foreground}"
+                                            BorderThickness="1"
+                                            CornerRadius="10"
+                                            VerticalAlignment="Center"
+                                            HorizontalAlignment="Center"
+                                            Padding="10">
+                                        <Image Stretch="Uniform"
+                                               Source="{Binding ImageList.SelectedImage.ImageFile.FilePath}"
+                                               VerticalAlignment="Center"
+                                               HorizontalAlignment="Center"/>
+                                    </Border>
                                 </Border>
                             </Grid>
                         </Grid>
