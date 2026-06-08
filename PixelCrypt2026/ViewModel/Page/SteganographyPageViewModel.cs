@@ -136,7 +136,8 @@ namespace PixelCrypt2026.ViewModel.Page
 
                 if (!isEmpty)
                 {
-                    Content = File.ReadAllText(value);
+                    var content = File.ReadAllText(value);
+                    Content = content.Substring(0, Math.Min(content.Length, 10000));
                 }
                 else if (isEmpty && !string.IsNullOrEmpty(_filePath)) 
                 {
@@ -179,7 +180,9 @@ namespace PixelCrypt2026.ViewModel.Page
 
         private void StopCommand()
         {
-            
+            Progress.ProgressTime = "Остановка...";
+            ProgressHeight = new GridLength(0, GridUnitType.Star);
+            Progress.StopTimer();
         }
 
         private bool StartConfirmation()
