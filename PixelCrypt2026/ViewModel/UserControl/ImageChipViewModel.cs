@@ -106,32 +106,32 @@ namespace PixelCrypt2026.ViewModel.UserControl
                 case Status.None:
                     {
                         StatusValue = "";
-                        StatusBackground = "#00000000";
+                        StatusBackground = (Application.Current.TryFindResource("StatusNone") as SolidColorBrush).Color.ToString();
                         break;
                     }
                 case Status.InProgress:
                     {
                         StatusValue = "⏳";
-                        StatusBackground = (Application.Current.TryFindResource("Background2") as SolidColorBrush).Color.ToString();
+                        StatusBackground = (Application.Current.TryFindResource("StatusInProgress") as SolidColorBrush).Color.ToString();
                         break;
                     }
                 case Status.Success:
                     {
                         StatusValue = "Ok";
-                        StatusBackground = "#228B22";
+                        StatusBackground = (Application.Current.TryFindResource("StatusSuccess") as SolidColorBrush).Color.ToString();
                         break;
                     }
                 case Status.Failed:
                     {
                         StatusValue = "No";
-                        StatusBackground = "#DC143C";
+                        StatusBackground = (Application.Current.TryFindResource("StatusFailed") as SolidColorBrush).Color.ToString();
                         break;
                     }
 
                 default:
                     {
                         StatusValue = status.ToString();
-                        StatusBackground = "#00000000";
+                        StatusBackground = (Application.Current.TryFindResource("StatusNone") as SolidColorBrush).Color.ToString();
                         break;
                     }
             }

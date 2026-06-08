@@ -11,4 +11,11 @@
     <Brush x:Key="Background5">#696969</Brush>
     <Brush x:Key="Foreground">White</Brush>
 
+    <Brush x:Key="StatusNone">#808080</Brush>
+    <Brush x:Key="StatusSuccess">#388E3C</Brush>
+    <Brush x:Key="StatusPending">#C27D0A</Brush>
+    <Brush x:Key="StatusInProgress">#3173A5</Brush>
+    <Brush x:Key="StatusFailed">#B52323</Brush>
+    <Brush x:Key="StatusCancelled">#736060</Brush>
+
 </ResourceDictionary>

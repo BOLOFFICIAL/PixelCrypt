@@ -10,7 +10,6 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using static System.Net.WebRequestMethods;
 
 namespace PixelCrypt2026.ViewModel.Page
 {
@@ -26,6 +25,7 @@ namespace PixelCrypt2026.ViewModel.Page
         private GridLength _taskControlHeight;
         private string _filePath;
         private string _content;
+        private bool _isReadOnly;
 
         public ICommand SelectFileCommand { get; }
         public ICommand ClearFileCommand { get; }
@@ -84,6 +84,13 @@ namespace PixelCrypt2026.ViewModel.Page
 
             if (openFileDialog.ShowDialog() == true)
             {
+                if (!string.IsNullOrEmpty(Content)) 
+                {
+                    var res = MessageBox.Show("Тест будет заменен на содержимое из файла, продолжить?", "", MessageBoxButton.YesNo);
+
+                    if (res != MessageBoxResult.Yes) return;
+                }
+
                 FilePath = openFileDialog.FileName;
             }
         }
@@ -117,9 +124,19 @@ namespace PixelCrypt2026.ViewModel.Page
             set 
             {
                 Set(ref _filePath, value);
+                IsReadOnly = !string.IsNullOrEmpty(_filePath);
+                if (!string.IsNullOrEmpty(_filePath)) 
+                {
+                    Content = File.ReadAllText(FilePath);
+                }
                 OnPropertyChanged("FileName");
             }
+        }
 
+        public bool IsReadOnly 
+        {
+            get => _isReadOnly;
+            set => Set(ref _isReadOnly, value);
         }
 
         public string FileName => Path.GetFileName(FilePath);

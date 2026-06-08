@@ -81,8 +81,21 @@
                             CornerRadius="15">
 
                         <Grid Margin="10">
-                            <Image Stretch="Uniform"
-                                   Source="{Binding ImageList.SelectedImage.ImageFile.FilePath}"/>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="0"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Grid Grid.Column="0">
+                                <Border Background="{StaticResource Background2}"
+                                        CornerRadius="10"
+                                        Padding="10">
+                                    <Image Stretch="Uniform"
+                                           Source="{Binding ImageList.SelectedImage.ImageFile.FilePath}"
+                                           VerticalAlignment="Center"
+                                           HorizontalAlignment="Center"/>
+                                </Border>
+                            </Grid>
                         </Grid>
                     </Border>
                 </Grid>

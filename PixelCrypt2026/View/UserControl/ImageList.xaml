@@ -7,7 +7,7 @@
              xmlns:controls="clr-namespace:PixelCrypt2026.View.UserControl" 
              mc:Ignorable="d">
     <Border Background="{StaticResource Background1}"
-            Padding="10"
+            Padding="10,10,10,0"
             CornerRadius="15">
         <Grid>
             <Grid.RowDefinitions>
@@ -16,7 +16,7 @@
             </Grid.RowDefinitions>
             
             <Grid Grid.Row="0" 
-                  Margin="0,0,0,5"
+                  Margin="0,0,0,10"
                   HorizontalAlignment="Center">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="{Binding WidthAdd}"/>
@@ -50,24 +50,20 @@
                         <Style TargetType="ListBoxItem">
 
                             <Setter Property="HorizontalContentAlignment"
-                            Value="Stretch"/>
+                                    Value="Stretch"/>
 
                             <Setter Property="Background" 
                                     Value="Transparent"/>
                             <Setter Property="BorderBrush" 
                                     Value="Transparent"/>
-                            <Setter Property="BorderThickness" 
-                                    Value="0"/>
-                            <Setter Property="Padding" 
-                                    Value="0"/>
 
                             <Setter Property="Template">
                                 <Setter.Value>
                                     <ControlTemplate TargetType="ListBoxItem">
                                         <Border Background="{TemplateBinding Background}"
                                                 BorderBrush="{TemplateBinding BorderBrush}"
-                                                BorderThickness="{TemplateBinding BorderThickness}"
-                                                Padding="{TemplateBinding Padding}"
+                                                BorderThickness="0"
+                                                Padding="0"
                                                 SnapsToDevicePixels="True">
                                             <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                                               VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
@@ -81,7 +77,8 @@
                                     Value="{Binding DataContext, RelativeSource={RelativeSource AncestorType=ListBox}}"/>
 
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding Tag.IsEnable, RelativeSource={RelativeSource Self}}" Value="True">
+                                <DataTrigger Binding="{Binding Tag.IsEnable, RelativeSource={RelativeSource Self}}" 
+                                             Value="True">
                                     <Setter Property="ContextMenu">
                                         <Setter.Value>
                                             <ContextMenu DataContext="{Binding PlacementTarget, RelativeSource={RelativeSource Self}}">

@@ -9,7 +9,7 @@
       Title="SteganographyPage">
 
     <controls:BasePageLayout Title="{Binding Title}"
-                         BackCommand="{Binding BackCommand}">
+                             BackCommand="{Binding BackCommand}">
         <controls:BasePageLayout.PageContent>
             <Grid Margin="0,10,0,0">
                 <Grid.ColumnDefinitions>
@@ -58,7 +58,8 @@
                                 <ColumnDefinition Width="*" MinWidth="300"/>
                             </Grid.ColumnDefinitions>
 
-                            <Grid Grid.Column="0">
+                            <Grid Grid.Column="0" 
+                                  VerticalAlignment="Top">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="*"/>
@@ -106,7 +107,7 @@
                                 </Grid>
 
                                 <Grid Grid.Row="1"
-                                      Margin="0,5,0,0">
+                                      Margin="0,10,0,0">
                                     <Border Background="{StaticResource Background2}"
                                             Padding="10"
                                             CornerRadius="10">
@@ -115,6 +116,7 @@
                                                  FontSize="15"
                                                  IsReadOnly="{Binding IsReadOnly}"
                                                  Foreground="{StaticResource Foreground}"
+                                                 CaretBrush="{StaticResource Foreground}"
                                                  TextWrapping="Wrap"
                                                  Background="Transparent"/>
                                     </Border>
@@ -122,7 +124,7 @@
                             </Grid>
 
                             <GridSplitter Grid.Column="1" 
-                                          Margin="10,0"
+                                          Margin="5,0"
                                           Width="3" 
                                           HorizontalAlignment="Center" 
                                           VerticalAlignment="Stretch"
@@ -132,10 +134,10 @@
 
                             <Grid Grid.Column="2">
                                 <Border Background="{StaticResource Background2}"
-                                        CornerRadius="10">
+                                        CornerRadius="10"
+                                        Padding="10">
                                     <Image Source="{Binding ImageList.SelectedImage.ImageFile.FilePath}"
                                            Stretch="Uniform"
-                                           Margin="10"
                                            VerticalAlignment="Center"
                                            HorizontalAlignment="Center"/>
                                 </Border>
