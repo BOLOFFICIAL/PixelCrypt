@@ -130,12 +130,24 @@ namespace PixelCrypt2026.ViewModel.Page
             get => _filePath;
             set 
             {
-                Set(ref _filePath, value);
-                IsReadOnly = !string.IsNullOrEmpty(_filePath);
-                if (!string.IsNullOrEmpty(_filePath)) 
+                var isEmpty = string.IsNullOrEmpty(value);
+
+                IsReadOnly = !isEmpty;
+
+                if (!isEmpty)
                 {
-                    Content = File.ReadAllText(FilePath);
+                    Content = File.ReadAllText(value);
                 }
+                else if (isEmpty && !string.IsNullOrEmpty(_filePath)) 
+                {
+                    var res = MessageBox.Show("Очистить содержимое?", "", MessageBoxButton.YesNo);
+                    if (res == MessageBoxResult.Yes) 
+                    {
+                        Content = "";
+                    }
+                }
+
+                Set(ref _filePath, value);
                 OnPropertyChanged("FileName");
             }
         }
