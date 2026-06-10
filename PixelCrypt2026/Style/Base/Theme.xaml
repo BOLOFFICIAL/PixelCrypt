@@ -18,4 +18,9 @@
     <Brush x:Key="StatusFailed">#B52323</Brush>
     <Brush x:Key="StatusCancelled">#736060</Brush>
 
+    <Color x:Key="NotificationBaseColor">#FF1E1E1E</Color>
+    <Color x:Key="NotificationSuccessColor">#228B22</Color>
+    <Color x:Key="NotificationErrorColor">#A52A2A</Color>
+    <Color x:Key="NotificationQuestionColor">#FFA500</Color>
+
 </ResourceDictionary>

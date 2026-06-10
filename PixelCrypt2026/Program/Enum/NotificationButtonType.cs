@@ -1,9 +1,11 @@
 ﻿namespace PixelCrypt2026.Program.Enum
 {
-    public enum NotificationType
+    public enum NotificationButtonType
     {
+        None,
         Ok,
         YesNo,
-        Text
+        Text,
+        Custom
     }
 }

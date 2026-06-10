@@ -119,6 +119,7 @@
                                                  IsReadOnly="{Binding IsReadOnly}"
                                                  Foreground="{StaticResource Foreground}"
                                                  CaretBrush="{StaticResource Foreground}"
+                                                 AcceptsReturn="True"
                                                  TextWrapping="Wrap"
                                                  Background="Transparent"/>
                                     </Border>

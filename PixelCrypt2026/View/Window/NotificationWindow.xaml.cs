@@ -8,10 +8,24 @@ namespace PixelCrypt2026.View.Window
     /// </summary>
     public partial class NotificationWindow : System.Windows.Window
     {
-        public NotificationWindow(string content, string title, NotificationType type, NotificationStatusType status)
+        private List<Action> actions;
+        private NotificationIconType status;
+
+        public NotificationWindow(string content, string title, NotificationButtonType button, NotificationIconType icon)
         {
             InitializeComponent();
-            DataContext = new NotificationWindowViewModel(new Action(Close), content, title, type, status);
+            DataContext = new NotificationWindowViewModel(new Action(Close), content, title, button, icon);
+
+            //if (Context.MainWindow.Focusable) 
+            //    Owner = Context.MainWindow;
+
+            ShowDialog();
+        }
+
+        public NotificationWindow(string content, string title, List<Action> actions, NotificationIconType icon)
+        {
+            InitializeComponent();
+            DataContext = new NotificationWindowViewModel(new Action(Close), content, title, actions, icon);
 
             //if (Context.MainWindow.Focusable) 
             //    Owner = Context.MainWindow;
