@@ -94,7 +94,7 @@ namespace PixelCrypt2026.ViewModel.UserControl
 
         private bool OnCanStart(object parameter)
         {
-            var res = (CanStart?.Invoke() ?? true) 
+            var res = (CanStart?.Invoke() ?? true)
                 && (!_isProcessing);
 
             WidthStart = new GridLength(res ? 1 : 0, GridUnitType.Star);
@@ -115,7 +115,7 @@ namespace PixelCrypt2026.ViewModel.UserControl
 
         private bool OnCanSave(object parameter)
         {
-            var res = (CanSave?.Invoke() ?? true) 
+            var res = (CanSave?.Invoke() ?? true)
                 && (!_isProcessing);
 
             WidthSave = new GridLength(res ? 1 : 0, GridUnitType.Star);

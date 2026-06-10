@@ -1,9 +1,8 @@
-﻿using PixelCrypt2026.Program;
-using PixelCrypt2026.Program.Enum;
+﻿using PixelCrypt2026.Program.Enum;
+using PixelCrypt2026.Program.Service;
 using PixelCrypt2026.ViewModel.Base;
 using PixelCrypt2026.ViewModel.UserControl;
 using System.Windows;
-using System.Windows.Controls;
 
 namespace PixelCrypt2026.ViewModel.Page
 {
@@ -40,7 +39,7 @@ namespace PixelCrypt2026.ViewModel.Page
 
         public List<int> ComboBoxItem => _comboBoxItem;
 
-        public int ComboBoxValue 
+        public int ComboBoxValue
         {
             get => _comboBoxValue;
             set => Set(ref _comboBoxValue, value);
@@ -81,7 +80,7 @@ namespace PixelCrypt2026.ViewModel.Page
             TaskControl.ConfirmationStopRequested += StopConfirmation;
 
             TaskControl.SaveRequested += SaveCommand;
-            TaskControl.CanSave += () => ImageList.Images.Any(i => i.Status == Status.Success);
+            TaskControl.CanSave += () => ImageList.Images.Any(i => i.Status == StatusType.Success);
         }
 
         private void UpdateImageCount()
@@ -91,7 +90,7 @@ namespace PixelCrypt2026.ViewModel.Page
                 SettingsHeight = new GridLength(1, GridUnitType.Auto);
                 TaskControlHeight = new GridLength(1, GridUnitType.Auto);
             }
-            else 
+            else
             {
                 SettingsHeight = new GridLength(0, GridUnitType.Star);
                 TaskControlHeight = new GridLength(0, GridUnitType.Star);
@@ -100,7 +99,7 @@ namespace PixelCrypt2026.ViewModel.Page
 
         private bool ClearConfirmation()
         {
-            if (ImageList.Images.Any(i => i.Status == Status.Success))
+            if (ImageList.Images.Any(i => i.Status == StatusType.Success))
             {
                 var res = MessageBox.Show("Вы уверены что хотите очистить список?", "", MessageBoxButton.YesNo, MessageBoxImage.Question);
 
@@ -139,7 +138,7 @@ namespace PixelCrypt2026.ViewModel.Page
                 {
                     token.ThrowIfCancellationRequested();
 
-                    el.Status = Status.InProgress;
+                    el.Status = StatusType.InProgress;
 
                     try
                     {
@@ -147,13 +146,13 @@ namespace PixelCrypt2026.ViewModel.Page
                     }
                     catch (TaskCanceledException)
                     {
-                        el.Status = Status.None;
+                        el.Status = StatusType.None;
                         break;
                     }
 
                     processedItems++;
 
-                    el.Status = Status.Success;
+                    el.Status = StatusType.Success;
 
                     ImageList.SelectedImage = el;
 
@@ -199,7 +198,7 @@ namespace PixelCrypt2026.ViewModel.Page
 
         private bool StartConfirmation()
         {
-            if (ImageList.Images.Any(i => i.Status == Status.Success))
+            if (ImageList.Images.Any(i => i.Status == StatusType.Success))
             {
                 var res = MessageBox.Show("Текущий прогресс будет потерян, продолжить?", "", MessageBoxButton.YesNo, MessageBoxImage.Question);
 
@@ -225,7 +224,7 @@ namespace PixelCrypt2026.ViewModel.Page
 
         private void SaveCommand()
         {
-            MessageBox.Show($"Сохранение изображений {ImageList.Images.Count(i => i.Status == Status.Success)}");
+            MessageBox.Show($"Сохранение изображений {ImageList.Images.Count(i => i.Status == StatusType.Success)}");
         }
     }
 }

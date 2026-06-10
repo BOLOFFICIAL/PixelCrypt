@@ -1,6 +1,6 @@
 ﻿namespace PixelCrypt2026.Program.Enum
 {
-    public enum Status
+    public enum StatusType
     {
         None,
         Success,

@@ -1,4 +1,4 @@
-﻿namespace PixelCrypt2026.Program
+﻿namespace PixelCrypt2026.Program.Service
 {
     class OperationStatusService
     {

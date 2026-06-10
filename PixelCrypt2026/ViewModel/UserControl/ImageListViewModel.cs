@@ -271,7 +271,7 @@ namespace PixelCrypt2026.ViewModel.UserControl
         {
             foreach (var image in Images)
             {
-                image.Status = Program.Enum.Status.None;
+                image.Status = Program.Enum.StatusType.None;
             }
         }
     }

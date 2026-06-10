@@ -1,7 +1,7 @@
 ﻿using PixelCrypt2026.ViewModel.Base;
 using System.Windows.Controls;
 
-namespace PixelCrypt2026.Program
+namespace PixelCrypt2026.Program.Service
 {
     internal class NavigationService
     {

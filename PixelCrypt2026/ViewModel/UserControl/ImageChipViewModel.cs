@@ -13,7 +13,7 @@ namespace PixelCrypt2026.ViewModel.UserControl
         private string _statusValue;
         private string _statusBackground;
         private GridLength _statusWidth;
-        private Status _status;
+        private StatusType _status;
 
         public ImageChipViewModel(string filePath)
         {
@@ -55,7 +55,7 @@ namespace PixelCrypt2026.ViewModel.UserControl
             private set => Set(ref _statusBackground, value);
         }
 
-        public Status Status
+        public StatusType Status
         {
             get => _status;
             set
@@ -95,33 +95,33 @@ namespace PixelCrypt2026.ViewModel.UserControl
             }
         }
 
-        private void SetStatus(Status status = Status.None)
+        private void SetStatus(StatusType status = StatusType.None)
         {
-            StatusWidth = status == Status.None
+            StatusWidth = status == StatusType.None
                 ? new GridLength(0, GridUnitType.Star)
                 : new GridLength(1, GridUnitType.Auto);
 
             switch (status)
             {
-                case Status.None:
+                case StatusType.None:
                     {
                         StatusValue = "";
                         StatusBackground = (Application.Current.TryFindResource("StatusNone") as SolidColorBrush).Color.ToString();
                         break;
                     }
-                case Status.InProgress:
+                case StatusType.InProgress:
                     {
                         StatusValue = "⏳";
                         StatusBackground = (Application.Current.TryFindResource("StatusInProgress") as SolidColorBrush).Color.ToString();
                         break;
                     }
-                case Status.Success:
+                case StatusType.Success:
                     {
                         StatusValue = "Ok";
                         StatusBackground = (Application.Current.TryFindResource("StatusSuccess") as SolidColorBrush).Color.ToString();
                         break;
                     }
-                case Status.Failed:
+                case StatusType.Failed:
                     {
                         StatusValue = "No";
                         StatusBackground = (Application.Current.TryFindResource("StatusFailed") as SolidColorBrush).Color.ToString();

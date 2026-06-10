@@ -1,14 +1,11 @@
 ﻿using Microsoft.Win32;
 using PixelCrypt2026.Commands.Base;
-using PixelCrypt2026.Program;
 using PixelCrypt2026.Program.Enum;
-using PixelCrypt2026.View.UserControl;
+using PixelCrypt2026.Program.Service;
 using PixelCrypt2026.ViewModel.Base;
 using PixelCrypt2026.ViewModel.UserControl;
-using System;
 using System.IO;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace PixelCrypt2026.ViewModel.Page
@@ -62,7 +59,7 @@ namespace PixelCrypt2026.ViewModel.Page
             TaskControl.ConfirmationStopRequested += StopConfirmation;
 
             TaskControl.SaveRequested += SaveCommand;
-            TaskControl.CanSave += () => ImageList.Images.All(i => i.Status == Status.Success);
+            TaskControl.CanSave += () => ImageList.Images.All(i => i.Status == StatusType.Success);
         }
 
         private bool CanClearFile(object arg)
@@ -85,7 +82,7 @@ namespace PixelCrypt2026.ViewModel.Page
 
             if (openFileDialog.ShowDialog() == true)
             {
-                if (!string.IsNullOrEmpty(Content)) 
+                if (!string.IsNullOrEmpty(Content))
                 {
                     var res = MessageBox.Show("Тест будет заменен на содержимое из файла, продолжить?", "", MessageBoxButton.YesNo);
 
@@ -101,7 +98,7 @@ namespace PixelCrypt2026.ViewModel.Page
             FilePath = "";
         }
 
-        public bool IsEnable 
+        public bool IsEnable
         {
             get => _isEnable;
             set => Set(ref _isEnable, value);
@@ -128,7 +125,7 @@ namespace PixelCrypt2026.ViewModel.Page
         public string FilePath
         {
             get => _filePath;
-            set 
+            set
             {
                 var isEmpty = string.IsNullOrEmpty(value);
 
@@ -139,10 +136,10 @@ namespace PixelCrypt2026.ViewModel.Page
                     var content = File.ReadAllText(value);
                     Content = content.Substring(0, Math.Min(content.Length, 10000));
                 }
-                else if (isEmpty && !string.IsNullOrEmpty(_filePath)) 
+                else if (isEmpty && !string.IsNullOrEmpty(_filePath))
                 {
                     var res = MessageBox.Show("Очистить содержимое?", "", MessageBoxButton.YesNo);
-                    if (res == MessageBoxResult.Yes) 
+                    if (res == MessageBoxResult.Yes)
                     {
                         Content = "";
                     }
@@ -153,7 +150,7 @@ namespace PixelCrypt2026.ViewModel.Page
             }
         }
 
-        public bool IsReadOnly 
+        public bool IsReadOnly
         {
             get => _isReadOnly;
             set => Set(ref _isReadOnly, value);
@@ -169,7 +166,7 @@ namespace PixelCrypt2026.ViewModel.Page
 
         private void SaveCommand()
         {
-            MessageBox.Show($"Сохранение изображений {ImageList.Images.Count(i => i.Status == Status.Success)}");
+            MessageBox.Show($"Сохранение изображений {ImageList.Images.Count(i => i.Status == StatusType.Success)}");
         }
 
         private bool StopConfirmation()
@@ -187,7 +184,7 @@ namespace PixelCrypt2026.ViewModel.Page
 
         private bool StartConfirmation()
         {
-            if (ImageList.Images.Any(i => i.Status == Status.Success))
+            if (ImageList.Images.Any(i => i.Status == StatusType.Success))
             {
                 var res = MessageBox.Show("Текущий прогресс будет потерян, продолжить?", "", MessageBoxButton.YesNo, MessageBoxImage.Question);
 
@@ -200,7 +197,7 @@ namespace PixelCrypt2026.ViewModel.Page
 
         private bool ClearConfirmation()
         {
-            if (ImageList.Images.Any(i => i.Status == Status.Success))
+            if (ImageList.Images.Any(i => i.Status == StatusType.Success))
             {
                 var res = MessageBox.Show("Вы уверены что хотите очистить список?", "", MessageBoxButton.YesNo, MessageBoxImage.Question);
 
@@ -218,7 +215,7 @@ namespace PixelCrypt2026.ViewModel.Page
             IsEnable = false;
             IsReadOnly = true;
             ImageList.IsEnable = IsEnable;
-            
+
             SettingsHeight = new GridLength(0, GridUnitType.Star);
 
             SetToolStatus("Выполняется");
@@ -242,7 +239,7 @@ namespace PixelCrypt2026.ViewModel.Page
                 {
                     token.ThrowIfCancellationRequested();
 
-                    el.Status = Status.InProgress;
+                    el.Status = StatusType.InProgress;
 
                     try
                     {
@@ -250,13 +247,13 @@ namespace PixelCrypt2026.ViewModel.Page
                     }
                     catch (TaskCanceledException)
                     {
-                        el.Status = Status.None;
+                        el.Status = StatusType.None;
                         break;
                     }
 
                     processedItems++;
 
-                    el.Status = Status.Success;
+                    el.Status = StatusType.Success;
 
                     ImageList.SelectedImage = el;
 
