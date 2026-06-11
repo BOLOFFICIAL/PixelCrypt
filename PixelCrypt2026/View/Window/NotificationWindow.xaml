@@ -25,7 +25,7 @@
                          EndPoint="0.5,1">
                 <GradientStop Offset="0" 
                       Color="{Binding StatusColor}" />
-                <GradientStop Offset="1" 
+                <GradientStop Offset="0.8" 
                       Color="{StaticResource NotificationBaseColor}" />
             </LinearGradientBrush>
         </Border.Background>
@@ -35,7 +35,7 @@
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
-                <RowDefinition Height="auto"/>
+                <RowDefinition Height="*"/>
                 <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
 
@@ -80,6 +80,7 @@
                            FontSize="15"
                            FontWeight="Bold"
                            HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
                            TextWrapping="Wrap"
                            Foreground="{StaticResource Foreground}"/>
             </Grid>
@@ -93,63 +94,85 @@
                     <RowDefinition Height="{Binding HeightButtonCustom}"/>
                 </Grid.RowDefinitions>
 
-                <Grid Grid.Row="0" 
+                <Grid Grid.Row="0"
                       HorizontalAlignment="Center">
                     <Button Content="Ok"
+                            Width="80"
+                            BorderBrush="{StaticResource Foreground}"
+                            BorderThickness="2"
+                            Background="{Binding StatusColor}"
                             Command="{Binding OkCommand}"
-                            Margin="5"
                             Padding="20,10"/>
                 </Grid>
 
                 <Grid Grid.Row="1"
                       HorizontalAlignment="Center">
-                    <StackPanel Orientation="Horizontal">
-                        <Button Content="Да"
-                                Command="{Binding YesCommand}"
-                                Margin="5"
-                                Padding="20,10"/>
-                        <Button Content="Нет"
-                                Command="{Binding NoCommand}"
-                                Margin="5"
-                                Padding="20,10"/>
-                    </StackPanel>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Button Content="Да"
+                            Grid.Column="0"
+                            Width="80"
+                            BorderBrush="{StaticResource Foreground}"
+                            BorderThickness="2"
+                            Background="{Binding StatusColor}"
+                            Command="{Binding YesCommand}"
+                            Margin="0,0,5,0"
+                            Padding="20,10" 
+                            Cursor="Hand"/>
+                    <Button Content="Нет"
+                            Width="80"
+                            Grid.Column="1"
+                            BorderBrush="{StaticResource Foreground}"
+                            BorderThickness="2"
+                            Background="{Binding StatusColor}"
+                            Command="{Binding NoCommand}"
+                            Margin="5,0,0,0"
+                            Padding="20,10"/>
                 </Grid>
 
-                <Grid Grid.Row="2"
+                <Grid Grid.Row="2" 
                       HorizontalAlignment="Center">
-                    <StackPanel Orientation="Horizontal">
-                        <Border Background="{StaticResource Background3}"
-                                Padding="10"
-                                CornerRadius="10">
-                            <TextBox Text="{Binding InputText,UpdateSourceTrigger=PropertyChanged}"
+                    <Border Background="{StaticResource Background3}" 
+                            Padding="0" 
+                            CornerRadius="10">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBox Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged}"
                                      BorderThickness="0"
                                      FontSize="15"
+                                     MinHeight="40"
                                      MinWidth="150"
                                      MaxWidth="200"
                                      MaxLines="5"
+                                     Padding="10,10,0,10"
                                      Foreground="{StaticResource Foreground}"
                                      CaretBrush="{StaticResource Foreground}"
                                      AcceptsReturn="True"
                                      TextWrapping="Wrap"
-                                     Background="Transparent"/>
-                        </Border>
-                        <Button Command="{Binding TextCommand}"
-                                VerticalAlignment="Top"
-                                Margin="5,0,0,0">
-                            <Button.Content>
-                                <fa:ImageAwesome Icon="Solid_Play"
-                                                 Foreground="{StaticResource Foreground}"
-                                                 Height="20"
-                                                 RenderTransformOrigin="0.5,0.5">
-                                </fa:ImageAwesome>
-                            </Button.Content>
-                        </Button>
-                    </StackPanel>
+                                     Background="Transparent"
+                                     VerticalContentAlignment="Center"
+                                     VerticalAlignment="Center"/>
+
+                            <Button Command="{Binding TextCommand}"
+                                    VerticalAlignment="Top"
+                                    Height="40"
+                                    Background="Transparent"
+                                    BorderThickness="0"
+                                    Padding="10,0">
+                                <fa:ImageAwesome Icon="Solid_Play" 
+                                                 Foreground="{Binding StatusColor}"
+                                                 Height="18" 
+                                                 Width="18"/>
+                            </Button>
+                        </StackPanel>
+                    </Border>
                 </Grid>
 
                 <Grid Grid.Row="3">
                     <ItemsControl ItemsSource="{Binding Buttons}"
-                                  HorizontalAlignment="Center">
+                                  HorizontalAlignment="Stretch">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <StackPanel Orientation="Vertical"/>
@@ -161,8 +184,11 @@
                                 <Button Content="{Binding Text}"
                                         Command="{Binding Command}"
                                         Margin="5"
+                                        BorderBrush="{StaticResource Foreground}"
+                                        BorderThickness="2"
+                                        Background="Transparent"
                                         Padding="20,10"
-                                        HorizontalAlignment="Center"
+                                        HorizontalAlignment="Stretch"
                                         MinWidth="100"/>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>

@@ -92,6 +92,7 @@ namespace PixelCrypt2026.ViewModel.Window
                 case NotificationIconType.Success: icon = "Solid_CheckCircle"; break;
                 case NotificationIconType.Error: icon = "Solid_TimesCircle"; break;
                 case NotificationIconType.Question: icon = "Solid_ExclamationTriangle"; break;
+                default: icon = "Solid_Bell"; break;
             }
 
             Icon = icon;
@@ -134,7 +135,7 @@ namespace PixelCrypt2026.ViewModel.Window
                             Text = action.title,
                             Command = new LambdaCommand((object obj) => 
                             { 
-                                action.action.Invoke(); 
+                                action.action?.Invoke(); 
                                 OnCloseCommand(null); 
                             })
                         });

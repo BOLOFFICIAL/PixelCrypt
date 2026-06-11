@@ -1,5 +1,6 @@
 ﻿using PixelCrypt2026.Program.Enum;
 using PixelCrypt2026.ViewModel.Window;
+using System.Windows.Input;
 
 namespace PixelCrypt2026.View.Window
 {
@@ -15,22 +16,30 @@ namespace PixelCrypt2026.View.Window
         {
             InitializeComponent();
             DataContext = new NotificationWindowViewModel(new Action(Close), content, title, button, icon);
-
-            if (MainWindow.Instance.Focusable)
-                Owner = MainWindow.Instance;
-
-            ShowDialog();
+            Initialize();
         }
 
         public NotificationWindow(string content, string title, List<(string, Action)> actions, NotificationIconType icon)
         {
-            InitializeComponent();
+            InitializeComponent();      
             DataContext = new NotificationWindowViewModel(new Action(Close), content, title, actions, icon);
+            Initialize();
+        }
 
+        private void Initialize() 
+        {
             if (MainWindow.Instance.Focusable)
                 Owner = MainWindow.Instance;
 
+            this.KeyDown += OnKeyDown;
+
             ShowDialog();
+        }
+
+        private void OnKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Escape) 
+                Close();
         }
     }
 }

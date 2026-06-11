@@ -41,25 +41,37 @@
                             <RowDefinition Height="auto"/>
                         </Grid.RowDefinitions>
 
-                        <Grid Grid.Row="0">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="auto"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
+                        <Grid Grid.Row="0"
+                              >
+                            <Border Background="{StaticResource Background1}"
+                                    CornerRadius="15">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="100"/>
+                                    </Grid.ColumnDefinitions>
 
-                            <Grid Grid.Column="0"
-                                  Margin="0,0,5,0">
-                                <Label Content="Масштаб"
-                                       FontWeight="Medium"
-                                       VerticalAlignment="Center"
-                                       FontSize="20"
-                                       Foreground="{StaticResource Foreground}"/>
-                            </Grid>
+                                    <Grid Grid.Column="0">
+                                        <Label Content="Interference level"
+                                               FontWeight="Medium"
+                                               VerticalAlignment="Center"
+                                               HorizontalAlignment="Center"
+                                               FontSize="20"
+                                               Foreground="{StaticResource Foreground}"/>
+                                    </Grid>
 
-                            <Grid Grid.Column="1">
-                                <ComboBox ItemsSource="{Binding ComboBoxItem}"
-                                          SelectedValue="{Binding ComboBoxValue}"/>
-                            </Grid>
+                                    <Grid Grid.Column="1"
+                                          Margin="0,5,5,5">
+                                        <Border CornerRadius="10"
+                                                BorderBrush="{StaticResource Foreground}"
+                                                BorderThickness="1">
+                                            <ComboBox ItemsSource="{Binding ComboBoxItem}"
+                                                      SelectedValue="{Binding ComboBoxValue}"/>
+                                        </Border>
+
+                                    </Grid>
+                                </Grid>
+                            </Border>
                         </Grid>
 
                         <Grid Grid.Row="1"
