@@ -41,8 +41,7 @@
                             <RowDefinition Height="auto"/>
                         </Grid.RowDefinitions>
 
-                        <Grid Grid.Row="0"
-                              >
+                        <Grid Grid.Row="0">
                             <Border Background="{StaticResource Background1}"
                                     CornerRadius="15">
                                 <Grid>
@@ -56,7 +55,7 @@
                                                FontWeight="Medium"
                                                VerticalAlignment="Center"
                                                HorizontalAlignment="Center"
-                                               FontSize="20"
+                                               FontSize="15"
                                                Foreground="{StaticResource Foreground}"/>
                                     </Grid>
 

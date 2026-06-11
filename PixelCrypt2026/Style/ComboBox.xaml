@@ -6,9 +6,7 @@
         <Setter Property="Foreground" Value="{StaticResource Foreground}"/>
         <Setter Property="BorderBrush" Value="{StaticResource Background2}"/>
         <Setter Property="BorderThickness" Value="1"/>
-        <Setter Property="Padding" Value="12,10"/>
-        <Setter Property="FontSize" Value="16"/>
-        <Setter Property="Height" Value="42"/>
+        <Setter Property="FontSize" Value="15"/>
         <Setter Property="Cursor" Value="Hand"/>
 
         <Setter Property="Template">
@@ -16,13 +14,13 @@
                 <ControlTemplate TargetType="ComboBox">
                     <Grid>
                         <ToggleButton x:Name="ToggleButton"
-                                  Grid.ColumnSpan="2"
-                                  Focusable="False"
-                                  ClickMode="Press"
-                                  IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
-                                  Background="{TemplateBinding Background}"
-                                  BorderBrush="{TemplateBinding BorderBrush}"
-                                  BorderThickness="{TemplateBinding BorderThickness}">
+                                      Grid.ColumnSpan="2"
+                                      Focusable="False"
+                                      ClickMode="Press"
+                                      IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                      Background="{TemplateBinding Background}"
+                                      BorderBrush="{TemplateBinding BorderBrush}"
+                                      BorderThickness="{TemplateBinding BorderThickness}">
                             <ToggleButton.Style>
                                 <Style TargetType="ToggleButton">
                                     <Setter Property="Template">
@@ -32,31 +30,14 @@
                                                         Background="{TemplateBinding Background}"
                                                         BorderThickness="{TemplateBinding BorderThickness}"
                                                         CornerRadius="10">
-                                                    <Grid>
-                                                        <Grid.ColumnDefinitions>
-                                                            <ColumnDefinition/>
-                                                            <ColumnDefinition Width="36"/>
-                                                        </Grid.ColumnDefinitions>
-
-                                                        <ContentPresenter x:Name="contentPresenter"
-                                                                          Grid.Column="0"
-                                                                          Margin="{TemplateBinding Padding}"
-                                                                          HorizontalAlignment="Center"
-                                                                          VerticalAlignment="Center"
-                                                                          TextElement.Foreground="{StaticResource Foreground}"
-                                                                          Content="{Binding SelectedItem, RelativeSource={RelativeSource AncestorType=ComboBox}}"/>
-
-                                                        <Path x:Name="arrow"
-                                                              Grid.Column="1"
-                                                              Width="15"
-                                                              Height="7"
-                                                              Margin="0,0,10,0"
-                                                              HorizontalAlignment="Right"
-                                                              VerticalAlignment="Center"
-                                                              Data="M 0 0 L 5 5 L 10 0 Z"
-                                                              Fill="{StaticResource Accent}"
-                                                              Stretch="Uniform"/>
-                                                    </Grid>
+                                                    <ContentPresenter x:Name="contentPresenter"
+                                                                      Margin="10,5"
+                                                                      HorizontalAlignment="Center"
+                                                                      VerticalAlignment="Center"
+                                                                      TextElement.Foreground="{StaticResource Foreground}"
+                                                                      TextElement.FontWeight="Medium"
+                                                                      Content="{Binding SelectedItem, RelativeSource={RelativeSource AncestorType=ComboBox}}"/>
+                                                   
                                                 </Border>
 
                                                 <ControlTemplate.Triggers>
