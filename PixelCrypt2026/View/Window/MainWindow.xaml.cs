@@ -9,9 +9,12 @@ namespace PixelCrypt2026.View.Window
     /// </summary>
     public partial class MainWindow : System.Windows.Window
     {
+        public static MainWindow Instance { get; private set; }
         public MainWindow()
         {
             InitializeComponent();
+
+            Instance = this;
 
             var navigation = new NavigationService(MainFrame);
 

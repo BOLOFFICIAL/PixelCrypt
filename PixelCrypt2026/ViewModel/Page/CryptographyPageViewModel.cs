@@ -1,4 +1,5 @@
 ﻿using PixelCrypt2026.Program.Enum;
+using PixelCrypt2026.Program.Notification;
 using PixelCrypt2026.Program.Service;
 using PixelCrypt2026.ViewModel.Base;
 using PixelCrypt2026.ViewModel.UserControl;
@@ -80,7 +81,7 @@ namespace PixelCrypt2026.ViewModel.Page
             TaskControl.ConfirmationStopRequested += StopConfirmation;
 
             TaskControl.SaveRequested += SaveCommand;
-            TaskControl.CanSave += () => ImageList.Images.Any(i => i.Status == StatusType.Success);
+            TaskControl.CanSave += CanSave;
         }
 
         private void UpdateImageCount()
@@ -97,13 +98,15 @@ namespace PixelCrypt2026.ViewModel.Page
             }
         }
 
+        private bool CanSave() => ImageList.Images.Any(i => i.Status == StatusType.Success);
+
         private bool ClearConfirmation()
         {
             if (ImageList.Images.Any(i => i.Status == StatusType.Success))
             {
-                var res = MessageBox.Show("Вы уверены что хотите очистить список?", "", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                var res = Notification.Show("Вы уверены что хотите очистить список?", button: NotificationButtonType.YesNo, icon: NotificationIconType.Question);
 
-                if (res != MessageBoxResult.Yes)
+                if (res.Result != NotificationResultType.Yes)
                     return false;
             }
 
@@ -158,18 +161,18 @@ namespace PixelCrypt2026.ViewModel.Page
 
                     Progress.UpdateTimer(processedItems, totalItems);
 
-                    SetToolStatus($"Выполняется {processedItems}/{totalItems} ({Progress.ProgressPercent})");
+                    SetToolStatus($"Выполняется ({Progress.ProgressPercent})");
                 }
 
                 if (token.IsCancellationRequested)
                 {
-                    MessageBox.Show("Операция остановлена");
+                    Notification.Show("Операция остановлена");
                     Progress.ProgressTime = $"Остановлено ({processedItems}/{totalItems})";
                     SetToolStatus("Остановлено");
                 }
                 else
                 {
-                    MessageBox.Show("Операция завершена");
+                    Notification.Show("Операция завершена");
                     Progress.ProgressTime = "Завершено";
                     SetToolStatus("Завершено");
                 }
@@ -200,9 +203,9 @@ namespace PixelCrypt2026.ViewModel.Page
         {
             if (ImageList.Images.Any(i => i.Status == StatusType.Success))
             {
-                var res = MessageBox.Show("Текущий прогресс будет потерян, продолжить?", "", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                var res = Notification.Show("Текущий прогресс будет потерян, продолжить?", button: NotificationButtonType.YesNo, icon: NotificationIconType.Question);
 
-                if (res != MessageBoxResult.Yes)
+                if (res.Result != NotificationResultType.Yes)
                     return false;
             }
 
@@ -217,14 +220,13 @@ namespace PixelCrypt2026.ViewModel.Page
         }
 
         private bool StopConfirmation()
-            => MessageBox.Show("Вы уверены что хотите остановить?",
-                "",
-                MessageBoxButton.YesNo,
-                MessageBoxImage.Question) == MessageBoxResult.Yes;
+            => Notification.Show("Вы уверены что хотите остановить?",
+                button: NotificationButtonType.YesNo,
+                icon: NotificationIconType.Question).Result == NotificationResultType.Yes;
 
         private void SaveCommand()
         {
-            MessageBox.Show($"Сохранение изображений {ImageList.Images.Count(i => i.Status == StatusType.Success)}");
+            Notification.Show($"Сохранение изображений {ImageList.Images.Count(i => i.Status == StatusType.Success)}");
         }
     }
 }

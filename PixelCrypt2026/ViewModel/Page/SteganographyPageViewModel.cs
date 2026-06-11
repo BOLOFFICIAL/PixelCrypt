@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32;
 using PixelCrypt2026.Commands.Base;
 using PixelCrypt2026.Program.Enum;
+using PixelCrypt2026.Program.Notification;
 using PixelCrypt2026.Program.Service;
 using PixelCrypt2026.ViewModel.Base;
 using PixelCrypt2026.ViewModel.UserControl;
@@ -84,9 +85,9 @@ namespace PixelCrypt2026.ViewModel.Page
             {
                 if (!string.IsNullOrEmpty(Content))
                 {
-                    var res = MessageBox.Show("Тест будет заменен на содержимое из файла, продолжить?", "", MessageBoxButton.YesNo);
+                    var res = Notification.Show("Текст будет заменен на содержимое из файла, продолжить?", button: NotificationButtonType.YesNo, icon: NotificationIconType.Question);
 
-                    if (res != MessageBoxResult.Yes) return;
+                    if (res.Result != NotificationResultType.Yes) return;
                 }
 
                 FilePath = openFileDialog.FileName;
@@ -138,8 +139,9 @@ namespace PixelCrypt2026.ViewModel.Page
                 }
                 else if (isEmpty && !string.IsNullOrEmpty(_filePath))
                 {
-                    var res = MessageBox.Show("Очистить содержимое?", "", MessageBoxButton.YesNo);
-                    if (res == MessageBoxResult.Yes)
+                    var res = Notification.Show("Очистить содержимое?", button: NotificationButtonType.YesNo, icon: NotificationIconType.Question);
+
+                    if (res.Result == NotificationResultType.Yes)
                     {
                         Content = "";
                     }
@@ -166,14 +168,13 @@ namespace PixelCrypt2026.ViewModel.Page
 
         private void SaveCommand()
         {
-            MessageBox.Show($"Сохранение изображений {ImageList.Images.Count(i => i.Status == StatusType.Success)}");
+            Notification.Show($"Сохранение изображений {ImageList.Images.Count(i => i.Status == StatusType.Success)}");
         }
 
         private bool StopConfirmation()
-            => MessageBox.Show("Вы уверены что хотите остановить?",
-                "",
-                MessageBoxButton.YesNo,
-                MessageBoxImage.Question) == MessageBoxResult.Yes;
+            => Notification.Show("Вы уверены что хотите остановить?",
+                button: NotificationButtonType.YesNo,
+                icon: NotificationIconType.Question).Result == NotificationResultType.Yes;
 
         private void StopCommand()
         {
@@ -184,11 +185,17 @@ namespace PixelCrypt2026.ViewModel.Page
 
         private bool StartConfirmation()
         {
+            if (string.IsNullOrEmpty(Content) && string.IsNullOrEmpty(FilePath))
+            {
+                Notification.Show("Нет данных для импорта", button: NotificationButtonType.Ok, icon: NotificationIconType.Error);
+                return false;
+            }
+
             if (ImageList.Images.Any(i => i.Status == StatusType.Success))
             {
-                var res = MessageBox.Show("Текущий прогресс будет потерян, продолжить?", "", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                var res = Notification.Show("Текущий прогресс будет потерян, продолжить?", button: NotificationButtonType.YesNo, icon: NotificationIconType.Question);
 
-                if (res != MessageBoxResult.Yes)
+                if (res.Result != NotificationResultType.Yes)
                     return false;
             }
 
@@ -199,9 +206,9 @@ namespace PixelCrypt2026.ViewModel.Page
         {
             if (ImageList.Images.Any(i => i.Status == StatusType.Success))
             {
-                var res = MessageBox.Show("Вы уверены что хотите очистить список?", "", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                var res = Notification.Show("Вы уверены что хотите очистить список?", button: NotificationButtonType.YesNo, icon: NotificationIconType.Question);
 
-                if (res != MessageBoxResult.Yes)
+                if (res.Result != NotificationResultType.Yes)
                     return false;
             }
 
@@ -259,18 +266,18 @@ namespace PixelCrypt2026.ViewModel.Page
 
                     Progress.UpdateTimer(processedItems, totalItems);
 
-                    SetToolStatus($"Выполняется {processedItems}/{totalItems} ({Progress.ProgressPercent})");
+                    SetToolStatus($"Выполняется ({Progress.ProgressPercent})");
                 }
 
                 if (token.IsCancellationRequested)
                 {
-                    MessageBox.Show("Операция остановлена");
+                    Notification.Show("Операция остановлена");
                     Progress.ProgressTime = $"Остановлено ({processedItems}/{totalItems})";
                     SetToolStatus("Остановлено");
                 }
                 else
                 {
-                    MessageBox.Show("Операция завершена");
+                    Notification.Show("Операция завершена");
                     Progress.ProgressTime = "Завершено";
                     SetToolStatus("Завершено");
                 }

@@ -16,19 +16,19 @@ namespace PixelCrypt2026.View.Window
             InitializeComponent();
             DataContext = new NotificationWindowViewModel(new Action(Close), content, title, button, icon);
 
-            //if (Context.MainWindow.Focusable) 
-            //    Owner = Context.MainWindow;
+            if (MainWindow.Instance.Focusable)
+                Owner = MainWindow.Instance;
 
             ShowDialog();
         }
 
-        public NotificationWindow(string content, string title, List<Action> actions, NotificationIconType icon)
+        public NotificationWindow(string content, string title, List<(string, Action)> actions, NotificationIconType icon)
         {
             InitializeComponent();
             DataContext = new NotificationWindowViewModel(new Action(Close), content, title, actions, icon);
 
-            //if (Context.MainWindow.Focusable) 
-            //    Owner = Context.MainWindow;
+            if (MainWindow.Instance.Focusable)
+                Owner = MainWindow.Instance;
 
             ShowDialog();
         }

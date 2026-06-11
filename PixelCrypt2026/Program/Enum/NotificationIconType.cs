@@ -2,6 +2,7 @@
 {
     public enum NotificationIconType
     {
+        None,
         Success,
         Error,
         Question

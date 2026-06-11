@@ -35,15 +35,15 @@
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
-                <RowDefinition Height="*"/>
+                <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
 
             <Grid Grid.Row="0">
                 <Button Background="Transparent"
-                    Padding="0"
-                    Command="{Binding CloseCommand}"
-                    HorizontalAlignment="Right">
+                        Padding="0"
+                        Command="{Binding CloseCommand}"
+                        HorizontalAlignment="Right">
                     <fa:ImageAwesome Icon="Regular_TimesCircle"
                                      Foreground="{StaticResource Foreground}"
                                      Width="20"
@@ -54,9 +54,10 @@
 
             <Grid Grid.Row="1">
                 <fa:ImageAwesome Icon="{Binding Icon}"
-                             Width="90"
-                             Height="90"
-                             VerticalAlignment="Center">
+                                 Width="90"
+                                 Height="90"
+                                 Foreground="{StaticResource Foreground}"
+                                 VerticalAlignment="Center">
                     <fa:ImageAwesome.Effect>
                         <BlurEffect Radius="5"/>
                     </fa:ImageAwesome.Effect>
@@ -64,7 +65,7 @@
             </Grid>
 
             <Grid Grid.Row="2"
-                  Margin="10,0">
+                  Margin="10,10,10,0">
                 <TextBlock Text="{Binding Title}"
                            FontSize="20"
                            FontWeight="Bold"
@@ -83,8 +84,90 @@
                            Foreground="{StaticResource Foreground}"/>
             </Grid>
 
-            <Grid Grid.Row="4">
+            <Grid Grid.Row="4"
+                  Margin="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="{Binding HeightButtonOk}"/>
+                    <RowDefinition Height="{Binding HeightButtonYesNo}"/>
+                    <RowDefinition Height="{Binding HeightButtonText}"/>
+                    <RowDefinition Height="{Binding HeightButtonCustom}"/>
+                </Grid.RowDefinitions>
 
+                <Grid Grid.Row="0" 
+                      HorizontalAlignment="Center">
+                    <Button Content="Ok"
+                            Command="{Binding OkCommand}"
+                            Margin="5"
+                            Padding="20,10"/>
+                </Grid>
+
+                <Grid Grid.Row="1"
+                      HorizontalAlignment="Center">
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="Да"
+                                Command="{Binding YesCommand}"
+                                Margin="5"
+                                Padding="20,10"/>
+                        <Button Content="Нет"
+                                Command="{Binding NoCommand}"
+                                Margin="5"
+                                Padding="20,10"/>
+                    </StackPanel>
+                </Grid>
+
+                <Grid Grid.Row="2"
+                      HorizontalAlignment="Center">
+                    <StackPanel Orientation="Horizontal">
+                        <Border Background="{StaticResource Background3}"
+                                Padding="10"
+                                CornerRadius="10">
+                            <TextBox Text="{Binding InputText,UpdateSourceTrigger=PropertyChanged}"
+                                     BorderThickness="0"
+                                     FontSize="15"
+                                     MinWidth="150"
+                                     MaxWidth="200"
+                                     MaxLines="5"
+                                     Foreground="{StaticResource Foreground}"
+                                     CaretBrush="{StaticResource Foreground}"
+                                     AcceptsReturn="True"
+                                     TextWrapping="Wrap"
+                                     Background="Transparent"/>
+                        </Border>
+                        <Button Command="{Binding TextCommand}"
+                                VerticalAlignment="Top"
+                                Margin="5,0,0,0">
+                            <Button.Content>
+                                <fa:ImageAwesome Icon="Solid_Play"
+                                                 Foreground="{StaticResource Foreground}"
+                                                 Height="20"
+                                                 RenderTransformOrigin="0.5,0.5">
+                                </fa:ImageAwesome>
+                            </Button.Content>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+
+                <Grid Grid.Row="3">
+                    <ItemsControl ItemsSource="{Binding Buttons}"
+                                  HorizontalAlignment="Center">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Vertical"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button Content="{Binding Text}"
+                                        Command="{Binding Command}"
+                                        Margin="5"
+                                        Padding="20,10"
+                                        HorizontalAlignment="Center"
+                                        MinWidth="100"/>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Grid>
             </Grid>
         </Grid>
     </Border>

@@ -15,7 +15,7 @@ namespace PixelCrypt2026.Program.Notification
             return dataContext?.NotificationResult;
         }
 
-        public static NotificationResult Show(string content,  List<Action> actions, string title = "PixelCrypt", NotificationIconType icon = 0)
+        public static NotificationResult Show(string content, List<(string, Action)> actions, string title = "PixelCrypt", NotificationIconType icon = 0)
         {
             var notificationWindow = new NotificationWindow(content, title, actions, icon);
 
