@@ -25,12 +25,12 @@
                 
                 <Grid Grid.Column="0" 
                       Margin="0,0,10,0">
-                    <Button Content="Добавить" 
+                    <Button Content="Add" 
                             Command="{Binding AddImageCommand}"/>
                 </Grid>
                 
                 <Grid Grid.Column="1">
-                    <Button Content="Очистить" 
+                    <Button Content="Clear" 
                             Command="{Binding ClearImagesCommand}"/>
                 </Grid>
             </Grid>

@@ -16,7 +16,8 @@
                     Margin="0,0,0,5"
                     Orientation="Horizontal">
 
-            <Button Content="Назад"
+            <Button Content="back"
+                    VerticalAlignment="Center"
                     Command="{Binding BackCommand,
                                       RelativeSource={RelativeSource AncestorType=local:BasePageLayout}}"
                     Padding="15,5"/>

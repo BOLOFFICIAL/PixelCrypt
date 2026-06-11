@@ -20,8 +20,8 @@ namespace PixelCrypt2026.ViewModel.UserControl
             ImageFile = new ImageFile(filePath);
             StatusWidth = new GridLength(0, GridUnitType.Star);
 
-            Background = (Application.Current.TryFindResource("Background2") as SolidColorBrush).Color.ToString();
-            Foreground = (Application.Current.TryFindResource("Foreground") as SolidColorBrush).Color.ToString();
+            Background = (Application.Current.TryFindResource("ImageChipBackground") as SolidColorBrush).Color.ToString();
+            Foreground = (Application.Current.TryFindResource("ImageChipForeground") as SolidColorBrush).Color.ToString();
         }
 
         public ImageFile ImageFile { get; set; }
@@ -71,26 +71,13 @@ namespace PixelCrypt2026.ViewModel.UserControl
             {
                 if (value)
                 {
-                    var originalBackground = (Application.Current.TryFindResource("Background2") as SolidColorBrush).Color;
-
-                    Background = Color.FromRgb(
-                        (byte)(255 - originalBackground.R),
-                        (byte)(255 - originalBackground.G),
-                        (byte)(255 - originalBackground.B)
-                    ).ToString();
-
-                    var originalForeground = (Application.Current.TryFindResource("Foreground") as SolidColorBrush).Color;
-
-                    Foreground = Color.FromRgb(
-                        (byte)(255 - originalForeground.R),
-                        (byte)(255 - originalForeground.G),
-                        (byte)(255 - originalForeground.B)
-                    ).ToString();
+                    Background = (Application.Current.TryFindResource("ImageChipSelectedBackground") as SolidColorBrush).Color.ToString();
+                    Foreground = (Application.Current.TryFindResource("ImageChipSelectedForeground") as SolidColorBrush).Color.ToString();
                 }
                 else
                 {
-                    Background = (Application.Current.TryFindResource("Background2") as SolidColorBrush).Color.ToString();
-                    Foreground = (Application.Current.TryFindResource("Foreground") as SolidColorBrush).Color.ToString();
+                    Background = (Application.Current.TryFindResource("ImageChipBackground") as SolidColorBrush).Color.ToString();
+                    Foreground = (Application.Current.TryFindResource("ImageChipForeground") as SolidColorBrush).Color.ToString();
                 }
             }
         }

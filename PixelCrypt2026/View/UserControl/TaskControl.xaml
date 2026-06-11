@@ -15,18 +15,18 @@
             </Grid.ColumnDefinitions>
 
             <Button Grid.Column="0"
-                    Content="Выполнить"
+                    Content="Execute"
                     Command="{Binding StartCommand}"
                     Padding="10,5"/>
 
             <Button Grid.Column="1"
-                    Content="Остановить"
+                    Content="Stop"
                     Command="{Binding StopCommand}"
                     Padding="10,5"/>
 
             <Button Grid.Column="2"
                     Margin="5,0,0,0"
-                    Content="Сохранить"
+                    Content="Save"
                     Command="{Binding SaveCommand}"
                     Padding="10,5"/>
         </Grid>

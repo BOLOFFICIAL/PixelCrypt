@@ -4,7 +4,8 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:PixelCrypt2026.View.Page" 
-      xmlns:controls="clr-namespace:PixelCrypt2026.View.UserControl" xmlns:fa="http://schemas.fontawesome.com/icons/"
+      xmlns:controls="clr-namespace:PixelCrypt2026.View.UserControl" 
+      xmlns:fa="http://schemas.fontawesome.com/icons/"
       mc:Ignorable="d" 
       Title="SteganographyPage">
 
@@ -74,7 +75,7 @@
 
                                     <Grid Grid.Column="0"
                                           Margin="0,0,5,0">
-                                        <Button Content="Выбрать"
+                                        <Button Content="File"
                                                 IsEnabled="{Binding IsEnable}"
                                                 Command="{Binding SelectFileCommand}"/> 
                                     </Grid>
@@ -100,7 +101,7 @@
                                                     IsEnabled="{Binding IsEnable}"
                                                     Command="{Binding ClearFileCommand}">
                                                 <fa:ImageAwesome Icon="Regular_TimesCircle"
-                                                                 Foreground="{StaticResource Foreground}"
+                                                                 Foreground="{StaticResource ButtonForeground}"
                                                                  Width="25"
                                                                  Height="25"/>
                                             </Button>

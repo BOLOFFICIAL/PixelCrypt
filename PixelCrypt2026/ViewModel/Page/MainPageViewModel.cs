@@ -23,8 +23,8 @@ namespace PixelCrypt2026.ViewModel.Page
                     typeof(CryptographyPageViewModel),
                     new ToolCardViewModel<CryptographyPageViewModel>()
                     {
-                        Title = "Шифрование",
-                        Description = "Защитите изображение паролем, превратив его в визуальный шум. Без ключа никто не увидит оригинал.",
+                        Title = "Cryptography",
+                        Description = "Protect the image with a password by turning it into visual noise. No one will see the original without the key.",
                         ToolCardCommand = new LambdaCommand(OnNavigate)
                     }
                 },
@@ -32,8 +32,8 @@ namespace PixelCrypt2026.ViewModel.Page
                     typeof(SteganographyPageViewModel),
                     new ToolCardViewModel<SteganographyPageViewModel>()
                     {
-                        Title = "Стеганография",
-                        Description = "Спрячьте текст или файл внутри изображения незаметно. Внешне картинка остаётся прежней.",
+                        Title = "Steganography",
+                        Description = "Hide the text or file inside the image unnoticeably. Externally, the picture remains the same.",
                         ToolCardCommand = new LambdaCommand(OnNavigate)
                     }
                 }

@@ -191,7 +191,7 @@ namespace PixelCrypt2026.ViewModel.Page
                 return false;
             }
 
-            if (ImageList.Images.Any(i => i.Status == StatusType.Success))
+            if (ImageList.Images.All(i => i.Status == StatusType.Success))
             {
                 var res = Notification.Show("Текущий прогресс будет потерян, продолжить?", button: NotificationButtonType.YesNo, icon: NotificationIconType.Question);
 

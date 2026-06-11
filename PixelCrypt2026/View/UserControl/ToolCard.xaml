@@ -105,7 +105,7 @@
             </Grid>
 
             <Grid Grid.Row="3">
-                <Button Content="Выбрать" 
+                <Button Content="Select" 
                         HorizontalAlignment="Center" 
                         VerticalAlignment="Bottom" 
                         Padding="15,5" 
