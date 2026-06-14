@@ -32,7 +32,7 @@ namespace PixelCrypt2026.ViewModel.UserControl
             _cts = new CancellationTokenSource();
             RunTimerAsync(_cts.Token);
         }
-        public void UpdateTimer(int processedItems, int totalItems)
+        public void UpdateTimer(double processedItems, double totalItems)
         {
             if (_startTime is null || totalItems == 0 || processedItems == 0) return;
 

@@ -6,6 +6,7 @@
         Ok,
         Yes,
         No,
-        Text
+        Text,
+        Custom
     }
 }

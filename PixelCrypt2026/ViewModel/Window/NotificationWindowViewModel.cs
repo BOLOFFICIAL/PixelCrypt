@@ -135,7 +135,8 @@ namespace PixelCrypt2026.ViewModel.Window
                             Text = action.title,
                             Command = new LambdaCommand((object obj) => 
                             { 
-                                action.action?.Invoke(); 
+                                action.action?.Invoke();
+                                NotificationResult.Result = NotificationResultType.Custom;
                                 OnCloseCommand(null); 
                             })
                         });

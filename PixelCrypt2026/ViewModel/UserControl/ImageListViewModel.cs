@@ -272,6 +272,7 @@ namespace PixelCrypt2026.ViewModel.UserControl
             foreach (var image in Images)
             {
                 image.Status = Program.Enum.StatusType.None;
+                image.ImageFile.ResultImage = null;
             }
         }
     }

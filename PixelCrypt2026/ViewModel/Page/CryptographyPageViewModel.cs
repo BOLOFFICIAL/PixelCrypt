@@ -137,11 +137,11 @@ namespace PixelCrypt2026.ViewModel.Page
 
                 ImageList.ResetImages();
 
-                foreach (var el in ImageList.Images)
+                foreach (var image in ImageList.Images)
                 {
                     token.ThrowIfCancellationRequested();
 
-                    el.Status = StatusType.InProgress;
+                    image.Status = StatusType.InProgress;
 
                     try
                     {
@@ -149,18 +149,16 @@ namespace PixelCrypt2026.ViewModel.Page
                     }
                     catch (TaskCanceledException)
                     {
-                        el.Status = StatusType.None;
+                        image.Status = StatusType.None;
                         break;
                     }
 
                     processedItems++;
 
-                    el.Status = StatusType.Success;
+                    image.Status = StatusType.Success;
 
-                    ImageList.SelectedImage = el;
-
+                    ImageList.SelectedImage = image;
                     Progress.UpdateTimer(processedItems, totalItems);
-
                     SetToolStatus($"Выполняется ({Progress.ProgressPercent})");
                 }
 
