@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
@@ -54,6 +55,69 @@ namespace PixelCrypt2026.Program
                         }
                     }
                 }
+            }
+        }
+
+        public static Task<Bitmap> EncryptPhoto(string imagePath, string key) => EncryptionSequence(imagePath, key, EncryptSequence);
+
+        public static Task<Bitmap> DecryptPhoto(string imagePath, string key) => EncryptionSequence(imagePath, key, DecryptSequence);
+
+        private static Task<Bitmap> EncryptionSequence(string imagepath, string key, Func<List<Color>, string, List<Color>> action)
+        {
+            return Task.Run(() =>
+            {
+                var pixels = ImageHelper.GetArrayPixelsFromImage(imagepath);
+                int width = pixels.GetLength(0);
+                int height = pixels.GetLength(1);
+
+                var listPixels = ImageHelper.GetListPixelsFromArrayPixels(pixels);
+                var encrypt = action(listPixels, key);
+
+                return Converter.ConvertPixelsToBitmap(encrypt, width, height);
+            });
+        }
+
+        private static List<T> EncryptSequence<T>(List<T> collection, string password)
+        {
+            int length = collection.Count;
+            List<int> perm = CreatePermutation(password, length);
+            List<T> encryptedCollection = new List<T>(new T[length]);
+            for (int i = 0; i < length; i++)
+            {
+                encryptedCollection[i] = collection[perm[i]];
+            }
+            return encryptedCollection;
+        }
+
+        private static List<T> DecryptSequence<T>(List<T> encryptedCollection, string password)
+        {
+            int length = encryptedCollection.Count;
+            List<int> perm = CreatePermutation(password, length);
+            List<int> reversePerm = new List<int>(new int[length]);
+            for (int i = 0; i < length; i++)
+            {
+                reversePerm[perm[i]] = i;
+            }
+            List<T> decryptedCollection = new List<T>(new T[length]);
+            for (int i = 0; i < length; i++)
+            {
+                decryptedCollection[i] = encryptedCollection[reversePerm[i]];
+            }
+            return decryptedCollection;
+        }
+
+        private static List<int> CreatePermutation(string password, int length)
+        {
+            using (var md5 = MD5.Create())
+            {
+                byte[] hash = md5.ComputeHash(Encoding.UTF8.GetBytes(password));
+                int hashValue = BitConverter.ToInt32(hash, 0);
+
+                List<int> perm = Enumerable.Range(0, length).ToList();
+                Random random = new Random(hashValue);
+                perm = perm.OrderBy(x => random.Next()).ToList();
+
+                return perm;
             }
         }
     }

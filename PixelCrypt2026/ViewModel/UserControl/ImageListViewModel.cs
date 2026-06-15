@@ -24,6 +24,8 @@ namespace PixelCrypt2026.ViewModel.UserControl
         public event Func<bool> CanRemove;
         public event Func<bool> CanOpenOriginal;
 
+        public event Action SelectImage;
+
         public event Action AddRequested;
         public event Action ClearRequested;
 
@@ -104,7 +106,10 @@ namespace PixelCrypt2026.ViewModel.UserControl
                 Set(ref _selectedImage, value);
 
                 if (_selectedImage != null)
+                {
                     _selectedImage.IsSelected = true;
+                    SelectImage?.Invoke();
+                }
             }
         }
 

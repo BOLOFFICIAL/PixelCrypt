@@ -7,7 +7,6 @@ using PixelCrypt2026.Program.Notification;
 using PixelCrypt2026.Program.Service;
 using PixelCrypt2026.ViewModel.Base;
 using PixelCrypt2026.ViewModel.UserControl;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Text;
 using System.Windows;
@@ -363,7 +362,7 @@ namespace PixelCrypt2026.ViewModel.Page
                 catch (Exception ex)
                 {
                     filePathImage.Status = StatusType.Failed;
-                    Notification.Show($"Возникла ошибка при экспорте:\n{ex.Message}",button: NotificationButtonType.Ok, icon: NotificationIconType.Error); 
+                    Notification.Show($"Возникла ошибка при экспорте:\n{ex.Message}", button: NotificationButtonType.Ok, icon: NotificationIconType.Error);
                     return false;
                 }
             }

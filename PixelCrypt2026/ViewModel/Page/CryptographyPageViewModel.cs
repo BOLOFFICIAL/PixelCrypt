@@ -1,9 +1,13 @@
-﻿using PixelCrypt2026.Program.Enum;
+﻿using PixelCrypt2026.Model;
+using PixelCrypt2026.Program;
+using PixelCrypt2026.Program.Enum;
 using PixelCrypt2026.Program.Notification;
 using PixelCrypt2026.Program.Service;
 using PixelCrypt2026.ViewModel.Base;
 using PixelCrypt2026.ViewModel.UserControl;
+using System.Drawing;
 using System.Windows;
+using System.Windows.Media;
 
 namespace PixelCrypt2026.ViewModel.Page
 {
@@ -14,6 +18,9 @@ namespace PixelCrypt2026.ViewModel.Page
         private GridLength _taskControlHeight;
         private List<int> _comboBoxItem;
         private int _comboBoxValue;
+        private bool _isEncrypt;
+        private GridLength _widthResultImage;
+        private ImageSource _resultImageSource;
 
         public ImageListViewModel ImageList { get; set; }
         public ProgressPanelViewModel Progress { get; set; }
@@ -38,6 +45,18 @@ namespace PixelCrypt2026.ViewModel.Page
             set => Set(ref _taskControlHeight, value);
         }
 
+        public GridLength WidthResultImage 
+        {
+            get => _widthResultImage;
+            set => Set(ref _widthResultImage, value);
+        }
+
+        public ImageSource ResultImageSource 
+        {
+            get => _resultImageSource;
+            set => Set(ref _resultImageSource, value);
+        }
+
         public List<int> ComboBoxItem => _comboBoxItem;
 
         public int ComboBoxValue
@@ -58,6 +77,7 @@ namespace PixelCrypt2026.ViewModel.Page
             ComboBoxValue = ComboBoxItem.Last();
 
             ProgressHeight = new GridLength(0, GridUnitType.Star);
+            WidthResultImage = new GridLength(0, GridUnitType.Pixel);
 
             Progress = new ProgressPanelViewModel();
             PasswordBox = new PasswordBoxViewModel();
@@ -70,6 +90,7 @@ namespace PixelCrypt2026.ViewModel.Page
             ImageList.AddRequested += UpdateImageCount;
             ImageList.ClearRequested += UpdateImageCount;
             ImageList.RemoveRequested += UpdateImageCount;
+            ImageList.SelectImage += SelectImage;
 
             TaskControl = new TaskControlViewModel();
 
@@ -82,6 +103,19 @@ namespace PixelCrypt2026.ViewModel.Page
 
             TaskControl.SaveRequested += SaveCommand;
             TaskControl.CanSave += CanSave;
+        }
+
+        private void SelectImage()
+        {
+            if (ImageList.SelectedImage.ImageFile.ResultImageSource != null)
+            {
+                WidthResultImage = new GridLength(1, GridUnitType.Star);
+                ResultImageSource = ImageList.SelectedImage.ImageFile.ResultImageSource;
+            }
+            else 
+            {
+                WidthResultImage = new GridLength(0, GridUnitType.Pixel);
+            }
         }
 
         private void UpdateImageCount()
@@ -137,29 +171,17 @@ namespace PixelCrypt2026.ViewModel.Page
 
                 ImageList.ResetImages();
 
-                foreach (var image in ImageList.Images)
+                var password = ProgramHelper.GetHash32(PasswordBox.Password ?? "");
+
+                double totalPixels = ImageList.Images.Sum(i => (double)(i.ImageFile.ImageWidth * i.ImageFile.ImageHeight));
+
+                if (_isEncrypt)
                 {
-                    token.ThrowIfCancellationRequested();
-
-                    image.Status = StatusType.InProgress;
-
-                    try
-                    {
-                        await Task.Delay(500, token);
-                    }
-                    catch (TaskCanceledException)
-                    {
-                        image.Status = StatusType.None;
-                        break;
-                    }
-
-                    processedItems++;
-
-                    image.Status = StatusType.Success;
-
-                    ImageList.SelectedImage = image;
-                    Progress.UpdateTimer(processedItems, totalItems);
-                    SetToolStatus($"Выполняется ({Progress.ProgressPercent})");
+                    await Encrypt(totalPixels, token, password);
+                }
+                else 
+                {
+                    await Decrypt(totalPixels, token, password);
                 }
 
                 if (token.IsCancellationRequested)
@@ -197,8 +219,94 @@ namespace PixelCrypt2026.ViewModel.Page
             }
         }
 
+        internal async Task<ActionResult> Decrypt(double totalItems, CancellationToken token, string password)
+        {
+            var res = await Process(totalItems,token, password, Encryption.DecryptPhoto);
+            res.ResultTitle = "Расшифрование";
+
+            if (res.IsSuccessResult)
+                res.ResultMessage = "Данные успешно расшифрованы";
+
+            return res;
+        }
+
+        internal async Task<ActionResult> Encrypt(double totalItems, CancellationToken token, string password)
+        {
+            var res = await Process(totalItems,token, password, Encryption.EncryptPhoto);
+            res.ResultTitle = "Шифрование";
+
+            if (res.IsSuccessResult)
+                res.ResultMessage = "Данные успешно зашифрованы";
+
+            return res;
+        }
+
+        private async Task<ActionResult> Process(double totalItems, CancellationToken token, string password, Func<string, string, Task<Bitmap>> action)
+        {
+            var result = new ActionResult();
+            var processedItems = 0;
+            var completedImages = new List<ImageFile>();
+
+            var hashPassword = ProgramHelper.GetHash32(password);
+
+            try
+            {
+                foreach (var image in ImageList.Images)
+                {
+                    token.ThrowIfCancellationRequested();
+                    image.Status = StatusType.InProgress;
+                    try
+                    {
+                        image.ImageFile.ResultImage = await action(image.ImageFile.FilePath, hashPassword);
+                        image.ImageFile.ResultImageSource = await Task.Run(() => Converter.ConvertBitmapToImageSource(image.ImageFile.ResultImage));
+                        image.Status = StatusType.Success;
+                        ImageList.SelectedImage = image;
+                        completedImages.Add(image.ImageFile);
+                        double convertedPixels = completedImages.Sum(i => (double)(i.ImageWidth * i.ImageHeight));
+                        Progress.UpdateTimer(convertedPixels, totalItems);
+                        SetToolStatus($"Выполняется ({Progress.ProgressPercent})");
+                    }
+                    catch (TaskCanceledException) 
+                    {
+                        image.Status = StatusType.None;
+                        return result;
+                    }
+                    catch (Exception)
+                    {
+                        image.Status = StatusType.Failed;
+                        return result;
+                    }
+                }
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                return new ActionResult()
+                {
+                    IsSuccessResult = false,
+                    ResultMessage = $"Неизвестная ошибка: {ex.Message}",
+                    ResultTitle = "",
+                };
+            }
+        }
+
         private bool StartConfirmation()
         {
+            _isEncrypt = true;
+
+            if (Notification.Show(
+                "Выберите желаемое действие",
+                actions: new List<(string, Action)>()
+                {
+                        ("Encrypt", () => {_isEncrypt = true; }),
+                        ("Decrypt",() => {_isEncrypt = false; })
+                },
+                icon: NotificationIconType.Question).Result == NotificationResultType.Cancel)
+            {
+                return false;
+            }
+
             if (ImageList.Images.Any(i => i.Status == StatusType.Success))
             {
                 var res = Notification.Show("Текущий прогресс будет потерян, продолжить?", button: NotificationButtonType.YesNo, icon: NotificationIconType.Question);

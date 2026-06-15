@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using System.IO;
+using System.Windows.Media;
 
 namespace PixelCrypt2026.Model
 {
@@ -32,6 +33,7 @@ namespace PixelCrypt2026.Model
         public string ImageResolution => $"{ImageWidth} x {ImageHeight} px";
 
         public Bitmap ResultImage { get; internal set; }
+        public ImageSource ResultImageSource { get; internal set; }
 
         public ImageFile(string filePath)
         {
