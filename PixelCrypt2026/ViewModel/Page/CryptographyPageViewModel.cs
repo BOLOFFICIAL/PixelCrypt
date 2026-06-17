@@ -17,7 +17,7 @@ namespace PixelCrypt2026.ViewModel.Page
         private GridLength _settingsHeightHeight;
         private GridLength _taskControlHeight;
         private List<int> _comboBoxItem;
-        private int _comboBoxValue;
+        private int _interference;
         private bool _isEncrypt;
         private GridLength _widthResultImage;
         private ImageSource _resultImageSource;
@@ -59,10 +59,10 @@ namespace PixelCrypt2026.ViewModel.Page
 
         public List<int> ComboBoxItem => _comboBoxItem;
 
-        public int ComboBoxValue
+        public int Interference
         {
-            get => _comboBoxValue;
-            set => Set(ref _comboBoxValue, value);
+            get => _interference;
+            set => Set(ref _interference, value);
         }
 
         public CryptographyPageViewModel(NavigationService navigation) : base(navigation)
@@ -74,7 +74,7 @@ namespace PixelCrypt2026.ViewModel.Page
                 .Where(x => x <= 100)
                 .ToList();
 
-            ComboBoxValue = ComboBoxItem.Last();
+            Interference = ComboBoxItem.Last();
 
             ProgressHeight = new GridLength(0, GridUnitType.Star);
             WidthResultImage = new GridLength(0, GridUnitType.Pixel);
@@ -241,7 +241,7 @@ namespace PixelCrypt2026.ViewModel.Page
             return res;
         }
 
-        private async Task<ActionResult> Process(double totalItems, CancellationToken token, string password, Func<string, string, Task<Bitmap>> action)
+        private async Task<ActionResult> Process(double totalItems, CancellationToken token, string password, Func<string, string,int, Task<Bitmap>> action)
         {
             var result = new ActionResult();
             var processedItems = 0;
@@ -255,12 +255,12 @@ namespace PixelCrypt2026.ViewModel.Page
                 {
                     token.ThrowIfCancellationRequested();
                     image.Status = StatusType.InProgress;
+                    ImageList.SelectedImage = image;
                     try
                     {
-                        image.ImageFile.ResultImage = await action(image.ImageFile.FilePath, hashPassword);
+                        image.ImageFile.ResultImage = await action(image.ImageFile.FilePath, hashPassword, Interference);
                         image.ImageFile.ResultImageSource = await Task.Run(() => Converter.ConvertBitmapToImageSource(image.ImageFile.ResultImage));
                         image.Status = StatusType.Success;
-                        ImageList.SelectedImage = image;
                         completedImages.Add(image.ImageFile);
                         double convertedPixels = completedImages.Sum(i => (double)(i.ImageWidth * i.ImageHeight));
                         Progress.UpdateTimer(convertedPixels, totalItems);
@@ -332,7 +332,7 @@ namespace PixelCrypt2026.ViewModel.Page
 
         private void SaveCommand()
         {
-            Notification.Show($"Сохранение изображений {ImageList.Images.Count(i => i.Status == StatusType.Success)}");
+            FileHelper.SaveBitmapToFolder(ImageList.Images.Select(i => i.ImageFile).ToList());
         }
     }
 }

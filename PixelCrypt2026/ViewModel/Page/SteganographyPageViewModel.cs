@@ -347,7 +347,6 @@ namespace PixelCrypt2026.ViewModel.Page
                 {
                     bynaryData.Add(await ImageHelper.ExportDataFromImage(filePathImage.ImageFile.FilePath));
                     completedImages.Add(filePathImage.ImageFile);
-
                     double convertedPixels = completedImages.Sum(i => (double)(i.ImageWidth * i.ImageHeight));
                     processedItems++;
                     Progress.UpdateTimer(convertedPixels, totalPixels);

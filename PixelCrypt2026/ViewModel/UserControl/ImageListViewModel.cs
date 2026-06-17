@@ -278,6 +278,7 @@ namespace PixelCrypt2026.ViewModel.UserControl
             {
                 image.Status = Program.Enum.StatusType.None;
                 image.ImageFile.ResultImage = null;
+                image.ImageFile.ResultImageSource = null;
             }
         }
     }

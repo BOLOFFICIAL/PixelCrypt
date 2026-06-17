@@ -65,7 +65,7 @@
                                                 BorderBrush="{StaticResource Foreground}"
                                                 BorderThickness="1">
                                             <ComboBox ItemsSource="{Binding ComboBoxItem}"
-                                                      SelectedValue="{Binding ComboBoxValue}"/>
+                                                      SelectedValue="{Binding Interference}"/>
                                         </Border>
 
                                     </Grid>
