@@ -54,72 +54,26 @@ namespace PixelCrypt2026.Program
             }
         }
 
-        public static Task<Bitmap> EncryptPhoto(string imagePath, string key, int interference) => ProcessSequence(imagePath, key, EncryptSequence, interference);
+        public static Task<Bitmap> EncryptPhoto(string imagePath, string key, int interference) => EncryptionSequence(imagePath, key, interference, EncryptSequence);
 
-        public static Task<Bitmap> DecryptPhoto(string imagePath, string key, int interference) => ProcessSequence(imagePath, key, DecryptSequence, interference);
+        public static Task<Bitmap> DecryptPhoto(string imagePath, string key, int interference) => EncryptionSequence(imagePath, key, interference, DecryptSequence);
 
-        private static Task<Bitmap> ProcessSequence(string imagepath, string key, Func<Color[,], string, int, Bitmap> action, int interference)
+        private static Task<Bitmap> EncryptionSequence(string imagepath, string key, int interference, Func<List<int>, string, List<int>> action)
         {
             return Task.Run(() =>
             {
                 var pixels = ImageHelper.GetArrayPixelsFromImage(imagepath);
+                int width = pixels.GetLength(0);
+                int height = pixels.GetLength(1);
 
-                return action(pixels, key, interference);
+                (var rows, var cols) = Matrix.Info(height, width, interference);
+                int totalBlocks = (height / rows) * (width / cols);
+                var sequence = Enumerable.Range(0, totalBlocks).ToList();
+                var customOrder = action(sequence, key);
+                var reorderBlocks = Matrix.ReorderBlocksCustom(pixels, cols, rows, customOrder);
+                var encrypt = ImageHelper.GetListPixelsFromArrayPixels(reorderBlocks);
+                return Converter.ConvertPixelsToBitmap(encrypt, width, height);
             });
-        }
-
-        private static Bitmap EncryptSequence(Color[,] collection, string password, int interference) 
-        {
-            int width = collection.GetLength(0);
-            int height = collection.GetLength(1);
-            var encrypt = new List<Color>();
-
-            if (interference == 100)
-            {
-                var listPixels = ImageHelper.GetListPixelsFromArrayPixels(collection);
-                encrypt = EncryptSequence(listPixels, password);
-            }
-            else
-            {
-                (var rows, var cols) = Matrix.Info(height, width, interference);
-
-                int totalBlocks = (height / rows) * (width / cols);
-
-                var sequence = Enumerable.Range(0, totalBlocks).ToList();
-
-                var customOrder = EncryptSequence(sequence, password);
-
-                encrypt = ImageHelper.GetListPixelsFromArrayPixels(Matrix.ReorderBlocksCustom(collection, cols, rows, customOrder));
-            }
-
-            return Converter.ConvertPixelsToBitmap(encrypt, width, height);
-        }
-
-        private static Bitmap DecryptSequence(Color[,] collection, string password, int interference)
-        {
-            int width = collection.GetLength(0);
-            int height = collection.GetLength(1);
-            var encrypt = new List<Color>();
-
-            if (interference == 100)
-            {
-                var listPixels = ImageHelper.GetListPixelsFromArrayPixels(collection);
-                encrypt = DecryptSequence(listPixels, password);
-            }
-            else
-            {
-                (var rows, var cols) = Matrix.Info(height, width, interference);
-
-                int totalBlocks = (height / rows) * (width / cols);
-
-                var sequence = Enumerable.Range(0, totalBlocks).ToList();
-
-                var customOrder = DecryptSequence(sequence, password);
-
-                encrypt = ImageHelper.GetListPixelsFromArrayPixels(Matrix.ReorderBlocksCustom(collection, cols, rows, customOrder));
-            }
-
-            return Converter.ConvertPixelsToBitmap(encrypt, width, height);
         }
 
         private static List<T> EncryptSequence<T>(List<T> collection, string password)
