@@ -105,7 +105,7 @@ namespace PixelCrypt2026.ViewModel.Window
             switch (_button)
             {
                 case NotificationButtonType.None:
-                    _autoCloseTimer = new DispatcherTimer{Interval = TimeSpan.FromSeconds(3)};
+                    _autoCloseTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(3) };
                     _autoCloseTimer.Tick += (s, e) =>
                     {
                         _autoCloseTimer.Stop();
@@ -133,11 +133,11 @@ namespace PixelCrypt2026.ViewModel.Window
                         Buttons.Add(new NotificationButton()
                         {
                             Text = action.title,
-                            Command = new LambdaCommand((object obj) => 
-                            { 
+                            Command = new LambdaCommand((object obj) =>
+                            {
                                 action.action?.Invoke();
                                 NotificationResult.Result = NotificationResultType.Custom;
-                                OnCloseCommand(null); 
+                                OnCloseCommand(null);
                             })
                         });
                     }

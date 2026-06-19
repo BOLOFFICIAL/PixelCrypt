@@ -45,13 +45,13 @@ namespace PixelCrypt2026.ViewModel.Page
             set => Set(ref _taskControlHeight, value);
         }
 
-        public GridLength WidthResultImage 
+        public GridLength WidthResultImage
         {
             get => _widthResultImage;
             set => Set(ref _widthResultImage, value);
         }
 
-        public ImageSource ResultImageSource 
+        public ImageSource ResultImageSource
         {
             get => _resultImageSource;
             set => Set(ref _resultImageSource, value);
@@ -112,7 +112,7 @@ namespace PixelCrypt2026.ViewModel.Page
                 WidthResultImage = new GridLength(1, GridUnitType.Star);
                 ResultImageSource = ImageList.SelectedImage.ImageFile.ResultImageSource;
             }
-            else 
+            else
             {
                 WidthResultImage = new GridLength(0, GridUnitType.Pixel);
             }
@@ -179,7 +179,7 @@ namespace PixelCrypt2026.ViewModel.Page
                 {
                     await Encrypt(totalPixels, token, password);
                 }
-                else 
+                else
                 {
                     await Decrypt(totalPixels, token, password);
                 }
@@ -221,7 +221,7 @@ namespace PixelCrypt2026.ViewModel.Page
 
         internal async Task<ActionResult> Decrypt(double totalItems, CancellationToken token, string password)
         {
-            var res = await Process(totalItems,token, password, Encryption.DecryptPhoto);
+            var res = await Process(totalItems, token, password, Encryption.DecryptPhoto);
             res.ResultTitle = "Расшифрование";
 
             if (res.IsSuccessResult)
@@ -232,7 +232,7 @@ namespace PixelCrypt2026.ViewModel.Page
 
         internal async Task<ActionResult> Encrypt(double totalItems, CancellationToken token, string password)
         {
-            var res = await Process(totalItems,token, password, Encryption.EncryptPhoto);
+            var res = await Process(totalItems, token, password, Encryption.EncryptPhoto);
             res.ResultTitle = "Шифрование";
 
             if (res.IsSuccessResult)
@@ -241,7 +241,7 @@ namespace PixelCrypt2026.ViewModel.Page
             return res;
         }
 
-        private async Task<ActionResult> Process(double totalItems, CancellationToken token, string password, Func<string, string,int, Task<Bitmap>> action)
+        private async Task<ActionResult> Process(double totalItems, CancellationToken token, string password, Func<string, string, int, Task<Bitmap>> action)
         {
             var result = new ActionResult();
             var processedItems = 0;
@@ -266,7 +266,7 @@ namespace PixelCrypt2026.ViewModel.Page
                         Progress.UpdateTimer(convertedPixels, totalItems);
                         SetToolStatus($"Выполняется ({Progress.ProgressPercent})");
                     }
-                    catch (TaskCanceledException) 
+                    catch (TaskCanceledException)
                     {
                         image.Status = StatusType.None;
                         return result;
