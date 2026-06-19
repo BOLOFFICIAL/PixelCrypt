@@ -259,11 +259,6 @@ namespace PixelCrypt2026.ViewModel.Page
 
                 int totalItems = ImageList.Images.Count;
 
-                if (totalItems > 1)
-                {
-                    ProgressHeight = new GridLength(1, GridUnitType.Auto);
-                }
-
                 double totalPixels = ImageList.Images.Sum(i => (double)(i.ImageFile.ImageWidth * i.ImageFile.ImageHeight));
 
                 var hashPassword = ProgramHelper.GetHash32(PasswordBox.Password ?? "");
@@ -352,6 +347,11 @@ namespace PixelCrypt2026.ViewModel.Page
                     Progress.UpdateTimer(convertedPixels, totalPixels);
                     SetToolStatus($"Выполняется ({Progress.ProgressPercent})");
                     filePathImage.Status = StatusType.Success;
+
+                    if (ImageList.Images.Count > 1 && ProgressHeight.Value != 1 && Progress.Timer.TotalSeconds > 1)
+                    {
+                        ProgressHeight = new GridLength(1, GridUnitType.Auto);
+                    }
                 }
                 catch (OperationCanceledException)
                 {
@@ -466,6 +466,11 @@ namespace PixelCrypt2026.ViewModel.Page
                     Progress.UpdateTimer(convertedPixels, totalPixels);
                     SetToolStatus($"Выполняется ({Progress.ProgressPercent})");
                     ImageList.Images[i].Status = StatusType.Success;
+
+                    if (ImageList.Images.Count > 1 && ProgressHeight.Value != 1 && Progress.Timer.TotalSeconds > 1)
+                    {
+                        ProgressHeight = new GridLength(1, GridUnitType.Auto);
+                    }
                 }
                 catch (OperationCanceledException)
                 {

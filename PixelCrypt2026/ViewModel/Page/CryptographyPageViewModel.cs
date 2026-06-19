@@ -162,11 +162,6 @@ namespace PixelCrypt2026.ViewModel.Page
             {
                 int totalItems = ImageList.Images.Count;
 
-                if (totalItems > 1)
-                {
-                    ProgressHeight = new GridLength(1, GridUnitType.Auto);
-                }
-
                 int processedItems = 0;
 
                 ImageList.ResetImages();
@@ -264,6 +259,12 @@ namespace PixelCrypt2026.ViewModel.Page
                         completedImages.Add(image.ImageFile);
                         double convertedPixels = completedImages.Sum(i => (double)(i.ImageWidth * i.ImageHeight));
                         Progress.UpdateTimer(convertedPixels, totalItems);
+
+                        if (ImageList.Images.Count > 1 && ProgressHeight.Value != 1 && Progress.Timer.TotalSeconds > 1)
+                        {
+                            ProgressHeight = new GridLength(1, GridUnitType.Auto);
+                        }
+
                         SetToolStatus($"Выполняется ({Progress.ProgressPercent})");
                     }
                     catch (TaskCanceledException)
