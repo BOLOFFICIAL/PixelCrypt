@@ -13,7 +13,6 @@ namespace PixelCrypt2026.ViewModel.Page
 {
     internal class CryptographyPageViewModel : BasePageLayoutViewModel
     {
-        private GridLength _progressHeight;
         private GridLength _settingsHeightHeight;
         private GridLength _taskControlHeight;
         private List<int> _comboBoxItem;
@@ -26,12 +25,6 @@ namespace PixelCrypt2026.ViewModel.Page
         public ProgressPanelViewModel Progress { get; set; }
         public PasswordBoxViewModel PasswordBox { get; set; }
         public TaskControlViewModel TaskControl { get; set; }
-
-        public GridLength ProgressHeight
-        {
-            get => _progressHeight;
-            set => Set(ref _progressHeight, value);
-        }
 
         public GridLength SettingsHeight
         {
@@ -76,7 +69,6 @@ namespace PixelCrypt2026.ViewModel.Page
 
             Interference = ComboBoxItem.Last();
 
-            ProgressHeight = new GridLength(0, GridUnitType.Star);
             WidthResultImage = new GridLength(0, GridUnitType.Pixel);
 
             Progress = new ProgressPanelViewModel();
@@ -209,7 +201,6 @@ namespace PixelCrypt2026.ViewModel.Page
                 TaskControl.FinishCommand();
                 ImageList.IsEnable = true;
                 SettingsHeight = new GridLength(1, GridUnitType.Auto);
-                ProgressHeight = new GridLength(0, GridUnitType.Star);
                 SetToolStatus();
             }
         }
@@ -259,12 +250,6 @@ namespace PixelCrypt2026.ViewModel.Page
                         completedImages.Add(image.ImageFile);
                         double convertedPixels = completedImages.Sum(i => (double)(i.ImageWidth * i.ImageHeight));
                         Progress.UpdateTimer(convertedPixels, totalItems);
-
-                        if (ImageList.Images.Count > 1 && ProgressHeight.Value != 1 && Progress.Timer.TotalSeconds > 1)
-                        {
-                            ProgressHeight = new GridLength(1, GridUnitType.Auto);
-                        }
-
                         SetToolStatus($"Выполняется ({Progress.ProgressPercent})");
                     }
                     catch (TaskCanceledException)
@@ -322,7 +307,6 @@ namespace PixelCrypt2026.ViewModel.Page
         private void StopCommand()
         {
             Progress.ProgressTime = "Остановка...";
-            ProgressHeight = new GridLength(0, GridUnitType.Star);
             Progress.StopTimer();
         }
 

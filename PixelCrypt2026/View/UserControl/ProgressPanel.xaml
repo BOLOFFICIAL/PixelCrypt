@@ -6,41 +6,47 @@
              xmlns:local="clr-namespace:PixelCrypt2026.View.UserControl"
              mc:Ignorable="d">
     <Grid>
-        <Border BorderThickness="1"
-                Background="{StaticResource Background1}"
-                CornerRadius="15"
-                Padding="5">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="80"/>
-                </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="{Binding ProgressHeight}"/>
+        </Grid.RowDefinitions>
 
-                <Border Grid.Column="0" 
-                        Background="{StaticResource Background2}"
-                        CornerRadius="10"
-                        Padding="10,5">
-                    <TextBlock Text="{Binding ProgressTime}"
-                               VerticalAlignment="Center"
-                               HorizontalAlignment="Center"
-                               FontSize="14"
-                               Foreground="White"
-                               FontWeight="SemiBold"/>
-                </Border>
+        <Grid Margin="0,0,0,10">
+            <Border BorderThickness="1"
+                    Background="{StaticResource Background1}"
+                    CornerRadius="15"
+                    Padding="5">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="80"/>
+                    </Grid.ColumnDefinitions>
 
-                <Border Grid.Column="1"
-                        Padding="10,5"
-                        Background="{StaticResource Background2}"
-                        CornerRadius="10"
-                        Margin="5,0,0,0">
-                    <TextBlock Text="{Binding ProgressPercent}"
-                               VerticalAlignment="Center"
-                               HorizontalAlignment="Center"
-                               FontSize="14"
-                               Foreground="White"
-                               FontWeight="SemiBold"/>
-                </Border>
-            </Grid>
-        </Border>
+                    <Border Grid.Column="0" 
+                            Background="{StaticResource Background2}"
+                            CornerRadius="10"
+                            Padding="10,5">
+                        <TextBlock Text="{Binding ProgressTime}"
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Center"
+                                   FontSize="14"
+                                   Foreground="White"
+                                   FontWeight="SemiBold"/>
+                    </Border>
+
+                    <Border Grid.Column="1"
+                            Padding="10,5"
+                            Background="{StaticResource Background2}"
+                            CornerRadius="10"
+                            Margin="5,0,0,0">
+                        <TextBlock Text="{Binding ProgressPercent}"
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Center"
+                                   FontSize="14"
+                                   Foreground="White"
+                                   FontWeight="SemiBold"/>
+                    </Border>
+                </Grid>
+            </Border>
+        </Grid>
     </Grid>
 </UserControl>

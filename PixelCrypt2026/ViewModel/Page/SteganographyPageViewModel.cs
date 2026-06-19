@@ -21,7 +21,6 @@ namespace PixelCrypt2026.ViewModel.Page
         public PasswordBoxViewModel PasswordBox { get; set; }
         public TaskControlViewModel TaskControl { get; set; }
 
-        private GridLength _progressHeight;
         private GridLength _settingsHeightHeight;
         private GridLength _taskControlHeight;
         private string _filePath;
@@ -39,8 +38,6 @@ namespace PixelCrypt2026.ViewModel.Page
 
             SelectFileCommand = new LambdaCommand(OnSelectFileCommand, CanSelectFile);
             ClearFileCommand = new LambdaCommand(OnClearFileCommand, CanClearFile);
-
-            ProgressHeight = new GridLength(0, GridUnitType.Star);
 
             Progress = new ProgressPanelViewModel();
             PasswordBox = new PasswordBoxViewModel();
@@ -107,12 +104,6 @@ namespace PixelCrypt2026.ViewModel.Page
         {
             get => _isEnable;
             set => Set(ref _isEnable, value);
-        }
-
-        public GridLength ProgressHeight
-        {
-            get => _progressHeight;
-            set => Set(ref _progressHeight, value);
         }
 
         public GridLength SettingsHeight
@@ -191,7 +182,6 @@ namespace PixelCrypt2026.ViewModel.Page
         private void StopCommand()
         {
             Progress.ProgressTime = "Остановка...";
-            ProgressHeight = new GridLength(0, GridUnitType.Star);
             Progress.StopTimer();
         }
 
@@ -316,7 +306,6 @@ namespace PixelCrypt2026.ViewModel.Page
                 IsReadOnly = !string.IsNullOrEmpty(FilePath);
                 ImageList.IsEnable = IsEnable;
                 SettingsHeight = new GridLength(1, GridUnitType.Auto);
-                ProgressHeight = new GridLength(0, GridUnitType.Star);
                 SetToolStatus();
             }
         }
@@ -347,11 +336,6 @@ namespace PixelCrypt2026.ViewModel.Page
                     Progress.UpdateTimer(convertedPixels, totalPixels);
                     SetToolStatus($"Выполняется ({Progress.ProgressPercent})");
                     filePathImage.Status = StatusType.Success;
-
-                    if (ImageList.Images.Count > 1 && ProgressHeight.Value != 1 && Progress.Timer.TotalSeconds > 1)
-                    {
-                        ProgressHeight = new GridLength(1, GridUnitType.Auto);
-                    }
                 }
                 catch (OperationCanceledException)
                 {
@@ -466,11 +450,6 @@ namespace PixelCrypt2026.ViewModel.Page
                     Progress.UpdateTimer(convertedPixels, totalPixels);
                     SetToolStatus($"Выполняется ({Progress.ProgressPercent})");
                     ImageList.Images[i].Status = StatusType.Success;
-
-                    if (ImageList.Images.Count > 1 && ProgressHeight.Value != 1 && Progress.Timer.TotalSeconds > 1)
-                    {
-                        ProgressHeight = new GridLength(1, GridUnitType.Auto);
-                    }
                 }
                 catch (OperationCanceledException)
                 {
