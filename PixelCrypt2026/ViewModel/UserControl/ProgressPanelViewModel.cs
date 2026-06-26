@@ -1,4 +1,5 @@
 ﻿using PixelCrypt2026.ViewModel.Base;
+using System.Windows;
 
 namespace PixelCrypt2026.ViewModel.UserControl
 {
@@ -8,6 +9,7 @@ namespace PixelCrypt2026.ViewModel.UserControl
         private string _progressPercent = "0%";
         private CancellationTokenSource _cts;
         private DateTime? _startTime = null;
+        private GridLength _progressHeight = new GridLength(0, GridUnitType.Pixel);
 
         public TimeSpan Timer { get; set; }
 
@@ -15,6 +17,12 @@ namespace PixelCrypt2026.ViewModel.UserControl
         {
             get => _progressTime;
             set => Set(ref _progressTime, value);
+        }
+
+        public GridLength ProgressHeight
+        {
+            get => _progressHeight;
+            set => Set(ref _progressHeight, value);
         }
 
         public string ProgressPercent
@@ -45,6 +53,7 @@ namespace PixelCrypt2026.ViewModel.UserControl
         public void StopTimer()
         {
             _cts?.Cancel();
+            ProgressHeight = new GridLength(0, GridUnitType.Pixel);
             _cts = null;
         }
 
@@ -56,6 +65,11 @@ namespace PixelCrypt2026.ViewModel.UserControl
                 {
                     Timer -= TimeSpan.FromSeconds(1);
                     ProgressTime = $"{Timer.Hours:D2}:{Timer.Minutes:D2}:{Timer.Seconds:D2}";
+                    ProgressHeight = new GridLength(1, GridUnitType.Auto);
+                }
+                else 
+                {
+                    ProgressHeight = new GridLength(0, GridUnitType.Pixel);
                 }
 
                 try

@@ -19,14 +19,13 @@
 
                 <Grid Grid.Column="0">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="{Binding ProgressHeight}"/>
+                        <RowDefinition Height="auto"/>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="{Binding SettingsHeight}"/>
                         <RowDefinition Height="{Binding TaskControlHeight}"/>
                     </Grid.RowDefinitions>
 
-                    <Grid Grid.Row="0"
-                          Margin="0,0,0,10">
+                    <Grid Grid.Row="0">
                         <controls:ProgressPanel DataContext="{Binding Progress}"/>
                     </Grid>
 
