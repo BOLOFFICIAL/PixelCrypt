@@ -129,6 +129,7 @@ namespace PixelCrypt2026.ViewModel.Page
             {
                 SettingsHeight = new GridLength(0, GridUnitType.Star);
                 TaskControlHeight = new GridLength(0, GridUnitType.Star);
+                WidthResultImage = new GridLength(0, GridUnitType.Pixel);
             }
         }
 
@@ -264,7 +265,7 @@ namespace PixelCrypt2026.ViewModel.Page
                         {
                             ProgressHeight = new GridLength(1, GridUnitType.Auto);
                         }
-
+                        SelectImage();
                         SetToolStatus($"Выполняется ({Progress.ProgressPercent})");
                     }
                     catch (TaskCanceledException)
