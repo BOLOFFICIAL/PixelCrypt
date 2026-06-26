@@ -65,9 +65,13 @@ namespace PixelCrypt2026.ViewModel.UserControl
                 {
                     Timer -= TimeSpan.FromSeconds(1);
                     ProgressTime = $"{Timer.Hours:D2}:{Timer.Minutes:D2}:{Timer.Seconds:D2}";
+                }
+
+                if ((int)Math.Truncate(Timer.TotalSeconds) > 0)
+                {
                     ProgressHeight = new GridLength(1, GridUnitType.Auto);
                 }
-                else 
+                else
                 {
                     ProgressHeight = new GridLength(0, GridUnitType.Pixel);
                 }
