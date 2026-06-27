@@ -47,7 +47,9 @@ namespace PixelCrypt2026.ViewModel.Page
             UpdateImageCount();
 
             ImageList.ConfirmationClearRequested += ClearConfirmation;
-            ImageList.AddRequested += UpdateImageCount;
+            ImageList.ConfirmationAddRequested += AddConfirmation;
+            ImageList.ConfirmationRemoveRequested += RemoveConfirmation;
+            ImageList.AddRequested += UpdateImageCount; 
             ImageList.ClearRequested += UpdateImageCount;
             ImageList.RemoveRequested += UpdateImageCount;
 
@@ -62,6 +64,32 @@ namespace PixelCrypt2026.ViewModel.Page
 
             TaskControl.SaveRequested += SaveCommand;
             TaskControl.CanSave += () => ImageList.Images.All(i => i.Status == StatusType.Success);
+        }
+
+        private bool RemoveConfirmation()
+        {
+            if (ImageList.Images.Where(i => i.Status == StatusType.Success).Count() > 0)
+            {
+                var res = Notification.Show("Удаление изображений приведет к потере данных, продолжить?", button: NotificationButtonType.YesNo, icon: NotificationIconType.Question);
+                if (res.Result != NotificationResultType.Yes)
+                    return false;
+            }
+
+            ImageList.ResetImages();
+            return true;
+        }
+
+        private bool AddConfirmation()
+        {
+            if (ImageList.Images.Where(i => i.Status == StatusType.Success).Count() > 0)
+            {
+                var res = Notification.Show("Добавление изображений приведет к потере данных, продолжить?", button: NotificationButtonType.YesNo, icon: NotificationIconType.Question);
+                if (res.Result != NotificationResultType.Yes)
+                    return false;
+            }
+
+            ImageList.ResetImages();
+            return true;
         }
 
         private bool CanClearFile(object arg)
@@ -160,6 +188,7 @@ namespace PixelCrypt2026.ViewModel.Page
             get => _content;
             set => Set(ref _content, value);
         }
+        
         public string ResultString { get; private set; }
 
         private void SaveCommand()
@@ -255,48 +284,23 @@ namespace PixelCrypt2026.ViewModel.Page
 
                 if (_isImport)
                 {
-                    bool flowControl = await Import(totalPixels, hashPassword, token);
-
-                    if (!flowControl)
-                    {
-                        return;
-                    }
+                    await Import(totalPixels, hashPassword, token);
                 }
                 else
                 {
-                    bool flowControl = await Export(totalPixels, hashPassword, token);
-
-                    if (!flowControl)
-                    {
-                        return;
-                    }
+                    await Export(totalPixels, hashPassword, token);
                 }
 
                 if (token.IsCancellationRequested)
                 {
-                    Notification.Show("Операция остановлена");
-                    Progress.ProgressTime = $"Остановлено";
+                    Notification.Show("Операция остановлена", icon: NotificationIconType.Question);
                     SetToolStatus("Остановлено");
                 }
                 else
                 {
-                    Notification.Show("Операция завершена");
-                    Progress.ProgressTime = "Завершено";
+                    Notification.Show("Операция завершена", icon: NotificationIconType.Success);
                     SetToolStatus("Завершено");
                 }
-            }
-            catch (OperationCanceledException)
-            {
-                Progress.ProgressTime = "Операция отменена";
-                SetToolStatus("Отменено");
-                ImageList.ResetImages();
-            }
-            catch (Exception ex)
-            {
-                Progress.ProgressTime = "Ошибка";
-                SetToolStatus("Ошибка");
-                ImageList.ResetImages();
-                System.Diagnostics.Debug.WriteLine($"Error: {ex.Message}");
             }
             finally
             {
@@ -310,7 +314,7 @@ namespace PixelCrypt2026.ViewModel.Page
             }
         }
 
-        private async Task<bool> Export(double totalPixels, string hashPassword, CancellationToken token)
+        private async Task Export(double totalPixels, string hashPassword, CancellationToken token)
         {
             ResultString = "";
             var processedItems = 0;
@@ -329,7 +333,19 @@ namespace PixelCrypt2026.ViewModel.Page
                 ImageList.SelectedImage = filePathImage;
                 try
                 {
-                    bynaryData.Add(await ImageHelper.ExportDataFromImage(filePathImage.ImageFile.FilePath));
+                    var exportTask = ImageHelper.ExportDataFromImage(filePathImage.ImageFile.FilePath);
+
+                    var cancelTask = Task.Delay(Timeout.Infinite, token);
+
+                    var completedTask = await Task.WhenAny(exportTask, cancelTask);
+
+                    if (completedTask == cancelTask)
+                    {
+                        token.ThrowIfCancellationRequested();
+                    }
+
+                    bynaryData.Add(await exportTask);
+
                     completedImages.Add(filePathImage.ImageFile);
                     double convertedPixels = completedImages.Sum(i => (double)(i.ImageWidth * i.ImageHeight));
                     processedItems++;
@@ -340,19 +356,20 @@ namespace PixelCrypt2026.ViewModel.Page
                 catch (OperationCanceledException)
                 {
                     filePathImage.Status = StatusType.None;
-                    return false;
+                    ImageList.ResetImages();
+                    return;
                 }
                 catch (Exception ex)
                 {
                     filePathImage.Status = StatusType.Failed;
-                    Notification.Show($"Возникла ошибка при экспорте:\n{ex.Message}", button: NotificationButtonType.Ok, icon: NotificationIconType.Error);
-                    return false;
+                    Notification.Show($"Возникла ошибка: {ex.Message}", button: NotificationButtonType.Ok,icon: NotificationIconType.Error);
+                    return;
                 }
             }
 
             var allData = new StringBuilder();
 
-            foreach (var item in bynaryData)
+            foreach (var item in bynaryData) 
                 allData.Append(item);
 
             var exportData = Converter.ConvertBinaryStringToText(allData.ToString());
@@ -393,11 +410,9 @@ namespace PixelCrypt2026.ViewModel.Page
                 Content = Encryption.DecryptText(exportData, hashPassword);
                 ResultString = Content;
             }
-
-            return true;
         }
 
-        private async Task<bool> Import(double totalPixels, string hashPassword, CancellationToken token)
+        private async Task Import(double totalPixels, string hashPassword, CancellationToken token)
         {
             var data = "";
             var processedItems = 0;
@@ -422,7 +437,7 @@ namespace PixelCrypt2026.ViewModel.Page
 
             if (distributeData == null)
             {
-                return false;
+                return;
             }
 
             var lines = ProgramHelper.SplitString(binary, distributeData);
@@ -431,18 +446,31 @@ namespace PixelCrypt2026.ViewModel.Page
 
             if (lines == null)
             {
-                return false;
+                return;
             }
 
             ImageList.ResetImages();
 
             for (int i = 0; i < ImageList.Images.Count; i++)
             {
-                token.ThrowIfCancellationRequested();
-                ImageList.Images[i].Status = StatusType.InProgress;
                 try
                 {
-                    ImageList.Images[i].ImageFile.ResultImage = await ImageHelper.ImportDataToImage(lines[i], ImageList.Images[i].ImageFile.FilePath);
+                    token.ThrowIfCancellationRequested();
+                    ImageList.Images[i].Status = StatusType.InProgress;
+
+                    var importTask = ImageHelper.ImportDataToImage(lines[i], ImageList.Images[i].ImageFile.FilePath);
+
+                    var cancelTask = Task.Delay(Timeout.Infinite, token);
+
+                    var completedTask = await Task.WhenAny(importTask, cancelTask);
+
+                    if (completedTask == cancelTask)
+                    {
+                        token.ThrowIfCancellationRequested();
+                    }
+
+                    ImageList.Images[i].ImageFile.ResultImage = await importTask;
+
                     completedImages.Add(ImageList.Images[i].ImageFile);
                     lines[i] = "";
                     double convertedPixels = completedImages.Sum(i => (double)(i.ImageWidth * i.ImageHeight));
@@ -450,17 +478,21 @@ namespace PixelCrypt2026.ViewModel.Page
                     Progress.UpdateTimer(convertedPixels, totalPixels);
                     SetToolStatus($"Выполняется ({Progress.ProgressPercent})");
                     ImageList.Images[i].Status = StatusType.Success;
+                    ImageList.SelectedImage = ImageList.Images[i];
                 }
                 catch (OperationCanceledException)
                 {
                     ImageList.Images[i].Status = StatusType.None;
-                    return false;
+                    ImageList.ResetImages();
+                    return;
                 }
-
-                ImageList.SelectedImage = ImageList.Images[i];
+                catch (Exception ex)
+                {
+                    ImageList.Images[i].Status = StatusType.Failed;
+                    Notification.Show($"Возникла ошибка: {ex.Message}", button: NotificationButtonType.Ok, icon: NotificationIconType.Error);
+                    return;
+                }
             }
-
-            return true;
         }
 
         private void UpdateImageCount()
@@ -477,34 +509,30 @@ namespace PixelCrypt2026.ViewModel.Page
             }
         }
 
-        private ActionResult SaveImport()
+        private void SaveImport()
         {
             if (ImageList.Images.Where(i => i.ImageFile.ResultImage != null).Count() == 0)
             {
-                return new ActionResult()
-                {
-                    IsSuccessResult = false,
-                    ResultMessage = "Нет данных для сохранения",
-                    ResultTitle = "Экспорт"
-                };
+                Notification.Show($"Нет данных для сохранения", icon: NotificationIconType.Error);
+                return;
             }
-
-            return FileHelper.SaveBitmapToFolder(ImageList.Images.Select(i => i.ImageFile).ToList());
+            FileHelper.SaveBitmapToFolder(ImageList.Images.Where(i => i.ImageFile.ResultImage != null).Select(i => i.ImageFile).ToList());
+            Notification.Show($"Данные успешно сохранены", icon: NotificationIconType.Success);
+            return;
         }
 
-        private ActionResult SaveExport()
+        private void SaveExport()
         {
             if (ResultString.Length == 0)
             {
-                return new ActionResult()
-                {
-                    IsSuccessResult = false,
-                    ResultMessage = "Нет данных для сохранения",
-                    ResultTitle = "Экспорт"
-                };
+                Notification.Show($"Нет данных для сохранения", icon: NotificationIconType.Error);
+                return;
             }
 
-            return FileHelper.SaveDataToFile($"PixelCrypt_{DateTime.Now:yyyyMMddHHmmss}", $"Файлы (*.txt)|*.txt", ResultString).Result;
+            FileHelper.SaveDataToFile($"PixelCrypt_{DateTime.Now:yyyyMMddHHmmss}", $"Файлы (*.txt)|*.txt", ResultString);
+            Notification.Show($"Данные успешно сохранены", icon: NotificationIconType.Success);
+
+            return;
         }
     }
 }

@@ -118,8 +118,6 @@ namespace PixelCrypt2026.ViewModel.UserControl
             if ((!ConfirmationAddRequested?.Invoke()) ?? false)
                 return;
 
-            AddRequested?.Invoke();
-
             OpenFileDialog openFileDialog = new OpenFileDialog()
             {
                 Title = "Выберите изображение",

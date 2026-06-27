@@ -153,10 +153,6 @@ namespace PixelCrypt2026.ViewModel.Page
 
             try
             {
-                int totalItems = ImageList.Images.Count;
-
-                int processedItems = 0;
-
                 ImageList.ResetImages();
 
                 var password = ProgramHelper.GetHash32(PasswordBox.Password ?? "");
@@ -165,36 +161,23 @@ namespace PixelCrypt2026.ViewModel.Page
 
                 if (_isEncrypt)
                 {
-                    await Encrypt(totalPixels, token, password);
+                    await Process(totalPixels, token, password, Encryption.EncryptPhoto);
                 }
                 else
                 {
-                    await Decrypt(totalPixels, token, password);
+                    await Process(totalPixels, token, password, Encryption.DecryptPhoto);
                 }
 
                 if (token.IsCancellationRequested)
                 {
-                    Notification.Show("Операция остановлена");
-                    Progress.ProgressTime = $"Остановлено ({processedItems}/{totalItems})";
+                    Notification.Show("Операция остановлена", icon: NotificationIconType.Question);
                     SetToolStatus("Остановлено");
                 }
                 else
                 {
-                    Notification.Show("Операция завершена");
-                    Progress.ProgressTime = "Завершено";
+                    Notification.Show("Операция завершена", icon: NotificationIconType.Success);
                     SetToolStatus("Завершено");
                 }
-            }
-            catch (OperationCanceledException)
-            {
-                Progress.ProgressTime = "Операция отменена";
-                SetToolStatus("Отменено");
-            }
-            catch (Exception ex)
-            {
-                Progress.ProgressTime = "Ошибка";
-                SetToolStatus("Ошибка");
-                System.Diagnostics.Debug.WriteLine($"Error: {ex.Message}");
             }
             finally
             {
@@ -206,76 +189,54 @@ namespace PixelCrypt2026.ViewModel.Page
             }
         }
 
-        internal async Task<ActionResult> Decrypt(double totalItems, CancellationToken token, string password)
+        private async Task Process(double totalItems, CancellationToken token, string password, Func<string, string, int, Task<Bitmap>> action)
         {
-            var res = await Process(totalItems, token, password, Encryption.DecryptPhoto);
-            res.ResultTitle = "Расшифрование";
-
-            if (res.IsSuccessResult)
-                res.ResultMessage = "Данные успешно расшифрованы";
-
-            return res;
-        }
-
-        internal async Task<ActionResult> Encrypt(double totalItems, CancellationToken token, string password)
-        {
-            var res = await Process(totalItems, token, password, Encryption.EncryptPhoto);
-            res.ResultTitle = "Шифрование";
-
-            if (res.IsSuccessResult)
-                res.ResultMessage = "Данные успешно зашифрованы";
-
-            return res;
-        }
-
-        private async Task<ActionResult> Process(double totalItems, CancellationToken token, string password, Func<string, string, int, Task<Bitmap>> action)
-        {
-            var result = new ActionResult();
             var processedItems = 0;
             var completedImages = new List<ImageFile>();
 
             var hashPassword = ProgramHelper.GetHash32(password);
 
-            try
+            foreach (var image in ImageList.Images)
             {
-                foreach (var image in ImageList.Images)
+                try
                 {
                     token.ThrowIfCancellationRequested();
                     image.Status = StatusType.InProgress;
                     ImageList.SelectedImage = image;
-                    try
-                    {
-                        image.ImageFile.ResultImage = await action(image.ImageFile.FilePath, hashPassword, Interference);
-                        image.ImageFile.ResultImageSource = await Task.Run(() => Converter.ConvertBitmapToImageSource(image.ImageFile.ResultImage));
-                        image.Status = StatusType.Success;
-                        completedImages.Add(image.ImageFile);
-                        double convertedPixels = completedImages.Sum(i => (double)(i.ImageWidth * i.ImageHeight));
-                        Progress.UpdateTimer(convertedPixels, totalItems);
-                        SelectImage();
-                        SetToolStatus($"Выполняется ({Progress.ProgressPercent})");
-                    }
-                    catch (TaskCanceledException)
-                    {
-                        image.Status = StatusType.None;
-                        return result;
-                    }
-                    catch (Exception)
-                    {
-                        image.Status = StatusType.Failed;
-                        return result;
-                    }
-                }
 
-                return result;
-            }
-            catch (Exception ex)
-            {
-                return new ActionResult()
+                    var processTask = action(image.ImageFile.FilePath, hashPassword, Interference);
+
+                    var cancelTask = Task.Delay(Timeout.Infinite, token);
+
+                    var completedTask = await Task.WhenAny(processTask, cancelTask);
+
+                    if (completedTask == cancelTask)
+                    {
+                        token.ThrowIfCancellationRequested();
+                    }
+
+                    image.ImageFile.ResultImage = await processTask;
+                    image.ImageFile.ResultImageSource = await Task.Run(() => Converter.ConvertBitmapToImageSource(image.ImageFile.ResultImage));
+
+                    image.Status = StatusType.Success;
+                    completedImages.Add(image.ImageFile);
+
+                    double convertedPixels = completedImages.Sum(i => (double)(i.ImageWidth * i.ImageHeight));
+                    Progress.UpdateTimer(convertedPixels, totalItems);
+                    SelectImage();
+                    SetToolStatus($"Выполняется ({Progress.ProgressPercent})");
+                }
+                catch (OperationCanceledException)
                 {
-                    IsSuccessResult = false,
-                    ResultMessage = $"Неизвестная ошибка: {ex.Message}",
-                    ResultTitle = "",
-                };
+                    image.Status = StatusType.None;
+                    return;
+                }
+                catch (Exception ex)
+                {
+                    image.Status = StatusType.Failed;
+                    Notification.Show($"Возникла ошибка: {ex.Message}", button: NotificationButtonType.Ok, icon: NotificationIconType.Error);
+                    return;
+                }
             }
         }
 
@@ -319,7 +280,8 @@ namespace PixelCrypt2026.ViewModel.Page
 
         private void SaveCommand()
         {
-            FileHelper.SaveBitmapToFolder(ImageList.Images.Select(i => i.ImageFile).ToList());
+            FileHelper.SaveBitmapToFolder(ImageList.Images.Where(i => i.ImageFile.ResultImage != null).Select(i => i.ImageFile).ToList());
+            Notification.Show($"Изображения сохранены", icon: NotificationIconType.Success);
         }
     }
 }
