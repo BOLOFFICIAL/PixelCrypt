@@ -277,8 +277,16 @@ namespace PixelCrypt2026.ViewModel.Page
 
         private void SaveCommand()
         {
-            FileHelper.SaveBitmapToFolder(ImageList.Images.Where(i => i.ImageFile.ResultImage != null).Select(i => i.ImageFile).ToList());
-            Notification.Show($"Изображения сохранены", icon: NotificationIconType.Success);
+            var res = FileHelper.SaveBitmapToFolder(ImageList.Images.Where(i => i.ImageFile.ResultImage != null).Select(i => i.ImageFile).ToList());
+
+            if (res.IsSuccessResult)
+            {
+                Notification.Show($"Изображения сохранены", icon: NotificationIconType.Success);
+            }
+            else 
+            {
+                Notification.Show($"Не удалось сохранить изображения.\n{res.ResultMessage}", button: NotificationButtonType.Ok, icon: NotificationIconType.Error);
+            }
         }
     }
 }

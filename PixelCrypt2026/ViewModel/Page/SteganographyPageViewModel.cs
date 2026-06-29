@@ -323,27 +323,27 @@ namespace PixelCrypt2026.ViewModel.Page
             }
         }
 
-        private async Task<bool> Export(double totalPixels, string hashPassword, CancellationToken token)
+        private async Task<bool> Export(double totalPixels, string passwordHash, CancellationToken token)
         {
             ResultString = "";
-            var processedItems = 0;
+            var processedImageCount = 0;
 
-            var bynaryData = new List<string>();
+            var extractedBinaryParts = new List<string>();
 
-            var completedImages = new List<ImageFile>();
+            var successfullyProcessedImages = new List<ImageFile>();
 
             ImageList.ResetImages();
 
-            foreach (var filePathImage in ImageList.Images)
-            {    
+            foreach (var imageItem in ImageList.Images)
+            {
                 try
                 {
                     token.ThrowIfCancellationRequested();
 
-                    filePathImage.Status = StatusType.InProgress;
-                    ImageList.SelectedImage = filePathImage;
+                    imageItem.Status = StatusType.InProgress;
+                    ImageList.SelectedImage = imageItem;
 
-                    var exportTask = ImageHelper.ExportDataFromImage(filePathImage.ImageFile.FilePath);
+                    var exportTask = ImageHelper.ExportDataFromImage(imageItem.ImageFile.FilePath);
 
                     var cancelTask = Task.Delay(Timeout.Infinite, token);
 
@@ -354,18 +354,18 @@ namespace PixelCrypt2026.ViewModel.Page
                         token.ThrowIfCancellationRequested();
                     }
 
-                    bynaryData.Add(await exportTask);
+                    extractedBinaryParts.Add(await exportTask);
 
-                    completedImages.Add(filePathImage.ImageFile);
-                    double convertedPixels = completedImages.Sum(i => (double)(i.ImageWidth * i.ImageHeight));
-                    processedItems++;
-                    Progress.UpdateTimer(convertedPixels, totalPixels);
+                    successfullyProcessedImages.Add(imageItem.ImageFile);
+                    double processedPixels = successfullyProcessedImages.Sum(i => (double)(i.ImageWidth * i.ImageHeight));
+                    processedImageCount++;
+                    Progress.UpdateTimer(processedPixels, totalPixels);
                     SetToolStatus($"Выполняется ({Progress.ProgressPercent})");
-                    filePathImage.Status = StatusType.Success;
+                    imageItem.Status = StatusType.Success;
                 }
                 catch (OperationCanceledException)
                 {
-                    filePathImage.Status = StatusType.None;
+                    imageItem.Status = StatusType.None;
                     Notification.Show("Операция остановлена", icon: NotificationIconType.Question);
                     SetToolStatus("Остановлено");
                     ImageList.ResetImages();
@@ -373,37 +373,65 @@ namespace PixelCrypt2026.ViewModel.Page
                 }
                 catch (Exception ex)
                 {
-                    filePathImage.Status = StatusType.Failed;
-                    Notification.Show($"Возникла ошибка: {ex.Message}", button: NotificationButtonType.Ok,icon: NotificationIconType.Error);
+                    imageItem.Status = StatusType.Failed;
+                    ImageList.ResetImages();
+                    Notification.Show($"Возникла ошибка: {ex.Message}", button: NotificationButtonType.Ok, icon: NotificationIconType.Error);
                     return false;
                 }
             }
 
-            var allData = new StringBuilder();
-
-            foreach (var item in bynaryData) 
-                allData.Append(item);
-
-            var exportData = Converter.ConvertBinaryStringToText(allData.ToString());
-
-            var exportFileData = exportData.Split("[*]");
-
-            if (exportFileData.Length > 1)
+            try
             {
-                ResultString = Encryption.DecryptText(exportFileData[2], hashPassword);
+                var decodedTextParts = new List<string>();
 
-                var doFile = Notification.Show("Экспортированные данные являются файлом.\nСобрать файл?", "Экспорт данных", button: NotificationButtonType.YesNo, icon: NotificationIconType.Question).Result == NotificationResultType.Yes;
+                foreach (var dataPart in extractedBinaryParts)
+                    decodedTextParts.Add(Converter.ConvertBinaryStringToText(dataPart));
 
-                if (doFile)
+                var allData = new StringBuilder();
+
+                if (IsIndexDependence)
                 {
-                    var saveRes = FileHelper.SaveDataToFile(exportFileData[0], $"Файлы (*{exportFileData[1]})|*{exportFileData[1]}", Convert.FromBase64String(ResultString));
+                    var items = decodedTextParts.Select(el => el.Split("[i]")[1]);
+                    foreach (var item in items)
+                        allData.Append(item);
+                }
+                else
+                {
+                    var ordered = decodedTextParts
+                        .Select(el => el.Split("[i]"))
+                        .OrderBy(data => int.Parse(data[0]))
+                        .Select(data => data[1]);
 
-                    if (saveRes.Result.IsSuccessResult)
+                    foreach (var item in ordered)
+                        allData.Append(item);
+                }
+
+                var finalDataString = allData.ToString();
+
+                var fileMetadataParts = finalDataString.Split("[d]");
+
+                if (fileMetadataParts.Length > 1)
+                {
+                    ResultString = Encryption.DecryptText(fileMetadataParts[2], passwordHash);
+
+                    var shouldAssembleFile = Notification.Show("Экспортированные данные являются файлом.\nСобрать файл?", "Экспорт данных", button: NotificationButtonType.YesNo, icon: NotificationIconType.Question).Result == NotificationResultType.Yes;
+
+                    if (shouldAssembleFile)
                     {
-                        string fileData = File.ReadAllText(saveRes.FilePath) ?? string.Empty;
+                        var saveRes = FileHelper.SaveDataToFile(fileMetadataParts[0], $"Файлы (*{fileMetadataParts[1]})|*{fileMetadataParts[1]}", Convert.FromBase64String(ResultString));
 
-                        Content = fileData.Length > 10000 ? fileData.Substring(0, 10000) : fileData;
-                        FilePath = saveRes.FilePath;
+                        if (saveRes.Result.IsSuccessResult)
+                        {
+                            string fileData = File.ReadAllText(saveRes.FilePath) ?? string.Empty;
+
+                            Content = fileData.Length > 10000 ? fileData.Substring(0, 10000) : fileData;
+                            FilePath = saveRes.FilePath;
+                        }
+                        else
+                        {
+                            Content = ResultString;
+                            FilePath = "";
+                        }
                     }
                     else
                     {
@@ -413,53 +441,50 @@ namespace PixelCrypt2026.ViewModel.Page
                 }
                 else
                 {
-                    Content = ResultString;
-                    FilePath = "";
+                    Content = Encryption.DecryptText(finalDataString, passwordHash);
+                    ResultString = Content;
                 }
             }
-            else
+            catch (Exception ex)
             {
-                Content = Encryption.DecryptText(exportData, hashPassword);
-                ResultString = Content;
+                Notification.Show($"Не удалось сформировать данные.\nВозникла ошибка: {ex.Message}", button: NotificationButtonType.Ok, icon: NotificationIconType.Error);
+                ImageList.ResetImages();
+                return false;
             }
 
             return true;
         }
 
-        private async Task<bool> Import(double totalPixels, string hashPassword, CancellationToken token)
+        private async Task<bool> Import(double totalPixels, string passwordHash, CancellationToken token)
         {
-            var data = "";
-            var processedItems = 0;
+            var dataToHide = "";
+            var processedImageCount = 0;
 
             var completedImages = new List<ImageFile>();
 
             if (string.IsNullOrEmpty(FilePath))
             {
-                data = Encryption.EncryptText(Content, hashPassword);
+                dataToHide = Encryption.EncryptText(Content, passwordHash);
             }
             else
             {
-                var fileInfo = new FileInfo(FilePath);
-                data = $"{fileInfo.Name}[*]{fileInfo.Extension}[*]" + Encryption.EncryptText(Convert.ToBase64String(File.ReadAllBytes(FilePath)), hashPassword);
+                var sourceFileInfo = new FileInfo(FilePath);
+                dataToHide = $"{sourceFileInfo.Name}[d]{sourceFileInfo.Extension}[d]" + Encryption.EncryptText(Convert.ToBase64String(File.ReadAllBytes(FilePath)), passwordHash);
             }
 
-            string binary = Converter.ConvertTextToBinaryString(data);
+            var imageCapacities = ImageList.Images.Select(i => (int)(i.ImageFile.ImageWidth * i.ImageFile.ImageHeight * 3 * 0.5 / 64)).ToList();
 
-            var datas = ImageList.Images.Select(i => (int)(i.ImageFile.ImageWidth * i.ImageFile.ImageHeight * 3 * 0.9)).ToList();
+            var dataDistributionPlan = ProgramHelper.DistributeData(imageCapacities, dataToHide.Length);
 
-            var distributeData = ProgramHelper.DistributeData(datas, binary.Length);
-
-            if (distributeData == null)
+            if (dataDistributionPlan == null)
             {
                 Notification.Show($"Данных слишком много", button: NotificationButtonType.Ok, icon: NotificationIconType.Error);
                 return false;
             }
 
-            var lines = ProgramHelper.SplitString(binary, distributeData);
+            var dataChunks = ProgramHelper.SplitString(dataToHide, dataDistributionPlan);
 
-            binary = "";
-
-            if (lines == null)
+            if (dataChunks == null)
             {
                 Notification.Show($"Не удалось сформировать данные для импорта", button: NotificationButtonType.Ok, icon: NotificationIconType.Error);
                 return false;
@@ -474,7 +499,11 @@ namespace PixelCrypt2026.ViewModel.Page
                     token.ThrowIfCancellationRequested();
                     ImageList.Images[i].Status = StatusType.InProgress;
 
-                    var importTask = ImageHelper.ImportDataToImage(lines[i], ImageList.Images[i].ImageFile.FilePath);
+                    var content = IsIndexDependence ? dataChunks[i] : $"{i}[i]{dataChunks[i]}";
+
+                    var binaryDataToWrite = Converter.ConvertTextToBinaryString(content);
+
+                    var importTask = ImageHelper.ImportDataToImage(binaryDataToWrite, ImageList.Images[i].ImageFile.FilePath);
 
                     var cancelTask = Task.Delay(Timeout.Infinite, token);
 
@@ -488,9 +517,9 @@ namespace PixelCrypt2026.ViewModel.Page
                     ImageList.Images[i].ImageFile.ResultImage = await importTask;
 
                     completedImages.Add(ImageList.Images[i].ImageFile);
-                    lines[i] = "";
+                    dataChunks[i] = "";
                     double convertedPixels = completedImages.Sum(i => (double)(i.ImageWidth * i.ImageHeight));
-                    processedItems++;
+                    processedImageCount++;
                     Progress.UpdateTimer(convertedPixels, totalPixels);
                     SetToolStatus($"Выполняется ({Progress.ProgressPercent})");
                     ImageList.Images[i].Status = StatusType.Success;
@@ -535,9 +564,16 @@ namespace PixelCrypt2026.ViewModel.Page
                 Notification.Show($"Нет данных для сохранения", icon: NotificationIconType.Error);
                 return;
             }
-            FileHelper.SaveBitmapToFolder(ImageList.Images.Where(i => i.ImageFile.ResultImage != null).Select(i => i.ImageFile).ToList());
-            Notification.Show($"Данные успешно сохранены", icon: NotificationIconType.Success);
-            return;
+            var res = FileHelper.SaveBitmapToFolder(ImageList.Images.Where(i => i.ImageFile.ResultImage != null).Select(i => i.ImageFile).ToList());
+
+            if (res.IsSuccessResult)
+            {
+                Notification.Show($"Изображения сохранены", icon: NotificationIconType.Success);
+            }
+            else
+            {
+                Notification.Show($"Не удалось сохранить изображения.\n{res.ResultMessage}", button: NotificationButtonType.Ok, icon: NotificationIconType.Error);
+            }
         }
 
         private void SaveExport()

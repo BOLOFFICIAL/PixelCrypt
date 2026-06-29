@@ -99,12 +99,8 @@
 
                             <Grid Margin="10,10,5,10"
                                   Grid.Column="0">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="0"/>
-                                </Grid.ColumnDefinitions>
 
-                                <Grid Grid.Column="0">
+                                <Grid>
                                     <Border Background="{StaticResource Background2}"
                                             CornerRadius="10"
                                             Padding="10">
