@@ -62,10 +62,7 @@ namespace PixelCrypt2026.ViewModel.Page
         {
             Title = $"Cryptography";
 
-            _comboBoxItem = Enumerable.Range(0, 21)
-                .Select(i => i * 5 == 0 ? 1 : i * 5)
-                .Where(x => x <= 100)
-                .ToList();
+            _comboBoxItem = Enumerable.Range(1, 10).Select(i => i * 10).ToList();
 
             Interference = ComboBoxItem.Last();
 
