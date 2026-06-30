@@ -86,7 +86,7 @@
 
                 <Grid Grid.Column="1">
                     <Border Grid.Column="1"
-                            Padding="0,0,5,0"
+                            Padding="5"
                             Margin="10,0,0,0"
                             Background="{StaticResource Background1}"
                             CornerRadius="15">
@@ -97,30 +97,27 @@
                                 <ColumnDefinition Width="{Binding WidthResultImage}"/>
                             </Grid.ColumnDefinitions>
 
-                            <Grid Margin="10,10,5,10"
+                            <Grid Margin="5"
                                   Grid.Column="0">
-
-                                <Grid>
-                                    <Border Background="{StaticResource Background2}"
+                                <Border Background="{StaticResource Background2}"
+                                        CornerRadius="10"
+                                        Padding="10">
+                                    <Border Background="{StaticResource Background3}"
+                                            BorderBrush="{StaticResource Foreground}"
+                                            BorderThickness="1"
                                             CornerRadius="10"
+                                            VerticalAlignment="Center"
+                                            HorizontalAlignment="Center"
                                             Padding="10">
-                                        <Border Background="{StaticResource Background3}"
-                                                BorderBrush="{StaticResource Foreground}"
-                                                BorderThickness="1"
-                                                CornerRadius="10"
-                                                VerticalAlignment="Center"
-                                                HorizontalAlignment="Center"
-                                                Padding="10">
-                                            <Image Stretch="Uniform"
-                                                   Source="{Binding ImageList.SelectedImage.ImageFile.FilePath}"
-                                                   VerticalAlignment="Center"
-                                                   HorizontalAlignment="Center"/>
-                                        </Border>
+                                        <Image Stretch="Uniform"
+                                               Source="{Binding ImageList.SelectedImage.ImageFile.FilePath}"
+                                               VerticalAlignment="Center"
+                                               HorizontalAlignment="Center"/>
                                     </Border>
-                                </Grid>
+                                </Border>
                             </Grid>
 
-                            <Grid Margin="5,10,5,10"
+                            <Grid Margin="5"
                                   Grid.Column="1">
                                 <Border Background="{StaticResource Background2}"
                                         CornerRadius="10"
