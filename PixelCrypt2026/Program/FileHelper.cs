@@ -49,7 +49,16 @@ namespace PixelCrypt2026.Program
                     foreach (var el in imageFiles)
                     {
                         currentImage = el;
-                        var name = Path.Combine(folderPicker.FileName, Path.GetFileNameWithoutExtension(currentImage.FilePath) + $"_PixelCrypt_{now:yyyyMMddHHmmss}.png");
+                        var baseName = Path.GetFileNameWithoutExtension(currentImage.FilePath) + $"_PixelCrypt_{now:yyyyMMddHHmmss}";
+                        var name = Path.Combine(folderPicker.FileName, baseName + ".png");
+
+                        int counter = 1;
+                        while (File.Exists(name))
+                        {
+                            name = Path.Combine(folderPicker.FileName, $"{baseName}_({counter}).png");
+                            counter++;
+                        }
+
                         el.ResultImage.Save(name, ImageFormat.Png);
                     }
 

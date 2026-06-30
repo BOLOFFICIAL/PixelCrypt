@@ -63,7 +63,8 @@
                                           Margin="0,5,5,5">
                                         <CheckBox IsChecked="{Binding IsIndexDependence, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
                                                   VerticalAlignment="Center"
-                                                  VerticalContentAlignment="Center"/>
+                                                  VerticalContentAlignment="Center"
+                                                  ToolTip="Determines how data ordering is handled. If checked, no indices are assigned, meaning the data directly impacts the order. If unchecked, indices are generated and used to define the data order."/>
                                     </Grid>
                                 </Grid>
                             </Border>

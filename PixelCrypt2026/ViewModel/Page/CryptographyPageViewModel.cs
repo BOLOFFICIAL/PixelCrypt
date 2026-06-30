@@ -188,7 +188,6 @@ namespace PixelCrypt2026.ViewModel.Page
 
         private async Task Process(double totalItems, CancellationToken token, string password, Func<string, string, int, Task<Bitmap>> action)
         {
-            var processedItems = 0;
             var completedImages = new List<ImageFile>();
 
             var hashPassword = ProgramHelper.GetHash32(password);
@@ -281,11 +280,11 @@ namespace PixelCrypt2026.ViewModel.Page
 
             if (res.IsSuccessResult)
             {
-                Notification.Show($"Изображения сохранены", icon: NotificationIconType.Success);
+                Notification.Show(res.ResultMessage, icon: NotificationIconType.Success);
             }
-            else 
+            else
             {
-                Notification.Show($"Не удалось сохранить изображения.\n{res.ResultMessage}", button: NotificationButtonType.Ok, icon: NotificationIconType.Error);
+                Notification.Show(res.ResultMessage, button: NotificationButtonType.Ok, icon: NotificationIconType.Error);
             }
         }
     }
