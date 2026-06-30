@@ -77,6 +77,7 @@ namespace PixelCrypt2026.ViewModel.Page
             }
 
             ImageList.ResetImages();
+            SetToolStatus();
             return true;
         }
 
@@ -90,6 +91,7 @@ namespace PixelCrypt2026.ViewModel.Page
             }
 
             ImageList.ResetImages();
+            SetToolStatus();
             return true;
         }
 
@@ -252,6 +254,7 @@ namespace PixelCrypt2026.ViewModel.Page
                     return false;
             }
 
+            SetToolStatus();
             return true;
         }
 
@@ -265,6 +268,7 @@ namespace PixelCrypt2026.ViewModel.Page
                     return false;
             }
 
+            SetToolStatus();
             return true;
         }
 
@@ -304,7 +308,6 @@ namespace PixelCrypt2026.ViewModel.Page
                 if (token.IsCancellationRequested)
                 {
                     Notification.Show("Операция остановлена", icon: NotificationIconType.Question);
-                    SetToolStatus("Остановлено");
                 }
                 else
                 {
@@ -320,7 +323,6 @@ namespace PixelCrypt2026.ViewModel.Page
                 IsReadOnly = !string.IsNullOrEmpty(FilePath);
                 ImageList.IsEnable = IsEnable;
                 SettingsHeight = new GridLength(1, GridUnitType.Auto);
-                SetToolStatus();
             }
         }
 
@@ -354,14 +356,14 @@ namespace PixelCrypt2026.ViewModel.Page
                     successfullyProcessedImages.Add(imageItem.ImageFile);
                     double processedPixels = successfullyProcessedImages.Sum(i => (double)(i.ImageWidth * i.ImageHeight));
                     Progress.UpdateTimer(processedPixels, totalPixels);
-                    SetToolStatus($"Выполняется ({Progress.ProgressPercent})");
+                    SetToolStatus($"Выполнено {Progress.ProgressPercent}");
                     imageItem.Status = StatusType.Success;
                 }
                 catch (OperationCanceledException)
                 {
                     imageItem.Status = StatusType.None;
                     Notification.Show("Операция остановлена", icon: NotificationIconType.Question);
-                    SetToolStatus("Остановлено");
+                    SetToolStatus();
                     ImageList.ResetImages();
                     return false;
                 }
@@ -369,6 +371,7 @@ namespace PixelCrypt2026.ViewModel.Page
                 {
                     imageItem.Status = StatusType.Failed;
                     Notification.Show($"Возникла ошибка: {ex.Message}", button: NotificationButtonType.Ok, icon: NotificationIconType.Error);
+                    SetToolStatus($"Ошибка");
                     return false;
                 }
             }
@@ -441,6 +444,7 @@ namespace PixelCrypt2026.ViewModel.Page
             {
                 Notification.Show($"Не удалось сформировать данные.\nВозникла ошибка: {ex.Message}", button: NotificationButtonType.Ok, icon: NotificationIconType.Error);
                 ImageList.ResetImages();
+                SetToolStatus($"Ошибка");
                 return false;
             }
 
@@ -471,6 +475,7 @@ namespace PixelCrypt2026.ViewModel.Page
                 if (dataDistributionPlan == null)
                 {
                     Notification.Show($"Данных слишком много", button: NotificationButtonType.Ok, icon: NotificationIconType.Error);
+                    SetToolStatus();
                     return false;
                 }
 
@@ -479,16 +484,18 @@ namespace PixelCrypt2026.ViewModel.Page
                 if (dataChunks == null)
                 {
                     Notification.Show($"Не удалось сформировать данные для импорта", button: NotificationButtonType.Ok, icon: NotificationIconType.Error);
+                    SetToolStatus();
                     return false;
                 }
-
-                ImageList.ResetImages();
             }
             catch (Exception ex)
             {
                 Notification.Show($"Возникла ошибка: {ex.Message}", button: NotificationButtonType.Ok, icon: NotificationIconType.Error);
+                SetToolStatus($"Ошибка");
                 return false;
             }
+
+            ImageList.ResetImages();
 
             for (int i = 0; i < ImageList.Images.Count; i++)
             {
@@ -514,7 +521,7 @@ namespace PixelCrypt2026.ViewModel.Page
                     dataChunks[i] = "";
                     double convertedPixels = completedImages.Sum(i => (double)(i.ImageWidth * i.ImageHeight));
                     Progress.UpdateTimer(convertedPixels, totalPixels);
-                    SetToolStatus($"Выполняется ({Progress.ProgressPercent})");
+                    SetToolStatus($"Выполнено {Progress.ProgressPercent}");
                     ImageList.Images[i].Status = StatusType.Success;
                     ImageList.SelectedImage = ImageList.Images[i];
                 }
@@ -522,7 +529,7 @@ namespace PixelCrypt2026.ViewModel.Page
                 {
                     ImageList.Images[i].Status = StatusType.None;
                     Notification.Show("Операция остановлена", icon: NotificationIconType.Question);
-                    SetToolStatus("Остановлено");
+                    SetToolStatus();
                     ImageList.ResetImages();
                     return false;
                 }
@@ -530,6 +537,7 @@ namespace PixelCrypt2026.ViewModel.Page
                 {
                     ImageList.Images[i].Status = StatusType.Failed;
                     Notification.Show($"Возникла ошибка: {ex.Message}", button: NotificationButtonType.Ok, icon: NotificationIconType.Error);
+                    SetToolStatus($"Ошибка");
                     return false;
                 }
             }
@@ -562,6 +570,7 @@ namespace PixelCrypt2026.ViewModel.Page
             if (res.IsSuccessResult)
             {
                 Notification.Show(res.ResultMessage, icon: NotificationIconType.Success);
+                SetToolStatus("Сохранено");
             }
             else
             {
@@ -579,7 +588,7 @@ namespace PixelCrypt2026.ViewModel.Page
 
             FileHelper.SaveDataToFile($"PixelCrypt_{DateTime.Now:yyyyMMddHHmmss}", $"Файлы (*.txt)|*.txt", ResultString);
             Notification.Show($"Данные успешно сохранены", icon: NotificationIconType.Success);
-
+            SetToolStatus("Сохранено");
             return;
         }
     }

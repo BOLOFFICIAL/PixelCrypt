@@ -134,6 +134,7 @@ namespace PixelCrypt2026.ViewModel.Page
                     return false;
             }
 
+            SetToolStatus();
             return true;
         }
 
@@ -168,7 +169,7 @@ namespace PixelCrypt2026.ViewModel.Page
                 if (token.IsCancellationRequested)
                 {
                     Notification.Show("Операция остановлена", icon: NotificationIconType.Question);
-                    SetToolStatus("Остановлено");
+                    SetToolStatus();
                 }
                 else
                 {
@@ -182,7 +183,6 @@ namespace PixelCrypt2026.ViewModel.Page
                 TaskControl.FinishCommand();
                 ImageList.IsEnable = true;
                 SettingsHeight = new GridLength(1, GridUnitType.Auto);
-                SetToolStatus();
             }
         }
 
@@ -220,7 +220,7 @@ namespace PixelCrypt2026.ViewModel.Page
                     double convertedPixels = completedImages.Sum(i => (double)(i.ImageWidth * i.ImageHeight));
                     Progress.UpdateTimer(convertedPixels, totalItems);
                     SelectImage();
-                    SetToolStatus($"Выполняется ({Progress.ProgressPercent})");
+                    SetToolStatus($"Выполнено {Progress.ProgressPercent}");
                 }
                 catch (OperationCanceledException)
                 {
@@ -230,6 +230,7 @@ namespace PixelCrypt2026.ViewModel.Page
                 catch (Exception ex)
                 {
                     image.Status = StatusType.Failed;
+                    SetToolStatus($"Ошибка");
                     Notification.Show($"Возникла ошибка: {ex.Message}", button: NotificationButtonType.Ok, icon: NotificationIconType.Error);
                     return;
                 }
@@ -280,6 +281,7 @@ namespace PixelCrypt2026.ViewModel.Page
 
             if (res.IsSuccessResult)
             {
+                SetToolStatus("Сохранено");
                 Notification.Show(res.ResultMessage, icon: NotificationIconType.Success);
             }
             else
