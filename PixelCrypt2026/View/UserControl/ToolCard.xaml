@@ -10,7 +10,7 @@
 
     <Border CornerRadius="10"
             Margin="10"
-            Padding="10"
+            Padding="10,5,10,10"
             Background="{StaticResource Background1}"
             RenderTransformOrigin="0.5,0.5">
 

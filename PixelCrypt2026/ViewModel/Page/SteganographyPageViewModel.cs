@@ -71,7 +71,7 @@ namespace PixelCrypt2026.ViewModel.Page
         {
             if (ImageList.Images.Where(i => i.Status == StatusType.Success).Count() > 0)
             {
-                var res = Notification.Show("Удаление изображений приведет к потере данных, продолжить?", button: NotificationButtonType.YesNo, icon: NotificationIconType.Question);
+                var res = Notification.Show("Removing images will reset progress. Continue?", button: NotificationButtonType.YesNo, icon: NotificationIconType.Question);
                 if (res.Result != NotificationResultType.Yes)
                     return false;
             }
@@ -85,7 +85,7 @@ namespace PixelCrypt2026.ViewModel.Page
         {
             if (ImageList.Images.Where(i => i.Status == StatusType.Success).Count() > 0)
             {
-                var res = Notification.Show("Добавление изображений приведет к потере данных, продолжить?", button: NotificationButtonType.YesNo, icon: NotificationIconType.Question);
+                var res = Notification.Show("Adding new images will reset progress. Continue?", button: NotificationButtonType.YesNo, icon: NotificationIconType.Question);
                 if (res.Result != NotificationResultType.Yes)
                     return false;
             }
@@ -109,7 +109,7 @@ namespace PixelCrypt2026.ViewModel.Page
         {
             OpenFileDialog openFileDialog = new OpenFileDialog
             {
-                Title = "Выберите файл",
+                Title = "Select a file",
                 Multiselect = false
             };
 
@@ -117,7 +117,7 @@ namespace PixelCrypt2026.ViewModel.Page
             {
                 if (!string.IsNullOrEmpty(Content))
                 {
-                    var res = Notification.Show("Текст будет заменен на содержимое из файла, продолжить?", button: NotificationButtonType.YesNo, icon: NotificationIconType.Question);
+                    var res = Notification.Show("This will replace the text with the file content. Continue?", button: NotificationButtonType.YesNo, icon: NotificationIconType.Question);
 
                     if (res.Result != NotificationResultType.Yes) return;
                 }
@@ -132,7 +132,7 @@ namespace PixelCrypt2026.ViewModel.Page
 
             if (!string.IsNullOrEmpty(Content)) 
             {
-                var res = Notification.Show("Очистить содержимое?", button: NotificationButtonType.YesNo, icon: NotificationIconType.Question);
+                var res = Notification.Show("Clear contents?", button: NotificationButtonType.YesNo, icon: NotificationIconType.Question);
 
                 if (res.Result == NotificationResultType.Yes)
                 {
@@ -214,13 +214,13 @@ namespace PixelCrypt2026.ViewModel.Page
         }
 
         private bool StopConfirmation()
-            => Notification.Show("Вы уверены что хотите остановить?",
+            => Notification.Show("Stop the current operation?",
                 button: NotificationButtonType.YesNo,
                 icon: NotificationIconType.Question).Result == NotificationResultType.Yes;
 
         private void StopCommand()
         {
-            Progress.ProgressTime = "Остановка...";
+            Progress.ProgressTime = "Stopping...";
             Progress.StopTimer();
         }
 
@@ -229,7 +229,7 @@ namespace PixelCrypt2026.ViewModel.Page
             _isImport = true;
 
             if (Notification.Show(
-                "Выберите желаемое действие",
+                "Select operation mode",
                 actions: new List<(string, Action)>()
                 {
                         ("Import", () => {_isImport = true; }),
@@ -242,13 +242,13 @@ namespace PixelCrypt2026.ViewModel.Page
 
             if (_isImport && string.IsNullOrEmpty(Content) && string.IsNullOrEmpty(FilePath))
             {
-                Notification.Show("Нет данных для импорта", button: NotificationButtonType.Ok, icon: NotificationIconType.Error);
+                Notification.Show("No data to import", button: NotificationButtonType.Ok, icon: NotificationIconType.Error);
                 return false;
             }
 
             if (ImageList.Images.All(i => i.Status == StatusType.Success))
             {
-                var res = Notification.Show("Текущий прогресс будет потерян, продолжить?", button: NotificationButtonType.YesNo, icon: NotificationIconType.Question);
+                var res = Notification.Show("This will reset current progress. Continue?", button: NotificationButtonType.YesNo, icon: NotificationIconType.Question);
 
                 if (res.Result != NotificationResultType.Yes)
                     return false;
@@ -262,7 +262,7 @@ namespace PixelCrypt2026.ViewModel.Page
         {
             if (ImageList.Images.Any(i => i.Status == StatusType.Success))
             {
-                var res = Notification.Show("Вы уверены что хотите очистить список?", button: NotificationButtonType.YesNo, icon: NotificationIconType.Question);
+                var res = Notification.Show("Are you sure you want to clear the list?", title: "List clearing", button: NotificationButtonType.YesNo, icon: NotificationIconType.Question);
 
                 if (res.Result != NotificationResultType.Yes)
                     return false;
@@ -284,7 +284,7 @@ namespace PixelCrypt2026.ViewModel.Page
 
                 SettingsHeight = new GridLength(0, GridUnitType.Star);
 
-                SetToolStatus("Выполняется");
+                SetToolStatus("In progress");
 
                 Progress.StartTimer();
 
@@ -307,12 +307,12 @@ namespace PixelCrypt2026.ViewModel.Page
 
                 if (token.IsCancellationRequested)
                 {
-                    Notification.Show("Операция остановлена", icon: NotificationIconType.Question);
+                    Notification.Show("Operation stopped", icon: NotificationIconType.Question);
                 }
                 else
                 {
-                    Notification.Show("Операция завершена", icon: NotificationIconType.Success);
-                    SetToolStatus("Завершено");
+                    Notification.Show("Operation completed", icon: NotificationIconType.Success);
+                    SetToolStatus("Completed");
                 }
             }
             finally
@@ -356,13 +356,13 @@ namespace PixelCrypt2026.ViewModel.Page
                     successfullyProcessedImages.Add(imageItem.ImageFile);
                     double processedPixels = successfullyProcessedImages.Sum(i => (double)(i.ImageWidth * i.ImageHeight));
                     Progress.UpdateTimer(processedPixels, totalPixels);
-                    SetToolStatus($"Выполнено {Progress.ProgressPercent}");
+                    SetToolStatus($"Completed {Progress.ProgressPercent}");
                     imageItem.Status = StatusType.Success;
                 }
                 catch (OperationCanceledException)
                 {
                     imageItem.Status = StatusType.None;
-                    Notification.Show("Операция остановлена", icon: NotificationIconType.Question);
+                    Notification.Show("Operation stopped", icon: NotificationIconType.Question);
                     SetToolStatus();
                     ImageList.ResetImages();
                     return false;
@@ -370,8 +370,8 @@ namespace PixelCrypt2026.ViewModel.Page
                 catch (Exception ex)
                 {
                     imageItem.Status = StatusType.Failed;
-                    Notification.Show($"Возникла ошибка: {ex.Message}", button: NotificationButtonType.Ok, icon: NotificationIconType.Error);
-                    SetToolStatus($"Ошибка");
+                    Notification.Show($"Error: {ex.Message}", button: NotificationButtonType.Ok, icon: NotificationIconType.Error);
+                    SetToolStatus($"Error");
                     return false;
                 }
             }
@@ -409,11 +409,11 @@ namespace PixelCrypt2026.ViewModel.Page
                 {
                     ResultString = Encryption.DecryptText(fileMetadataParts[2], passwordHash);
 
-                    var shouldAssembleFile = Notification.Show("Экспортированные данные являются файлом.\nСобрать файл?", "Экспорт данных", button: NotificationButtonType.YesNo, icon: NotificationIconType.Question).Result == NotificationResultType.Yes;
+                    var shouldAssembleFile = Notification.Show("The exported data is a file\nBuild the file?", "Export data", button: NotificationButtonType.YesNo, icon: NotificationIconType.Question).Result == NotificationResultType.Yes;
 
                     if (shouldAssembleFile)
                     {
-                        var saveRes = FileHelper.SaveDataToFile(fileMetadataParts[0], $"Файлы (*{fileMetadataParts[1]})|*{fileMetadataParts[1]}", Convert.FromBase64String(ResultString));
+                        var saveRes = FileHelper.SaveDataToFile(fileMetadataParts[0], $"File (*{fileMetadataParts[1]})|*{fileMetadataParts[1]}", Convert.FromBase64String(ResultString));
 
                         if (saveRes.Result.IsSuccessResult)
                         {
@@ -442,9 +442,9 @@ namespace PixelCrypt2026.ViewModel.Page
             }
             catch (Exception ex)
             {
-                Notification.Show($"Не удалось сформировать данные.\nВозникла ошибка: {ex.Message}", button: NotificationButtonType.Ok, icon: NotificationIconType.Error);
+                Notification.Show($"Failed to build data.\nError: {ex.Message}", button: NotificationButtonType.Ok, icon: NotificationIconType.Error);
                 ImageList.ResetImages();
-                SetToolStatus($"Ошибка");
+                SetToolStatus($"Error");
                 return false;
             }
 
@@ -474,7 +474,7 @@ namespace PixelCrypt2026.ViewModel.Page
 
                 if (dataDistributionPlan == null)
                 {
-                    Notification.Show($"Данных слишком много", button: NotificationButtonType.Ok, icon: NotificationIconType.Error);
+                    Notification.Show($"Too much data", button: NotificationButtonType.Ok, icon: NotificationIconType.Error);
                     SetToolStatus();
                     return false;
                 }
@@ -483,15 +483,15 @@ namespace PixelCrypt2026.ViewModel.Page
 
                 if (dataChunks == null)
                 {
-                    Notification.Show($"Не удалось сформировать данные для импорта", button: NotificationButtonType.Ok, icon: NotificationIconType.Error);
+                    Notification.Show($"Failed to prepare data for import", button: NotificationButtonType.Ok, icon: NotificationIconType.Error);
                     SetToolStatus();
                     return false;
                 }
             }
             catch (Exception ex)
             {
-                Notification.Show($"Возникла ошибка: {ex.Message}", button: NotificationButtonType.Ok, icon: NotificationIconType.Error);
-                SetToolStatus($"Ошибка");
+                Notification.Show($"Error: {ex.Message}", button: NotificationButtonType.Ok, icon: NotificationIconType.Error);
+                SetToolStatus($"Error");
                 return false;
             }
 
@@ -503,6 +503,7 @@ namespace PixelCrypt2026.ViewModel.Page
                 {
                     token.ThrowIfCancellationRequested();
                     ImageList.Images[i].Status = StatusType.InProgress;
+                    ImageList.SelectedImage = ImageList.Images[i];
 
                     var content = IsIndexDependence ? dataChunks[i] : $"{i}[i]{dataChunks[i]}";
                     var binaryDataToWrite = Converter.ConvertTextToBinaryString(content);
@@ -521,14 +522,13 @@ namespace PixelCrypt2026.ViewModel.Page
                     dataChunks[i] = "";
                     double convertedPixels = completedImages.Sum(i => (double)(i.ImageWidth * i.ImageHeight));
                     Progress.UpdateTimer(convertedPixels, totalPixels);
-                    SetToolStatus($"Выполнено {Progress.ProgressPercent}");
+                    SetToolStatus($"Completed {Progress.ProgressPercent}");
                     ImageList.Images[i].Status = StatusType.Success;
-                    ImageList.SelectedImage = ImageList.Images[i];
                 }
                 catch (OperationCanceledException)
                 {
                     ImageList.Images[i].Status = StatusType.None;
-                    Notification.Show("Операция остановлена", icon: NotificationIconType.Question);
+                    Notification.Show("Operation stopped", icon: NotificationIconType.Question);
                     SetToolStatus();
                     ImageList.ResetImages();
                     return false;
@@ -536,8 +536,8 @@ namespace PixelCrypt2026.ViewModel.Page
                 catch (Exception ex)
                 {
                     ImageList.Images[i].Status = StatusType.Failed;
-                    Notification.Show($"Возникла ошибка: {ex.Message}", button: NotificationButtonType.Ok, icon: NotificationIconType.Error);
-                    SetToolStatus($"Ошибка");
+                    Notification.Show($"Error: {ex.Message}", button: NotificationButtonType.Ok, icon: NotificationIconType.Error);
+                    SetToolStatus($"Error");
                     return false;
                 }
             }
@@ -562,7 +562,7 @@ namespace PixelCrypt2026.ViewModel.Page
         {
             if (ImageList.Images.Where(i => i.ImageFile.ResultImage != null).Count() == 0)
             {
-                Notification.Show($"Нет данных для сохранения", icon: NotificationIconType.Error);
+                Notification.Show($"No data to save", icon: NotificationIconType.Error);
                 return;
             }
             var res = FileHelper.SaveBitmapToFolder(ImageList.Images.Where(i => i.ImageFile.ResultImage != null).Select(i => i.ImageFile).ToList());
@@ -570,7 +570,7 @@ namespace PixelCrypt2026.ViewModel.Page
             if (res.IsSuccessResult)
             {
                 Notification.Show(res.ResultMessage, icon: NotificationIconType.Success);
-                SetToolStatus("Сохранено");
+                SetToolStatus("Saved");
             }
             else
             {
@@ -582,13 +582,13 @@ namespace PixelCrypt2026.ViewModel.Page
         {
             if (ResultString.Length == 0)
             {
-                Notification.Show($"Нет данных для сохранения", icon: NotificationIconType.Error);
+                Notification.Show($"No data to save", icon: NotificationIconType.Error);
                 return;
             }
 
-            FileHelper.SaveDataToFile($"PixelCrypt_{DateTime.Now:yyyyMMddHHmmss}", $"Файлы (*.txt)|*.txt", ResultString);
-            Notification.Show($"Данные успешно сохранены", icon: NotificationIconType.Success);
-            SetToolStatus("Сохранено");
+            FileHelper.SaveDataToFile($"PixelCrypt_{DateTime.Now:yyyyMMddHHmmss}", $"Files (*.txt)|*.txt", ResultString);
+            Notification.Show($"Data saved successfully", icon: NotificationIconType.Success);
+            SetToolStatus("Saved");
             return;
         }
     }

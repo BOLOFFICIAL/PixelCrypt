@@ -128,7 +128,7 @@ namespace PixelCrypt2026.ViewModel.Page
         {
             if (ImageList.Images.Any(i => i.Status == StatusType.Success))
             {
-                var res = Notification.Show("Вы уверены что хотите очистить список?", button: NotificationButtonType.YesNo, icon: NotificationIconType.Question);
+                var res = Notification.Show("Are you sure you want to clear the list?",title: "List clearing", button: NotificationButtonType.YesNo, icon: NotificationIconType.Question);
 
                 if (res.Result != NotificationResultType.Yes)
                     return false;
@@ -145,7 +145,7 @@ namespace PixelCrypt2026.ViewModel.Page
             ImageList.IsEnable = false;
             SettingsHeight = new GridLength(0, GridUnitType.Star);
 
-            SetToolStatus("Выполняется");
+            SetToolStatus("In progress");
 
             Progress.StartTimer();
 
@@ -168,13 +168,13 @@ namespace PixelCrypt2026.ViewModel.Page
 
                 if (token.IsCancellationRequested)
                 {
-                    Notification.Show("Операция остановлена", icon: NotificationIconType.Question);
+                    Notification.Show("Operation stopped", icon: NotificationIconType.Question);
                     SetToolStatus();
                 }
                 else
                 {
-                    Notification.Show("Операция завершена", icon: NotificationIconType.Success);
-                    SetToolStatus("Завершено");
+                    Notification.Show("Operation completed", icon: NotificationIconType.Success);
+                    SetToolStatus("Completed");
                 }
             }
             finally
@@ -220,7 +220,7 @@ namespace PixelCrypt2026.ViewModel.Page
                     double convertedPixels = completedImages.Sum(i => (double)(i.ImageWidth * i.ImageHeight));
                     Progress.UpdateTimer(convertedPixels, totalItems);
                     SelectImage();
-                    SetToolStatus($"Выполнено {Progress.ProgressPercent}");
+                    SetToolStatus($"Completed {Progress.ProgressPercent}");
                 }
                 catch (OperationCanceledException)
                 {
@@ -230,8 +230,8 @@ namespace PixelCrypt2026.ViewModel.Page
                 catch (Exception ex)
                 {
                     image.Status = StatusType.Failed;
-                    SetToolStatus($"Ошибка");
-                    Notification.Show($"Возникла ошибка: {ex.Message}", button: NotificationButtonType.Ok, icon: NotificationIconType.Error);
+                    SetToolStatus($"Error");
+                    Notification.Show($"Error: {ex.Message}", button: NotificationButtonType.Ok, icon: NotificationIconType.Error);
                     return;
                 }
             }
@@ -242,7 +242,7 @@ namespace PixelCrypt2026.ViewModel.Page
             _isEncrypt = true;
 
             if (Notification.Show(
-                "Выберите желаемое действие",
+                "Select operation mode",
                 actions: new List<(string, Action)>()
                 {
                         ("Encrypt", () => {_isEncrypt = true; }),
@@ -255,7 +255,7 @@ namespace PixelCrypt2026.ViewModel.Page
 
             if (ImageList.Images.Any(i => i.Status == StatusType.Success))
             {
-                var res = Notification.Show("Текущий прогресс будет потерян, продолжить?", button: NotificationButtonType.YesNo, icon: NotificationIconType.Question);
+                var res = Notification.Show("This will reset current progress. Continue?", button: NotificationButtonType.YesNo, icon: NotificationIconType.Question);
 
                 if (res.Result != NotificationResultType.Yes)
                     return false;
@@ -266,12 +266,12 @@ namespace PixelCrypt2026.ViewModel.Page
 
         private void StopCommand()
         {
-            Progress.ProgressTime = "Остановка...";
+            Progress.ProgressTime = "Stopping...";
             Progress.StopTimer();
         }
 
         private bool StopConfirmation()
-            => Notification.Show("Вы уверены что хотите остановить?",
+            => Notification.Show("Stop the current operation?",
                 button: NotificationButtonType.YesNo,
                 icon: NotificationIconType.Question).Result == NotificationResultType.Yes;
 
@@ -281,7 +281,7 @@ namespace PixelCrypt2026.ViewModel.Page
 
             if (res.IsSuccessResult)
             {
-                SetToolStatus("Сохранено");
+                SetToolStatus("Saved");
                 Notification.Show(res.ResultMessage, icon: NotificationIconType.Success);
             }
             else

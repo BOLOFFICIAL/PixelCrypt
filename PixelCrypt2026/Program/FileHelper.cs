@@ -14,7 +14,7 @@ namespace PixelCrypt2026.Program
 
         public static ActionResult SaveBitmapToFolder(List<ImageFile> imageFiles)
         {
-            var title = "Сохранение данных";
+            var title = "Saving data";
             var currentImage = imageFiles.FirstOrDefault();
 
             try
@@ -24,7 +24,7 @@ namespace PixelCrypt2026.Program
                     return new ActionResult()
                     {
                         IsSuccessResult = false,
-                        ResultMessage = "Нет данных для сохранения",
+                        ResultMessage = "No data to save",
                         ResultTitle = title,
                     };
                 }
@@ -32,7 +32,7 @@ namespace PixelCrypt2026.Program
                 CommonOpenFileDialog folderPicker = new CommonOpenFileDialog();
 
                 folderPicker.IsFolderPicker = true;
-                folderPicker.Title = "Выбор папки для хранения данных";
+                folderPicker.Title = "Choose folder to save images";
                 var now = DateTime.Now;
                 folderPicker.DefaultFileName = $"PixelCrypt_{now:yyyyMMddHHmmss}";
                 folderPicker.InitialDirectory = Path.GetDirectoryName(currentImage.FilePath);
@@ -65,7 +65,7 @@ namespace PixelCrypt2026.Program
                     return new ActionResult()
                     {
                         IsSuccessResult = true,
-                        ResultMessage = $"Данные сохранены в папке {Path.GetFileName(folderPicker.FileName)}",
+                        ResultMessage = $"Successfully saved to folder {Path.GetFileName(folderPicker.FileName)}",
                         ResultTitle = title,
                     };
                 }
@@ -73,7 +73,7 @@ namespace PixelCrypt2026.Program
                 return new ActionResult()
                 {
                     IsSuccessResult = false,
-                    ResultMessage = $"Данные не сохранены",
+                    ResultMessage = $"Data not saved",
                     ResultTitle = title,
                 };
             }
@@ -82,7 +82,7 @@ namespace PixelCrypt2026.Program
                 return new ActionResult()
                 {
                     IsSuccessResult = false,
-                    ResultMessage = $"В процессе сохранения данных для\n\n{currentImage?.FileName}\n\nвозникла неизвестная ошибка: {ex.Message}",
+                    ResultMessage = $"Error saving: \n\n{currentImage?.FileName}\n\n {ex.Message}",
                     ResultTitle = title,
                 };
             }
@@ -91,13 +91,13 @@ namespace PixelCrypt2026.Program
 
         private static SaveDataResult SaveDataToFile<T>(string fileName, string filter, T data, Action<string, T> action)
         {
-            var title = "Сохранение данных";
+            var title = "Saving data";
 
             try
             {
                 var saveFileDialog = new SaveFileDialog
                 {
-                    Title = "Выбрать файл для сохранения данных",
+                    Title = "Select a file to save data",
                     FileName = fileName,
                     Filter = filter
                 };
@@ -118,7 +118,7 @@ namespace PixelCrypt2026.Program
                         Result = new ActionResult()
                         {
                             IsSuccessResult = true,
-                            ResultMessage = $"Данные сохранены в файле {Path.GetFileName(selectedFilePath)}",
+                            ResultMessage = $"Successfully saved to {Path.GetFileName(selectedFilePath)}",
                             ResultTitle = title,
                         },
                         FilePath = selectedFilePath,
@@ -130,7 +130,7 @@ namespace PixelCrypt2026.Program
                     Result = new ActionResult()
                     {
                         IsSuccessResult = false,
-                        ResultMessage = $"Данные не сохранены",
+                        ResultMessage = $"Data not saved",
                         ResultTitle = title,
                     },
                     FilePath = "",
@@ -143,7 +143,7 @@ namespace PixelCrypt2026.Program
                     Result = new ActionResult()
                     {
                         IsSuccessResult = false,
-                        ResultMessage = $"Неизвестная ошибка: {ex.Message}",
+                        ResultMessage = $"An unexpected error occurred: {ex.Message}",
                         ResultTitle = title,
                     },
                     FilePath = "",

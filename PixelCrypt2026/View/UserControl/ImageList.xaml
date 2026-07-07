@@ -82,19 +82,19 @@
                                     <Setter Property="ContextMenu">
                                         <Setter.Value>
                                             <ContextMenu DataContext="{Binding PlacementTarget, RelativeSource={RelativeSource Self}}">
-                                                <MenuItem Header="Поднять"
+                                                <MenuItem Header="Move up"
                                                           Command="{Binding Tag.MoveUpCommand}"
                                                           CommandParameter="{Binding DataContext}"/>
 
-                                                <MenuItem Header="Опустить"
+                                                <MenuItem Header="Move down"
                                                           Command="{Binding Tag.MoveDownCommand}"
                                                           CommandParameter="{Binding DataContext}"/>
 
-                                                <MenuItem Header="Удалить"
+                                                <MenuItem Header="Delete"
                                                           Command="{Binding Tag.RemoveCommand}"
                                                           CommandParameter="{Binding DataContext}"/>
 
-                                                <MenuItem Header="Открыть"
+                                                <MenuItem Header="Open"
                                                           Command="{Binding Tag.OpenOriginalCommand}"
                                                           CommandParameter="{Binding DataContext}"/>
                                             </ContextMenu>

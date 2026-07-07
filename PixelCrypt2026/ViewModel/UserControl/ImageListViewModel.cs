@@ -120,8 +120,8 @@ namespace PixelCrypt2026.ViewModel.UserControl
 
             OpenFileDialog openFileDialog = new OpenFileDialog()
             {
-                Title = "Выберите изображение",
-                Filter = "Изображение (*.png;*.jpg;*.jpeg;*.bmp)|*.png;*.jpg;*.jpeg;*.bmp",
+                Title = "Select an image",
+                Filter = "Image (*.png;*.jpg;*.jpeg;*.bmp)|*.png;*.jpg;*.jpeg;*.bmp",
                 Multiselect = true,
             };
 
