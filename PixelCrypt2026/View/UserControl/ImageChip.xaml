@@ -21,12 +21,23 @@
             <TextBlock Text="{Binding StatusValue}"
                        FontSize="15"
                        Foreground="White"/>
-
+            
         </Border>
 
         <Border Grid.Column="1"
                 Background="{Binding Background}"
-                CornerRadius="10">
+                CornerRadius="10"
+                BorderThickness="1">
+            
+            <Border.Style>
+                <Style TargetType="Border">
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="BorderBrush" Value="{Binding Foreground}"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
 
             <TextBlock Text="{Binding ImageFile.FileName}"
                        Foreground="{Binding Foreground}"
@@ -35,13 +46,24 @@
                        FontSize="15"
                        HorizontalAlignment="Center"
                        TextWrapping="Wrap">
+
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="FontWeight" Value="SemiBold"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+                
                 <TextBlock.ToolTip>
                     <ToolTip BorderThickness="0"
                              Background="Transparent"
                              MaxWidth="620"
                              Placement="Mouse">
                         <Border Background="{StaticResource Background2}" 
-                                BorderBrush="{StaticResource Foreground}"
+                                BorderBrush="{Binding Foreground}"
                                 BorderThickness="2" 
                                 CornerRadius="10">
                             <Border.Effect>
@@ -148,7 +170,7 @@
             </TextBlock>
 
         </Border>
-
+        
     </Grid>
-
+    
 </UserControl>
