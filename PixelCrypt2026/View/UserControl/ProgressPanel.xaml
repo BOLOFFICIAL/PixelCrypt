@@ -29,7 +29,7 @@
                                    VerticalAlignment="Center"
                                    HorizontalAlignment="Center"
                                    FontSize="14"
-                                   Foreground="White"
+                                   Foreground="{StaticResource Foreground}"
                                    FontWeight="SemiBold"/>
                     </Border>
 
@@ -42,7 +42,7 @@
                                    VerticalAlignment="Center"
                                    HorizontalAlignment="Center"
                                    FontSize="14"
-                                   Foreground="White"
+                                   Foreground="{StaticResource Foreground}"
                                    FontWeight="SemiBold"/>
                     </Border>
                 </Grid>

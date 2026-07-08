@@ -20,7 +20,7 @@
 
             <TextBlock Text="{Binding StatusValue}"
                        FontSize="15"
-                       Foreground="White"/>
+                       Foreground="{StaticResource Foreground}"/>
             
         </Border>
 
