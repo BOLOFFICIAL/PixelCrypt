@@ -29,33 +29,31 @@ namespace PixelCrypt2026.Program
                     };
                 }
 
-                CommonOpenFileDialog folderPicker = new CommonOpenFileDialog();
-
-                folderPicker.IsFolderPicker = true;
-                folderPicker.Title = "Choose folder to save images";
-                var now = DateTime.Now;
-                folderPicker.DefaultFileName = $"PixelCrypt_{now:yyyyMMddHHmmss}";
-                folderPicker.InitialDirectory = Path.GetDirectoryName(currentImage.FilePath);
-
-                CommonFileDialogResult dialogResult = folderPicker.ShowDialog();
-
-                if (dialogResult == CommonFileDialogResult.Ok)
+                var folderPicker = new CommonOpenFileDialog
                 {
-                    if (!Directory.Exists(folderPicker.FileName))
-                    {
-                        Directory.CreateDirectory(folderPicker.FileName);
-                    }
+                    IsFolderPicker = true,
+                    Title = "Choose folder to save images"
+                };
+
+                if (folderPicker.ShowDialog() == CommonFileDialogResult.Ok)
+                {
+                    var now = DateTime.Now;
+                    var newFolderName = $"PixelCrypt_{now:yyyyMMddHHmmss}";
+
+                    var targetFolder = Path.Combine(folderPicker.FileName, newFolderName);
+
+                    Directory.CreateDirectory(targetFolder);
 
                     foreach (var el in imageFiles)
                     {
                         currentImage = el;
-                        var baseName = Path.GetFileNameWithoutExtension(currentImage.FilePath) + $"_PixelCrypt_{now:yyyyMMddHHmmss}";
-                        var name = Path.Combine(folderPicker.FileName, baseName + ".png");
+                        var baseName = Path.GetFileNameWithoutExtension(currentImage.FilePath);
+                        var name = Path.Combine(targetFolder, baseName + ".png");
 
                         int counter = 1;
                         while (File.Exists(name))
                         {
-                            name = Path.Combine(folderPicker.FileName, $"{baseName}_({counter}).png");
+                            name = Path.Combine(targetFolder, $"{baseName}_({counter}).png");
                             counter++;
                         }
 
@@ -65,7 +63,7 @@ namespace PixelCrypt2026.Program
                     return new ActionResult()
                     {
                         IsSuccessResult = true,
-                        ResultMessage = $"Successfully saved to folder {Path.GetFileName(folderPicker.FileName)}",
+                        ResultMessage = $"Successfully saved to folder {newFolderName}",
                         ResultTitle = title,
                     };
                 }
@@ -73,7 +71,7 @@ namespace PixelCrypt2026.Program
                 return new ActionResult()
                 {
                     IsSuccessResult = false,
-                    ResultMessage = $"Data not saved",
+                    ResultMessage = "Data not saved",
                     ResultTitle = title,
                 };
             }
