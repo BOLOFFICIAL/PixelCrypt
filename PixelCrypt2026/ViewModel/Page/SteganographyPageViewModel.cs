@@ -387,14 +387,19 @@ namespace PixelCrypt2026.ViewModel.Page
 
                 if (IsIndexDependence)
                 {
-                    var items = decodedTextParts.Select(el => el.Split("[i]")[1]);
+                    var items = decodedTextParts
+                        .Select(el => el.Contains("[i]") ? el.Split("[i]")[1] : el);
+
                     foreach (var item in items)
                         allData.Append(item);
                 }
                 else
                 {
                     var ordered = decodedTextParts
-                        .Select(el => el.Split("[i]"))
+                        .Select(el => {
+                            var parts = el.Split("[i]");
+                            return parts.Length > 1 ? parts : new[] { "0", el };
+                        })
                         .OrderBy(data => int.Parse(data[0]))
                         .Select(data => data[1]);
 
