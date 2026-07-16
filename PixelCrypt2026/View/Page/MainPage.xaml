@@ -75,7 +75,7 @@
         </Grid>
 
         <Grid Grid.Row="2">
-            <TextBlock Text="v1.0"
+            <TextBlock Text="v3.0"
                        x:Name="Version"
                        Foreground="{StaticResource Foreground}"
                        FontSize="14"
