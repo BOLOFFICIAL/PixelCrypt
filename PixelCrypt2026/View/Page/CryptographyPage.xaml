@@ -4,7 +4,8 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:PixelCrypt2026.View.Page" 
-      xmlns:controls="clr-namespace:PixelCrypt2026.View.UserControl"
+      xmlns:controls="clr-namespace:PixelCrypt2026.View.UserControl" 
+      xmlns:mini="clr-namespace:PixelCrypt2026.View.UserControl.Mini"
       mc:Ignorable="d"
       Title="CryptographyPage">
 
@@ -64,7 +65,17 @@
                                                 BorderBrush="{StaticResource Foreground}"
                                                 BorderThickness="1">
                                             <ComboBox ItemsSource="{Binding ComboBoxItem}"
-                                                      SelectedValue="{Binding Interference}"/>
+                                                      SelectedValue="{Binding Interference}">
+                                                <ComboBox.ToolTip>
+                                                    <ToolTip BorderThickness="0" 
+                                                             Background="Transparent" 
+                                                             Placement="Mouse">
+                                                        <mini:InfoToolTip 
+                                                            Title="Interference level"
+                                                            Info="• Sets the block size for the permutation algorithm as a percentage of the maximum possible blocks.&#x0a;• Higher values create smaller blocks and more complex rearrangement, making the image completely unrecognizable."/>
+                                                    </ToolTip>
+                                                </ComboBox.ToolTip>
+                                            </ComboBox>
                                         </Border>
 
                                     </Grid>

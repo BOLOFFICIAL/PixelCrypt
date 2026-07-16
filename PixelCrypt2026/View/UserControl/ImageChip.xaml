@@ -1,7 +1,8 @@
 ﻿<UserControl x:Class="PixelCrypt2026.View.UserControl.ImageChip"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:PixelCrypt2026.View.UserControl">
+             xmlns:local="clr-namespace:PixelCrypt2026.View.UserControl" 
+             xmlns:mini="clr-namespace:PixelCrypt2026.View.UserControl.Mini">
 
     <Grid DataContext="{Binding Image, RelativeSource={RelativeSource AncestorType=local:ImageChip}}"
           Margin="0,0,0,10">
@@ -48,113 +49,16 @@
                        TextWrapping="Wrap">
 
                 <TextBlock.ToolTip>
-                    <ToolTip BorderThickness="0"
-                             Background="Transparent"
-                             MaxWidth="620"
+                    <ToolTip BorderThickness="0" 
+                             Background="Transparent" 
+                             MaxWidth="600" 
                              Placement="Mouse">
-                        <Border Background="{StaticResource Background2}" 
-                                BorderBrush="{Binding Foreground}"
-                                BorderThickness="2" 
-                                CornerRadius="10">
-                            <Border.Effect>
-                                <DropShadowEffect BlurRadius="15" 
-                                                  ShadowDepth="3" 
-                                                  Opacity="0.15"
-                                                  Color="Black"/>
-                            </Border.Effect>
-
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" MinWidth="180"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-
-                                <Border Grid.Column="0" 
-                                        Padding="15,10">
-                                    <StackPanel>
-                                        <TextBlock Text="{Binding ImageFile.FileName}" 
-                                                   Foreground="{StaticResource Foreground}"
-                                                   FontWeight="SemiBold"
-                                                   FontSize="20"
-                                                   TextWrapping="Wrap"
-                                                   Margin="0,0,0,10"
-                                                   ToolTipService.InitialShowDelay="500"
-                                                   ToolTipService.ShowDuration="10000"
-                                                   ToolTipService.BetweenShowDelay="1000"/>
-
-                                        <Border Height="3" 
-                                                Background="{StaticResource Accent}" 
-                                                Opacity="0.5"
-                                                Margin="0,0,0,10"/>
-
-                                        <Grid>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="Auto"/>
-                                                <RowDefinition Height="Auto"/>
-                                                <RowDefinition Height="Auto"/>
-                                            </Grid.RowDefinitions>
-
-                                            <StackPanel Grid.Row="0" 
-                                                        Margin="0,0,0,10">
-                                                <TextBlock Text="FILE SIZE" 
-                                                           Foreground="{StaticResource Accent}"
-                                                           FontSize="10"
-                                                           FontWeight="Bold"
-                                                           Margin="0,0,0,5"/>
-                                                <TextBlock Text="{Binding ImageFile.FileSizeFormatted}" 
-                                                           Foreground="{StaticResource Foreground}"
-                                                           FontWeight="Regular"
-                                                           FontSize="15"
-                                                           TextWrapping="Wrap"/>
-                                            </StackPanel>
-
-                                            <StackPanel Grid.Row="1" 
-                                                        Margin="0,0,0,10">
-                                                <TextBlock Text="RESOLUTION" 
-                                                           Foreground="{StaticResource Accent}"
-                                                           FontSize="10"
-                                                           FontWeight="Bold"
-                                                           Margin="0,0,0,5"/>
-                                                <TextBlock Text="{Binding ImageFile.ImageResolution}" 
-                                                           Foreground="{StaticResource Foreground}"
-                                                           FontWeight="Regular"
-                                                           FontSize="15"
-                                                           TextWrapping="Wrap"/>
-                                            </StackPanel>
-
-                                            <StackPanel Grid.Row="2">
-                                                <TextBlock Text="LOCATION" 
-                                                           Foreground="{StaticResource Accent}"
-                                                           FontSize="10"
-                                                           FontWeight="Bold"
-                                                           Margin="0,0,0,5"/>
-                                                <TextBlock Text="{Binding ImageFile.FilePath}" 
-                                                           Foreground="{StaticResource Foreground}"
-                                                           FontWeight="Regular"
-                                                           TextWrapping="Wrap"
-                                                           FontSize="15"
-                                                           ToolTip="{Binding ImageFile.FilePath}"/>
-                                            </StackPanel>
-                                        </Grid>
-                                    </StackPanel>
-                                </Border>
-
-                                <Border Grid.Column="1"
-                                        Background="{StaticResource Background3}"
-                                        CornerRadius="10"
-                                        Padding="10"
-                                        Margin="5"
-                                        Width="220">
-                                    <Image Stretch="Uniform"
-                                           MaxWidth="200"
-                                           MaxHeight="400"
-                                           HorizontalAlignment="Center"
-                                           VerticalAlignment="Center"
-                                           Source="{Binding ImageFile.FilePath}">
-                                    </Image>
-                                </Border>
-                            </Grid>
-                        </Border>
+                        <mini:ImageToolTip 
+                            FileName="{Binding ImageFile.FileName}"
+                            FileSizeFormatted="{Binding ImageFile.FileSizeFormatted}"
+                            ImageResolution="{Binding ImageFile.ImageResolution}"
+                            FilePath="{Binding ImageFile.FilePath}"
+                            Foreground="{Binding Foreground}"/>
                     </ToolTip>
                 </TextBlock.ToolTip>
             </TextBlock>

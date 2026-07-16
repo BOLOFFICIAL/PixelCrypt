@@ -5,7 +5,8 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:PixelCrypt2026.View.Page" 
       xmlns:controls="clr-namespace:PixelCrypt2026.View.UserControl" 
-      xmlns:fa="http://schemas.fontawesome.com/icons/"
+      xmlns:fa="http://schemas.fontawesome.com/icons/" 
+      xmlns:mini="clr-namespace:PixelCrypt2026.View.UserControl.Mini"
       mc:Ignorable="d" 
       Title="SteganographyPage">
 
@@ -64,42 +65,14 @@
                                         <CheckBox IsChecked="{Binding IsIndexDependence, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
                                                   VerticalAlignment="Center"
                                                   VerticalContentAlignment="Center">
-
+                                            
                                             <CheckBox.ToolTip>
-                                                <ToolTip BorderThickness="0"
+                                                <ToolTip BorderThickness="0" 
                                                          Background="Transparent"
-                                                         MaxWidth="500"
                                                          Placement="Mouse">
-                                                    <Border Background="{StaticResource Background2}" 
-                                                            BorderBrush="{StaticResource Foreground}"
-                                                            BorderThickness="2" 
-                                                            CornerRadius="10">
-
-                                                        <Border Padding="15,10">
-                                                            <StackPanel>
-                                                                <TextBlock Text="Index dependence" 
-                                                                           Foreground="{StaticResource Foreground}"
-                                                                           FontWeight="SemiBold"
-                                                                           FontSize="15"
-                                                                           TextWrapping="Wrap"
-                                                                           Margin="0,0,0,10"/>
-
-                                                                <Border Height="3" 
-                                                                        Background="{StaticResource Accent}" 
-                                                                        Opacity="0.5"
-                                                                        Margin="0,0,0,10"/>
-
-                                                                <TextBlock Foreground="{StaticResource Foreground}"
-                                                                           FontWeight="Regular"
-                                                                           FontSize="15"
-                                                                           TextWrapping="Wrap">
-                                                                    <Run Text="- If checked, no indices are assigned, meaning the data directly impacts the order."/>
-                                                                    <LineBreak/>
-                                                                    <Run Text="- If unchecked, indices are generated and used to define the data order."/>
-                                                                </TextBlock>
-                                                            </StackPanel>
-                                                        </Border>
-                                                    </Border>
+                                                    <mini:InfoToolTip 
+                                                        Title="Index dependence"
+                                                        Info="• If checked, no indices are assigned, meaning the data directly impacts the order. &#x0a;• If unchecked, indices are generated and used to define the data order."/>
                                                 </ToolTip>
                                             </CheckBox.ToolTip>
                                         </CheckBox>
@@ -159,12 +132,21 @@
                                                 CornerRadius="10"
                                                 Padding="10,0">
                                             <TextBlock Text="{Binding FileName}"
-                                                       ToolTip="{Binding FilePath}"
                                                        FontSize="15"
                                                        FontWeight="Medium"
                                                        VerticalAlignment="Center"
                                                        HorizontalAlignment="Center"
-                                                       Foreground="{StaticResource Foreground}"/>
+                                                       Foreground="{StaticResource Foreground}">
+                                                <TextBlock.ToolTip>
+                                                    <ToolTip BorderThickness="0" 
+                                                             Background="Transparent"
+                                                             Placement="Mouse">
+                                                        <mini:InfoToolTip 
+                                                            Title="{Binding FileName}"
+                                                            Info="{Binding FilePath}"/>
+                                                    </ToolTip>
+                                                </TextBlock.ToolTip>
+                                            </TextBlock>
                                         </Border>
                                     </Grid>
 

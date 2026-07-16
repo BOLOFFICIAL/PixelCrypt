@@ -1,0 +1,42 @@
+﻿<UserControl x:Class="PixelCrypt2026.View.UserControl.Mini.InfoToolTip"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mini="clr-namespace:PixelCrypt2026.View.UserControl.Mini"
+             MaxWidth="500"
+             x:Name="root">
+    
+    <Border Background="{StaticResource Background2}" 
+            BorderBrush="{StaticResource Foreground}" 
+            BorderThickness="2" 
+            Padding="15,10"
+            CornerRadius="10">
+        
+        <Border.Effect>
+            <DropShadowEffect BlurRadius="15" ShadowDepth="3" Opacity="0.15" Color="Black"/>
+        </Border.Effect>
+        
+        <Grid>
+            <StackPanel>
+                <TextBlock Text="{Binding Title, ElementName=root}" 
+                           Foreground="{StaticResource Foreground}" 
+                           FontWeight="SemiBold" 
+                           FontSize="15" 
+                           TextWrapping="Wrap" 
+                           Margin="0,0,0,10"/>
+
+                <Border Height="3" 
+                        Background="{StaticResource Accent}" 
+                        Opacity="0.5" 
+                        Margin="0,0,0,10"/>
+
+                <TextBlock Text="{Binding Info, ElementName=root}" 
+                           Foreground="{StaticResource Foreground}" 
+                           FontWeight="Regular" 
+                           FontSize="15" 
+                           TextWrapping="Wrap"/>
+            </StackPanel>
+        </Grid>
+    </Border>
+</UserControl>
