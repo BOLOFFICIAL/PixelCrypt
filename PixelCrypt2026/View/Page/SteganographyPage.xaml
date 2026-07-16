@@ -63,8 +63,46 @@
                                           Margin="0,5,5,5">
                                         <CheckBox IsChecked="{Binding IsIndexDependence, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
                                                   VerticalAlignment="Center"
-                                                  VerticalContentAlignment="Center"
-                                                  ToolTip="Determines how data ordering is handled. If checked, no indices are assigned, meaning the data directly impacts the order. If unchecked, indices are generated and used to define the data order."/>
+                                                  VerticalContentAlignment="Center">
+
+                                            <CheckBox.ToolTip>
+                                                <ToolTip BorderThickness="0"
+                                                         Background="Transparent"
+                                                         MaxWidth="500"
+                                                         Placement="Mouse">
+                                                    <Border Background="{StaticResource Background2}" 
+                                                            BorderBrush="{StaticResource Foreground}"
+                                                            BorderThickness="2" 
+                                                            CornerRadius="10">
+
+                                                        <Border Padding="15,10">
+                                                            <StackPanel>
+                                                                <TextBlock Text="Index dependence" 
+                                                                           Foreground="{StaticResource Foreground}"
+                                                                           FontWeight="SemiBold"
+                                                                           FontSize="15"
+                                                                           TextWrapping="Wrap"
+                                                                           Margin="0,0,0,10"/>
+
+                                                                <Border Height="3" 
+                                                                        Background="{StaticResource Accent}" 
+                                                                        Opacity="0.5"
+                                                                        Margin="0,0,0,10"/>
+
+                                                                <TextBlock Foreground="{StaticResource Foreground}"
+                                                                           FontWeight="Regular"
+                                                                           FontSize="15"
+                                                                           TextWrapping="Wrap">
+                                                                    <Run Text="- If checked, no indices are assigned, meaning the data directly impacts the order."/>
+                                                                    <LineBreak/>
+                                                                    <Run Text="- If unchecked, indices are generated and used to define the data order."/>
+                                                                </TextBlock>
+                                                            </StackPanel>
+                                                        </Border>
+                                                    </Border>
+                                                </ToolTip>
+                                            </CheckBox.ToolTip>
+                                        </CheckBox>
                                     </Grid>
                                 </Grid>
                             </Border>
