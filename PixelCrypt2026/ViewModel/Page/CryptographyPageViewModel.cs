@@ -17,7 +17,6 @@ namespace PixelCrypt2026.ViewModel.Page
         private GridLength _taskControlHeight;
         private List<int> _comboBoxItem;
         private int _interference;
-        private bool _isEncrypt;
         private GridLength _widthResultImage;
         private ImageSource _resultImageSource;
 
@@ -25,6 +24,7 @@ namespace PixelCrypt2026.ViewModel.Page
         public ProgressPanelViewModel Progress { get; set; }
         public PasswordBoxViewModel PasswordBox { get; set; }
         public TaskControlViewModel TaskControl { get; set; }
+        public ModeControlViewModel ModeControl { get; set; }
 
         public GridLength SettingsHeight
         {
@@ -92,6 +92,8 @@ namespace PixelCrypt2026.ViewModel.Page
 
             TaskControl.SaveRequested += SaveCommand;
             TaskControl.CanSave += CanSave;
+
+            ModeControl = new ModeControlViewModel(new List<string>() { "Encrypt", "Decrypt" });
         }
 
         private void SelectImage()
@@ -130,7 +132,7 @@ namespace PixelCrypt2026.ViewModel.Page
         {
             if (ImageList.Images.Any(i => i.Status == StatusType.Success))
             {
-                var res = Notification.Show("Are you sure you want to clear the list?",title: "List clearing", button: NotificationButtonType.YesNo, icon: NotificationIconType.Question);
+                var res = Notification.Show("Are you sure you want to clear the list?", title: "List clearing", button: NotificationButtonType.YesNo, icon: NotificationIconType.Question);
 
                 if (res.Result != NotificationResultType.Yes)
                     return false;
@@ -161,13 +163,14 @@ namespace PixelCrypt2026.ViewModel.Page
 
                 var processResult = false;
 
-                if (_isEncrypt)
+                switch (ModeControl.SelectedMode)
                 {
-                    processResult = await Process(totalPixels, token, password, Encryption.EncryptPhoto);
-                }
-                else
-                {
-                    processResult = await Process(totalPixels, token, password, Encryption.DecryptPhoto);
+                    case 0:
+                        processResult = await Process(totalPixels, token, password, Encryption.EncryptPhoto);
+                        break;
+                    case 1:
+                        processResult = await Process(totalPixels, token, password, Encryption.DecryptPhoto);
+                        break;
                 }
 
                 if (token.IsCancellationRequested)
@@ -175,7 +178,7 @@ namespace PixelCrypt2026.ViewModel.Page
                     Notification.Show("Operation stopped", icon: NotificationIconType.Question);
                     SetToolStatus();
                 }
-                else if(processResult)
+                else if (processResult)
                 {
                     Notification.Show("Operation completed", icon: NotificationIconType.Success);
                     SetToolStatus("Completed");
@@ -245,20 +248,6 @@ namespace PixelCrypt2026.ViewModel.Page
 
         private bool StartConfirmation()
         {
-            _isEncrypt = true;
-
-            if (Notification.Show(
-                "Select operation mode",
-                actions: new List<(string, Action)>()
-                {
-                        ("Encrypt", () => {_isEncrypt = true; }),
-                        ("Decrypt",() => {_isEncrypt = false; })
-                },
-                icon: NotificationIconType.Question).Result == NotificationResultType.Cancel)
-            {
-                return false;
-            }
-
             if (ImageList.Images.Any(i => i.Status == StatusType.Success))
             {
                 var res = Notification.Show("This will reset current progress. Continue?", button: NotificationButtonType.YesNo, icon: NotificationIconType.Question);

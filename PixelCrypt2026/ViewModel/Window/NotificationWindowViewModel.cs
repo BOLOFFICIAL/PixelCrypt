@@ -50,7 +50,7 @@ namespace PixelCrypt2026.ViewModel.Window
             set => Set(ref _heightButtonCustom, value);
         }
 
-        public ObservableCollection<NotificationButton> Buttons { get; private set; } = new ObservableCollection<NotificationButton>();
+        public ObservableCollection<UIButton> Buttons { get; private set; } = new ObservableCollection<UIButton>();
 
         public NotificationWindowViewModel(Action closeAction, string content, string title, NotificationButtonType button, NotificationIconType icon)
         {
@@ -130,7 +130,7 @@ namespace PixelCrypt2026.ViewModel.Window
                     HeightButtonCustom = height;
                     foreach (var action in _actions)
                     {
-                        Buttons.Add(new NotificationButton()
+                        Buttons.Add(new UIButton()
                         {
                             Text = action.title,
                             Command = new LambdaCommand((object obj) =>

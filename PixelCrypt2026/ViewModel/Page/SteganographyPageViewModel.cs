@@ -20,6 +20,7 @@ namespace PixelCrypt2026.ViewModel.Page
         public ProgressPanelViewModel Progress { get; set; }
         public PasswordBoxViewModel PasswordBox { get; set; }
         public TaskControlViewModel TaskControl { get; set; }
+        public ModeControlViewModel ModeControl { get; set; }
 
         private GridLength _settingsHeightHeight;
         private GridLength _taskControlHeight;
@@ -27,7 +28,6 @@ namespace PixelCrypt2026.ViewModel.Page
         private string _content;
         private bool _isReadOnly;
         private bool _isEnable = true;
-        private bool _isImport;
         private bool _isIndexDependence = true;
 
         public ICommand SelectFileCommand { get; }
@@ -50,7 +50,7 @@ namespace PixelCrypt2026.ViewModel.Page
             ImageList.ConfirmationClearRequested += ClearConfirmation;
             ImageList.ConfirmationAddRequested += AddConfirmation;
             ImageList.ConfirmationRemoveRequested += RemoveConfirmation;
-            ImageList.AddRequested += UpdateImageCount; 
+            ImageList.AddRequested += UpdateImageCount;
             ImageList.ClearRequested += UpdateImageCount;
             ImageList.RemoveRequested += UpdateImageCount;
 
@@ -65,6 +65,8 @@ namespace PixelCrypt2026.ViewModel.Page
 
             TaskControl.SaveRequested += SaveCommand;
             TaskControl.CanSave += () => ImageList.Images.All(i => i.Status == StatusType.Success);
+
+            ModeControl = new ModeControlViewModel(new List<string>() { "Import", "Export" });
         }
 
         private bool RemoveConfirmation()
@@ -130,7 +132,7 @@ namespace PixelCrypt2026.ViewModel.Page
         {
             FilePath = "";
 
-            if (!string.IsNullOrEmpty(Content)) 
+            if (!string.IsNullOrEmpty(Content))
             {
                 var res = Notification.Show("Clear contents?", button: NotificationButtonType.YesNo, icon: NotificationIconType.Question);
 
@@ -159,7 +161,7 @@ namespace PixelCrypt2026.ViewModel.Page
             set => Set(ref _taskControlHeight, value);
         }
 
-        public bool IsIndexDependence 
+        public bool IsIndexDependence
         {
             get => _isIndexDependence;
             set => Set(ref _isIndexDependence, value);
@@ -198,18 +200,15 @@ namespace PixelCrypt2026.ViewModel.Page
             get => _content;
             set => Set(ref _content, value);
         }
-        
+
         public string ResultString { get; private set; }
 
         private void SaveCommand()
         {
-            if (_isImport)
+            switch (ModeControl.SelectedMode)
             {
-                SaveImport();
-            }
-            else
-            {
-                SaveExport();
+                case 0: SaveImport(); break;
+                case 1: SaveExport(); break;
             }
         }
 
@@ -226,21 +225,7 @@ namespace PixelCrypt2026.ViewModel.Page
 
         private bool StartConfirmation()
         {
-            _isImport = true;
-
-            if (Notification.Show(
-                "Select operation mode",
-                actions: new List<(string, Action)>()
-                {
-                        ("Import", () => {_isImport = true; }),
-                        ("Export",() => {_isImport = false; })
-                },
-                icon: NotificationIconType.Question).Result == NotificationResultType.Cancel)
-            {
-                return false;
-            }
-
-            if (_isImport && string.IsNullOrEmpty(Content) && string.IsNullOrEmpty(FilePath))
+            if (ModeControl.SelectedMode == 0 && string.IsNullOrEmpty(Content) && string.IsNullOrEmpty(FilePath))
             {
                 Notification.Show("No data to import", button: NotificationButtonType.Ok, icon: NotificationIconType.Error);
                 return false;
@@ -294,15 +279,20 @@ namespace PixelCrypt2026.ViewModel.Page
 
                 var hashPassword = ProgramHelper.GetHash32(PasswordBox.Password ?? "");
 
-                if (_isImport)
+                switch (ModeControl.SelectedMode)
                 {
-                    var res = await Import(totalPixels, hashPassword, token);
-                    if (!res) return;
-                }
-                else
-                {
-                    var res = await Export(totalPixels, hashPassword, token);
-                    if (!res) return;
+                    case 0:
+                        {
+                            var res = await Import(totalPixels, hashPassword, token);
+                            if (!res) return;
+                            break;
+                        }
+                    case 1:
+                        {
+                            var res = await Export(totalPixels, hashPassword, token);
+                            if (!res) return;
+                            break;
+                        }
                 }
 
                 if (token.IsCancellationRequested)
@@ -396,7 +386,8 @@ namespace PixelCrypt2026.ViewModel.Page
                 else
                 {
                     var ordered = decodedTextParts
-                        .Select(el => {
+                        .Select(el =>
+                        {
                             var parts = el.Split("[i]");
                             return parts.Length > 1 ? parts : new[] { "0", el };
                         })
