@@ -1,5 +1,6 @@
 ﻿using Microsoft.Win32;
 using PixelCrypt2026.Commands.Base;
+using PixelCrypt2026.Program.Notification;
 using PixelCrypt2026.ViewModel.Base;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -130,6 +131,8 @@ namespace PixelCrypt2026.ViewModel.UserControl
             if (result != true)
                 return;
 
+            var errorList = new List<string>();
+
             foreach (string filePath in openFileDialog.FileNames)
             {
                 bool alreadyExists = Images.Any(x => x.ImageFile.FilePath == filePath);
@@ -139,10 +142,26 @@ namespace PixelCrypt2026.ViewModel.UserControl
 
                 var newItem = new ImageChipViewModel(filePath);
 
-                TotalSize += newItem.ImageFile.ImageWidth * newItem.ImageFile.ImageHeight;
+                var volume = newItem.ImageFile.ImageWidth * newItem.ImageFile.ImageHeight;
 
-                Images.Add(newItem);
+                if (volume > 0)
+                {
+                    TotalSize += volume;
 
+                    Images.Add(newItem);
+                }
+                else 
+                {
+                    errorList.Add(newItem.ImageFile.FileName);
+                }
+            }
+
+            if (errorList.Any()) 
+            {
+                Notification.Show($"The following images are empty or corrupted and could not be added:\n• {string.Join("\n• ", errorList)}",
+                    "Adding Images", 
+                    Program.Enum.NotificationButtonType.Ok, 
+                    Program.Enum.NotificationIconType.Question);
             }
 
             SelectedImage = SelectedImage ?? Images.FirstOrDefault();

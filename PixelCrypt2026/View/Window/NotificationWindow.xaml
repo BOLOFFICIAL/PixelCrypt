@@ -7,10 +7,11 @@
         xmlns:fa="http://schemas.fontawesome.com/icons/"
         mc:Ignorable="d"
         MinWidth="250"
-        MaxWidth="300"
+        MaxWidth="400"
         SizeToContent="WidthAndHeight"
         WindowStartupLocation="CenterOwner"
         MinHeight="300"
+        MaxHeight="800"
         AllowsTransparency="True"
         WindowStyle="None"
         Background="Transparent"
@@ -76,13 +77,15 @@
 
             <Grid Grid.Row="3"
                   Margin="10,20">
-                <TextBlock Text="{Binding Content}"
-                           FontSize="15"
-                           FontWeight="Bold"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center"
-                           TextWrapping="Wrap"
-                           Foreground="{StaticResource Foreground}"/>
+                <ScrollViewer VerticalScrollBarVisibility="Hidden">
+                    <TextBlock Text="{Binding Content}"
+           FontSize="15"
+           FontWeight="Bold"
+           HorizontalAlignment="Center"
+           VerticalAlignment="Center"
+           TextWrapping="Wrap"
+           Foreground="{StaticResource Foreground}"/>
+                </ScrollViewer>
             </Grid>
 
             <Grid Grid.Row="4"

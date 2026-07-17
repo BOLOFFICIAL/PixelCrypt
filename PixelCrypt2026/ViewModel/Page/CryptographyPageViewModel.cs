@@ -159,13 +159,15 @@ namespace PixelCrypt2026.ViewModel.Page
 
                 double totalPixels = ImageList.Images.Sum(i => (double)(i.ImageFile.ImageWidth * i.ImageFile.ImageHeight));
 
+                var processResult = false;
+
                 if (_isEncrypt)
                 {
-                    await Process(totalPixels, token, password, Encryption.EncryptPhoto);
+                    processResult = await Process(totalPixels, token, password, Encryption.EncryptPhoto);
                 }
                 else
                 {
-                    await Process(totalPixels, token, password, Encryption.DecryptPhoto);
+                    processResult = await Process(totalPixels, token, password, Encryption.DecryptPhoto);
                 }
 
                 if (token.IsCancellationRequested)
@@ -173,7 +175,7 @@ namespace PixelCrypt2026.ViewModel.Page
                     Notification.Show("Operation stopped", icon: NotificationIconType.Question);
                     SetToolStatus();
                 }
-                else
+                else if(processResult)
                 {
                     Notification.Show("Operation completed", icon: NotificationIconType.Success);
                     SetToolStatus("Completed");
@@ -188,7 +190,7 @@ namespace PixelCrypt2026.ViewModel.Page
             }
         }
 
-        private async Task Process(double totalItems, CancellationToken token, string password, Func<string, string, int, Task<Bitmap>> action)
+        private async Task<bool> Process(double totalItems, CancellationToken token, string password, Func<string, string, int, Task<Bitmap>> action)
         {
             var completedImages = new List<ImageFile>();
 
@@ -227,16 +229,18 @@ namespace PixelCrypt2026.ViewModel.Page
                 catch (OperationCanceledException)
                 {
                     image.Status = StatusType.None;
-                    return;
+                    return true;
                 }
                 catch (Exception ex)
                 {
                     image.Status = StatusType.Failed;
                     SetToolStatus($"Error");
                     Notification.Show($"Error: {ex.Message}", button: NotificationButtonType.Ok, icon: NotificationIconType.Error);
-                    return;
+                    return false;
                 }
             }
+
+            return true;
         }
 
         private bool StartConfirmation()
