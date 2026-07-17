@@ -120,6 +120,8 @@ namespace PixelCrypt2026.ViewModel.Page
                 TaskControlHeight = new GridLength(0, GridUnitType.Star);
                 WidthResultImage = new GridLength(0, GridUnitType.Pixel);
             }
+
+            SetToolStatus();
         }
 
         private bool CanSave() => ImageList.Images.Any(i => i.Status == StatusType.Success);

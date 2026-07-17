@@ -561,6 +561,8 @@ namespace PixelCrypt2026.ViewModel.Page
                 SettingsHeight = new GridLength(0, GridUnitType.Star);
                 TaskControlHeight = new GridLength(0, GridUnitType.Star);
             }
+
+            SetToolStatus();
         }
 
         private void SaveImport()
