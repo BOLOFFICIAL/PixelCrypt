@@ -70,7 +70,7 @@ namespace PixelCrypt2026.ViewModel.UserControl
         {
             string activeForeground = (Application.Current.TryFindResource("Foreground") as SolidColorBrush)?.Color.ToString();
             string activeBackground = "#00000000";
-            string selectedForeground = (Application.Current.TryFindResource("Foreground") as SolidColorBrush)?.Color.ToString();
+            string selectedForeground = (Application.Current.TryFindResource("ButtonForeground") as SolidColorBrush)?.Color.ToString();
             string selectedBackground = (Application.Current.TryFindResource("Accent") as SolidColorBrush)?.Color.ToString();
 
             for (int i = 0; i < Buttons.Count; i++)
