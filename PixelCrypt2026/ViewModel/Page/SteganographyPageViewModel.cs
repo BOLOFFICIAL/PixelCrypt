@@ -174,15 +174,21 @@ namespace PixelCrypt2026.ViewModel.Page
             {
                 var isEmpty = string.IsNullOrEmpty(value);
 
-                IsReadOnly = !isEmpty;
-
-                if (!isEmpty)
+                try
                 {
-                    var content = File.ReadAllText(value);
-                    Content = content.Substring(0, Math.Min(content.Length, 10000));
-                }
+                    if (!isEmpty)
+                    {
+                        var content = File.ReadAllText(value);
+                        Content = content.Substring(0, Math.Min(content.Length, 10000));
+                    }
 
-                Set(ref _filePath, value);
+                    IsReadOnly = !isEmpty;
+                    Set(ref _filePath, value);
+                }
+                catch (Exception ex)
+                {
+                    Notification.Show($"Error: {ex.Message}", button: NotificationButtonType.Ok, icon: NotificationIconType.Error);
+                }
                 OnPropertyChanged("FileName");
             }
         }
