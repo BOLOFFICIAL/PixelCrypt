@@ -7,21 +7,261 @@
              mc:Ignorable="d"
              x:Name="root">
 
-    <Border Background="{StaticResource Background2}" 
+    <UserControl.Resources>
+        <Storyboard x:Key="ResetAnimation">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="mainBorder"
+                                           Storyboard.TargetProperty="Opacity">
+                <DiscreteDoubleKeyFrame KeyTime="0" 
+                                        Value="0"/>
+            </DoubleAnimationUsingKeyFrames>
+
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="mainScale"
+                                           Storyboard.TargetProperty="ScaleX">
+                <DiscreteDoubleKeyFrame KeyTime="0" 
+                                        Value="0.85"/>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="mainScale"
+                                           Storyboard.TargetProperty="ScaleY">
+                <DiscreteDoubleKeyFrame KeyTime="0" 
+                                        Value="0.85"/>
+            </DoubleAnimationUsingKeyFrames>
+
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="mainTranslate"
+                                           Storyboard.TargetProperty="Y">
+                <DiscreteDoubleKeyFrame KeyTime="0" 
+                                        Value="15"/>
+            </DoubleAnimationUsingKeyFrames>
+
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="leftPanel"
+                                           Storyboard.TargetProperty="Opacity">
+                <DiscreteDoubleKeyFrame KeyTime="0" 
+                                        Value="0"/>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="leftPanelTranslate"
+                                           Storyboard.TargetProperty="X">
+                <DiscreteDoubleKeyFrame KeyTime="0" 
+                                        Value="-20"/>
+            </DoubleAnimationUsingKeyFrames>
+
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="separatorScale"
+                                           Storyboard.TargetProperty="ScaleX">
+                <DiscreteDoubleKeyFrame KeyTime="0" 
+                                        Value="0"/>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="separatorBorder"
+                                           Storyboard.TargetProperty="Opacity">
+                <DiscreteDoubleKeyFrame KeyTime="0" 
+                                        Value="0"/>
+            </DoubleAnimationUsingKeyFrames>
+
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="detailsPanel"
+                                           Storyboard.TargetProperty="Opacity">
+                <DiscreteDoubleKeyFrame KeyTime="0" 
+                                        Value="0"/>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="detailsTranslate"
+                                           Storyboard.TargetProperty="Y">
+                <DiscreteDoubleKeyFrame KeyTime="0" 
+                                        Value="10"/>
+            </DoubleAnimationUsingKeyFrames>
+
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="imagePanel"
+                                           Storyboard.TargetProperty="Opacity">
+                <DiscreteDoubleKeyFrame KeyTime="0" 
+                                        Value="0"/>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="imageScale"
+                                           Storyboard.TargetProperty="ScaleX">
+                <DiscreteDoubleKeyFrame KeyTime="0" 
+                                        Value="0.85"/>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="imageScale"
+                                           Storyboard.TargetProperty="ScaleY">
+                <DiscreteDoubleKeyFrame KeyTime="0" 
+                                        Value="0.85"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+
+        <Storyboard x:Key="ShowAnimation">
+            <DoubleAnimation Storyboard.TargetName="mainBorder"
+                             Storyboard.TargetProperty="Opacity"
+                             From="0" To="1"
+                             Duration="0:0:0.5">
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+
+            <DoubleAnimation Storyboard.TargetName="mainScale"
+                             Storyboard.TargetProperty="ScaleX"
+                             From="0.85" To="1"
+                             Duration="0:0:0.5">
+                <DoubleAnimation.EasingFunction>
+                    <BackEase EasingMode="EaseOut" Amplitude="0.4"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+            <DoubleAnimation Storyboard.TargetName="mainScale"
+                             Storyboard.TargetProperty="ScaleY"
+                             From="0.85" To="1"
+                             Duration="0:0:0.5">
+                <DoubleAnimation.EasingFunction>
+                    <BackEase EasingMode="EaseOut" Amplitude="0.4"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+
+            <DoubleAnimation Storyboard.TargetName="mainTranslate"
+                             Storyboard.TargetProperty="Y"
+                             From="15" To="0"
+                             Duration="0:0:0.5">
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+
+            <DoubleAnimation Storyboard.TargetName="leftPanel"
+                             Storyboard.TargetProperty="Opacity"
+                             From="0" To="1"
+                             BeginTime="0:0:0.15"
+                             Duration="0:0:0.35">
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+            <DoubleAnimation Storyboard.TargetName="leftPanelTranslate"
+                             Storyboard.TargetProperty="X"
+                             From="-20" To="0"
+                             BeginTime="0:0:0.15"
+                             Duration="0:0:0.5">
+                <DoubleAnimation.EasingFunction>
+                    <BackEase EasingMode="EaseOut" Amplitude="0.2"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+
+            <DoubleAnimation Storyboard.TargetName="imagePanel"
+                             Storyboard.TargetProperty="Opacity"
+                             From="0" To="1"
+                             BeginTime="0:0:0.2"
+                             Duration="0:0:0.4">
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+            <DoubleAnimation Storyboard.TargetName="imageScale"
+                             Storyboard.TargetProperty="ScaleX"
+                             From="0.85" To="1"
+                             BeginTime="0:0:0.2"
+                             Duration="0:0:0.5">
+                <DoubleAnimation.EasingFunction>
+                    <BackEase EasingMode="EaseOut" Amplitude="0.4"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+            <DoubleAnimation Storyboard.TargetName="imageScale"
+                             Storyboard.TargetProperty="ScaleY"
+                             From="0.85" To="1"
+                             BeginTime="0:0:0.2"
+                             Duration="0:0:0.5">
+                <DoubleAnimation.EasingFunction>
+                    <BackEase EasingMode="EaseOut" Amplitude="0.4"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+
+            <DoubleAnimation Storyboard.TargetName="separatorScale"
+                             Storyboard.TargetProperty="ScaleX"
+                             From="0" To="1"
+                             BeginTime="0:0:0.35"
+                             Duration="0:0:0.35">
+                <DoubleAnimation.EasingFunction>
+                    <BackEase EasingMode="EaseOut" Amplitude="0.3"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+            <DoubleAnimation Storyboard.TargetName="separatorBorder"
+                             Storyboard.TargetProperty="Opacity"
+                             From="0" To="0.5"
+                             BeginTime="0:0:0.35"
+                             Duration="0:0:0.3">
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+
+            <DoubleAnimation Storyboard.TargetName="detailsPanel"
+                             Storyboard.TargetProperty="Opacity"
+                             From="0" To="1"
+                             BeginTime="0:0:0.35"
+                             Duration="0:0:0.35">
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+            <DoubleAnimation Storyboard.TargetName="detailsTranslate"
+                             Storyboard.TargetProperty="Y"
+                             From="10" To="0"
+                             BeginTime="0:0:0.35"
+                             Duration="0:0:0.5">
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
+
+        <Storyboard x:Key="FullShowAnimation">
+            <ParallelTimeline>
+                <StaticResource ResourceKey="ResetAnimation"/>
+                <ParallelTimeline BeginTime="0:0:0.05">
+                    <StaticResource ResourceKey="ShowAnimation"/>
+                </ParallelTimeline>
+            </ParallelTimeline>
+        </Storyboard>
+    </UserControl.Resources>
+
+    <UserControl.Triggers>
+        <EventTrigger RoutedEvent="Loaded">
+            <BeginStoryboard Storyboard="{StaticResource FullShowAnimation}"/>
+        </EventTrigger>
+    </UserControl.Triggers>
+
+    <Border x:Name="mainBorder"
+            Background="{StaticResource Background2}" 
             BorderBrush="{Binding Foreground, RelativeSource={RelativeSource AncestorType=mini:ImageToolTip}}" 
             BorderThickness="2" 
-            CornerRadius="10">
+            CornerRadius="10"
+            Opacity="0"
+            RenderTransformOrigin="0.5,0.5">
+
+        <Border.RenderTransform>
+            <TransformGroup>
+                <ScaleTransform x:Name="mainScale" 
+                                ScaleX="0.85" 
+                                ScaleY="0.85"/>
+                <TranslateTransform x:Name="mainTranslate" 
+                                    X="0" 
+                                    Y="15"/>
+            </TransformGroup>
+        </Border.RenderTransform>
+
         <Border.Effect>
-            <DropShadowEffect BlurRadius="15" ShadowDepth="3" Opacity="0.15" Color="Black"/>
+            <DropShadowEffect BlurRadius="15" 
+                              ShadowDepth="3" 
+                              Opacity="0.15" 
+                              Color="Black"/>
         </Border.Effect>
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" MinWidth="180"/>
+                <ColumnDefinition Width="*" 
+                                  MinWidth="180"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <Border Grid.Column="0" 
-                    Padding="15,10">
+            <Border x:Name="leftPanel"
+                    Grid.Column="0" 
+                    Padding="15,10"
+                    Opacity="0">
+                <Border.RenderTransform>
+                    <TranslateTransform x:Name="leftPanelTranslate" 
+                                        X="-20" 
+                                        Y="0"/>
+                </Border.RenderTransform>
+
                 <StackPanel>
                     <TextBlock Text="{Binding FileName, ElementName=root}" 
                                Foreground="{StaticResource Foreground}" 
@@ -30,12 +270,27 @@
                                TextWrapping="Wrap" 
                                Margin="0,0,0,10"/>
 
-                    <Border Height="3" 
+                    <Border x:Name="separatorBorder"
+                            Height="3" 
                             Background="{StaticResource Accent}" 
-                            Opacity="0.5" 
-                            Margin="0,0,0,10"/>
+                            Opacity="0" 
+                            Margin="0,0,0,10"
+                            RenderTransformOrigin="0.5,0.5">
+                        <Border.RenderTransform>
+                            <ScaleTransform x:Name="separatorScale" 
+                                            ScaleX="0" 
+                                            ScaleY="1"/>
+                        </Border.RenderTransform>
+                    </Border>
 
-                    <Grid>
+                    <Grid x:Name="detailsPanel"
+                          Opacity="0">
+                        <Grid.RenderTransform>
+                            <TranslateTransform x:Name="detailsTranslate" 
+                                                X="0" 
+                                                Y="10"/>
+                        </Grid.RenderTransform>
+
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
@@ -85,12 +340,21 @@
                 </StackPanel>
             </Border>
 
-            <Border Grid.Column="1" 
+            <Border x:Name="imagePanel"
+                    Grid.Column="1" 
                     Background="{StaticResource Background3}" 
                     CornerRadius="10" 
                     Padding="10" 
                     Margin="5" 
-                    Width="220">
+                    Width="220"
+                    Opacity="0"
+                    RenderTransformOrigin="0.5,0.5">
+                <Border.RenderTransform>
+                    <ScaleTransform x:Name="imageScale" 
+                                    ScaleX="0.85" 
+                                    ScaleY="0.85"/>
+                </Border.RenderTransform>
+
                 <Image Stretch="Uniform" 
                        MaxWidth="200" 
                        MaxHeight="400" 
