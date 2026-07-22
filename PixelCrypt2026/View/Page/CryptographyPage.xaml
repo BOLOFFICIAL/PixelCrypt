@@ -14,7 +14,7 @@
         <controls:BasePageLayout.PageContent>
             <Grid Margin="0,10,0,0">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="300"/>
+                    <ColumnDefinition Width="325"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 

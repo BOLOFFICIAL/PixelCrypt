@@ -12,7 +12,7 @@
 
     <Brush x:Key="Foreground">#EDE8E8</Brush>
 
-    <Brush x:Key="ImageChipBackground">#3B3232</Brush>
+    <Brush x:Key="ImageChipBackground">#493E3E</Brush>
     <Brush x:Key="ImageChipForeground">#EDE8E8</Brush>
 
     <Brush x:Key="ImageChipSelectedBackground">#5F1E1E</Brush>

@@ -36,82 +36,87 @@
             </Grid>
 
             <Grid Grid.Row="1">
-                <ListBox ItemsSource="{Binding Images}"
-                         Background="Transparent"
-                         BorderThickness="0"
-                         VirtualizingPanel.IsVirtualizing="True"
-                         ScrollViewer.CanContentScroll="True"
-                         ScrollViewer.VerticalScrollBarVisibility="Hidden"
-                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                         SelectedItem="{Binding SelectedImage}"
-                         Tag="{Binding}">
+                <Border Background="{StaticResource Background2}"
+                        CornerRadius="10"
+                        Padding="5,5,5,0"
+                        Margin="0,0,0,10">
+                    <ListBox ItemsSource="{Binding Images}"
+                             Background="Transparent"
+                             BorderThickness="0"
+                             VirtualizingPanel.IsVirtualizing="True"
+                             ScrollViewer.CanContentScroll="True"
+                             ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                             SelectedItem="{Binding SelectedImage}"
+                             Tag="{Binding}">
 
-                    <ListBox.ItemContainerStyle>
-                        <Style TargetType="ListBoxItem">
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="ListBoxItem">
 
-                            <Setter Property="HorizontalContentAlignment"
-                                    Value="Stretch"/>
+                                <Setter Property="HorizontalContentAlignment"
+                                        Value="Stretch"/>
 
-                            <Setter Property="Background" 
-                                    Value="Transparent"/>
-                            <Setter Property="BorderBrush" 
-                                    Value="Transparent"/>
+                                <Setter Property="Background" 
+                                        Value="Transparent"/>
+                                <Setter Property="BorderBrush" 
+                                        Value="Transparent"/>
 
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="ListBoxItem">
-                                        <Border Background="{TemplateBinding Background}"
-                                                BorderBrush="{TemplateBinding BorderBrush}"
-                                                BorderThickness="0"
-                                                Padding="0"
-                                                SnapsToDevicePixels="True">
-                                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
-                                        </Border>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="ListBoxItem">
+                                            <Border Background="{TemplateBinding Background}"
+                                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                                    BorderThickness="0"
+                                                    Padding="0"
+                                                    SnapsToDevicePixels="True">
+                                                <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                                  SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
 
-                            <Setter Property="Tag"
-                                    Value="{Binding DataContext, RelativeSource={RelativeSource AncestorType=ListBox}}"/>
+                                <Setter Property="Tag"
+                                        Value="{Binding DataContext, RelativeSource={RelativeSource AncestorType=ListBox}}"/>
 
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding Tag.IsEnable, RelativeSource={RelativeSource Self}}" 
-                                             Value="True">
-                                    <Setter Property="ContextMenu">
-                                        <Setter.Value>
-                                            <ContextMenu DataContext="{Binding PlacementTarget, RelativeSource={RelativeSource Self}}">
-                                                <MenuItem Header="Move up"
-                                                          Command="{Binding Tag.MoveUpCommand}"
-                                                          CommandParameter="{Binding DataContext}"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Tag.IsEnable, RelativeSource={RelativeSource Self}}" 
+                                                 Value="True">
+                                        <Setter Property="ContextMenu">
+                                            <Setter.Value>
+                                                <ContextMenu DataContext="{Binding PlacementTarget, RelativeSource={RelativeSource Self}}">
+                                                    <MenuItem Header="Move up"
+                                                              Command="{Binding Tag.MoveUpCommand}"
+                                                              CommandParameter="{Binding DataContext}"/>
 
-                                                <MenuItem Header="Move down"
-                                                          Command="{Binding Tag.MoveDownCommand}"
-                                                          CommandParameter="{Binding DataContext}"/>
+                                                    <MenuItem Header="Move down"
+                                                              Command="{Binding Tag.MoveDownCommand}"
+                                                              CommandParameter="{Binding DataContext}"/>
 
-                                                <MenuItem Header="Delete"
-                                                          Command="{Binding Tag.RemoveCommand}"
-                                                          CommandParameter="{Binding DataContext}"/>
+                                                    <MenuItem Header="Delete"
+                                                              Command="{Binding Tag.RemoveCommand}"
+                                                              CommandParameter="{Binding DataContext}"/>
 
-                                                <MenuItem Header="Open"
-                                                          Command="{Binding Tag.OpenOriginalCommand}"
-                                                          CommandParameter="{Binding DataContext}"/>
-                                            </ContextMenu>
-                                        </Setter.Value>
-                                    </Setter>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </ListBox.ItemContainerStyle>
+                                                    <MenuItem Header="Open"
+                                                              Command="{Binding Tag.OpenOriginalCommand}"
+                                                              CommandParameter="{Binding DataContext}"/>
+                                                </ContextMenu>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ListBox.ItemContainerStyle>
 
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <controls:ImageChip Image="{Binding}"/>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <controls:ImageChip Image="{Binding}"/>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
 
-                </ListBox>
+                    </ListBox>
+                </Border>
             </Grid>
         </Grid>
     </Border>
