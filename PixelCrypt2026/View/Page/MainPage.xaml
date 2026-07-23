@@ -4,7 +4,8 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:local="clr-namespace:PixelCrypt2026.View.Page"
-      xmlns:controls="clr-namespace:PixelCrypt2026.View.UserControl"
+      xmlns:controls="clr-namespace:PixelCrypt2026.View.UserControl" 
+      xmlns:mini="clr-namespace:PixelCrypt2026.View.UserControl.Mini"
       mc:Ignorable="d"
       d:DesignHeight="720"
       d:DesignWidth="1280">
@@ -21,6 +22,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="100"/>
                 <RowDefinition Height="*"/>
+                <RowDefinition Height="{Binding UpdateHeight}"/>
             </Grid.RowDefinitions>
 
             <Grid Grid.Row="0">
@@ -72,11 +74,28 @@
                     </ScrollViewer>
                 </Border>
             </Grid>
+
+            <Grid Grid.Row="2"
+                  Margin="0,20,0,0">
+                <Button Content="Update"
+                        Command="{Binding UpdateCommand}"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center">
+                    <Button.ToolTip>
+                        <ToolTip BorderThickness="0" 
+                                 Background="Transparent"
+                                 Placement="Mouse">
+                            <mini:InfoToolTip 
+                                Title="Update"
+                                Info="{Binding NewVersion}"/>
+                        </ToolTip>
+                    </Button.ToolTip>
+                </Button>
+            </Grid>
         </Grid>
 
         <Grid Grid.Row="2">
-            <TextBlock Text="v3.0"
-                       x:Name="Version"
+            <TextBlock Text="{Binding Version}"
                        Foreground="{StaticResource Foreground}"
                        FontSize="14"
                        Opacity="0.5"
