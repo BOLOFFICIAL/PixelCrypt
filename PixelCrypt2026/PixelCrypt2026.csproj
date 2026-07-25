@@ -7,11 +7,24 @@
 	  <ImplicitUsings>enable</ImplicitUsings>
 	  <UseWPF>true</UseWPF>
 	  <ApplicationIcon>PixelCryptLogo.ico</ApplicationIcon>
-	  <Version>3.0.0.0</Version>
+	  <Version>3.0.0.1</Version>
+	  <!-- Версия приложения: Major.Minor.Build.Revision
+	  0 — Major (главная). Меняется при кардинальных изменениях, несовместимых с прошлой версией.
+      0 — Minor (дополнительная). Меняется при добавлении нового функционала, совместимого со старой версией.
+      0 — Build (сборка). Обычно это номер коммита или количество дней с начала проекта.
+      0 — Revision (ревизия). Исправление багов в рамках текущей сборки.
+      -->
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Updater.exe" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Include="PixelCryptLogo.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Updater.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
