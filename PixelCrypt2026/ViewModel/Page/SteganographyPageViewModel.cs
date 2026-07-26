@@ -211,10 +211,43 @@ namespace PixelCrypt2026.ViewModel.Page
 
         private void SaveCommand()
         {
+            var res = new ActionResult();
+
             switch (ModeControl.SelectedMode)
             {
-                case 0: SaveImport(); break;
-                case 1: SaveExport(); break;
+                case 0:
+                    {
+                        if (ImageList.Images.Where(i => i.ImageFile.ResultImage != null).Count() == 0)
+                        {
+                            Notification.Show($"No data to save", icon: NotificationIconType.Error);
+                            return;
+                        }
+
+                        res = FileHelper.SaveBitmapToFolder(ImageList.Images.Where(i => i.ImageFile.ResultImage != null).Select(i => i.ImageFile).ToList());
+                    }
+                    break;
+                case 1:
+                    {
+                        if (ResultString.Length == 0)
+                        {
+                            Notification.Show($"No data to save", icon: NotificationIconType.Error);
+                            return;
+                        }
+
+                        res = FileHelper.SaveDataToFile($"PixelCrypt_{DateTime.Now:yyyyMMddHHmmss}", $"Files (*.txt)|*.txt", ResultString).Result;
+                    }
+                    break;
+            }
+
+            if (res.IsSuccessResult)
+            {
+                SetToolStatus();
+                Notification.Show(res.ResultMessage, button: NotificationButtonType.Ok, icon: NotificationIconType.Success);
+                ImageList.ResetImages();
+            }
+            else
+            {
+                Notification.Show(res.ResultMessage, button: NotificationButtonType.Ok, icon: NotificationIconType.Error);
             }
         }
 
@@ -562,38 +595,5 @@ namespace PixelCrypt2026.ViewModel.Page
             SetToolStatus();
         }
 
-        private void SaveImport()
-        {
-            if (ImageList.Images.Where(i => i.ImageFile.ResultImage != null).Count() == 0)
-            {
-                Notification.Show($"No data to save", icon: NotificationIconType.Error);
-                return;
-            }
-            var res = FileHelper.SaveBitmapToFolder(ImageList.Images.Where(i => i.ImageFile.ResultImage != null).Select(i => i.ImageFile).ToList());
-
-            if (res.IsSuccessResult)
-            {
-                Notification.Show(res.ResultMessage, icon: NotificationIconType.Success);
-                SetToolStatus("Saved");
-            }
-            else
-            {
-                Notification.Show(res.ResultMessage, button: NotificationButtonType.Ok, icon: NotificationIconType.Error);
-            }
-        }
-
-        private void SaveExport()
-        {
-            if (ResultString.Length == 0)
-            {
-                Notification.Show($"No data to save", icon: NotificationIconType.Error);
-                return;
-            }
-
-            FileHelper.SaveDataToFile($"PixelCrypt_{DateTime.Now:yyyyMMddHHmmss}", $"Files (*.txt)|*.txt", ResultString);
-            Notification.Show($"Data saved successfully", icon: NotificationIconType.Success);
-            SetToolStatus("Saved");
-            return;
-        }
     }
 }

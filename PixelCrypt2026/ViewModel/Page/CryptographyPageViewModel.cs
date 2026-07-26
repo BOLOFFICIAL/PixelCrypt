@@ -276,8 +276,9 @@ namespace PixelCrypt2026.ViewModel.Page
 
             if (res.IsSuccessResult)
             {
-                SetToolStatus("Saved");
-                Notification.Show(res.ResultMessage, icon: NotificationIconType.Success);
+                SetToolStatus();
+                Notification.Show(res.ResultMessage, button: NotificationButtonType.Ok, icon: NotificationIconType.Success);
+                ImageList.ResetImages();
             }
             else
             {

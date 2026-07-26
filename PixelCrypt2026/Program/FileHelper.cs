@@ -44,34 +44,67 @@ namespace PixelCrypt2026.Program
 
                     Directory.CreateDirectory(targetFolder);
 
+                    var errorList = new List<string>();
+
                     foreach (var el in imageFiles)
                     {
                         currentImage = el;
                         var baseName = Path.GetFileNameWithoutExtension(currentImage.FilePath);
-                        var name = Path.Combine(targetFolder, baseName + ".png");
+                        var name = Path.Combine(targetFolder, baseName);
 
-                        int counter = 1;
-                        while (File.Exists(name))
+                        try
                         {
-                            name = Path.Combine(targetFolder, $"{baseName}_({counter}).png");
-                            counter++;
-                        }
+                            int counter = 1;
+                            while (File.Exists(name))
+                            {
+                                name = Path.Combine(targetFolder, $"{baseName}_({counter}).png");
+                                counter++;
+                            }
 
-                        el.ResultImage.Save(name, ImageFormat.Png);
+                            el.ResultImage.Save(name, ImageFormat.Png);
+                        }
+                        catch (Exception ex)
+                        {
+                            errorList.Add($"Error in saving {baseName}: {ex.Message}");
+                        }
                     }
 
-                    return new ActionResult()
+                    if (errorList.Any())
                     {
-                        IsSuccessResult = true,
-                        ResultMessage = $"Successfully saved to folder {newFolderName}",
-                        ResultTitle = title,
-                    };
+                        if (errorList.Count == imageFiles.Count)
+                        {
+                            return new ActionResult()
+                            {
+                                IsSuccessResult = false,
+                                ResultMessage = $"Errors occurred when saving all the images:\n\n{string.Join("\n", errorList)}",
+                                ResultTitle = title,
+                            };
+                        }
+                        else 
+                        {
+                            return new ActionResult()
+                            {
+                                IsSuccessResult = true,
+                                ResultMessage = $"Some images were not saved due to errors:\n\n{string.Join("\n", errorList)}",
+                                ResultTitle = title,
+                            };
+                        }
+                    }
+                    else 
+                    {
+                        return new ActionResult()
+                        {
+                            IsSuccessResult = true,
+                            ResultMessage = $"Successfully saved to folder {newFolderName}",
+                            ResultTitle = title,
+                        };
+                    }
                 }
 
                 return new ActionResult()
                 {
                     IsSuccessResult = false,
-                    ResultMessage = "Data not saved",
+                    ResultMessage = "Canceling data saving",
                     ResultTitle = title,
                 };
             }
@@ -128,7 +161,7 @@ namespace PixelCrypt2026.Program
                     Result = new ActionResult()
                     {
                         IsSuccessResult = false,
-                        ResultMessage = $"Data not saved",
+                        ResultMessage = "Canceling data saving",
                         ResultTitle = title,
                     },
                     FilePath = "",

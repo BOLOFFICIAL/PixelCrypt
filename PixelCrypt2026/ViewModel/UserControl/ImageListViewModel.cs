@@ -144,10 +144,9 @@ namespace PixelCrypt2026.ViewModel.UserControl
 
                 var volume = newItem.ImageFile.ImageWidth * newItem.ImageFile.ImageHeight;
 
-                if (volume > 0)
+                if (volume > 0 && filePath.Length < 236)
                 {
                     TotalSize += volume;
-
                     Images.Add(newItem);
                 }
                 else 
@@ -158,7 +157,7 @@ namespace PixelCrypt2026.ViewModel.UserControl
 
             if (errorList.Any()) 
             {
-                Notification.Show($"The following images are empty or corrupted and could not be added:\n• {string.Join("\n• ", errorList)}",
+                Notification.Show($"The following images are empty or incorrect and could not be added:\n• {string.Join("\n• ", errorList)}",
                     "Adding Images", 
                     Program.Enum.NotificationButtonType.Ok, 
                     Program.Enum.NotificationIconType.Question);
