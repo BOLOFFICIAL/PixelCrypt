@@ -50,7 +50,7 @@ namespace PixelCrypt2026.Program
                     {
                         currentImage = el;
                         var baseName = Path.GetFileNameWithoutExtension(currentImage.FilePath);
-                        var name = Path.Combine(targetFolder, baseName);
+                        var name = Path.Combine(targetFolder, baseName + ".png");
 
                         try
                         {
