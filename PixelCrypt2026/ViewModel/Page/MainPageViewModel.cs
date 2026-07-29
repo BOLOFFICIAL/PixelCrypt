@@ -30,7 +30,7 @@ namespace PixelCrypt2026.ViewModel.Page
 
             UpdateCommand = new LambdaCommand(OnUpdate);
 
-            _backgroundUpdater = new Updater("BOLOFFICIAL", "Releases", "PixelCrypt/PixelCrypt2026", Version);
+            _backgroundUpdater = new Updater("BOLOFFICIAL", "Releases", "PixelCrypt2026", Version);
             _backgroundUpdater.UpdateFound += (sender, e) => ShowUpdate(e);
             _backgroundUpdater.Start();
 
