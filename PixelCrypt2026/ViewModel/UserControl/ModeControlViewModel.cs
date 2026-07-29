@@ -22,12 +22,12 @@ namespace PixelCrypt2026.ViewModel.UserControl
                 UpdateButtonsState();
             }
         }
-        
-        public ModeControlViewModel(List<string> modes) 
+
+        public ModeControlViewModel(List<string> modes)
         {
             var mds = new List<(string title, Action action)>();
 
-            foreach (var mode in modes) 
+            foreach (var mode in modes)
             {
                 mds.Add((mode, null));
             }
@@ -40,7 +40,7 @@ namespace PixelCrypt2026.ViewModel.UserControl
             InitializeModes(modes);
         }
 
-        private void InitializeModes(List<(string title, Action action)> modes) 
+        private void InitializeModes(List<(string title, Action action)> modes)
         {
             int index = 0;
 

@@ -1,6 +1,5 @@
 ﻿using PixelCrypt2026.ViewModel.Base;
 using System.Windows.Input;
-using System.Windows.Media;
 
 namespace PixelCrypt2026.Model
 {

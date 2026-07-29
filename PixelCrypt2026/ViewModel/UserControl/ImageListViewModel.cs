@@ -149,17 +149,17 @@ namespace PixelCrypt2026.ViewModel.UserControl
                     TotalSize += volume;
                     Images.Add(newItem);
                 }
-                else 
+                else
                 {
                     errorList.Add(newItem.ImageFile.FileName);
                 }
             }
 
-            if (errorList.Any()) 
+            if (errorList.Any())
             {
                 Notification.Show($"The following images are empty or incorrect and could not be added:\n• {string.Join("\n• ", errorList)}",
-                    "Adding Images", 
-                    Program.Enum.NotificationButtonType.Ok, 
+                    "Adding Images",
+                    Program.Enum.NotificationButtonType.Ok,
                     Program.Enum.NotificationIconType.Question);
             }
 

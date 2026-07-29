@@ -80,7 +80,7 @@ namespace PixelCrypt2026.Program
                                 ResultTitle = title,
                             };
                         }
-                        else 
+                        else
                         {
                             return new ActionResult()
                             {
@@ -90,7 +90,7 @@ namespace PixelCrypt2026.Program
                             };
                         }
                     }
-                    else 
+                    else
                     {
                         return new ActionResult()
                         {
