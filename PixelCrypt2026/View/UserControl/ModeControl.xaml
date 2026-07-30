@@ -7,7 +7,7 @@
              mc:Ignorable="d">
     <Border Background="{StaticResource Background1}" 
             Padding="15"
-            CornerRadius="15">
+            CornerRadius="10">
 
         <ItemsControl ItemsSource="{Binding Buttons}"
                       HorizontalAlignment="Stretch">
