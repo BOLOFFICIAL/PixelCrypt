@@ -5,6 +5,7 @@ using PixelCrypt2026.Program;
 using PixelCrypt2026.Program.Enum;
 using PixelCrypt2026.Program.Notification;
 using PixelCrypt2026.Program.Service;
+using PixelCrypt2026.View.UserControl;
 using PixelCrypt2026.ViewModel.Base;
 using PixelCrypt2026.ViewModel.UserControl;
 using System.IO;
@@ -135,6 +136,7 @@ namespace PixelCrypt2026.ViewModel.Page
 
                 FilePath = openFileDialog.FileName;
                 ImageList.ResetImages();
+                SetToolStatus();
             }
         }
 
@@ -251,9 +253,9 @@ namespace PixelCrypt2026.ViewModel.Page
 
             if (res.IsSuccessResult)
             {
-                SetToolStatus();
                 Notification.Show(res.ResultMessage, button: NotificationButtonType.Ok, icon: NotificationIconType.Success);
                 ImageList.ResetImages();
+                SetToolStatus();
             }
             else
             {
@@ -318,6 +320,7 @@ namespace PixelCrypt2026.ViewModel.Page
 
                 SettingsHeight = new GridLength(0, GridUnitType.Star);
 
+                ImageList.ResetImages();
                 SetToolStatus("In progress");
 
                 Progress.StartTimer();
@@ -371,8 +374,6 @@ namespace PixelCrypt2026.ViewModel.Page
             var extractedBinaryParts = new List<string>();
             var successfullyProcessedImages = new List<ImageFile>();
 
-            ImageList.ResetImages();
-
             foreach (var imageItem in ImageList.Images)
             {
                 try
@@ -402,8 +403,8 @@ namespace PixelCrypt2026.ViewModel.Page
                 {
                     imageItem.Status = StatusType.None;
                     Notification.Show("Operation stopped", icon: NotificationIconType.Question);
-                    SetToolStatus();
                     ImageList.ResetImages();
+                    SetToolStatus();
                     return false;
                 }
                 catch (Exception ex)
@@ -541,8 +542,6 @@ namespace PixelCrypt2026.ViewModel.Page
                 return false;
             }
 
-            ImageList.ResetImages();
-
             for (int i = 0; i < ImageList.Images.Count; i++)
             {
                 try
@@ -575,8 +574,8 @@ namespace PixelCrypt2026.ViewModel.Page
                 {
                     ImageList.Images[i].Status = StatusType.None;
                     Notification.Show("Operation stopped", icon: NotificationIconType.Question);
-                    SetToolStatus();
                     ImageList.ResetImages();
+                    SetToolStatus();
                     return false;
                 }
                 catch (Exception ex)

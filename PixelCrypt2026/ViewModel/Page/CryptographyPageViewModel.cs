@@ -149,14 +149,13 @@ namespace PixelCrypt2026.ViewModel.Page
             ImageList.IsEnable = false;
             SettingsHeight = new GridLength(0, GridUnitType.Star);
 
+            ImageList.ResetImages();
             SetToolStatus("In progress");
 
             Progress.StartTimer();
 
             try
             {
-                ImageList.ResetImages();
-
                 var password = ProgramHelper.GetHash32(PasswordBox.Password ?? "");
 
                 double totalPixels = ImageList.Images.Sum(i => (double)(i.ImageFile.ImageWidth * i.ImageFile.ImageHeight));
@@ -276,9 +275,9 @@ namespace PixelCrypt2026.ViewModel.Page
 
             if (res.IsSuccessResult)
             {
-                SetToolStatus();
                 Notification.Show(res.ResultMessage, button: NotificationButtonType.Ok, icon: NotificationIconType.Success);
                 ImageList.ResetImages();
+                SetToolStatus();
             }
             else
             {
