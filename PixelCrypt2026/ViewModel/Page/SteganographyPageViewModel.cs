@@ -119,12 +119,22 @@ namespace PixelCrypt2026.ViewModel.Page
             {
                 if (!string.IsNullOrEmpty(Content))
                 {
-                    var res = Notification.Show("This will replace the text with the file content. Continue?", button: NotificationButtonType.YesNo, icon: NotificationIconType.Question);
+                    var message = "This will replace the text with the file content";
+
+                    if (ImageList.Images.All(i => i.Status == StatusType.Success))
+                    {
+                        message += " and reset current progress";
+                    }
+
+                    message += ". Continue?";
+
+                    var res = Notification.Show(message, button: NotificationButtonType.YesNo, icon: NotificationIconType.Question);
 
                     if (res.Result != NotificationResultType.Yes) return;
                 }
 
                 FilePath = openFileDialog.FileName;
+                ImageList.ResetImages();
             }
         }
 
@@ -472,6 +482,7 @@ namespace PixelCrypt2026.ViewModel.Page
                 else
                 {
                     Content = Encryption.DecryptText(finalDataString, passwordHash);
+                    FilePath = "";
                     ResultString = Content;
                 }
             }
