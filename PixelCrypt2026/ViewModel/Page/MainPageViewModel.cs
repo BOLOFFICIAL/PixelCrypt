@@ -30,7 +30,7 @@ namespace PixelCrypt2026.ViewModel.Page
 
             UpdateCommand = new LambdaCommand(OnUpdate);
 
-            _backgroundUpdater = new Updater("BOLOFFICIAL", "Releases", "PixelCrypt2026", Version);
+            _backgroundUpdater = new Updater("BOLOFFICIAL", "PixelCrypt", Version);
             _backgroundUpdater.UpdateFound += (sender, e) => ShowUpdate(e);
             _backgroundUpdater.Start();
 
@@ -64,7 +64,7 @@ namespace PixelCrypt2026.ViewModel.Page
         private void OnUpdate(object obj)
         {
             var res = Notification.Show(
-                $"Update to version {_backgroundUpdater.NewVersion} now?",
+                $"Update to version {_backgroundUpdater.LatestRelease.Name} now?",
                 button: Program.Enum.NotificationButtonType.YesNo,
                 icon: Program.Enum.NotificationIconType.Question);
 
@@ -80,10 +80,10 @@ namespace PixelCrypt2026.ViewModel.Page
             Application.Current.Shutdown();
         }
 
-        private void ShowUpdate(string newVersion)
+        private void ShowUpdate(UpdateFoundEventArgs release)
         {
             UpdateHeight = new GridLength(1, GridUnitType.Auto);
-            NewVersion = $"A new version is available: {newVersion}";
+            NewVersion = $"A new version is available: {release.Release.Name}";
         }
 
         public string Version => FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion;
