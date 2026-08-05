@@ -93,6 +93,8 @@ namespace PixelCrypt2026.ViewModel.Page
             TaskControl.SaveRequested += SaveCommand;
             TaskControl.CanSave += CanSave;
 
+            TaskControl.CopyRequested += CopyCommand;
+
             ModeControl = new ModeControlViewModel(new List<string>() { "Encrypt", "Decrypt" });
         }
 
@@ -283,6 +285,12 @@ namespace PixelCrypt2026.ViewModel.Page
             {
                 Notification.Show(res.ResultMessage, button: NotificationButtonType.Ok, icon: NotificationIconType.Error);
             }
+        }
+
+        private void CopyCommand() 
+        {
+            ProgramHelper.CopyBitmapsToClipboard(ImageList.Images.Where(i => i.ImageFile.ResultImage != null).Select(i => i.ImageFile.ResultImage).ToList());
+            Notification.Show("Images copied", icon: NotificationIconType.Success);
         }
     }
 }

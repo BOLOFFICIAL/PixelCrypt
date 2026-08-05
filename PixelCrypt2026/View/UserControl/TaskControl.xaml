@@ -3,32 +3,46 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:PixelCrypt2026.View.UserControl">
-    <!--<Border Background="{StaticResource Background1}"
-            Padding="5"
-            CornerRadius="10">-->
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="{Binding WidthStart}"/>
-                <ColumnDefinition Width="{Binding WidthStop}"/>
-                <ColumnDefinition Width="{Binding WidthSave}"/>
-            </Grid.ColumnDefinitions>
+             xmlns:local="clr-namespace:PixelCrypt2026.View.UserControl" 
+             xmlns:fa="http://schemas.fontawesome.com/icons/">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="{Binding WidthStart}"/>
+            <ColumnDefinition Width="{Binding WidthStop}"/>
+            <ColumnDefinition Width="{Binding WidthSave}"/>
+        </Grid.ColumnDefinitions>
 
-            <Button Grid.Column="0"
+        <Button Grid.Column="0"
                     Content="Execute"
                     Command="{Binding StartCommand}"
                     Padding="10,5"/>
 
-            <Button Grid.Column="1"
+        <Button Grid.Column="1"
                     Content="Stop"
                     Command="{Binding StopCommand}"
                     Padding="10,5"/>
 
-            <Button Grid.Column="2"
+        <Grid Grid.Column="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+            
+            <Button Grid.Column="0"
                     Margin="5,0,0,0"
                     Content="Save"
                     Command="{Binding SaveCommand}"
                     Padding="10,5"/>
+
+            <Button Grid.Column="1"
+                    Margin="5,0,0,0"
+                    Command="{Binding CopyCommand}"
+                    Width="35"
+                    Padding="0,0">
+                <fa:ImageAwesome Icon="Solid_Copy"
+                                 Foreground="{StaticResource Foreground}"
+                                 Height="20"/>
+            </Button>
         </Grid>
-    <!--</Border>-->
+    </Grid>
 </UserControl>

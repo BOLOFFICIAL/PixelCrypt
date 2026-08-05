@@ -5,7 +5,6 @@ using PixelCrypt2026.Program;
 using PixelCrypt2026.Program.Enum;
 using PixelCrypt2026.Program.Notification;
 using PixelCrypt2026.Program.Service;
-using PixelCrypt2026.View.UserControl;
 using PixelCrypt2026.ViewModel.Base;
 using PixelCrypt2026.ViewModel.UserControl;
 using System.IO;
@@ -66,6 +65,8 @@ namespace PixelCrypt2026.ViewModel.Page
 
             TaskControl.SaveRequested += SaveCommand;
             TaskControl.CanSave += () => ImageList.Images.All(i => i.Status == StatusType.Success);
+
+            TaskControl.CopyRequested += CopyCommand;
 
             ModeControl = new ModeControlViewModel(new List<string>() { "Import", "Export" });
         }
@@ -260,6 +261,25 @@ namespace PixelCrypt2026.ViewModel.Page
             else
             {
                 Notification.Show(res.ResultMessage, button: NotificationButtonType.Ok, icon: NotificationIconType.Error);
+            }
+        }
+
+        private void CopyCommand()
+        {
+            switch (ModeControl.SelectedMode)
+            {
+                case 0:
+                    {
+                        ProgramHelper.CopyBitmapsToClipboard(ImageList.Images.Where(i => i.ImageFile.ResultImage != null).Select(i => i.ImageFile.ResultImage).ToList());
+                        Notification.Show("Images copied", icon: NotificationIconType.Success);
+                    }
+                    break;
+                case 1:
+                    {
+                        ProgramHelper.CopyText(ResultString);
+                        Notification.Show("Data copied", icon: NotificationIconType.Success);
+                    }
+                    break;
             }
         }
 

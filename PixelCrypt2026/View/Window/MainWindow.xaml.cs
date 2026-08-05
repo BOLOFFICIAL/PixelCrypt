@@ -1,4 +1,5 @@
-﻿using PixelCrypt2026.Program.Notification;
+﻿using PixelCrypt2026.Program;
+using PixelCrypt2026.Program.Notification;
 using PixelCrypt2026.Program.Service;
 using PixelCrypt2026.View.Page;
 using PixelCrypt2026.ViewModel.Page;
@@ -19,6 +20,8 @@ namespace PixelCrypt2026.View.Window
 
             Instance = this;
 
+            ProgramHelper.CleanupTempFiles();
+
             var navigation = new NavigationService(MainFrame);
 
             navigation.Register<MainPageViewModel>(new MainPage(navigation));
@@ -35,6 +38,9 @@ namespace PixelCrypt2026.View.Window
                 icon: Program.Enum.NotificationIconType.Question);
 
             e.Cancel = res.Result != Program.Enum.NotificationResultType.Yes;
+
+            if (res.Result == Program.Enum.NotificationResultType.Yes)
+                ProgramHelper.CleanupTempFiles();
 
             base.OnClosing(e);
         }

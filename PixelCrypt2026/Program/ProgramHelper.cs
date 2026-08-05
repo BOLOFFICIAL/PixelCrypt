@@ -1,5 +1,9 @@
-﻿using System.Security.Cryptography;
+﻿using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
+using System.Security.Cryptography;
 using System.Text;
+using System.Windows;
 
 namespace PixelCrypt2026.Program
 {
@@ -75,6 +79,49 @@ namespace PixelCrypt2026.Program
             }
 
             return result;
+        }
+
+        public static void CopyText(string text)
+        {
+            Clipboard.SetText(text ?? string.Empty);
+        }
+
+        public static void CopyBitmapsToClipboard(List<Bitmap> bitmaps)
+        {
+            if (bitmaps == null || bitmaps.Count == 0) return;
+
+            string tempDir = Path.Combine(Path.GetTempPath(), "PixelCrypt", "TmpBitmaps_" + Guid.NewGuid());
+            Directory.CreateDirectory(tempDir);
+
+            var filePaths = new List<string>();
+            string timeStamp = DateTime.Now.ToString("yyyyMMddHHmmss");
+
+            for (int i = 0; i < bitmaps.Count; i++)
+            {
+                try
+                {
+                    string fileName = $"PixelCrypt_{timeStamp}_{i + 1}.png";
+                    string fullPath = Path.Combine(tempDir, fileName);
+                    bitmaps[i].Save(fullPath, ImageFormat.Png);
+                    filePaths.Add(fullPath);
+                }
+                catch
+                {
+                    continue; // Игнорируем ошибки при сохранении отдельных изображений
+                }
+            }
+
+            var pathsCollection = new System.Collections.Specialized.StringCollection();
+            pathsCollection.AddRange(filePaths.ToArray());
+            Clipboard.SetFileDropList(pathsCollection);
+        }
+
+        public static void CleanupTempFiles()
+        {
+            string tempDir = Path.Combine(Path.GetTempPath(), "PixelCrypt");
+
+            if (Directory.Exists(tempDir))
+                Directory.Delete(tempDir, true);
         }
     }
 }

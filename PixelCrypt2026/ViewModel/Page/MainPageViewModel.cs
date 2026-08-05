@@ -80,10 +80,10 @@ namespace PixelCrypt2026.ViewModel.Page
             Application.Current.Shutdown();
         }
 
-        private void ShowUpdate(UpdateFoundEventArgs release)
+        private void ShowUpdate(GitHubRelease release)
         {
             UpdateHeight = new GridLength(1, GridUnitType.Auto);
-            NewVersion = $"A new version is available: {release.Release.Name}";
+            NewVersion = $"A new version is available: {release.TagName}";
         }
 
         public string Version => FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion;

@@ -18,6 +18,7 @@ namespace PixelCrypt2026.ViewModel.UserControl
         public event Action StartRequested;
         public event Action StopRequested;
         public event Action SaveRequested;
+        public event Action CopyRequested;
         public event Func<bool> ConfirmationStartRequested;
         public event Func<bool> ConfirmationStopRequested;
         public event Func<bool> ConfirmationSaveRequested;
@@ -25,6 +26,7 @@ namespace PixelCrypt2026.ViewModel.UserControl
         public ICommand StartCommand { get; }
         public ICommand StopCommand { get; }
         public ICommand SaveCommand { get; }
+        public ICommand CopyCommand { get; }
 
         public CancellationTokenSource CancellationTokenSource { get; private set; }
 
@@ -51,6 +53,7 @@ namespace PixelCrypt2026.ViewModel.UserControl
             StartCommand = new LambdaCommand(OnStartExecute, OnCanStart);
             StopCommand = new LambdaCommand(OnStopExecute, OnCanStop);
             SaveCommand = new LambdaCommand(OnSaveExecute, OnCanSave);
+            CopyCommand = new LambdaCommand(OnCopyExecute);
 
             _isProcessing = false;
         }
@@ -90,6 +93,11 @@ namespace PixelCrypt2026.ViewModel.UserControl
                 return;
 
             SaveRequested?.Invoke();
+        }
+
+        private void OnCopyExecute(object parameter)
+        {
+            CopyRequested?.Invoke();
         }
 
         private bool OnCanStart(object parameter)
