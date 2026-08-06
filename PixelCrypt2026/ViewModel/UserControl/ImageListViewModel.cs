@@ -51,9 +51,10 @@ namespace PixelCrypt2026.ViewModel.UserControl
         public ObservableCollection<ImageChipViewModel> Images { get; }
         public long TotalSize = 0;
 
-        public ICommand AddImageCommand { get; set; }
-        public ICommand ClearImagesCommand { get; set; }
+        public ICommand AddImageCommand { get; }
+        public ICommand ClearImagesCommand { get; }
         public ICommand PasteImagesCommand { get; }
+        public ICommand DropCommand { get;}
 
         public ICommand MoveUpCommand { get; }
         public ICommand MoveDownCommand { get; }
@@ -67,11 +68,23 @@ namespace PixelCrypt2026.ViewModel.UserControl
             AddImageCommand = new LambdaCommand(AddImage);
             ClearImagesCommand = new LambdaCommand(ClearImages, CanClearImages);
             PasteImagesCommand = new LambdaCommand(PasteImages);
+            DropCommand = new LambdaCommand(DropImages);
 
             MoveUpCommand = new LambdaCommand(OnMoveUp, OnCanMoveUp);
             MoveDownCommand = new LambdaCommand(OnMoveDown, OnCanMoveDown);
             RemoveCommand = new LambdaCommand(OnRemove, OnCanRemove);
             OpenOriginalCommand = new LambdaCommand(OnOpenOriginal, OnCanOpenOriginal);
+        }
+
+        private void DropImages(object obj)
+        {
+            var e = obj as DragEventArgs;
+
+            if (e is null || !e.Data.GetDataPresent(DataFormats.FileDrop) || !IsEnable) return;
+
+            var files = (string[])e.Data.GetData(DataFormats.FileDrop);
+
+            AddImageFiles(files);
         }
 
         public GridLength HeightButtons
@@ -149,6 +162,13 @@ namespace PixelCrypt2026.ViewModel.UserControl
 
             foreach (string filePath in fileNames)
             {
+                if (Path.GetExtension(filePath) == "")
+                {
+                    AddImageFiles(Directory.GetFiles(filePath)
+                        .Where(f => _validExtension.Contains(Path.GetExtension(f)))
+                        .ToArray());
+                }
+
                 bool alreadyExists = Images.Any(x => x.ImageFile.FilePath == filePath);
 
                 if (alreadyExists || !File.Exists(filePath) || !_validExtension.Contains(Path.GetExtension(filePath)))
