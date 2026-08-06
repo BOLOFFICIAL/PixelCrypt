@@ -1,9 +1,12 @@
 ﻿using Microsoft.Win32;
 using PixelCrypt2026.Commands.Base;
+using PixelCrypt2026.Program;
 using PixelCrypt2026.Program.Notification;
 using PixelCrypt2026.ViewModel.Base;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Windows;
 using System.Windows.Input;
 
@@ -16,6 +19,8 @@ namespace PixelCrypt2026.ViewModel.UserControl
         private GridLength _heightButtons;
         private GridLength _widthAdd;
         private GridLength _widthClear;
+
+        private readonly List<string> _validExtension = new List<string>() { ".png", ".jpg", ".jpeg", ".bmp" };
 
         public event Func<bool> CanAdd;
         public event Func<bool> CanClear;
@@ -48,6 +53,7 @@ namespace PixelCrypt2026.ViewModel.UserControl
 
         public ICommand AddImageCommand { get; set; }
         public ICommand ClearImagesCommand { get; set; }
+        public ICommand PasteImagesCommand { get; }
 
         public ICommand MoveUpCommand { get; }
         public ICommand MoveDownCommand { get; }
@@ -60,6 +66,7 @@ namespace PixelCrypt2026.ViewModel.UserControl
 
             AddImageCommand = new LambdaCommand(AddImage);
             ClearImagesCommand = new LambdaCommand(ClearImages, CanClearImages);
+            PasteImagesCommand = new LambdaCommand(PasteImages);
 
             MoveUpCommand = new LambdaCommand(OnMoveUp, OnCanMoveUp);
             MoveDownCommand = new LambdaCommand(OnMoveDown, OnCanMoveDown);
@@ -119,10 +126,12 @@ namespace PixelCrypt2026.ViewModel.UserControl
             if ((!ConfirmationAddRequested?.Invoke()) ?? false)
                 return;
 
+            var filter = string.Join(";", _validExtension.Select(extension => $"*{extension}"));
+
             OpenFileDialog openFileDialog = new OpenFileDialog()
             {
                 Title = "Select an image",
-                Filter = "Image (*.png;*.jpg;*.jpeg;*.bmp)|*.png;*.jpg;*.jpeg;*.bmp",
+                Filter = $"Image ({filter})|{filter}",
                 Multiselect = true,
             };
 
@@ -131,13 +140,18 @@ namespace PixelCrypt2026.ViewModel.UserControl
             if (result != true)
                 return;
 
+            AddImageFiles(openFileDialog.FileNames);
+        }
+
+        private void AddImageFiles(string[] fileNames)
+        {
             var errorList = new List<string>();
 
-            foreach (string filePath in openFileDialog.FileNames)
+            foreach (string filePath in fileNames)
             {
                 bool alreadyExists = Images.Any(x => x.ImageFile.FilePath == filePath);
 
-                if (alreadyExists)
+                if (alreadyExists || !File.Exists(filePath) || !_validExtension.Contains(Path.GetExtension(filePath)))
                     continue;
 
                 var newItem = new ImageChipViewModel(filePath);
@@ -188,6 +202,47 @@ namespace PixelCrypt2026.ViewModel.UserControl
             WidthClear = new GridLength(res ? 1 : 0, GridUnitType.Star);
 
             return res;
+        }
+
+        private void PasteImages(object p)
+        {
+            if ((!ConfirmationAddRequested?.Invoke()) ?? false)
+                return;
+
+            var fileDropList = Clipboard.GetFileDropList();
+
+            if (fileDropList != null && fileDropList.Count > 0)
+            {
+                AddImageFiles(fileDropList.Cast<string>().ToArray());
+                return;
+            }
+
+            if (System.Windows.Forms.Clipboard.ContainsImage())
+            {
+                using var image = System.Windows.Forms.Clipboard.GetImage();
+
+                if (image == null)
+                    return;
+
+                var tempDir = Path.Combine(
+                    Path.GetTempPath(),
+                    "PixelCrypt");
+
+                if (!Directory.Exists(tempDir))
+                    Directory.CreateDirectory(tempDir);
+
+                var hash = ProgramHelper.GetHash32(ProgramHelper.GetSha256(image));
+
+                var tempPath = Path.Combine(tempDir, $"pasted_{hash}.png");
+
+                if (!File.Exists(tempPath))
+                    image.Save(tempPath, ImageFormat.Png);
+
+                AddImageFiles(new[] { tempPath });
+                return;
+            }
+
+            AddImage(null);
         }
 
         private void OnMoveUp(object p)

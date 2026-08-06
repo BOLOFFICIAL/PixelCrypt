@@ -1,6 +1,8 @@
 ﻿using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
 using System.Windows;
@@ -16,6 +18,53 @@ namespace PixelCrypt2026.Program
             byte[] inputBytes = Encoding.ASCII.GetBytes(input);
             byte[] hash = MD5Hash.ComputeHash(inputBytes);
             return output = Convert.ToHexString(hash);
+        }
+
+        public static string GetSha256(Image image)
+        {
+            if (image == null) return null;
+
+            int width = image.Width;
+            int height = image.Height;
+            int bytesPerPixel = 4;
+            int rowSize = checked(width * bytesPerPixel);
+
+            using var bitmap = new Bitmap(width, height, PixelFormat.Format32bppArgb);
+
+            using (var graphics = Graphics.FromImage(bitmap))
+            {
+                graphics.Clear(Color.Transparent);
+                graphics.CompositingMode = CompositingMode.SourceCopy;
+                graphics.DrawImage(
+                    image,
+                    new Rectangle(0, 0, width, height));
+            }
+
+            var rectangle = new Rectangle(0, 0, width, height);
+
+            BitmapData bitmapData = bitmap.LockBits(rectangle, ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+
+            try
+            {
+                byte[] data = new byte[checked(8 + rowSize * height)];
+
+                Buffer.BlockCopy(BitConverter.GetBytes(width), 0, data, 0, 4);
+
+                Buffer.BlockCopy(BitConverter.GetBytes(height), 0, data, 4, 4);
+
+                for (int y = 0; y < height; y++)
+                {
+                    IntPtr rowAddress = IntPtr.Add(bitmapData.Scan0, y * bitmapData.Stride);
+                    Marshal.Copy(rowAddress, data, 8 + y * rowSize, rowSize);
+                }
+
+                byte[] hash = SHA256.HashData(data);
+                return Convert.ToHexString(hash);
+            }
+            finally
+            {
+                bitmap.UnlockBits(bitmapData);
+            }
         }
 
         public static List<string> SplitString(string str, int partsCount)
@@ -91,7 +140,9 @@ namespace PixelCrypt2026.Program
             if (bitmaps == null || bitmaps.Count == 0) return;
 
             string tempDir = Path.Combine(Path.GetTempPath(), "PixelCrypt", "TmpBitmaps_" + Guid.NewGuid());
-            Directory.CreateDirectory(tempDir);
+
+            if (!Directory.Exists(tempDir))
+                Directory.CreateDirectory(tempDir);
 
             var filePaths = new List<string>();
             string timeStamp = DateTime.Now.ToString("yyyyMMddHHmmss");
@@ -120,8 +171,20 @@ namespace PixelCrypt2026.Program
         {
             string tempDir = Path.Combine(Path.GetTempPath(), "PixelCrypt");
 
-            if (Directory.Exists(tempDir))
+            if (!Directory.Exists(tempDir)) return;
+
+            try
+            {
+                var files = Directory.GetFiles(tempDir, "*.*", SearchOption.AllDirectories);
+                foreach (var file in files)
+                {
+                    try { File.Delete(file); }
+                    catch (Exception) { continue; }
+                }
                 Directory.Delete(tempDir, true);
+            }
+            catch (Exception ex) { }
         }
+
     }
 }

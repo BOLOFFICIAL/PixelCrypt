@@ -50,6 +50,27 @@
                              SelectedItem="{Binding SelectedImage}"
                              Tag="{Binding}">
 
+                        <ListBox.Style>
+                            <Style TargetType="ListBox">
+                                <Setter Property="ContextMenu" Value="{x:Null}" />
+
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Tag.IsEnable, RelativeSource={RelativeSource Self}}" 
+                                                 Value="True">
+                                        <Setter Property="ContextMenu">
+                                            <Setter.Value>
+                                                <ContextMenu DataContext="{Binding PlacementTarget.DataContext,
+                                                               RelativeSource={RelativeSource Self}}">
+                                                    <MenuItem Header="Paste" 
+                                                              Command="{Binding PasteImagesCommand}" />
+                                                </ContextMenu>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ListBox.Style>
+
                         <ListBox.ItemContainerStyle>
                             <Style TargetType="ListBoxItem">
 
