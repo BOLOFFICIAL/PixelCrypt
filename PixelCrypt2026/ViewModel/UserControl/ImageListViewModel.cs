@@ -163,7 +163,42 @@ namespace PixelCrypt2026.ViewModel.UserControl
         {
             var invalidFiles = new List<string>();
 
+            if (fileNames == null || fileNames.Length == 0)
+                return;
+
             var validFiles = GetNewImagePaths(fileNames);
+            
+            if (validFiles.Count == 0)
+                return;
+
+            var selectedFolders = fileNames.Where(f => File.GetAttributes(f).HasFlag(FileAttributes.Directory)).ToHashSet();
+
+            if (selectedFolders.Any())
+            {
+                var topLevelFiles = selectedFolders
+                    .SelectMany(folder => validFiles
+                        .Where(f => string.Equals(Path.GetDirectoryName(f),folder,StringComparison.OrdinalIgnoreCase))
+                        .ToList())
+                    .Distinct()
+                    .ToList();
+
+                if (topLevelFiles.Count < validFiles.Count)
+                {
+                    string message = $"Total files found: {validFiles.Count}\n" +
+                        $"Files in selected folder(s): {topLevelFiles.Count}\n" +
+                        $"Use all files?";
+
+                    var result = Notification.Show(
+                        message,
+                        button: Program.Enum.NotificationButtonType.YesNo,
+                        icon: Program.Enum.NotificationIconType.Question);
+
+                    if (result.Result != Program.Enum.NotificationResultType.Yes)
+                    {
+                        validFiles = topLevelFiles;
+                    }
+                }
+            }
 
             foreach (var filePath in validFiles)
             {
@@ -220,6 +255,9 @@ namespace PixelCrypt2026.ViewModel.UserControl
                             .ToArray();
 
                         result.AddRange(GetNewImagePaths(files));
+
+                        result.AddRange(GetNewImagePaths(Directory.GetDirectories(path)));
+
                         continue;
                     }
                 }
