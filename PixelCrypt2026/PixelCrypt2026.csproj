@@ -7,7 +7,7 @@
 	  <ImplicitUsings>enable</ImplicitUsings>
 	  <UseWPF>true</UseWPF>
 	  <ApplicationIcon>PixelCryptLogo.ico</ApplicationIcon>
-	  <Version>3.2.0.0</Version>
+	  <Version>3.2.1.0</Version>
 	  <!-- Версия приложения: Major.Minor.Build.Revision
 	  0 — Major (главная). Меняется при кардинальных изменениях, несовместимых с прошлой версией.
       0 — Minor (дополнительная). Меняется при добавлении нового функционала, совместимого со старой версией.

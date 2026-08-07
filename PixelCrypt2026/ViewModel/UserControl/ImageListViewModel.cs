@@ -166,38 +166,52 @@ namespace PixelCrypt2026.ViewModel.UserControl
             if (fileNames == null || fileNames.Length == 0)
                 return;
 
-            var validFiles = GetNewImagePaths(fileNames);
-            
-            if (validFiles.Count == 0)
-                return;
+            var selectedFolders = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var selectedFileSet = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-            var selectedFolders = fileNames.Where(f => File.GetAttributes(f).HasFlag(FileAttributes.Directory)).ToHashSet();
-
-            if (selectedFolders.Any())
+            foreach (var path in fileNames)
             {
-                var topLevelFiles = selectedFolders
-                    .SelectMany(folder => validFiles
-                        .Where(f => string.Equals(Path.GetDirectoryName(f),folder,StringComparison.OrdinalIgnoreCase))
-                        .ToList())
-                    .Distinct()
-                    .ToList();
+                var attrs = File.GetAttributes(path);
 
-                if (topLevelFiles.Count < validFiles.Count)
+                if (attrs.HasFlag(FileAttributes.Directory))
+                    selectedFolders.Add(path);
+                else if(_validExtension.Contains(Path.GetExtension(path).ToLowerInvariant()))
+                    selectedFileSet.Add(path);
+            }
+
+            var validFiles = GetNewImagePaths(fileNames);
+
+            var validByFolder = validFiles
+                .GroupBy(f => Path.GetDirectoryName(f) ?? "", StringComparer.OrdinalIgnoreCase)
+                .ToDictionary(g => g.Key, g => g.ToList(), StringComparer.OrdinalIgnoreCase);
+
+            foreach (var folder in selectedFolders)
+            {
+                if (validByFolder.TryGetValue(folder, out var filesInFolder))
                 {
-                    string message = $"Total files found: {validFiles.Count}\n" +
-                        $"Files in selected folder(s): {topLevelFiles.Count}\n" +
-                        $"Use all files?";
-
-                    var result = Notification.Show(
-                        message,
-                        button: Program.Enum.NotificationButtonType.YesNo,
-                        icon: Program.Enum.NotificationIconType.Question);
-
-                    if (result.Result != Program.Enum.NotificationResultType.Yes)
+                    foreach (var file in filesInFolder)
                     {
-                        validFiles = topLevelFiles;
+                        selectedFileSet.Add(file);
                     }
                 }
+            }
+
+            var selectedFiles = selectedFileSet.ToList();
+
+            if (selectedFiles.Count < validFiles.Count)
+            {
+                string message = $"The selected folder contains files in subfolders.\nChoose which files to process:";
+
+                var result = Notification.Show(message,
+                    actions: new List<(string, Action)>()
+                    {
+                            ($"All ({validFiles.Count})", () =>{}),
+                            ($"Top-level ({selectedFiles.Count})", () => {validFiles = selectedFiles;})
+                    },
+                    icon: Program.Enum.NotificationIconType.Question);
+
+                if (result.Result == Program.Enum.NotificationResultType.Cancel)
+                    return;
             }
 
             foreach (var filePath in validFiles)
@@ -251,7 +265,7 @@ namespace PixelCrypt2026.ViewModel.UserControl
                     if (attr.HasFlag(FileAttributes.Directory))
                     {
                         var files = Directory.GetFiles(path)
-                            .Where(f => _validExtension.Contains(Path.GetExtension(f)))
+                            .Where(f => _validExtension.Contains(Path.GetExtension(f)?.ToLowerInvariant() ?? ""))
                             .ToArray();
 
                         result.AddRange(GetNewImagePaths(files));
@@ -261,9 +275,9 @@ namespace PixelCrypt2026.ViewModel.UserControl
                         continue;
                     }
                 }
-                catch 
-                { 
-                    continue; 
+                catch
+                {
+                    continue;
                 }
 
                 if (existingPaths.Contains(path))

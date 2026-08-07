@@ -128,8 +128,10 @@ namespace PixelCrypt2026.ViewModel.Window
                     break;
                 case NotificationButtonType.Custom:
                     HeightButtonCustom = height;
+                    int index = 0;
                     foreach (var action in _actions)
                     {
+                        int currentIndex = index;
                         Buttons.Add(new UIButton()
                         {
                             Text = action.title,
@@ -137,9 +139,12 @@ namespace PixelCrypt2026.ViewModel.Window
                             {
                                 action.action?.Invoke();
                                 NotificationResult.Result = NotificationResultType.Custom;
+                                NotificationResult.Content = currentIndex.ToString();
                                 OnCloseCommand(null);
                             })
                         });
+
+                        index++;
                     }
                     break;
             }
