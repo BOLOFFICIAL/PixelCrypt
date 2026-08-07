@@ -55,7 +55,7 @@ namespace PixelCrypt2026.ViewModel.UserControl
         public ICommand AddImageCommand { get; }
         public ICommand ClearImagesCommand { get; }
         public ICommand PasteImagesCommand { get; }
-        public ICommand DropCommand { get;}
+        public ICommand DropCommand { get; }
 
         public ICommand MoveUpCommand { get; }
         public ICommand MoveDownCommand { get; }
@@ -85,7 +85,7 @@ namespace PixelCrypt2026.ViewModel.UserControl
 
             var files = (string[])e.Data.GetData(DataFormats.FileDrop);
 
-            AddImageFiles(files);
+            ImportImageFiles(files);
 
             Application.Current?.Dispatcher.InvokeAsync(CommandManager.InvalidateRequerySuggested, DispatcherPriority.Background);
         }
@@ -156,53 +156,88 @@ namespace PixelCrypt2026.ViewModel.UserControl
             if (result != true)
                 return;
 
-            AddImageFiles(openFileDialog.FileNames);
+            ImportImageFiles(openFileDialog.FileNames);
         }
 
-        private void AddImageFiles(string[] fileNames)
+        private void ImportImageFiles(string[] fileNames)
         {
-            var errorList = new List<string>();
+            var invalidFiles = new List<string>();
 
-            foreach (string filePath in fileNames)
+            var validFiles = GetNewImagePaths(fileNames);
+
+            foreach (var filePath in validFiles)
             {
-                if (Path.GetExtension(filePath) == "")
-                {
-                    AddImageFiles(Directory.GetFiles(filePath)
-                        .Where(f => _validExtension.Contains(Path.GetExtension(f)))
-                        .ToArray());
-                }
+                var imageVm = new ImageChipViewModel(filePath);
 
-                bool alreadyExists = Images.Any(x => x.ImageFile.FilePath == filePath);
+                long width = imageVm.ImageFile.ImageWidth;
+                long height = imageVm.ImageFile.ImageHeight;
+                long volume = width * height;
 
-                if (alreadyExists || !File.Exists(filePath) || !_validExtension.Contains(Path.GetExtension(filePath)))
-                    continue;
+                bool isValid = volume > 0 && filePath.Length < 236;
 
-                var newItem = new ImageChipViewModel(filePath);
-
-                var volume = newItem.ImageFile.ImageWidth * newItem.ImageFile.ImageHeight;
-
-                if (volume > 0 && filePath.Length < 236)
+                if (isValid)
                 {
                     TotalSize += volume;
-                    Images.Add(newItem);
+                    Images.Add(imageVm);
                 }
                 else
                 {
-                    errorList.Add(newItem.ImageFile.FileName);
+                    invalidFiles.Add(imageVm.ImageFile.FileName);
                 }
             }
 
-            if (errorList.Any())
+            if (invalidFiles.Any())
             {
-                Notification.Show($"The following images are empty or incorrect and could not be added:\n• {string.Join("\n• ", errorList)}",
-                    "Adding Images",
-                    Program.Enum.NotificationButtonType.Ok,
-                    Program.Enum.NotificationIconType.Question);
+                string message = "The following images are empty or incorrect and could not be added:\n• " + string.Join("\n• ", invalidFiles);
+
+                Notification.Show(message, "Adding Images", Program.Enum.NotificationButtonType.Ok, Program.Enum.NotificationIconType.Question);
+            }
+            else if (validFiles.Count == 0)
+            {
+                Notification.Show($"No images to add", "Adding Images", icon: Program.Enum.NotificationIconType.Error);
             }
 
-            SelectedImage = SelectedImage ?? Images.FirstOrDefault();
-
+            SelectedImage ??= Images.FirstOrDefault();
             AddRequested?.Invoke();
+        }
+
+        private List<string> GetNewImagePaths(string[] paths)
+        {
+            var result = new List<string>();
+
+            var existingPaths = new HashSet<string>(Images.Select(img => img.ImageFile.FilePath));
+
+            foreach (string path in paths)
+            {
+                try
+                {
+                    var attr = File.GetAttributes(path);
+
+                    if (attr.HasFlag(FileAttributes.Directory))
+                    {
+                        var files = Directory.GetFiles(path)
+                            .Where(f => _validExtension.Contains(Path.GetExtension(f)))
+                            .ToArray();
+
+                        result.AddRange(GetNewImagePaths(files));
+                        continue;
+                    }
+                }
+                catch 
+                { 
+                    continue; 
+                }
+
+                if (existingPaths.Contains(path))
+                    continue;
+
+                if (!File.Exists(path) || !_validExtension.Contains((Path.GetExtension(path)?.ToLowerInvariant() ?? "")))
+                    continue;
+
+                result.Add(path);
+            }
+
+            return result;
         }
 
         private void ClearImages(object p)
@@ -236,7 +271,7 @@ namespace PixelCrypt2026.ViewModel.UserControl
 
             if (fileDropList != null && fileDropList.Count > 0)
             {
-                AddImageFiles(fileDropList.Cast<string>().ToArray());
+                ImportImageFiles(fileDropList.Cast<string>().ToArray());
                 return;
             }
 
@@ -261,7 +296,7 @@ namespace PixelCrypt2026.ViewModel.UserControl
                 if (!File.Exists(tempPath))
                     image.Save(tempPath, ImageFormat.Png);
 
-                AddImageFiles(new[] { tempPath });
+                ImportImageFiles(new[] { tempPath });
                 return;
             }
 
