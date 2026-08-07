@@ -9,6 +9,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Threading;
 
 namespace PixelCrypt2026.ViewModel.UserControl
 {
@@ -85,6 +86,8 @@ namespace PixelCrypt2026.ViewModel.UserControl
             var files = (string[])e.Data.GetData(DataFormats.FileDrop);
 
             AddImageFiles(files);
+
+            Application.Current?.Dispatcher.InvokeAsync(CommandManager.InvalidateRequerySuggested, DispatcherPriority.Background);
         }
 
         public GridLength HeightButtons
