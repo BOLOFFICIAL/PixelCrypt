@@ -69,46 +69,46 @@ namespace PixelCrypt2026.Program
 
         public static int ConvertBinaryStringToInt(string binary) => Convert.ToInt32(binary, 2);
 
-        public static Bitmap ConvertImageToBitmap(System.Windows.Controls.Image wpfImage)
-        {
-            var bitmapSource = wpfImage.Source as BitmapSource;
+        //public static Bitmap ConvertImageToBitmap(System.Windows.Controls.Image wpfImage)
+        //{
+        //    var bitmapSource = wpfImage.Source as BitmapSource;
 
-            using (var memoryStream = new MemoryStream())
-            {
-                var encoder = new PngBitmapEncoder();
-                encoder.Frames.Add(BitmapFrame.Create(bitmapSource));
+        //    using (var memoryStream = new MemoryStream())
+        //    {
+        //        var encoder = new PngBitmapEncoder();
+        //        encoder.Frames.Add(BitmapFrame.Create(bitmapSource));
 
-                encoder.Save(memoryStream);
+        //        encoder.Save(memoryStream);
 
-                using (var bmp = new Bitmap(memoryStream))
-                {
-                    return new Bitmap(bmp);
-                }
-            }
-        }
+        //        using (var bmp = new Bitmap(memoryStream))
+        //        {
+        //            return new Bitmap(bmp);
+        //        }
+        //    }
+        //}
 
-        public static ImageSource ConvertBitmapToImageSource(Bitmap bitmap)
-        {
-            var tempBitmap = new Bitmap(bitmap);
-            try
-            {
-                using (var memory = new MemoryStream())
-                {
-                    tempBitmap.Save(memory, System.Drawing.Imaging.ImageFormat.Png);
-                    memory.Position = 0;
-                    var bitmapImage = new BitmapImage();
-                    bitmapImage.BeginInit();
-                    bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
-                    bitmapImage.StreamSource = memory;
-                    bitmapImage.EndInit();
-                    bitmapImage.Freeze();
-                    return bitmapImage;
-                }
-            }
-            finally
-            {
-                tempBitmap.Dispose();
-            }
-        }
+        //public static ImageSource ConvertBitmapToImageSource(Bitmap bitmap)
+        //{
+        //    var tempBitmap = new Bitmap(bitmap);
+        //    try
+        //    {
+        //        using (var memory = new MemoryStream())
+        //        {
+        //            tempBitmap.Save(memory, System.Drawing.Imaging.ImageFormat.Png);
+        //            memory.Position = 0;
+        //            var bitmapImage = new BitmapImage();
+        //            bitmapImage.BeginInit();
+        //            bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
+        //            bitmapImage.StreamSource = memory;
+        //            bitmapImage.EndInit();
+        //            bitmapImage.Freeze();
+        //            return bitmapImage;
+        //        }
+        //    }
+        //    finally
+        //    {
+        //        tempBitmap.Dispose();
+        //    }
+        //}
     }
 }
