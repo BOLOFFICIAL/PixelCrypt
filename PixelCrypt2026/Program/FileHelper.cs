@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using PixelCrypt2026.Model;
+using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 
@@ -12,7 +13,7 @@ namespace PixelCrypt2026.Program
 
         public static SaveDataResult SaveDataToFile(string fileName, string filter, byte[] data) => SaveDataToFile(fileName, filter, data, System.IO.File.WriteAllBytes);
 
-        public static ActionResult SaveBitmapToFolder(List<ImageFile> imageFiles)
+        public static ActionResult SaveImageToFolder(List<ImageFile> imageFiles)
         {
             var title = "Saving data";
             var currentImage = imageFiles.FirstOrDefault();
@@ -61,7 +62,7 @@ namespace PixelCrypt2026.Program
                                 counter++;
                             }
 
-                            el.ResultImage.Save(name, ImageFormat.Png);
+                            CopyFileAndDeleteOriginal(el.ResultImage, name, true);
                         }
                         catch (Exception ex)
                         {
@@ -119,6 +120,54 @@ namespace PixelCrypt2026.Program
             }
         }
 
+        public static void CopyFileAndDeleteOriginal(string sourceFilePath, string destinationFilePath, bool toDelete = false)
+        {
+            try
+            {
+                string? destDir = Path.GetDirectoryName(destinationFilePath);
+                if (!string.IsNullOrEmpty(destDir) && !Directory.Exists(destDir))
+                    Directory.CreateDirectory(destDir);
+
+                File.Copy(sourceFilePath, destinationFilePath, overwrite: true);
+
+                if (toDelete)
+                    File.Delete(sourceFilePath);
+            }
+            catch { }
+        }
+
+        public static List<string> SaveBitmapToFolder(string path = null, params Bitmap[] imageFiles)
+        {
+            if (string.IsNullOrEmpty(path))
+                path = Path.Combine(Path.GetTempPath(), "PixelCrypt");
+
+            if (imageFiles == null || imageFiles.Count() == 0)
+                return null;
+
+            var res = new List<string>();
+
+            try
+            {
+                Directory.CreateDirectory(path);
+
+                for (int i = 0; i < imageFiles.Count(); i++)
+                {
+                    Bitmap bmp = imageFiles[i];
+                    if (bmp == null)
+                        return null;
+
+                    string fileName = Path.Combine(path, $"{Guid.NewGuid()}.png");
+                    bmp.Save(fileName, ImageFormat.Png);
+                    res.Add(fileName);
+                }
+
+                return res;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
 
         private static SaveDataResult SaveDataToFile<T>(string fileName, string filter, T data, Action<string, T> action)
         {

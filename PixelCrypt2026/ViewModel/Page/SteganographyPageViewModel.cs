@@ -236,7 +236,22 @@ namespace PixelCrypt2026.ViewModel.Page
                             return;
                         }
 
-                        res = FileHelper.SaveBitmapToFolder(ImageList.Images.Where(i => i.ImageFile.ResultImage != null).Select(i => i.ImageFile).ToList());
+                        var saveImages = ImageList.Images.Where(i => i.ImageFile.ResultImage != null).Select(i => i.ImageFile).ToList();
+
+                        var errorList = saveImages
+                            .Where(si => !File.Exists(si.ResultImage))
+                            .Select(si => si.FileName)
+                            .ToList();
+
+                        if (errorList.Any())
+                        {
+                            var message = "The following images have no data to save:\n• " + string.Join("\n• ", errorList) + "\nCheck the data and try again.";
+                            Notification.Show(message, button: NotificationButtonType.Ok, icon: NotificationIconType.Error);
+                            ImageList.ResetImages();
+                            return;
+                        }
+
+                        res = FileHelper.SaveImageToFolder(ImageList.Images.Where(i => i.ImageFile.ResultImage != null).Select(i => i.ImageFile).ToList());
                     }
                     break;
                 case 1:
@@ -270,7 +285,22 @@ namespace PixelCrypt2026.ViewModel.Page
             {
                 case 0:
                     {
-                        ProgramHelper.CopyBitmapsToClipboard(ImageList.Images.Where(i => i.ImageFile.ResultImage != null).Select(i => i.ImageFile.ResultImage).ToList());
+                        var saveImages = ImageList.Images.Where(i => i.ImageFile.ResultImage != null).Select(i => i.ImageFile).ToList();
+
+                        var errorList = saveImages
+                            .Where(si => !File.Exists(si.ResultImage))
+                            .Select(si => si.FileName)
+                            .ToList();
+
+                        if (errorList.Any())
+                        {
+                            var message = "The following images have no data to copy:\n• " + string.Join("\n• ", errorList) + "\nCheck the data and try again.";
+                            Notification.Show(message, button: NotificationButtonType.Ok, icon: NotificationIconType.Error);
+                            ImageList.ResetImages();
+                            return;
+                        }
+
+                        ProgramHelper.CopyFileToClipboard(ImageList.Images.Where(i => i.ImageFile.ResultImage != null).Select(i => i.ImageFile.ResultImage).ToList());
                         Notification.Show("Images copied", icon: NotificationIconType.Success);
                     }
                     break;
@@ -581,7 +611,7 @@ namespace PixelCrypt2026.ViewModel.Page
                         token.ThrowIfCancellationRequested();
                     }
 
-                    ImageList.Images[i].ImageFile.ResultImage = await importTask;
+                    ImageList.Images[i].ImageFile.ResultImage = FileHelper.SaveBitmapToFolder(null, await importTask)?.FirstOrDefault();
 
                     completedImages.Add(ImageList.Images[i].ImageFile);
                     dataChunks[i] = "";

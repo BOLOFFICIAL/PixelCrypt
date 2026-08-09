@@ -171,12 +171,19 @@ namespace PixelCrypt2026.ViewModel.UserControl
 
             foreach (var path in fileNames)
             {
-                var attrs = File.GetAttributes(path);
+                try
+                {
+                    var attrs = File.GetAttributes(path);
 
-                if (attrs.HasFlag(FileAttributes.Directory))
-                    selectedFolders.Add(path);
-                else if(_validExtension.Contains(Path.GetExtension(path).ToLowerInvariant()))
-                    selectedFileSet.Add(path);
+                    if (attrs.HasFlag(FileAttributes.Directory))
+                        selectedFolders.Add(path);
+                    else if (_validExtension.Contains(Path.GetExtension(path).ToLowerInvariant()))
+                        selectedFileSet.Add(path);
+                }
+                catch
+                {
+                    continue;
+                }
             }
 
             var validFiles = GetNewImagePaths(fileNames);
@@ -425,6 +432,15 @@ namespace PixelCrypt2026.ViewModel.UserControl
             TotalSize -= image.ImageFile.ImageWidth * image.ImageFile.ImageHeight;
 
             Images.Remove(image);
+            
+            try
+            {
+                var imagePath = image.ImageFile.ResultImage;
+
+                if (File.Exists(imagePath))
+                    File.Delete(imagePath);
+            }
+            catch { }
 
             RemoveRequested?.Invoke();
         }
@@ -457,9 +473,19 @@ namespace PixelCrypt2026.ViewModel.UserControl
         {
             foreach (var image in Images)
             {
-                image.Status = Program.Enum.StatusType.None;
-                image.ImageFile.ResultImage = null;
-                image.ImageFile.ResultImageSource = null;
+                try
+                {
+                    var imagePath = image.ImageFile.ResultImage;
+                    image.ImageFile.ResultImage = null;
+
+                    if (File.Exists(imagePath))
+                        File.Delete(imagePath);
+                }
+                catch { }
+                finally
+                {
+                    image.Status = Program.Enum.StatusType.None;
+                }
             }
         }
     }

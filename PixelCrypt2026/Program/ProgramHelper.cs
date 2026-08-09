@@ -26,24 +26,43 @@ namespace PixelCrypt2026.Program
 
             int width = image.Width;
             int height = image.Height;
+            var bitmap = new Bitmap(width, height, PixelFormat.Format32bppArgb);
+
+            using (var g = Graphics.FromImage(bitmap))
+            {
+                g.Clear(Color.Transparent);
+                g.CompositingMode = CompositingMode.SourceCopy;
+                g.DrawImage(image, new Rectangle(0, 0, width, height));
+            }
+
+            return GetSha256(bitmap);
+        }
+
+        public static string GetSha256(Bitmap bitmap)
+        {
+            if (bitmap == null) return null;
+
+            int width = bitmap.Width;
+            int height = bitmap.Height;
             int bytesPerPixel = 4;
             int rowSize = checked(width * bytesPerPixel);
 
-            using var bitmap = new Bitmap(width, height, PixelFormat.Format32bppArgb);
-
-            using (var graphics = Graphics.FromImage(bitmap))
+            if (bitmap.PixelFormat != PixelFormat.Format32bppArgb)
             {
-                graphics.Clear(Color.Transparent);
-                graphics.CompositingMode = CompositingMode.SourceCopy;
-                graphics.DrawImage(
-                    image,
-                    new Rectangle(0, 0, width, height));
+                var converted = new Bitmap(width, height, PixelFormat.Format32bppArgb);
+
+                using (var g = Graphics.FromImage(bitmap))
+                {
+                    g.Clear(Color.Transparent);
+                    g.CompositingMode = CompositingMode.SourceCopy;
+                    g.DrawImage(bitmap, new Rectangle(0, 0, width, height));
+                }
+
+                return GetSha256(converted);
             }
 
-            var rectangle = new Rectangle(0, 0, width, height);
-
-            BitmapData bitmapData = bitmap.LockBits(rectangle, ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
-
+            var rect = new Rectangle(0, 0, width, height);
+            BitmapData bitmapData = bitmap.LockBits(rect, ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
             try
             {
                 byte[] data = new byte[checked(8 + rowSize * height)];
@@ -135,32 +154,9 @@ namespace PixelCrypt2026.Program
             Clipboard.SetText(text ?? string.Empty);
         }
 
-        public static void CopyBitmapsToClipboard(List<Bitmap> bitmaps)
+        public static void CopyFileToClipboard(List<string> filePaths)
         {
-            if (bitmaps == null || bitmaps.Count == 0) return;
-
-            string tempDir = Path.Combine(Path.GetTempPath(), "PixelCrypt", "TmpBitmaps_" + Guid.NewGuid());
-
-            if (!Directory.Exists(tempDir))
-                Directory.CreateDirectory(tempDir);
-
-            var filePaths = new List<string>();
-            string timeStamp = DateTime.Now.ToString("yyyyMMddHHmmss");
-
-            for (int i = 0; i < bitmaps.Count; i++)
-            {
-                try
-                {
-                    string fileName = $"PixelCrypt_{timeStamp}_{i + 1}.png";
-                    string fullPath = Path.Combine(tempDir, fileName);
-                    bitmaps[i].Save(fullPath, ImageFormat.Png);
-                    filePaths.Add(fullPath);
-                }
-                catch
-                {
-                    continue; // Игнорируем ошибки при сохранении отдельных изображений
-                }
-            }
+            if (filePaths == null || filePaths.Count == 0) return;
 
             var pathsCollection = new System.Collections.Specialized.StringCollection();
             pathsCollection.AddRange(filePaths.ToArray());

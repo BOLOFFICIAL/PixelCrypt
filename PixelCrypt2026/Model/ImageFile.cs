@@ -32,8 +32,7 @@ namespace PixelCrypt2026.Model
 
         public string ImageResolution => $"{ImageWidth} x {ImageHeight} px";
 
-        public Bitmap ResultImage { get; internal set; }
-        public ImageSource ResultImageSource { get; internal set; }
+        public string? ResultImage { get; internal set; }
 
         public ImageFile(string filePath)
         {

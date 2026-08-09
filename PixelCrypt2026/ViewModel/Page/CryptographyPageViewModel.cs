@@ -6,8 +6,10 @@ using PixelCrypt2026.Program.Service;
 using PixelCrypt2026.ViewModel.Base;
 using PixelCrypt2026.ViewModel.UserControl;
 using System.Drawing;
+using System.IO;
 using System.Windows;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace PixelCrypt2026.ViewModel.Page
 {
@@ -100,14 +102,23 @@ namespace PixelCrypt2026.ViewModel.Page
 
         private void SelectImage()
         {
-            if (ImageList.SelectedImage.ImageFile.ResultImageSource != null)
+            var resultPath = ImageList.SelectedImage.ImageFile.ResultImage;
+            if (string.IsNullOrEmpty(resultPath) || !File.Exists(resultPath))
             {
-                WidthResultImage = new GridLength(1, GridUnitType.Star);
-                ResultImageSource = ImageList.SelectedImage.ImageFile.ResultImageSource;
+                WidthResultImage = new GridLength(0, GridUnitType.Pixel);
             }
             else
             {
-                WidthResultImage = new GridLength(0, GridUnitType.Pixel);
+                WidthResultImage = new GridLength(1, GridUnitType.Star);
+
+                var bmpImage = new BitmapImage();
+                bmpImage.BeginInit();
+                bmpImage.CacheOption = BitmapCacheOption.OnLoad;  
+                bmpImage.UriSource = new Uri(resultPath);
+                bmpImage.EndInit();
+                bmpImage.Freeze();                                
+
+                ResultImageSource = bmpImage;
             }
         }
 
@@ -219,8 +230,7 @@ namespace PixelCrypt2026.ViewModel.Page
                         token.ThrowIfCancellationRequested();
                     }
 
-                    image.ImageFile.ResultImage = await processTask;
-                    image.ImageFile.ResultImageSource = await Task.Run(() => Converter.ConvertBitmapToImageSource(image.ImageFile.ResultImage));
+                    image.ImageFile.ResultImage = FileHelper.SaveBitmapToFolder(null, await processTask)?.FirstOrDefault();
 
                     image.Status = StatusType.Success;
                     completedImages.Add(image.ImageFile);
@@ -273,7 +283,27 @@ namespace PixelCrypt2026.ViewModel.Page
 
         private void SaveCommand()
         {
-            var res = FileHelper.SaveBitmapToFolder(ImageList.Images.Where(i => i.ImageFile.ResultImage != null).Select(i => i.ImageFile).ToList());
+            var saveImages = ImageList.Images.Where(i => i.ImageFile.ResultImage != null).Select(i => i.ImageFile).ToList();
+
+            var errorList = new List<string>();
+
+            foreach (var saveImage in saveImages) 
+            {
+                if (File.Exists(saveImage.ResultImage)) 
+                    continue;
+
+                errorList.Add(saveImage.FileName);
+            }
+
+            if (errorList.Any()) 
+            {
+                var message = "The following images have no data to save:\n• " + string.Join("\n• ", errorList) + "\nCancel saving?";
+                var resMessage = Notification.Show(message, button: NotificationButtonType.YesNo, icon: NotificationIconType.Question);
+
+                if (resMessage.Result == NotificationResultType.Yes) return;
+            }
+
+            var res = FileHelper.SaveImageToFolder(saveImages);
 
             if (res.IsSuccessResult)
             {
@@ -289,7 +319,27 @@ namespace PixelCrypt2026.ViewModel.Page
 
         private void CopyCommand() 
         {
-            ProgramHelper.CopyBitmapsToClipboard(ImageList.Images.Where(i => i.ImageFile.ResultImage != null).Select(i => i.ImageFile.ResultImage).ToList());
+            var saveImages = ImageList.Images.Where(i => i.ImageFile.ResultImage != null).Select(i => i.ImageFile).ToList();
+
+            var errorList = new List<string>();
+
+            foreach (var saveImage in saveImages)
+            {
+                if (File.Exists(saveImage.ResultImage))
+                    continue;
+
+                errorList.Add(saveImage.FileName);
+            }
+
+            if (errorList.Any())
+            {
+                var message = "The following images have no data to copy:\n• " + string.Join("\n• ", errorList) + "\nCancel copying?";
+                var resMessage = Notification.Show(message, button: NotificationButtonType.YesNo, icon: NotificationIconType.Question);
+
+                if (resMessage.Result == NotificationResultType.Yes) return;
+            }
+
+            ProgramHelper.CopyFileToClipboard(saveImages.Where(i => File.Exists(i.ResultImage)).Select(i => i.ResultImage).ToList());
             Notification.Show("Images copied", icon: NotificationIconType.Success);
         }
     }
