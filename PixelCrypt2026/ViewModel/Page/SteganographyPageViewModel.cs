@@ -7,6 +7,7 @@ using PixelCrypt2026.Program.Notification;
 using PixelCrypt2026.Program.Service;
 using PixelCrypt2026.ViewModel.Base;
 using PixelCrypt2026.ViewModel.UserControl;
+using System.ComponentModel;
 using System.IO;
 using System.Text;
 using System.Windows;
@@ -22,13 +23,14 @@ namespace PixelCrypt2026.ViewModel.Page
         public TaskControlViewModel TaskControl { get; set; }
         public ModeControlViewModel ModeControl { get; set; }
 
-        private GridLength _settingsHeightHeight;
+        private GridLength _settingsHeight;
         private GridLength _taskControlHeight;
         private string _filePath;
         private string _content;
         private bool _isReadOnly;
         private bool _isEnable = true;
         private bool _isIndexDependence = true;
+        private bool _isProcessing;
 
         public ICommand SelectFileCommand { get; }
         public ICommand ClearFileCommand { get; }
@@ -37,123 +39,62 @@ namespace PixelCrypt2026.ViewModel.Page
         {
             Title = $"Steganography";
 
-            SelectFileCommand = new LambdaCommand(OnSelectFileCommand, CanSelectFile);
-            ClearFileCommand = new LambdaCommand(OnClearFileCommand, CanClearFile);
+            SelectFileCommand = new LambdaCommand(OnSelectFileCommand);
+            ClearFileCommand = new LambdaCommand(OnClearFileCommand);
 
             Progress = new ProgressPanelViewModel();
             PasswordBox = new PasswordBoxViewModel();
 
-            ImageList = new ImageListViewModel();
+            ImageList = new ImageListViewModel()
+            {
+                Add = new ControlAction()
+                {
+                    ExecuteRequested = UpdateImageCount,
+                    ConfirmationRequired = AddConfirmation,
+                },
+                Clear = new ControlAction()
+                {
+                    ExecuteRequested = UpdateImageCount,
+                    ConfirmationRequired = ClearConfirmation,
+                },
+                Remove = new ControlAction()
+                {
+                    ExecuteRequested = UpdateImageCount,
+                    ConfirmationRequired = RemoveConfirmation,
+                },
+            };
+
+            ImageList.PropertyChanged += OnImageListPropertyChanged;
 
             UpdateImageCount();
 
-            ImageList.ConfirmationClearRequested += ClearConfirmation;
-            ImageList.ConfirmationAddRequested += AddConfirmation;
-            ImageList.ConfirmationRemoveRequested += RemoveConfirmation;
-            ImageList.AddRequested += UpdateImageCount;
-            ImageList.ClearRequested += UpdateImageCount;
-            ImageList.RemoveRequested += UpdateImageCount;
-
-            TaskControl = new TaskControlViewModel();
-
-            TaskControl.StartRequested += StartCommand;
-            TaskControl.CanStart += () => ImageList.Images.Count > 0;
-            TaskControl.ConfirmationStartRequested += StartConfirmation;
-
-            TaskControl.StopRequested += StopCommand;
-            TaskControl.ConfirmationStopRequested += StopConfirmation;
-
-            TaskControl.SaveRequested += SaveCommand;
-            TaskControl.CanSave += () => ImageList.Images.All(i => i.Status == StatusType.Success);
-
-            TaskControl.CopyRequested += CopyCommand;
-
-            ModeControl = new ModeControlViewModel(new List<string>() { "Import", "Export" });
-        }
-
-        private bool RemoveConfirmation()
-        {
-            if (ImageList.Images.Where(i => i.Status == StatusType.Success).Count() > 0)
+            TaskControl = new TaskControlViewModel()
             {
-                var res = Notification.Show("Removing images will reset progress. Continue?", button: NotificationButtonType.YesNo, icon: NotificationIconType.Question);
-                if (res.Result != NotificationResultType.Yes)
-                    return false;
-            }
-
-            ImageList.ResetImages();
-            SetToolStatus();
-            return true;
-        }
-
-        private bool AddConfirmation()
-        {
-            if (ImageList.Images.Where(i => i.Status == StatusType.Success).Count() > 0)
-            {
-                var res = Notification.Show("Adding new images will reset progress. Continue?", button: NotificationButtonType.YesNo, icon: NotificationIconType.Question);
-                if (res.Result != NotificationResultType.Yes)
-                    return false;
-            }
-
-            ImageList.ResetImages();
-            SetToolStatus();
-            return true;
-        }
-
-        private bool CanClearFile(object arg)
-        {
-            return true;
-        }
-
-        private bool CanSelectFile(object arg)
-        {
-            return true;
-        }
-
-        private void OnSelectFileCommand(object obj)
-        {
-            OpenFileDialog openFileDialog = new OpenFileDialog
-            {
-                Title = "Select a file",
-                Multiselect = false
+                Start = new ControlAction()
+                {
+                    ExecuteRequested = StartCommand,
+                    ConfirmationRequired = StartConfirmation,
+                    CanExecute = () => ImageList.Images.Count > 0,
+                },
+                Stop = new ControlAction()
+                {
+                    ExecuteRequested = StopCommand,
+                    ConfirmationRequired = StopConfirmation,
+                },
+                Save = new ControlAction()
+                {
+                    ExecuteRequested = SaveCommand,
+                    ConfirmationRequired = SaveConfirmation,
+                    CanExecute = () => ImageList.Images.All(i => i.Status == StatusType.Success),
+                },
+                Copy = new ControlAction()
+                {
+                    ExecuteRequested = CopyCommand,
+                    ConfirmationRequired = CopyConfirmation,
+                },
             };
 
-            if (openFileDialog.ShowDialog() == true)
-            {
-                if (!string.IsNullOrEmpty(Content))
-                {
-                    var message = "This will replace the text with the file content";
-
-                    if (ImageList.Images.All(i => i.Status == StatusType.Success))
-                    {
-                        message += " and reset current progress";
-                    }
-
-                    message += ". Continue?";
-
-                    var res = Notification.Show(message, button: NotificationButtonType.YesNo, icon: NotificationIconType.Question);
-
-                    if (res.Result != NotificationResultType.Yes) return;
-                }
-
-                FilePath = openFileDialog.FileName;
-                ImageList.ResetImages();
-                SetToolStatus();
-            }
-        }
-
-        private void OnClearFileCommand(object obj)
-        {
-            FilePath = "";
-
-            if (!string.IsNullOrEmpty(Content))
-            {
-                var res = Notification.Show("Clear contents?", button: NotificationButtonType.YesNo, icon: NotificationIconType.Question);
-
-                if (res.Result == NotificationResultType.Yes)
-                {
-                    Content = "";
-                }
-            }
+            ModeControl = new ModeControlViewModel(new List<string>() { "Import", "Export" });
         }
 
         public bool IsEnable
@@ -164,8 +105,8 @@ namespace PixelCrypt2026.ViewModel.Page
 
         public GridLength SettingsHeight
         {
-            get => _settingsHeightHeight;
-            set => Set(ref _settingsHeightHeight, value);
+            get => _settingsHeight;
+            set => Set(ref _settingsHeight, value);
         }
 
         public GridLength TaskControlHeight
@@ -200,7 +141,7 @@ namespace PixelCrypt2026.ViewModel.Page
                 }
                 catch (Exception ex)
                 {
-                    Notification.Show($"Error: {ex.Message}", button: NotificationButtonType.Ok, icon: NotificationIconType.Error);
+                    Notification.Show($"Failed to read file:\n{ex.Message}", "Open file", button: NotificationButtonType.Ok, icon: NotificationIconType.Error);
                 }
                 OnPropertyChanged("FileName");
             }
@@ -222,6 +163,84 @@ namespace PixelCrypt2026.ViewModel.Page
 
         public string ResultString { get; private set; }
 
+        private bool RemoveConfirmation()
+        {
+            if (ImageList.Images.Where(i => i.Status == StatusType.Success).Count() > 0)
+            {
+                var res = Notification.Show("Removing images will reset progress. Continue?", "Remove images", button: NotificationButtonType.YesNo, icon: NotificationIconType.Question);
+                if (res.Result != NotificationResultType.Yes)
+                    return false;
+            }
+
+            ImageList.ResetImages();
+            ResultString = "";
+            SetToolStatus();
+            return true;
+        }
+
+        private bool AddConfirmation()
+        {
+            if (ImageList.Images.Where(i => i.Status == StatusType.Success).Count() > 0)
+            {
+                var res = Notification.Show("Adding new images will reset progress. Continue?", "Add images", button: NotificationButtonType.YesNo, icon: NotificationIconType.Question);
+                if (res.Result != NotificationResultType.Yes)
+                    return false;
+            }
+
+            ImageList.ResetImages();
+            ResultString = "";
+            SetToolStatus();
+            return true;
+        }
+
+        private void OnSelectFileCommand(object obj)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog
+            {
+                Title = "Select a file",
+                Multiselect = false
+            };
+
+            if (openFileDialog.ShowDialog() == true)
+            {
+                if (!string.IsNullOrEmpty(Content))
+                {
+                    var message = "This will replace the text with the file content";
+
+                    if (ImageList.Images.All(i => i.Status == StatusType.Success))
+                    {
+                        message += " and reset current progress";
+                    }
+
+                    message += ". Continue?";
+
+                    var res = Notification.Show(message, "Select file", button: NotificationButtonType.YesNo, icon: NotificationIconType.Question);
+
+                    if (res.Result != NotificationResultType.Yes) return;
+                }
+
+                FilePath = openFileDialog.FileName;
+                ImageList.ResetImages();
+                ResultString = "";
+                SetToolStatus();
+            }
+        }
+
+        private void OnClearFileCommand(object obj)
+        {
+            FilePath = "";
+
+            if (!string.IsNullOrEmpty(Content))
+            {
+                var res = Notification.Show("Clear contents?", "Clear contents", button: NotificationButtonType.YesNo, icon: NotificationIconType.Question);
+
+                if (res.Result == NotificationResultType.Yes)
+                {
+                    Content = "";
+                }
+            }
+        }
+
         private void SaveCommand()
         {
             var res = new ActionResult();
@@ -230,10 +249,39 @@ namespace PixelCrypt2026.ViewModel.Page
             {
                 case 0:
                     {
+                        res = FileHelper.SaveImageToFolder(ImageList.Images.Where(i => i.ImageFile.ResultImage != null).Select(i => i.ImageFile).ToList());
+                    }
+                    break;
+                case 1:
+                    {
+                        res = FileHelper.SaveDataToFile($"PixelCrypt_{DateTime.Now:yyyyMMddHHmmss}", $"Files (*.txt)|*.txt", ResultString).Result;
+                    }
+                    break;
+            }
+
+            if (res.IsSuccessResult)
+            {
+                Notification.Show(res.ResultMessage, "Save", button: NotificationButtonType.Ok, icon: NotificationIconType.Success);
+                ImageList.ResetImages();
+                ResultString = "";
+                SetToolStatus();
+            }
+            else
+            {
+                Notification.Show(res.ResultMessage, "Save", button: NotificationButtonType.Ok, icon: NotificationIconType.Error);
+            }
+        }
+
+        private bool SaveConfirmation()
+        {
+            switch (ModeControl.SelectedMode)
+            {
+                case 0:
+                    {
                         if (ImageList.Images.Where(i => i.ImageFile.ResultImage != null).Count() == 0)
                         {
-                            Notification.Show($"No data to save", icon: NotificationIconType.Error);
-                            return;
+                            Notification.Show($"No data to save", "Save", icon: NotificationIconType.Error);
+                            return false;
                         }
 
                         var saveImages = ImageList.Images.Where(i => i.ImageFile.ResultImage != null).Select(i => i.ImageFile).ToList();
@@ -246,40 +294,47 @@ namespace PixelCrypt2026.ViewModel.Page
                         if (errorList.Any())
                         {
                             var message = "The following images have no data to save:\n• " + string.Join("\n• ", errorList) + "\nCheck the data and try again.";
-                            Notification.Show(message, button: NotificationButtonType.Ok, icon: NotificationIconType.Error);
+                            Notification.Show(message, "Save", button: NotificationButtonType.Ok, icon: NotificationIconType.Error);
                             ImageList.ResetImages();
-                            return;
+                            ResultString = "";
+                            return false;
                         }
-
-                        res = FileHelper.SaveImageToFolder(ImageList.Images.Where(i => i.ImageFile.ResultImage != null).Select(i => i.ImageFile).ToList());
                     }
                     break;
                 case 1:
                     {
                         if (ResultString.Length == 0)
                         {
-                            Notification.Show($"No data to save", icon: NotificationIconType.Error);
-                            return;
+                            Notification.Show($"No data to save", "Save", icon: NotificationIconType.Error);
+                            return false;
                         }
-
-                        res = FileHelper.SaveDataToFile($"PixelCrypt_{DateTime.Now:yyyyMMddHHmmss}", $"Files (*.txt)|*.txt", ResultString).Result;
                     }
                     break;
             }
 
-            if (res.IsSuccessResult)
-            {
-                Notification.Show(res.ResultMessage, button: NotificationButtonType.Ok, icon: NotificationIconType.Success);
-                ImageList.ResetImages();
-                SetToolStatus();
-            }
-            else
-            {
-                Notification.Show(res.ResultMessage, button: NotificationButtonType.Ok, icon: NotificationIconType.Error);
-            }
+            return true;
         }
 
         private void CopyCommand()
+        {
+            switch (ModeControl.SelectedMode)
+            {
+                case 0:
+                    {
+                        ProgramHelper.CopyFileToClipboard(ImageList.Images.Where(i => i.ImageFile.ResultImage != null).Select(i => i.ImageFile.ResultImage).ToList());
+                        Notification.Show("Images copied", "Copy", icon: NotificationIconType.Success);
+                    }
+                    break;
+                case 1:
+                    {
+                        ProgramHelper.CopyText(ResultString);
+                        Notification.Show("Data copied", "Copy", icon: NotificationIconType.Success);
+                    }
+                    break;
+            }
+        }
+
+        private bool CopyConfirmation()
         {
             switch (ModeControl.SelectedMode)
             {
@@ -295,26 +350,37 @@ namespace PixelCrypt2026.ViewModel.Page
                         if (errorList.Any())
                         {
                             var message = "The following images have no data to copy:\n• " + string.Join("\n• ", errorList) + "\nCheck the data and try again.";
-                            Notification.Show(message, button: NotificationButtonType.Ok, icon: NotificationIconType.Error);
+                            Notification.Show(message, "Copy", button: NotificationButtonType.Ok, icon: NotificationIconType.Error);
                             ImageList.ResetImages();
-                            return;
+                            ResultString = "";
+                            return false;
                         }
+                        else if (saveImages.Count == 0)
+                        {
+                            var message = "The following images have no data to copy:\n• "
+                                + string.Join("\n• ", ImageList.Images.Select(i => i.ImageFile.FileName).ToList());
 
-                        ProgramHelper.CopyFileToClipboard(ImageList.Images.Where(i => i.ImageFile.ResultImage != null).Select(i => i.ImageFile.ResultImage).ToList());
-                        Notification.Show("Images copied", icon: NotificationIconType.Success);
+                            Notification.Show(message, "Copy", button: NotificationButtonType.Ok, icon: NotificationIconType.Error);
+                            return false;
+                        }
                     }
                     break;
                 case 1:
                     {
-                        ProgramHelper.CopyText(ResultString);
-                        Notification.Show("Data copied", icon: NotificationIconType.Success);
+                        if (string.IsNullOrEmpty(ResultString))
+                        {
+                            Notification.Show("No data to copy", "Copy", button: NotificationButtonType.Ok, icon: NotificationIconType.Error);
+                            return false;
+                        }
                     }
                     break;
             }
+
+            return true;
         }
 
         private bool StopConfirmation()
-            => Notification.Show("Stop the current operation?",
+            => Notification.Show("Stop the current operation?", "Stop operation",
                 button: NotificationButtonType.YesNo,
                 icon: NotificationIconType.Question).Result == NotificationResultType.Yes;
 
@@ -328,13 +394,13 @@ namespace PixelCrypt2026.ViewModel.Page
         {
             if (ModeControl.SelectedMode == 0 && string.IsNullOrEmpty(Content) && string.IsNullOrEmpty(FilePath))
             {
-                Notification.Show("No data to import", button: NotificationButtonType.Ok, icon: NotificationIconType.Error);
+                Notification.Show("No data to import", "Import", button: NotificationButtonType.Ok, icon: NotificationIconType.Error);
                 return false;
             }
 
             if (ImageList.Images.All(i => i.Status == StatusType.Success))
             {
-                var res = Notification.Show("This will reset current progress. Continue?", button: NotificationButtonType.YesNo, icon: NotificationIconType.Question);
+                var res = Notification.Show("This will reset current progress. Continue?", "Start operation", button: NotificationButtonType.YesNo, icon: NotificationIconType.Question);
 
                 if (res.Result != NotificationResultType.Yes)
                     return false;
@@ -348,7 +414,7 @@ namespace PixelCrypt2026.ViewModel.Page
         {
             if (ImageList.Images.Any(i => i.Status == StatusType.Success))
             {
-                var res = Notification.Show("Are you sure you want to clear the list?", title: "List clearing", button: NotificationButtonType.YesNo, icon: NotificationIconType.Question);
+                var res = Notification.Show("Are you sure you want to clear the list?", title: "Clear list", button: NotificationButtonType.YesNo, icon: NotificationIconType.Question);
 
                 if (res.Result != NotificationResultType.Yes)
                     return false;
@@ -368,9 +434,11 @@ namespace PixelCrypt2026.ViewModel.Page
                 IsReadOnly = true;
                 ImageList.IsEnable = IsEnable;
 
+                _isProcessing = true;
                 SettingsHeight = new GridLength(0, GridUnitType.Star);
 
                 ImageList.ResetImages();
+                ResultString = "";
                 SetToolStatus("In progress");
 
                 Progress.StartTimer();
@@ -384,26 +452,20 @@ namespace PixelCrypt2026.ViewModel.Page
                 switch (ModeControl.SelectedMode)
                 {
                     case 0:
-                        {
-                            var res = await Import(totalPixels, hashPassword, token);
-                            if (!res) return;
-                            break;
-                        }
+                        if (!await Import(totalPixels, hashPassword, token)) return;
+                        break;
                     case 1:
-                        {
-                            var res = await Export(totalPixels, hashPassword, token);
-                            if (!res) return;
-                            break;
-                        }
+                        if (!await Export(totalPixels, hashPassword, token)) return;
+                        break;
                 }
 
                 if (token.IsCancellationRequested)
                 {
-                    Notification.Show("Operation stopped", icon: NotificationIconType.Question);
+                    Notification.Show("Operation stopped", "Operation", icon: NotificationIconType.Question);
                 }
                 else
                 {
-                    Notification.Show("Operation completed", icon: NotificationIconType.Success);
+                    Notification.Show("Operation completed", "Operation", icon: NotificationIconType.Success);
                     SetToolStatus("Completed");
                 }
             }
@@ -414,6 +476,7 @@ namespace PixelCrypt2026.ViewModel.Page
                 IsEnable = true;
                 IsReadOnly = !string.IsNullOrEmpty(FilePath);
                 ImageList.IsEnable = IsEnable;
+                _isProcessing = false;
                 SettingsHeight = new GridLength(1, GridUnitType.Auto);
             }
         }
@@ -452,15 +515,18 @@ namespace PixelCrypt2026.ViewModel.Page
                 catch (OperationCanceledException)
                 {
                     imageItem.Status = StatusType.None;
-                    Notification.Show("Operation stopped", icon: NotificationIconType.Question);
+                    Notification.Show("Operation stopped", "Operation", icon: NotificationIconType.Question);
                     ImageList.ResetImages();
+                    ResultString = "";
                     SetToolStatus();
                     return false;
                 }
                 catch (Exception ex)
                 {
                     imageItem.Status = StatusType.Failed;
-                    Notification.Show($"Error: {ex.Message}", button: NotificationButtonType.Ok, icon: NotificationIconType.Error);
+                    Notification.Show($"Failed to export:\n{ex.Message}", "Export error", button: NotificationButtonType.Ok, icon: NotificationIconType.Error);
+                    ImageList.ResetImages();
+                    ResultString = "";
                     SetToolStatus($"Error");
                     return false;
                 }
@@ -505,15 +571,18 @@ namespace PixelCrypt2026.ViewModel.Page
                 {
                     ResultString = Encryption.DecryptText(fileMetadataParts[2], passwordHash);
 
+                    var fileName = Encoding.UTF8.GetString(Convert.FromBase64String(fileMetadataParts[0]));
+                    var fileExtension = Encoding.UTF8.GetString(Convert.FromBase64String(fileMetadataParts[1]));
+
                     var shouldAssembleFile = Notification.Show("The exported data is a file\nBuild the file?", "Export data", button: NotificationButtonType.YesNo, icon: NotificationIconType.Question).Result == NotificationResultType.Yes;
 
                     if (shouldAssembleFile)
                     {
-                        var saveRes = FileHelper.SaveDataToFile(fileMetadataParts[0], $"File (*{fileMetadataParts[1]})|*{fileMetadataParts[1]}", Convert.FromBase64String(ResultString));
+                        var saveRes = FileHelper.SaveDataToFile(fileName, $"File (*{fileExtension})|*{fileExtension}", Convert.FromBase64String(ResultString));
 
                         if (saveRes.Result.IsSuccessResult)
                         {
-                            string fileData = File.ReadAllText(saveRes.FilePath) ?? string.Empty;
+                            string fileData = (await Task.Run(() => File.ReadAllText(saveRes.FilePath))) ?? string.Empty;
 
                             Content = fileData.Length > 10000 ? fileData.Substring(0, 10000) : fileData;
                             FilePath = saveRes.FilePath;
@@ -539,9 +608,10 @@ namespace PixelCrypt2026.ViewModel.Page
             }
             catch (Exception ex)
             {
-                Notification.Show($"Failed to build data.\nError: {ex.Message}", button: NotificationButtonType.Ok, icon: NotificationIconType.Error);
+                Notification.Show($"Failed to build data.\nError: {ex.Message}", "Export error", button: NotificationButtonType.Ok, icon: NotificationIconType.Error);
                 ImageList.ResetImages();
-                SetToolStatus($"Error");
+                ResultString = "";
+                SetToolStatus($"");
                 return false;
             }
 
@@ -563,15 +633,18 @@ namespace PixelCrypt2026.ViewModel.Page
                 else
                 {
                     var sourceFileInfo = new FileInfo(FilePath);
-                    dataToHide = $"{sourceFileInfo.Name}[d]{sourceFileInfo.Extension}[d]" + Encryption.EncryptText(Convert.ToBase64String(File.ReadAllBytes(FilePath)), passwordHash);
+                    var encodedName = Convert.ToBase64String(Encoding.UTF8.GetBytes(sourceFileInfo.Name));
+                    var encodedExtension = Convert.ToBase64String(Encoding.UTF8.GetBytes(sourceFileInfo.Extension));
+                    var fileBytes = await Task.Run(() => File.ReadAllBytes(FilePath));
+                    dataToHide = $"{encodedName}[d]{encodedExtension}[d]" + Encryption.EncryptText(Convert.ToBase64String(fileBytes), passwordHash);
                 }
 
-                var imageCapacities = ImageList.Images.Select(i => (int)(i.ImageFile.ImageWidth * i.ImageFile.ImageHeight * 3 * 0.5 / 64)).ToList();
+                var imageCapacities = ImageList.Images.Select(i => (int)(i.ImageFile.ImageWidth * i.ImageFile.ImageHeight * 0.045)).ToList();
                 var dataDistributionPlan = ProgramHelper.DistributeData(imageCapacities, dataToHide.Length);
 
                 if (dataDistributionPlan == null)
                 {
-                    Notification.Show($"Too much data", button: NotificationButtonType.Ok, icon: NotificationIconType.Error);
+                    Notification.Show($"The data is too large for the selected images", "Import", button: NotificationButtonType.Ok, icon: NotificationIconType.Error);
                     SetToolStatus();
                     return false;
                 }
@@ -580,14 +653,14 @@ namespace PixelCrypt2026.ViewModel.Page
 
                 if (dataChunks == null)
                 {
-                    Notification.Show($"Failed to prepare data for import", button: NotificationButtonType.Ok, icon: NotificationIconType.Error);
+                    Notification.Show($"Failed to prepare data for import", "Import", button: NotificationButtonType.Ok, icon: NotificationIconType.Error);
                     SetToolStatus();
                     return false;
                 }
             }
             catch (Exception ex)
             {
-                Notification.Show($"Error: {ex.Message}", button: NotificationButtonType.Ok, icon: NotificationIconType.Error);
+                Notification.Show($"Failed to import:\n{ex.Message}", "Import error", button: NotificationButtonType.Ok, icon: NotificationIconType.Error);
                 SetToolStatus($"Error");
                 return false;
             }
@@ -611,7 +684,8 @@ namespace PixelCrypt2026.ViewModel.Page
                         token.ThrowIfCancellationRequested();
                     }
 
-                    ImageList.Images[i].ImageFile.ResultImage = FileHelper.SaveBitmapToFolder(null, await importTask)?.FirstOrDefault();
+                    var importBitmap = await importTask;
+                    ImageList.Images[i].ImageFile.ResultImage = (await Task.Run(() => FileHelper.SaveBitmapToFolder(null, importBitmap)))?.FirstOrDefault();
 
                     completedImages.Add(ImageList.Images[i].ImageFile);
                     dataChunks[i] = "";
@@ -623,15 +697,16 @@ namespace PixelCrypt2026.ViewModel.Page
                 catch (OperationCanceledException)
                 {
                     ImageList.Images[i].Status = StatusType.None;
-                    Notification.Show("Operation stopped", icon: NotificationIconType.Question);
+                    Notification.Show("Operation stopped", "Operation", icon: NotificationIconType.Question);
                     ImageList.ResetImages();
+                    ResultString = "";
                     SetToolStatus();
                     return false;
                 }
                 catch (Exception ex)
                 {
                     ImageList.Images[i].Status = StatusType.Failed;
-                    Notification.Show($"Error: {ex.Message}", button: NotificationButtonType.Ok, icon: NotificationIconType.Error);
+                    Notification.Show($"Failed to import:\n{ex.Message}", "Import error", button: NotificationButtonType.Ok, icon: NotificationIconType.Error);
                     SetToolStatus($"Error");
                     return false;
                 }
@@ -641,18 +716,19 @@ namespace PixelCrypt2026.ViewModel.Page
 
         private void UpdateImageCount()
         {
-            if (ImageList.Images.Count > 0)
-            {
-                SettingsHeight = new GridLength(1, GridUnitType.Auto);
-                TaskControlHeight = new GridLength(1, GridUnitType.Auto);
-            }
-            else
-            {
-                SettingsHeight = new GridLength(0, GridUnitType.Star);
-                TaskControlHeight = new GridLength(0, GridUnitType.Star);
-            }
+            var showSettings = ImageList.Images.Count > 0 && !ImageList.IsImporting && !_isProcessing;
+            var showTaskControl = ImageList.Images.Count > 0 && !ImageList.IsImporting;
+
+            SettingsHeight = new GridLength(showSettings ? 1 : 0, showSettings ? GridUnitType.Auto : GridUnitType.Star);
+            TaskControlHeight = new GridLength(showTaskControl ? 1 : 0, showTaskControl ? GridUnitType.Auto : GridUnitType.Star);
 
             SetToolStatus();
+        }
+
+        private void OnImageListPropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(ImageListViewModel.IsImporting))
+                UpdateImageCount();
         }
 
     }

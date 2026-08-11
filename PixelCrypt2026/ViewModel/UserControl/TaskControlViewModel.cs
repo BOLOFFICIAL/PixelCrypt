@@ -1,4 +1,5 @@
 ﻿using PixelCrypt2026.Commands.Base;
+using PixelCrypt2026.Model;
 using PixelCrypt2026.ViewModel.Base;
 using System.Windows;
 using System.Windows.Input;
@@ -12,16 +13,11 @@ namespace PixelCrypt2026.ViewModel.UserControl
         private GridLength _widthStop;
         private GridLength _widthSave;
 
-        public event Func<bool> CanStart;
-        public event Func<bool> CanStop;
-        public event Func<bool> CanSave;
-        public event Action StartRequested;
-        public event Action StopRequested;
-        public event Action SaveRequested;
-        public event Action CopyRequested;
-        public event Func<bool> ConfirmationStartRequested;
-        public event Func<bool> ConfirmationStopRequested;
-        public event Func<bool> ConfirmationSaveRequested;
+
+        public ControlAction Start { get; set; }
+        public ControlAction Stop { get; set; }
+        public ControlAction Save { get; set; }
+        public ControlAction Copy { get; set; }
 
         public ICommand StartCommand { get; }
         public ICommand StopCommand { get; }
@@ -67,42 +63,45 @@ namespace PixelCrypt2026.ViewModel.UserControl
 
         private void OnStartExecute(object parameter)
         {
-            if ((!ConfirmationStartRequested?.Invoke()) ?? false)
+            if ((!Start?.ConfirmationRequired?.Invoke()) ?? false)
                 return;
 
             _isProcessing = true;
             CancellationTokenSource = new CancellationTokenSource();
 
-            StartRequested?.Invoke();
+            Start?.ExecuteRequested?.Invoke();
         }
 
         private void OnStopExecute(object parameter)
         {
-            if ((!ConfirmationStopRequested?.Invoke()) ?? false)
+            if ((!Stop?.ConfirmationRequired?.Invoke()) ?? false)
                 return;
 
             CancellationTokenSource?.Cancel();
             _isProcessing = false;
 
-            StopRequested?.Invoke();
+            Stop?.ExecuteRequested?.Invoke();
         }
 
         private void OnSaveExecute(object parameter)
         {
-            if ((!ConfirmationSaveRequested?.Invoke()) ?? false)
+            if ((!Save?.ConfirmationRequired?.Invoke()) ?? false)
                 return;
 
-            SaveRequested?.Invoke();
+            Save?.ExecuteRequested?.Invoke();
         }
 
         private void OnCopyExecute(object parameter)
         {
-            CopyRequested?.Invoke();
+            if ((!Copy?.ConfirmationRequired?.Invoke()) ?? false)
+                return;
+
+            Copy?.ExecuteRequested?.Invoke();
         }
 
         private bool OnCanStart(object parameter)
         {
-            var res = (CanStart?.Invoke() ?? true)
+            var res = (Start?.CanExecute?.Invoke() ?? true)
                 && (!_isProcessing);
 
             WidthStart = new GridLength(res ? 1 : 0, GridUnitType.Star);
@@ -112,7 +111,7 @@ namespace PixelCrypt2026.ViewModel.UserControl
 
         private bool OnCanStop(object parameter)
         {
-            var res = (CanStop?.Invoke() ?? true)
+            var res = (Stop?.CanExecute?.Invoke() ?? true)
                 && CancellationTokenSource != null
                 && _isProcessing;
 
@@ -123,7 +122,7 @@ namespace PixelCrypt2026.ViewModel.UserControl
 
         private bool OnCanSave(object parameter)
         {
-            var res = (CanSave?.Invoke() ?? true)
+            var res = (Save?.CanExecute?.Invoke() ?? true)
                 && (!_isProcessing);
 
             WidthSave = new GridLength(res ? 1 : 0, GridUnitType.Star);

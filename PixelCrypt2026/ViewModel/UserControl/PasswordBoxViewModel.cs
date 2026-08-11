@@ -14,7 +14,7 @@ namespace PixelCrypt2026.ViewModel.UserControl
         private GridLength _hideWidth;
         private GridLength _visibleWidth;
         private GridLength _autoPasswordWidth;
-        private bool isVisible = true;
+        private bool _isVisible = true;
         private string _toggleVisibilityIcon;
 
         public ICommand ToggleVisibilityCommand { get; }
@@ -65,9 +65,9 @@ namespace PixelCrypt2026.ViewModel.UserControl
 
         private void OnToggleVisibilityCommand(object obj)
         {
-            isVisible = !isVisible;
+            _isVisible = !_isVisible;
 
-            if (isVisible)
+            if (_isVisible)
             {
                 HideWidth = new GridLength(0, GridUnitType.Star);
                 VisibleWidth = new GridLength(1, GridUnitType.Star);

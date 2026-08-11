@@ -33,7 +33,7 @@ namespace PixelCrypt2026.View.Window
 
         protected override void OnClosing(CancelEventArgs e)
         {
-            var res = Notification.Show("Do you really want to close the program?",
+            var res = Notification.Show("Do you really want to close the program?", "Exit",
                 button: Program.Enum.NotificationButtonType.YesNo,
                 icon: Program.Enum.NotificationIconType.Question);
 

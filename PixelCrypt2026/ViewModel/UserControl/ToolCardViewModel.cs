@@ -14,6 +14,7 @@ namespace PixelCrypt2026.ViewModel.UserControl
             set => Set(ref _status, value);
         }
         public string Description { get; set; }
+        public string Icon { get; set; }
         public ICommand ToolCardCommand { get; set; }
     }
 

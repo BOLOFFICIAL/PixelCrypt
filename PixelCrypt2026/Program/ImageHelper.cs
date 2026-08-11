@@ -1,44 +1,54 @@
 ﻿using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace PixelCrypt2026.Program
 {
     internal static class ImageHelper
     {
-        private const int rgb = 3;
+        private const int Channels = 3;
+        private const int BytesPerPixel = 4;
 
-        public static async Task<Bitmap> ImportDataToImage(string data, string filepath)
+        private static readonly int[] ChannelOffsets = { 2, 1, 0 };
+
+        public static async Task<Bitmap> ImportDataToImage(string data, string filePath)
         {
             var importDataImage = await Task.Run(() =>
             {
-                var pixelIndex = 0;
-                var imagePixels = GetArrayPixelsFromImage(filepath);
-                var imageWidth = imagePixels.GetLength(0);
-                var imageHeight = imagePixels.GetLength(1);
-                var modifiedPixels = new Color[imageWidth, imageHeight];
-                var totalPixels = imageWidth * imageHeight;
-                var binaryLength = Converter.ConvertIntToBinaryString(totalPixels).Length;
-                var splitData = ProgramHelper.SplitString(data, rgb);
+                var (pixels, imageWidth, imageHeight) = ReadPixels(filePath);
+                int totalPixels = imageWidth * imageHeight;
+                int binaryLength = Converter.ConvertIntToBinaryString(totalPixels).Length;
+
+                var splitData = ProgramHelper.SplitString(data, Channels);
                 var binaryDataList = splitData.Select(el => Converter.ConvertIntToBinaryString(el.Length).PadLeft(binaryLength, '0') + el).ToList();
-                var averageDataLength = binaryDataList.Average(el => el.Length);
 
-                for (int x = 0; x < imageWidth; x++)
+                for (int i = 0; i < pixels.Length; i += BytesPerPixel)
                 {
-                    for (int y = 0; y < imageHeight; y++, pixelIndex++)
-                    {
-                        var currentPixel = imagePixels[x, y];
-                        var color = Color.FromArgb(NormalizeColorByte(currentPixel.R), NormalizeColorByte(currentPixel.G), NormalizeColorByte(currentPixel.B));
+                    pixels[i] = NormalizeColorByte(pixels[i]);
+                    pixels[i + 1] = NormalizeColorByte(pixels[i + 1]);
+                    pixels[i + 2] = NormalizeColorByte(pixels[i + 2]);
+                    pixels[i + 3] = 255;
+                }
 
-                        modifiedPixels[x, y] = Color.FromArgb(
-                            (pixelIndex < binaryDataList[0].Length) ? (byte)(color.R - byte.Parse(binaryDataList[0][pixelIndex].ToString())) : color.R,
-                            (pixelIndex < binaryDataList[1].Length) ? (byte)(color.G - byte.Parse(binaryDataList[1][pixelIndex].ToString())) : color.G,
-                            (pixelIndex < binaryDataList[2].Length) ? (byte)(color.B - byte.Parse(binaryDataList[2][pixelIndex].ToString())) : color.B);
+                for (int pixelIndex = 0; pixelIndex < totalPixels; pixelIndex++)
+                {
+                    int offset = pixelIndex * BytesPerPixel;
+
+                    for (int channel = 0; channel < Channels; channel++)
+                    {
+                        var binaryData = binaryDataList[channel];
+
+                        if (pixelIndex < binaryData.Length)
+                        {
+                            int channelOffset = offset + ChannelOffsets[channel];
+                            pixels[channelOffset] = (byte)(pixels[channelOffset] - (binaryData[pixelIndex] - '0'));
+                        }
                     }
                 }
 
-                return Converter.ConvertPixelsToBitmap(modifiedPixels);
+                return WriteBitmap(pixels, imageWidth, imageHeight);
             });
 
             return importDataImage;
@@ -48,26 +58,28 @@ namespace PixelCrypt2026.Program
         {
             var exportDataImage = await Task.Run(() =>
             {
-                var imagePixels = GetArrayPixelsFromImage(path);
-                var pixelList = GetListPixelsFromArrayPixels(imagePixels);
-                var binaryDataBuilders = Enumerable.Range(0, rgb).Select(_ => new StringBuilder()).ToList();
-                var binaryLength = Converter.ConvertIntToBinaryString(pixelList.Count).Length;
+                var (pixels, width, height) = ReadPixels(path);
+                int totalPixels = width * height;
+                var binaryDataBuilders = Enumerable.Range(0, Channels).Select(_ => new StringBuilder()).ToList();
+                int binaryLength = Converter.ConvertIntToBinaryString(totalPixels).Length;
 
-                for (var i = 0; i < binaryLength; i++)
+                for (int i = 0; i < binaryLength; i++)
                 {
-                    foreach (var data in binaryDataBuilders)
+                    for (int channel = 0; channel < Channels; channel++)
                     {
-                        data.Append(GetBinaryColorIndicator(pixelList[i], binaryDataBuilders.IndexOf(data)));
+                        binaryDataBuilders[channel].Append(GetBinaryColorIndicator(pixels, i, channel));
                     }
                 }
 
-                foreach (var binaryData in binaryDataBuilders)
+                for (int channel = 0; channel < Channels; channel++)
                 {
-                    var dataSize = Converter.ConvertBinaryStringToInt(binaryData.ToString());
+                    var binaryData = binaryDataBuilders[channel];
+                    int dataSize = Converter.ConvertBinaryStringToInt(binaryData.ToString());
                     binaryData.Clear();
+
                     for (int i = binaryLength; i < binaryLength + dataSize; i++)
                     {
-                        binaryData.Append(GetBinaryColorIndicator(pixelList[i], binaryDataBuilders.IndexOf(binaryData)));
+                        binaryData.Append(GetBinaryColorIndicator(pixels, i, channel));
                     }
                 }
 
@@ -77,42 +89,43 @@ namespace PixelCrypt2026.Program
             return exportDataImage;
         }
 
-        public static Color[,] GetArrayPixelsFromImage(string imagePath)
+        public static (byte[] Pixels, int Width, int Height) ReadPixels(string imagePath)
         {
-            using (var bitmap = new Bitmap(imagePath))
-            {
-                var width = bitmap.Width;
-                var height = bitmap.Height;
-                var pixels = new Color[width, height];
+            using var source = new Bitmap(imagePath);
 
-                for (int x = 0; x < width; x++)
-                {
-                    for (int y = 0; y < height; y++)
-                    {
-                        pixels[x, y] = bitmap.GetPixel(x, y);
-                    }
-                }
+            if (source.PixelFormat == PixelFormat.Format32bppArgb)
+                return ReadLocked(source);
 
-                return pixels;
-            }
+            using var converted = (Bitmap)source.Clone(new Rectangle(0, 0, source.Width, source.Height), PixelFormat.Format32bppArgb);
+            return ReadLocked(converted);
         }
 
-        public static List<Color> GetListPixelsFromArrayPixels(Color[,] pixels)
+        public static Bitmap WriteBitmap(byte[] pixels, int width, int height)
         {
-            var listPixels = new List<Color>();
-
-            int width = pixels.GetLength(0);
-            int height = pixels.GetLength(1);
-
-            for (int x = 0; x < width; x++)
+            var bitmap = new Bitmap(width, height, PixelFormat.Format32bppArgb);
+            var rect = new Rectangle(0, 0, width, height);
+            BitmapData data = bitmap.LockBits(rect, ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);
+            try
             {
-                for (int y = 0; y < height; y++)
+                int stride = data.Stride;
+                int rowBytes = width * BytesPerPixel;
+
+                if (stride == rowBytes)
                 {
-                    listPixels.Add(Color.FromArgb(pixels[x, y].A, pixels[x, y].R, pixels[x, y].G, pixels[x, y].B));
+                    Marshal.Copy(pixels, 0, data.Scan0, pixels.Length);
+                }
+                else
+                {
+                    for (int y = 0; y < height; y++)
+                        Marshal.Copy(pixels, y * rowBytes, IntPtr.Add(data.Scan0, y * stride), rowBytes);
                 }
             }
+            finally
+            {
+                bitmap.UnlockBits(data);
+            }
 
-            return listPixels;
+            return bitmap;
         }
 
         public static ImageFormat GetImageFormat(string path)
@@ -129,10 +142,41 @@ namespace PixelCrypt2026.Program
             };
         }
 
+        private static (byte[] Pixels, int Width, int Height) ReadLocked(Bitmap bitmap)
+        {
+            int width = bitmap.Width;
+            int height = bitmap.Height;
+            var rect = new Rectangle(0, 0, width, height);
+            BitmapData data = bitmap.LockBits(rect, ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+            try
+            {
+                int stride = data.Stride;
+                int rowBytes = width * BytesPerPixel;
+                byte[] pixels = new byte[rowBytes * height];
 
-        private static byte GetColorByIndex(Color color, int index) => (byte)(index == 0 ? color.R : index == 1 ? color.G : index == 2 ? color.B : 0);
+                if (stride == rowBytes)
+                {
+                    Marshal.Copy(data.Scan0, pixels, 0, pixels.Length);
+                }
+                else
+                {
+                    for (int y = 0; y < height; y++)
+                    {
+                        int sourceOffset = stride < 0 ? (height - 1 - y) * stride : y * stride;
+                        Marshal.Copy(IntPtr.Add(data.Scan0, sourceOffset), pixels, y * rowBytes, rowBytes);
+                    }
+                }
 
-        private static string GetBinaryColorIndicator(Color color, int index) => (GetColorByIndex(color, index) % 2 == 0) ? "1" : "0";
+                return (pixels, width, height);
+            }
+            finally
+            {
+                bitmap.UnlockBits(data);
+            }
+        }
+
+        private static string GetBinaryColorIndicator(byte[] pixels, int pixelIndex, int channel)
+            => (pixels[pixelIndex * BytesPerPixel + ChannelOffsets[channel]] % 2 == 0) ? "1" : "0";
 
         private static byte NormalizeColorByte(byte value)
         {

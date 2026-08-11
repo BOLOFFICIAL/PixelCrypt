@@ -57,7 +57,7 @@
 
                                     <DoubleAnimation Storyboard.TargetName="scaleTransform"
                                                      Storyboard.TargetProperty="ScaleX"
-                                                     To="1.04"
+                                                     To="1.02"
                                                      Duration="0:0:0.2">
                                         <DoubleAnimation.EasingFunction>
                                             <BackEase EasingMode="EaseOut" Amplitude="0.3"/>
@@ -65,7 +65,7 @@
                                     </DoubleAnimation>
                                     <DoubleAnimation Storyboard.TargetName="scaleTransform"
                                                      Storyboard.TargetProperty="ScaleY"
-                                                     To="1.04"
+                                                     To="1.02"
                                                      Duration="0:0:0.2">
                                         <DoubleAnimation.EasingFunction>
                                             <BackEase EasingMode="EaseOut" Amplitude="0.3"/>
@@ -121,7 +121,7 @@
 
                                     <DoubleAnimation Storyboard.TargetName="scaleTransform"
                                                      Storyboard.TargetProperty="ScaleX"
-                                                     To="0.93"
+                                                     To="0.97"
                                                      Duration="0:0:0.1">
                                         <DoubleAnimation.EasingFunction>
                                             <CubicEase EasingMode="EaseOut"/>
@@ -129,7 +129,7 @@
                                     </DoubleAnimation>
                                     <DoubleAnimation Storyboard.TargetName="scaleTransform"
                                                      Storyboard.TargetProperty="ScaleY"
-                                                     To="0.93"
+                                                     To="0.97"
                                                      Duration="0:0:0.1">
                                         <DoubleAnimation.EasingFunction>
                                             <CubicEase EasingMode="EaseOut"/>
@@ -153,7 +153,7 @@
 
                                     <DoubleAnimation Storyboard.TargetName="scaleTransform"
                                                      Storyboard.TargetProperty="ScaleX"
-                                                     To="1.04"
+                                                     To="1.02"
                                                      Duration="0:0:0.3">
                                         <DoubleAnimation.EasingFunction>
                                             <ElasticEase EasingMode="EaseOut" 
@@ -163,7 +163,7 @@
                                     </DoubleAnimation>
                                     <DoubleAnimation Storyboard.TargetName="scaleTransform"
                                                      Storyboard.TargetProperty="ScaleY"
-                                                     To="1.04"
+                                                     To="1.02"
                                                      Duration="0:0:0.3">
                                         <DoubleAnimation.EasingFunction>
                                             <ElasticEase EasingMode="EaseOut" 

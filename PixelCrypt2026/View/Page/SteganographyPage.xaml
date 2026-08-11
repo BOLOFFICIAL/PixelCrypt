@@ -222,7 +222,7 @@
                                         CornerRadius="10"
                                         Padding="10">
                                     <Border Background="{StaticResource Background3}"
-                                            BorderBrush="{StaticResource Foreground}"
+                                            BorderBrush="{StaticResource BorderSubtle}"
                                             BorderThickness="1"
                                             HorizontalAlignment="Center"
                                             VerticalAlignment="Center"

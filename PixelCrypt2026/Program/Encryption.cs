@@ -58,22 +58,20 @@ namespace PixelCrypt2026.Program
 
         public static Task<Bitmap> DecryptPhoto(string imagePath, string key, int interference) => EncryptionSequence(imagePath, key, interference, DecryptSequence);
 
-        private static Task<Bitmap> EncryptionSequence(string imagepath, string key, int interference, Func<List<int>, string, List<int>> action)
+        private static Task<Bitmap> EncryptionSequence(string imagePath, string key, int interference, Func<List<int>, string, List<int>> action)
         {
             return Task.Run(() =>
             {
-                var pixels = ImageHelper.GetArrayPixelsFromImage(imagepath);
-                int width = pixels.GetLength(0);
-                int height = pixels.GetLength(1);
+                var (pixels, width, height) = ImageHelper.ReadPixels(imagePath);
 
-                (var rows, var cols) = MatrixBlockUtils.CalculateBlockDimensions(height, width, interference);
+                (var blockHeight, var blockWidth) = MatrixBlockUtils.CalculateBlockDimensions(height, width, interference);
 
-                int totalBlocks = (height / rows) * (width / cols);
+                int totalBlocks = (height / blockHeight) * (width / blockWidth);
                 var sequence = Enumerable.Range(0, totalBlocks).ToList();
                 var customOrder = action(sequence, key);
-                var reorderBlocks = MatrixBlockUtils.ReorderBlocks(pixels, cols, rows, customOrder);
-                var encrypt = ImageHelper.GetListPixelsFromArrayPixels(reorderBlocks);
-                return Converter.ConvertPixelsToBitmap(encrypt, width, height);
+                var reordered = MatrixBlockUtils.ReorderBlocks(pixels, width, height, blockWidth, blockHeight, customOrder);
+
+                return ImageHelper.WriteBitmap(reordered, width, height);
             });
         }
 
@@ -108,17 +106,22 @@ namespace PixelCrypt2026.Program
 
         private static List<int> CreatePermutation(string password, int length)
         {
-            using (var md5 = MD5.Create())
+            if (length < 0)
+                throw new ArgumentOutOfRangeException(nameof(length));
+
+            byte[] hash = SHA256.HashData(Encoding.UTF8.GetBytes(password));
+            int seed = BitConverter.ToInt32(hash, 0);
+
+            var perm = Enumerable.Range(0, length).ToList();
+            var random = new Random(seed);
+
+            for (int i = perm.Count - 1; i > 0; i--)
             {
-                byte[] hash = md5.ComputeHash(Encoding.UTF8.GetBytes(password));
-                int hashValue = BitConverter.ToInt32(hash, 0);
-
-                List<int> perm = Enumerable.Range(0, length).ToList();
-                Random random = new Random(hashValue);
-                perm = perm.OrderBy(x => random.Next()).ToList();
-
-                return perm;
+                int j = random.Next(i + 1);
+                (perm[i], perm[j]) = (perm[j], perm[i]);
             }
+
+            return perm;
         }
     }
 }

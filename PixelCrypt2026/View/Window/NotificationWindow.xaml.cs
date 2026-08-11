@@ -9,9 +9,6 @@ namespace PixelCrypt2026.View.Window
     /// </summary>
     public partial class NotificationWindow : System.Windows.Window
     {
-        private List<Action> actions;
-        private NotificationIconType status;
-
         public NotificationWindow(string content, string title, NotificationButtonType button, NotificationIconType icon)
         {
             InitializeComponent();

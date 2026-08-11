@@ -63,7 +63,7 @@
                                     <Grid Grid.Column="1"
                                           Margin="0,5,5,5">
                                         <Border CornerRadius="10"
-                                                BorderBrush="{StaticResource Foreground}"
+                                                BorderBrush="{StaticResource BorderSubtle}"
                                                 BorderThickness="1">
                                             <ComboBox ItemsSource="{Binding ComboBoxItem}"
                                                       SelectedValue="{Binding Interference}">
@@ -120,7 +120,7 @@
                                         CornerRadius="10"
                                         Padding="10">
                                     <Border Background="{StaticResource Background3}"
-                                            BorderBrush="{StaticResource Foreground}"
+                                            BorderBrush="{StaticResource BorderSubtle}"
                                             BorderThickness="1"
                                             CornerRadius="10"
                                             VerticalAlignment="Center"
@@ -140,7 +140,7 @@
                                         CornerRadius="10"
                                         Padding="10">
                                     <Border Background="{StaticResource Background3}"
-                                            BorderBrush="{StaticResource Foreground}"
+                                            BorderBrush="{StaticResource BorderSubtle}"
                                             BorderThickness="1"
                                             CornerRadius="10"
                                             VerticalAlignment="Center"

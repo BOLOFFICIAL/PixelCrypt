@@ -65,7 +65,7 @@
                                     MinWidth="{TemplateBinding ActualWidth}"
                                     MaxHeight="200"
                                     Background="{StaticResource Background}"
-                                    BorderBrush="{StaticResource Background3}"
+                                    BorderBrush="{StaticResource BorderSubtle}"
                                     BorderThickness="1"
                                     CornerRadius="10"
                                     Margin="0,5,0,0"

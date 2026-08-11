@@ -1,8 +1,12 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <Brush x:Key="Accent">#D94A4A</Brush>
+    <!-- ===== Dark theme (red accent) ===== -->
 
+    <!-- Accent -->
+    <Brush x:Key="Accent">#B74141</Brush>
+
+    <!-- Backgrounds -->
     <Brush x:Key="Background">#211C1C</Brush>
     <Brush x:Key="Background1">#2D2626</Brush>
     <Brush x:Key="Background2">#3B3232</Brush>
@@ -10,27 +14,51 @@
     <Brush x:Key="Background4">#5A4C4C</Brush>
     <Brush x:Key="Background5">#705E5E</Brush>
 
+    <!-- Text -->
     <Brush x:Key="Foreground">#EDE8E8</Brush>
+    <Brush x:Key="SecondaryForeground">#9C8A8A</Brush>
 
+    <!-- Borders -->
+    <Brush x:Key="BorderSubtle">#5A4C4C</Brush>
+    <Brush x:Key="BorderStrong">#705E5E</Brush>
+
+    <!-- Image chips -->
     <Brush x:Key="ImageChipBackground">#493E3E</Brush>
     <Brush x:Key="ImageChipForeground">#EDE8E8</Brush>
-
     <Brush x:Key="ImageChipSelectedBackground">#5F1E1E</Brush>
     <Brush x:Key="ImageChipSelectedForeground">#F1C3C3</Brush>
 
-    <Brush x:Key="ButtonBackground">#D94A4A</Brush>
-    <Brush x:Key="ButtonForeground">White</Brush>
+    <!-- Buttons -->
+    <Brush x:Key="ButtonBackground">#B74141</Brush>
+    <Brush x:Key="ButtonForeground">#FFFFFF</Brush>
 
+    <!-- Status -->
     <Brush x:Key="StatusNone">#705E5E</Brush>
     <Brush x:Key="StatusSuccess">#2D7D46</Brush>
     <Brush x:Key="StatusPending">#D9A343</Brush>
-    <Brush x:Key="StatusInProgress">#A53131</Brush>
-    <Brush x:Key="StatusFailed">#D93B3B</Brush>
+    <Brush x:Key="StatusInProgress">#493E3E</Brush>
+    <Brush x:Key="StatusFailed">#A93838</Brush>
     <Brush x:Key="StatusCancelled">#7A6262</Brush>
 
-    <Color x:Key="NotificationBaseColor">#2D2626</Color>
+    <!-- Notifications -->
+    <Color x:Key="NotificationBaseColor">#211C1C</Color>
     <Color x:Key="NotificationSuccessColor">#2D7D46</Color>
-    <Color x:Key="NotificationErrorColor">#D93B3B</Color>
+    <Color x:Key="NotificationErrorColor">#A93838</Color>
     <Color x:Key="NotificationQuestionColor">#D9A343</Color>
+
+    <!-- ===== Base control styles ===== -->
+
+    <Style TargetType="Separator">
+        <Setter Property="Background" Value="{StaticResource BorderStrong}"/>
+        <Setter Property="Height" Value="1"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Separator">
+                    <Border Background="{TemplateBinding Background}"
+                            Height="{TemplateBinding Height}"/>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
 </ResourceDictionary>

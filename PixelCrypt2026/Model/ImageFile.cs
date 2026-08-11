@@ -1,6 +1,4 @@
-﻿using System.Drawing;
-using System.IO;
-using System.Windows.Media;
+﻿using System.IO;
 
 namespace PixelCrypt2026.Model
 {

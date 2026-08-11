@@ -13,26 +13,21 @@ namespace PixelCrypt2026.Program
     {
         public static string GetHash32(string input)
         {
-            string output;
-            MD5 MD5Hash = MD5.Create();
-            byte[] inputBytes = Encoding.ASCII.GetBytes(input);
-            byte[] hash = MD5Hash.ComputeHash(inputBytes);
-            return output = Convert.ToHexString(hash);
+            byte[] inputBytes = Encoding.UTF8.GetBytes(input);
+            byte[] hash = SHA256.HashData(inputBytes);
+            return Convert.ToHexString(hash).ToLowerInvariant();
         }
 
         public static string GetSha256(Image image)
         {
             if (image == null) return null;
 
-            int width = image.Width;
-            int height = image.Height;
-            var bitmap = new Bitmap(width, height, PixelFormat.Format32bppArgb);
-
+            using var bitmap = new Bitmap(image.Width, image.Height, PixelFormat.Format32bppArgb);
             using (var g = Graphics.FromImage(bitmap))
             {
-                g.Clear(Color.Transparent);
+                g.InterpolationMode = InterpolationMode.NearestNeighbor;
                 g.CompositingMode = CompositingMode.SourceCopy;
-                g.DrawImage(image, new Rectangle(0, 0, width, height));
+                g.DrawImage(image, new Rectangle(0, 0, bitmap.Width, bitmap.Height));
             }
 
             return GetSha256(bitmap);
@@ -44,16 +39,15 @@ namespace PixelCrypt2026.Program
 
             int width = bitmap.Width;
             int height = bitmap.Height;
-            int bytesPerPixel = 4;
+            const int bytesPerPixel = 4;
             int rowSize = checked(width * bytesPerPixel);
 
             if (bitmap.PixelFormat != PixelFormat.Format32bppArgb)
             {
-                var converted = new Bitmap(width, height, PixelFormat.Format32bppArgb);
-
-                using (var g = Graphics.FromImage(bitmap))
+                using var converted = new Bitmap(width, height, PixelFormat.Format32bppArgb);
+                using (var g = Graphics.FromImage(converted))
                 {
-                    g.Clear(Color.Transparent);
+                    g.InterpolationMode = InterpolationMode.NearestNeighbor;
                     g.CompositingMode = CompositingMode.SourceCopy;
                     g.DrawImage(bitmap, new Rectangle(0, 0, width, height));
                 }
@@ -68,7 +62,6 @@ namespace PixelCrypt2026.Program
                 byte[] data = new byte[checked(8 + rowSize * height)];
 
                 Buffer.BlockCopy(BitConverter.GetBytes(width), 0, data, 0, 4);
-
                 Buffer.BlockCopy(BitConverter.GetBytes(height), 0, data, 4, 4);
 
                 for (int y = 0; y < height; y++)
@@ -77,8 +70,7 @@ namespace PixelCrypt2026.Program
                     Marshal.Copy(rowAddress, data, 8 + y * rowSize, rowSize);
                 }
 
-                byte[] hash = SHA256.HashData(data);
-                return Convert.ToHexString(hash);
+                return Convert.ToHexString(SHA256.HashData(data)).ToLowerInvariant();
             }
             finally
             {

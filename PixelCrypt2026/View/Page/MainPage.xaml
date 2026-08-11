@@ -13,7 +13,7 @@
     <Grid Margin="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="15"/>
+            <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
 
         <Grid Grid.Row="0" 
@@ -22,7 +22,6 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="100"/>
                 <RowDefinition Height="*"/>
-                <RowDefinition Height="{Binding UpdateHeight}"/>
             </Grid.RowDefinitions>
 
             <Grid Grid.Row="0">
@@ -41,7 +40,7 @@
 
                     <TextBlock Text="Encryption • Security • Utilities"
                                FontSize="15"
-                               Foreground="{StaticResource Foreground}"
+                               Foreground="{StaticResource SecondaryForeground}"
                                Margin="0,5,0,0"
                                Opacity="0.5"
                                HorizontalAlignment="Center"/>
@@ -77,29 +76,37 @@
 
             <Grid Grid.Row="2"
                   Margin="0,20,0,0">
-                <Button Content="Update"
-                        Command="{Binding UpdateCommand}"
-                        VerticalAlignment="Center"
-                        HorizontalAlignment="Center">
-                    <Button.ToolTip>
-                        <ToolTip BorderThickness="0" 
-                                 Background="Transparent"
-                                 Placement="Mouse">
-                            <mini:InfoToolTip 
-                                Title="Update"
-                                Info="{Binding NewVersion}"/>
-                        </ToolTip>
-                    </Button.ToolTip>
-                </Button>
+                
             </Grid>
         </Grid>
 
-        <Grid Grid.Row="2">
-            <TextBlock Text="{Binding Version}"
-                       Foreground="{StaticResource Foreground}"
-                       FontSize="14"
-                       Opacity="0.5"
-                       HorizontalAlignment="Right"
+        <Grid Grid.Row="1"
+              HorizontalAlignment="Right">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="{Binding UpdateWidth}"/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+
+            <Button Grid.Column="0" 
+                    Content="Update"
+                    Margin="0,0,10,0"
+                    Command="{Binding UpdateCommand}"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center">
+                <Button.ToolTip>
+                    <ToolTip BorderThickness="0" 
+                             Background="Transparent"
+                             Placement="Mouse">
+                        <mini:InfoToolTip Title="Update"
+                                          Info="{Binding NewVersion}"/>
+                    </ToolTip>
+                </Button.ToolTip>
+            </Button>
+
+            <TextBlock Grid.Column="1"
+                       Text="{Binding Version}"
+                       Foreground="{StaticResource SecondaryForeground}"
+                       FontSize="15"
                        VerticalAlignment="Center"/>
         </Grid>
     </Grid>

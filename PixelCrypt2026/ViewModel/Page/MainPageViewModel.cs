@@ -17,7 +17,7 @@ namespace PixelCrypt2026.ViewModel.Page
         private readonly NavigationService _navigation;
         private readonly Dictionary<Type, ToolCardViewModel> _tools;
         private Updater _backgroundUpdater;
-        private GridLength _updateHeight = new GridLength(0);
+        private GridLength _updateWidth = new GridLength(0);
         private string _newVersion;
 
         public ICommand UpdateCommand { get; }
@@ -41,6 +41,7 @@ namespace PixelCrypt2026.ViewModel.Page
                     new ToolCardViewModel<CryptographyPageViewModel>()
                     {
                         Title = "Cryptography",
+                        Icon = "Solid_Lock",
                         Description = "Protect the image with a password by turning it into visual noise. No one will see the original without the key.",
                         ToolCardCommand = new LambdaCommand(OnNavigate)
                     }
@@ -50,6 +51,7 @@ namespace PixelCrypt2026.ViewModel.Page
                     new ToolCardViewModel<SteganographyPageViewModel>()
                     {
                         Title = "Steganography",
+                        Icon = "Solid_Eye",
                         Description = "Hide the text or file inside the image unnoticeably. Externally, the picture remains the same.",
                         ToolCardCommand = new LambdaCommand(OnNavigate)
                     }
@@ -64,7 +66,7 @@ namespace PixelCrypt2026.ViewModel.Page
         private void OnUpdate(object obj)
         {
             var res = Notification.Show(
-                $"Update to version {_backgroundUpdater.LatestRelease.Name} now?",
+                $"Update to version {_backgroundUpdater.LatestRelease?.Name} now?", "Update available",
                 button: Program.Enum.NotificationButtonType.YesNo,
                 icon: Program.Enum.NotificationIconType.Question);
 
@@ -82,7 +84,7 @@ namespace PixelCrypt2026.ViewModel.Page
 
         private void ShowUpdate(GitHubRelease release)
         {
-            UpdateHeight = new GridLength(1, GridUnitType.Auto);
+            UpdateWidth = new GridLength(1, GridUnitType.Auto);
             NewVersion = $"A new version is available: {release.TagName}";
         }
 
@@ -94,10 +96,10 @@ namespace PixelCrypt2026.ViewModel.Page
             set => Set(ref _newVersion, value);
         }
 
-        public GridLength UpdateHeight
+        public GridLength UpdateWidth
         {
-            get => _updateHeight;
-            set => Set(ref _updateHeight, value);
+            get => _updateWidth;
+            set => Set(ref _updateWidth, value);
         }
 
         private void OnSetStatus(Type type, string status)

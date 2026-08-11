@@ -4,14 +4,18 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:PixelCrypt2026.View.UserControl" 
+             xmlns:fa="http://schemas.fontawesome.com/icons/"
              MaxWidth="300" 
              MinWidth="300" 
+             Cursor="Hand"
              mc:Ignorable="d">
 
     <Border CornerRadius="10"
             Margin="10"
-            Padding="10,5,10,10"
+            Padding="10"
             Background="{StaticResource Background1}"
+            BorderBrush="{StaticResource BorderSubtle}"
+            BorderThickness="1"
             RenderTransformOrigin="0.5,0.5">
 
         <Border.RenderTransform>
@@ -66,47 +70,61 @@
             </Grid.RowDefinitions>
 
             <Grid Grid.Row="0"
-                  Margin="0,0,0,5">
+                  Margin="0,0,0,10">
                 <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="auto"/>
                 </Grid.ColumnDefinitions>
 
-                <TextBlock Text="{Binding Title}" 
-                           Grid.Column="0"
-                           FontSize="15" 
-                           Foreground="{StaticResource Foreground}"
-                           FontWeight="SemiBold" 
-                           TextWrapping="Wrap"/>
+                <Border Grid.Column="0"
+                        Width="45"
+                        Height="45"
+                        CornerRadius="10"
+                        Background="{StaticResource Background3}"
+                        VerticalAlignment="Top"
+                        Margin="0,0,10,0">
+                    <fa:ImageAwesome Icon="{Binding Icon}"
+                                     Foreground="{StaticResource Accent}"
+                                     Width="25"
+                                     Height="25"
+                                     HorizontalAlignment="Center"
+                                     VerticalAlignment="Center"/>
+                </Border>
 
-                <TextBlock Text="{Binding Status}" 
-                           Grid.Column="1"
-                           FontSize="10" 
-                           Foreground="{StaticResource Foreground}"
-                           VerticalAlignment="Top"
-                           FontWeight="SemiBold"
-                           TextWrapping="Wrap"/>
+                <StackPanel Grid.Column="1"
+                            VerticalAlignment="Top">
+                    <TextBlock Text="{Binding Title}"
+                               FontSize="20"
+                               VerticalAlignment="Center"
+                               Foreground="{StaticResource Foreground}"
+                               FontWeight="SemiBold"
+                               TextWrapping="Wrap"/>
+
+                    <TextBlock Text="{Binding Status}"
+                               FontSize="10"
+                               FontWeight="Bold"
+                               VerticalAlignment="Center"
+                               Foreground="{StaticResource SecondaryForeground}"
+                               Margin="0,5,0,0"
+                               TextWrapping="Wrap"/>
+                </StackPanel>
             </Grid>
 
-            <Grid Grid.Row="1" 
-                  Margin="0,0,0,5">
-                <Separator/>
-            </Grid>
+            <Separator Grid.Row="1"
+                       Margin="0,0,0,10"/>
 
-            <Grid Grid.Row="2"
-                  Margin="0,0,0,10">
-                <TextBlock Text="{Binding Description}" 
-                           FontSize="13" 
-                           Foreground="{StaticResource Foreground}"
-                           TextWrapping="Wrap"
-                           TextAlignment="Left"
-                           TextTrimming="CharacterEllipsis"
-                           VerticalAlignment="Top"/>
-            </Grid>
+            <TextBlock Grid.Row="2"
+                       Text="{Binding Description}"
+                       FontSize="15"
+                       Foreground="{StaticResource SecondaryForeground}"
+                       TextWrapping="Wrap"
+                       TextAlignment="Left"
+                       VerticalAlignment="Top"
+                       Margin="0,0,0,10"/>
 
             <Grid Grid.Row="3">
                 <Button Content="Select" 
-                        HorizontalAlignment="Center" 
+                        HorizontalAlignment="Stretch" 
                         VerticalAlignment="Bottom" 
                         Padding="15,5" 
                         CommandParameter="{Binding ToolCardParameter}" 

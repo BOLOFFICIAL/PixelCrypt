@@ -49,47 +49,29 @@
             return (blockHeight, blockWidth);
         }
 
-        public static T[,] ReorderBlocks<T>(T[,] matrix, int blockRows, int blockCols, List<int> customOrder)
+        public static byte[] ReorderBlocks(byte[] pixels, int width, int height, int blockWidth, int blockHeight, List<int> customOrder)
         {
-            if (matrix == null)
-                throw new ArgumentNullException(nameof(matrix));
+            if (pixels == null)
+                throw new ArgumentNullException(nameof(pixels));
             if (customOrder == null)
                 throw new ArgumentNullException(nameof(customOrder));
-            if (blockRows <= 0 || blockCols <= 0)
+            if (blockWidth <= 0 || blockHeight <= 0)
                 throw new ArgumentException("Block dimensions must be positive");
+            if (width % blockWidth != 0 || height % blockHeight != 0)
+                throw new ArgumentException("Image dimensions must be divisible by block dimensions");
 
-            int totalRows = matrix.GetLength(0);
-            int totalCols = matrix.GetLength(1);
+            const int bytesPerPixel = 4;
+            int stride = width * bytesPerPixel;
 
-            if (totalRows % blockRows != 0 || totalCols % blockCols != 0)
-                throw new ArgumentException("Matrix dimensions must be divisible by block dimensions");
-
-            int blocksInRow = totalCols / blockCols;
-            int blocksInCol = totalRows / blockRows;
+            int blocksInRow = height / blockHeight;
+            int blocksInCol = width / blockWidth;
             int totalBlocks = blocksInRow * blocksInCol;
 
-            T[][,] blocks = new T[totalBlocks][,];
+            if (customOrder.Count != totalBlocks)
+                throw new ArgumentException("customOrder length must match the number of blocks");
 
-            for (int i = 0; i < totalBlocks; i++)
-            {
-                int blockRow = i / blocksInRow;
-                int blockCol = i % blocksInRow;
-
-                blocks[i] = new T[blockRows, blockCols];
-
-                int startRow = blockRow * blockRows;
-                int startCol = blockCol * blockCols;
-
-                for (int r = 0; r < blockRows; r++)
-                {
-                    for (int c = 0; c < blockCols; c++)
-                    {
-                        blocks[i][r, c] = matrix[startRow + r, startCol + c];
-                    }
-                }
-            }
-
-            T[,] result = new T[totalRows, totalCols];
+            byte[] result = new byte[pixels.Length];
+            int blockBytes = blockWidth * bytesPerPixel;
 
             int resultBlockIndex = 0;
             foreach (int sourceBlockIndex in customOrder)
@@ -97,20 +79,22 @@
                 if (sourceBlockIndex < 0 || sourceBlockIndex >= totalBlocks)
                     throw new ArgumentException($"Invalid block index {sourceBlockIndex} in customOrder");
 
-                int resultBlockRow = resultBlockIndex / blocksInRow;
-                int resultBlockCol = resultBlockIndex % blocksInRow;
+                int sourceBandX = sourceBlockIndex / blocksInRow;
+                int sourceBandY = sourceBlockIndex % blocksInRow;
 
-                int startRow = resultBlockRow * blockRows;
-                int startCol = resultBlockCol * blockCols;
+                int destinationBandX = resultBlockIndex / blocksInRow;
+                int destinationBandY = resultBlockIndex % blocksInRow;
 
-                T[,] sourceBlock = blocks[sourceBlockIndex];
+                int sourceStartX = sourceBandX * blockWidth;
+                int sourceStartY = sourceBandY * blockHeight;
+                int destinationStartX = destinationBandX * blockWidth;
+                int destinationStartY = destinationBandY * blockHeight;
 
-                for (int r = 0; r < blockRows; r++)
+                for (int y = 0; y < blockHeight; y++)
                 {
-                    for (int c = 0; c < blockCols; c++)
-                    {
-                        result[startRow + r, startCol + c] = sourceBlock[r, c];
-                    }
+                    int sourceOffset = (sourceStartY + y) * stride + sourceStartX * bytesPerPixel;
+                    int destinationOffset = (destinationStartY + y) * stride + destinationStartX * bytesPerPixel;
+                    Buffer.BlockCopy(pixels, sourceOffset, result, destinationOffset, blockBytes);
                 }
 
                 resultBlockIndex++;

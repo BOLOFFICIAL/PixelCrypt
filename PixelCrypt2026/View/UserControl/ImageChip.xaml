@@ -21,7 +21,8 @@
 
             <TextBlock Text="{Binding StatusValue}"
                        FontSize="15"
-                       Foreground="{StaticResource Foreground}"/>
+                       Foreground="{StaticResource ButtonForeground}"
+                       FontWeight="Medium"/>
             
         </Border>
 
@@ -46,7 +47,7 @@
                        Padding="10,5"
                        FontSize="15"
                        HorizontalAlignment="Center"
-                       TextWrapping="Wrap">
+                       TextTrimming="CharacterEllipsis">
 
                 <TextBlock.ToolTip>
                     <ToolTip BorderThickness="0" 
