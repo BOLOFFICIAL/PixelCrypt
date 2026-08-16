@@ -147,16 +147,12 @@ namespace PixelCrypt2026.ViewModel.Page
 
             WidthResultImage = new GridLength(1, GridUnitType.Star);
 
-            var bmpImage = await Task.Run(() =>
-            {
-                var image = new BitmapImage();
-                image.BeginInit();
-                image.CacheOption = BitmapCacheOption.OnLoad;
-                image.UriSource = new Uri(resultPath);
-                image.EndInit();
-                image.Freeze();
-                return image;
-            });
+            var bmpImage = new BitmapImage();
+            bmpImage.BeginInit();
+            bmpImage.CacheOption = BitmapCacheOption.OnLoad;
+            bmpImage.UriSource = new Uri(resultPath);
+            bmpImage.EndInit();
+            bmpImage.Freeze();
 
             ResultImageSource = bmpImage;
         }
