@@ -3,14 +3,89 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:PixelCrypt2026.View.Window"
+        xmlns:fa="http://schemas.fontawesome.com/icons/"
+        xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
         mc:Ignorable="d"
-        Title="PixelCrypt" 
+        Title="PixelCrypt"
         MinHeight="600"
         MinWidth="1000"
+        WindowStyle="None"
         Background="{StaticResource Background}">
+
+    <shell:WindowChrome.WindowChrome>
+        <shell:WindowChrome CaptionHeight="40"
+                            ResizeBorderThickness="6"
+                            CornerRadius="0"
+                            GlassFrameThickness="0"
+                            UseAeroCaptionButtons="False"/>
+    </shell:WindowChrome.WindowChrome>
+
     <Grid>
-        <Frame x:Name="MainFrame"
-               NavigationUIVisibility = "Hidden"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0" 
+              Background="{StaticResource Background1}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Grid.Column="0"
+                       Text="PixelCrypt"
+                       FontSize="14"
+                       FontWeight="SemiBold"
+                       Foreground="{StaticResource Foreground}"
+                       VerticalAlignment="Center"
+                       Margin="12,0,0,0"/>
+
+            <StackPanel Grid.Column="1" 
+                        Orientation="Horizontal">
+                <Button shell:WindowChrome.IsHitTestVisibleInChrome="True"
+                        Background="Transparent"
+                        Click="Minimize_Click">
+                    <fa:ImageAwesome Icon="Solid_WindowMinimize" 
+                                     Foreground="{StaticResource Foreground}"
+                                     Height="10" 
+                                     Width="10"/>
+                </Button>
+
+                <Button x:Name="MaximizeButton"
+                        Background="Transparent"
+                        shell:WindowChrome.IsHitTestVisibleInChrome="True"
+                        Click="Maximize_Click">
+                    <fa:ImageAwesome Icon="Solid_WindowMaximize" 
+                                     Foreground="{StaticResource Foreground}"
+                                     Height="10" 
+                                     Width="10"/>
+                </Button>
+
+                <Button x:Name="RestoreButton"
+                        Background="Transparent"
+                        shell:WindowChrome.IsHitTestVisibleInChrome="True"
+                        Click="Maximize_Click"
+                        Visibility="Collapsed">
+                    <fa:ImageAwesome Icon="Solid_WindowRestore"
+                                     Foreground="{StaticResource Foreground}"
+                                     Height="10" 
+                                     Width="10"/>
+                </Button>
+
+                <Button shell:WindowChrome.IsHitTestVisibleInChrome="True"
+                        Background="Transparent"
+                        Click="Close_Click">
+                    <fa:ImageAwesome Icon="Solid_Times" 
+                                     Foreground="{StaticResource Foreground}"
+                                     Height="10" 
+                                     Width="10"/>
+                </Button>
+            </StackPanel>
+        </Grid>
+
+        <Frame Grid.Row="1"
+               x:Name="MainFrame"
+               NavigationUIVisibility="Hidden"/>
     </Grid>
 </Window>
