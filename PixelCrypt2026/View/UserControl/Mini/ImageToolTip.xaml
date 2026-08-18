@@ -5,7 +5,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:mini="clr-namespace:PixelCrypt2026.View.UserControl.Mini"
              mc:Ignorable="d"
-             x:Name="root">
+             x:Name="root"
+             FontFamily="{StaticResource Font}">
 
     <UserControl.Resources>
         <Storyboard x:Key="ResetAnimation">
@@ -265,7 +266,7 @@
                 <StackPanel>
                     <TextBlock Text="{Binding FileName, ElementName=root}" 
                                Foreground="{StaticResource Foreground}" 
-                               FontWeight="SemiBold" 
+                               FontWeight="Medium"  
                                FontSize="20" 
                                TextWrapping="Wrap" 
                                Margin="0,0,0,10"/>

@@ -10,7 +10,8 @@
         MinHeight="600"
         MinWidth="1000"
         WindowStyle="None"
-        Background="{StaticResource Background}">
+        Background="{StaticResource Background}"
+        TextElement.FontFamily="{StaticResource Font}">
 
     <shell:WindowChrome.WindowChrome>
         <shell:WindowChrome CaptionHeight="40"

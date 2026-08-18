@@ -13,7 +13,8 @@
         AllowsTransparency="True"
         WindowStyle="None"
         Background="Transparent"
-        ResizeMode="NoResize">
+        ResizeMode="NoResize"
+        TextElement.FontFamily="{StaticResource Font}">
 
     <Window.Resources>
         <Storyboard x:Key="ShowNotificationAnimation">
@@ -95,7 +96,7 @@
                     <TextBlock Grid.Column="1"
                                Text="{Binding Title}"
                                FontSize="20"
-                               FontWeight="SemiBold"
+                               FontWeight="Medium" 
                                Foreground="{StaticResource Foreground}"
                                VerticalAlignment="Center"
                                Margin="10,0,10,0"

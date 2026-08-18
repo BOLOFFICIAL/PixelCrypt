@@ -4,7 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:PixelCrypt2026.View.UserControl"
-             mc:Ignorable="d">
+             mc:Ignorable="d"
+             FontFamily="{StaticResource Font}">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="{Binding ProgressHeight}"/>
@@ -30,7 +31,7 @@
                                    HorizontalAlignment="Center"
                                    FontSize="14"
                                    Foreground="{StaticResource Foreground}"
-                                   FontWeight="SemiBold"/>
+                                   FontWeight="Medium" />
                     </Border>
 
                     <Border Grid.Column="1"
@@ -43,7 +44,7 @@
                                    HorizontalAlignment="Center"
                                    FontSize="14"
                                    Foreground="{StaticResource Foreground}"
-                                   FontWeight="SemiBold"/>
+                                   FontWeight="Medium" />
                     </Border>
                 </Grid>
             </Border>

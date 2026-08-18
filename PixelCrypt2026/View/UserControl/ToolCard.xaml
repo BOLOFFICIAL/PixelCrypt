@@ -6,7 +6,8 @@
              xmlns:local="clr-namespace:PixelCrypt2026.View.UserControl" 
              xmlns:fa="http://schemas.fontawesome.com/icons/"
              Cursor="Hand"
-             mc:Ignorable="d">
+             mc:Ignorable="d"
+             FontFamily="{StaticResource Font}">
 
     <Border CornerRadius="10"
             Margin="10"
@@ -80,7 +81,7 @@
                                FontSize="20"
                                VerticalAlignment="Center"
                                Foreground="{StaticResource Foreground}"
-                               FontWeight="Bold"
+                               FontWeight="Medium"
                                TextWrapping="Wrap"/>
 
                     <Border Grid.Column="1"

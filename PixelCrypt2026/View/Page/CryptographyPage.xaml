@@ -7,7 +7,8 @@
       xmlns:controls="clr-namespace:PixelCrypt2026.View.UserControl" 
       xmlns:mini="clr-namespace:PixelCrypt2026.View.UserControl.Mini"
       mc:Ignorable="d"
-      Title="CryptographyPage">
+      Title="CryptographyPage"
+      TextElement.FontFamily="{StaticResource Font}">
 
     <controls:BasePageLayout Title="{Binding Title}"
                              BackCommand="{Binding BackCommand}">

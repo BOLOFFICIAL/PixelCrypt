@@ -3,6 +3,21 @@
 
     <!-- ===== Dark theme (red accent) ===== -->
 
+    <!-- Fonts -->
+    <FontFamily x:Key="Font">/PixelCrypt2026;component/Fonts/#Onest</FontFamily>
+
+    <Style TargetType="Page">
+        <Setter Property="TextElement.FontFamily" Value="{StaticResource Font}"/>
+    </Style>
+
+    <Style TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource Font}"/>
+    </Style>
+
+    <Style TargetType="Control">
+        <Setter Property="FontFamily" Value="{StaticResource Font}"/>
+    </Style>
+
     <!-- Accent -->
     <Brush x:Key="Accent">#B74141</Brush>
 

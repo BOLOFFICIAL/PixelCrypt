@@ -8,6 +8,7 @@
         <Setter Property="CaretBrush" Value="{StaticResource Accent}"/>
         <Setter Property="SelectionBrush" Value="{StaticResource Accent}"/>
         <Setter Property="FontSize" Value="15"/>
+        <Setter Property="FontFamily" Value="{StaticResource Font}"/>
     </Style>
 
     <Style TargetType="PasswordBox">
@@ -17,6 +18,7 @@
         <Setter Property="CaretBrush" Value="{StaticResource Accent}"/>
         <Setter Property="SelectionBrush" Value="{StaticResource Accent}"/>
         <Setter Property="FontSize" Value="15"/>
+        <Setter Property="FontFamily" Value="{StaticResource Font}"/>
     </Style>
 
 </ResourceDictionary>

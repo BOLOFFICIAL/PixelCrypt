@@ -2,7 +2,8 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:PixelCrypt2026.View.UserControl"
-             xmlns:fa="http://schemas.fontawesome.com/icons/">
+             xmlns:fa="http://schemas.fontawesome.com/icons/"
+             FontFamily="{StaticResource Font}">
 
     <Grid Margin="10,5,10,10"
           KeyboardNavigation.TabNavigation="None">

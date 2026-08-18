@@ -21,9 +21,17 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="PixelCryptLogo.ico">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <Resource Include="Fonts\Onest-Regular.ttf" />
+    <Resource Include="Fonts\Onest-Bold.ttf" />
+    <Resource Include="Fonts\Onest-Medium.ttf" />
+    <Resource Include="Fonts\Onest-Light.ttf" />
+    <Resource Include="Fonts\Onest-Thin.ttf" />
+    <Resource Include="Fonts\Onest-ExtraBold.ttf" />
+    <Resource Include="Fonts\Onest-Black.ttf" />
+    <Resource Include="Fonts\Onest.CompositeFont" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Include="Updater.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

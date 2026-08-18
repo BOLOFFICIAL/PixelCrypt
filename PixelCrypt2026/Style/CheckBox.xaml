@@ -6,6 +6,7 @@
         <Setter Property="Background" Value="{StaticResource Background1}"/>
         <Setter Property="BorderBrush" Value="{StaticResource Background3}"/>
         <Setter Property="FontSize" Value="15"/>
+        <Setter Property="FontFamily" Value="{StaticResource Font}"/>
         <Setter Property="Cursor" Value="Hand"/>
         <Setter Property="Padding" Value="5"/>
         <Setter Property="Template">

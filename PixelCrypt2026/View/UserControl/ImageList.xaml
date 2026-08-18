@@ -6,7 +6,8 @@
              xmlns:local="clr-namespace:PixelCrypt2026.View.UserControl" 
              xmlns:controls="clr-namespace:PixelCrypt2026.View.UserControl" 
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-             mc:Ignorable="d">
+             mc:Ignorable="d"
+             FontFamily="{StaticResource Font}">
     <Border Background="{StaticResource Background1}"
             Padding="10,10,10,0"
             CornerRadius="10">

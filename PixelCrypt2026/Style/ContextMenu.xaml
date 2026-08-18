@@ -6,6 +6,7 @@
         <Setter Property="BorderBrush" Value="{StaticResource BorderSubtle}"/>
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="Padding" Value="0"/>
+        <Setter Property="FontFamily" Value="{StaticResource Font}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ContextMenu">
@@ -69,6 +70,7 @@
         <Setter Property="Foreground" Value="{StaticResource Foreground}"/>
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="FontFamily" Value="{StaticResource Font}"/>
         <Setter Property="MinWidth" Value="100"/>
         <Setter Property="Padding" Value="15,10"/>
         <Setter Property="Template">

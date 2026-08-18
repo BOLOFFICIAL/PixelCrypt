@@ -1,0 +1,67 @@
+<FontFamily
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/composite-font"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:System="clr-namespace:System;assembly=mscorlib"
+    Baseline="0.75"
+    LineSpacing="1.2">
+
+    <FontFamily.FamilyNames>
+        <System:String x:Key="en-US">Onest</System:String>
+    </FontFamily.FamilyNames>
+
+    <FontFamily.FamilyTypefaces>
+        <FamilyTypeface
+            Weight="Thin"
+            Stretch="Normal"
+            Style="Normal"
+            Target="Onest-Thin.ttf#Onest Thin" />
+
+        <FamilyTypeface
+            Weight="ExtraLight"
+            Stretch="Normal"
+            Style="Normal"
+            Target="Onest-Thin.ttf#Onest Thin" />
+
+        <FamilyTypeface
+            Weight="Light"
+            Stretch="Normal"
+            Style="Normal"
+            Target="Onest-Light.ttf#Onest Light" />
+
+        <FamilyTypeface
+            Weight="Normal"
+            Stretch="Normal"
+            Style="Normal"
+            Target="Onest-Regular.ttf#Onest Regular" />
+
+        <FamilyTypeface
+            Weight="Medium"
+            Stretch="Normal"
+            Style="Normal"
+            Target="Onest-Medium.ttf#Onest Medium" />
+
+        <FamilyTypeface
+            Weight="SemiBold"
+            Stretch="Normal"
+            Style="Normal"
+            Target="Onest-Medium.ttf#Onest Medium" />
+
+        <FamilyTypeface
+            Weight="Bold"
+            Stretch="Normal"
+            Style="Normal"
+            Target="Onest-Bold.ttf#Onest Bold" />
+
+        <FamilyTypeface
+            Weight="ExtraBold"
+            Stretch="Normal"
+            Style="Normal"
+            Target="Onest-ExtraBold.ttf#Onest ExtraBold" />
+
+        <FamilyTypeface
+            Weight="Black"
+            Stretch="Normal"
+            Style="Normal"
+            Target="Onest-Black.ttf#Onest Black" />
+    </FontFamily.FamilyTypefaces>
+</FontFamily>

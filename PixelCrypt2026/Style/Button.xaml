@@ -4,7 +4,8 @@
     <Style TargetType="Button">
         <Setter Property="Padding" Value="10,5"/>
         <Setter Property="FontSize" Value="15"/>
-        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="FontWeight" Value="Medium"/>
+        <Setter Property="FontFamily" Value="{StaticResource Font}"/>
         <Setter Property="Cursor" Value="Hand"/>
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="BorderBrush" Value="Transparent"/>
@@ -43,70 +44,7 @@
                                     Value="Arrow"/>
                         </Trigger>
 
-                        <EventTrigger RoutedEvent="MouseEnter">
-                            <BeginStoryboard>
-                                <Storyboard>
-                                    <DoubleAnimation Storyboard.TargetName="border"
-                                                     Storyboard.TargetProperty="Opacity"
-                                                     To="0.9"
-                                                     Duration="0:0:0.2">
-                                        <DoubleAnimation.EasingFunction>
-                                            <CubicEase EasingMode="EaseOut"/>
-                                        </DoubleAnimation.EasingFunction>
-                                    </DoubleAnimation>
-
-                                    <DoubleAnimation Storyboard.TargetName="scaleTransform"
-                                                     Storyboard.TargetProperty="ScaleX"
-                                                     To="1.02"
-                                                     Duration="0:0:0.2">
-                                        <DoubleAnimation.EasingFunction>
-                                            <BackEase EasingMode="EaseOut" Amplitude="0.3"/>
-                                        </DoubleAnimation.EasingFunction>
-                                    </DoubleAnimation>
-                                    <DoubleAnimation Storyboard.TargetName="scaleTransform"
-                                                     Storyboard.TargetProperty="ScaleY"
-                                                     To="1.02"
-                                                     Duration="0:0:0.2">
-                                        <DoubleAnimation.EasingFunction>
-                                            <BackEase EasingMode="EaseOut" Amplitude="0.3"/>
-                                        </DoubleAnimation.EasingFunction>
-                                    </DoubleAnimation>
-                                </Storyboard>
-                            </BeginStoryboard>
-                        </EventTrigger>
-
-                        <EventTrigger RoutedEvent="MouseLeave">
-                            <BeginStoryboard>
-                                <Storyboard>
-                                    <DoubleAnimation Storyboard.TargetName="border"
-                                                     Storyboard.TargetProperty="Opacity"
-                                                     To="1.0"
-                                                     Duration="0:0:0.25">
-                                        <DoubleAnimation.EasingFunction>
-                                            <CubicEase EasingMode="EaseOut"/>
-                                        </DoubleAnimation.EasingFunction>
-                                    </DoubleAnimation>
-
-                                    <DoubleAnimation Storyboard.TargetName="scaleTransform"
-                                                     Storyboard.TargetProperty="ScaleX"
-                                                     To="1.0"
-                                                     Duration="0:0:0.25">
-                                        <DoubleAnimation.EasingFunction>
-                                            <CubicEase EasingMode="EaseOut"/>
-                                        </DoubleAnimation.EasingFunction>
-                                    </DoubleAnimation>
-                                    <DoubleAnimation Storyboard.TargetName="scaleTransform"
-                                                     Storyboard.TargetProperty="ScaleY"
-                                                     To="1.0"
-                                                     Duration="0:0:0.25">
-                                        <DoubleAnimation.EasingFunction>
-                                            <CubicEase EasingMode="EaseOut"/>
-                                        </DoubleAnimation.EasingFunction>
-                                    </DoubleAnimation>
-                                </Storyboard>
-                            </BeginStoryboard>
-                        </EventTrigger>
-
+                        
                         <EventTrigger RoutedEvent="PreviewMouseDown">
                             <BeginStoryboard>
                                 <Storyboard>
