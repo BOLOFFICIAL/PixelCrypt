@@ -5,8 +5,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:PixelCrypt2026.View.UserControl" 
              xmlns:fa="http://schemas.fontawesome.com/icons/"
-             MaxWidth="300" 
-             MinWidth="300" 
              Cursor="Hand"
              mc:Ignorable="d">
 
@@ -70,52 +68,59 @@
             </Grid.RowDefinitions>
 
             <Grid Grid.Row="0"
-                  Margin="0,0,0,10">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
+                  Margin="0,0,0,5">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="auto"/>
+                    </Grid.ColumnDefinitions>
 
-                <Border Grid.Column="0"
-                        Width="45"
-                        Height="45"
-                        CornerRadius="10"
-                        Background="{StaticResource Background3}"
-                        VerticalAlignment="Top"
-                        Margin="0,0,10,0">
-                    <fa:ImageAwesome Icon="{Binding Icon}"
-                                     Foreground="{StaticResource Accent}"
-                                     Width="25"
-                                     Height="25"
-                                     HorizontalAlignment="Center"
-                                     VerticalAlignment="Center"/>
-                </Border>
-
-                <StackPanel Grid.Column="1"
-                            VerticalAlignment="Top">
-                    <TextBlock Text="{Binding Title}"
+                    <TextBlock Grid.Column="0" 
+                               Text="{Binding Title}"
                                FontSize="20"
                                VerticalAlignment="Center"
                                Foreground="{StaticResource Foreground}"
-                               FontWeight="SemiBold"
+                               FontWeight="Bold"
                                TextWrapping="Wrap"/>
 
-                    <TextBlock Text="{Binding Status}"
-                               FontSize="10"
-                               FontWeight="Bold"
-                               VerticalAlignment="Center"
-                               Foreground="{StaticResource SecondaryForeground}"
-                               Margin="0,5,0,0"
-                               TextWrapping="Wrap"/>
-                </StackPanel>
+                    <Border Grid.Column="1"
+                            Background="{StaticResource Background3}"
+                            CornerRadius="10"
+                            Padding="10,5"
+                            Margin="10,0,0,0"
+                            BorderBrush="{StaticResource BorderSubtle}">
+                        <TextBlock Text="{Binding Status}"
+                                   FontSize="10"
+                                   FontWeight="Bold"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   Foreground="{StaticResource SecondaryForeground}"
+                                   TextWrapping="Wrap"/>
+
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Setter Property="Visibility" Value="Visible"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Status}" Value="{x:Null}">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Status}" Value="">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                    </Border>
+
+                </Grid>
             </Grid>
 
-            <Separator Grid.Row="1"
-                       Margin="0,0,0,10"/>
+            <Separator Grid.Row="1" Margin="0,5"/>
 
             <TextBlock Grid.Row="2"
                        Text="{Binding Description}"
                        FontSize="15"
+                       Width="250"
                        Foreground="{StaticResource SecondaryForeground}"
                        TextWrapping="Wrap"
                        TextAlignment="Left"
