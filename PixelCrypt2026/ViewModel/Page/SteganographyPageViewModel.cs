@@ -509,7 +509,7 @@ namespace PixelCrypt2026.ViewModel.Page
                     successfullyProcessedImages.Add(imageItem.ImageFile);
                     double processedPixels = successfullyProcessedImages.Sum(i => (double)(i.ImageWidth * i.ImageHeight));
                     Progress.UpdateTimer(processedPixels, totalPixels);
-                    SetToolStatus($"Completed {Progress.ProgressPercent}");
+                    SetToolStatus(Progress.ProgressPercent);
                     imageItem.Status = StatusType.Success;
                 }
                 catch (OperationCanceledException)
@@ -691,7 +691,7 @@ namespace PixelCrypt2026.ViewModel.Page
                     dataChunks[i] = "";
                     double convertedPixels = completedImages.Sum(i => (double)(i.ImageWidth * i.ImageHeight));
                     Progress.UpdateTimer(convertedPixels, totalPixels);
-                    SetToolStatus($"Completed {Progress.ProgressPercent}");
+                    SetToolStatus(Progress.ProgressPercent);
                     ImageList.Images[i].Status = StatusType.Success;
                 }
                 catch (OperationCanceledException)

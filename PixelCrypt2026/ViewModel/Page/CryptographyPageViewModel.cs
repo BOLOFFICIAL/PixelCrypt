@@ -269,7 +269,7 @@ namespace PixelCrypt2026.ViewModel.Page
                     double convertedPixels = completedImages.Sum(i => (double)(i.ImageWidth * i.ImageHeight));
                     Progress.UpdateTimer(convertedPixels, totalItems);
                     await SelectImage();
-                    SetToolStatus($"Completed {Progress.ProgressPercent}");
+                    SetToolStatus(Progress.ProgressPercent);
                 }
                 catch (OperationCanceledException)
                 {

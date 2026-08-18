@@ -38,10 +38,18 @@ namespace PixelCrypt2026.View.UserControl.Base
         public BindablePasswordBox()
         {
             InitializeComponent();
+            Loaded += OnLoaded;
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            UpdatePassword();
         }
 
         private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
         {
+            if (!passwordBox.IsKeyboardFocused) return;
+
             _isPasswordChanged = true;
             Password = passwordBox.Password;
             _isPasswordChanged = false;
